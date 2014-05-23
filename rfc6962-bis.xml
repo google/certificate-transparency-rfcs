@@ -446,8 +446,8 @@ corresponding Precertificate could contain
 <xref target="RFC6125">CN-ID</xref> MUST remain unredacted.
           </t>
           <t>
-            When a Precertificate contains one or more redacted labels, an
-extension (OID 1.3.6.1.4.1.11129.2.4.6, whose extnValue OCTET STRING
+            When a Precertificate contains one or more redacted labels, a
+non-critical extension (OID 1.3.6.1.4.1.11129.2.4.6, whose extnValue OCTET STRING
 contains an ASN.1 SEQUENCE OF INTEGERs) MUST be added to the corresponding
 certificate: the first INTEGER indicates the number of labels redacted in the
 Precertificate's first DNS-ID; the second INTEGER does the same for the
@@ -462,12 +462,12 @@ having to perform any guesswork.
         <section title="Using a Name-Constrained Intermediate CA">
           <t>
             An intermediate CA certificate or Precertificate that contains the
-Name Constraints extension (see Section 4.2.1.10 of <xref target="RFC5280"/>)
+critical or non-critical <xref target="RFC5280">Name Constraints</xref> extension
 MAY be logged in place of end-entity certificates issued by that intermediate
 CA, as long as all of the following conditions are met:
             <list style="symbols">
               <t>
-                there MUST be an extension (OID 1.3.6.1.4.1.11129.2.4.7,
+                there MUST be a non-critical extension (OID 1.3.6.1.4.1.11129.2.4.7,
 whose extnValue OCTET STRING contains ASN.1 NULL data (0x05 0x00)). This
 extension is an explicit indication that it is acceptable to not log
 certificates issued by this intermediate CA.
@@ -615,7 +615,7 @@ with type
 "signed_certificate_timestamp", or by using Online Certificate
 Status Protocol (OCSP) Stapling (also known as the "Certificate
 Status Request" TLS extension; see 
-<xref target='RFC6066'/>), where the OCSP response includes an
+<xref target='RFC6066'/>), where the OCSP response includes a non-critical
 extension with OID 1.3.6.1.4.1.11129.2.4.5 (see <xref target='RFC2560'/>) and
 body:
 
@@ -631,7 +631,13 @@ body:
           At least one SCT MUST be included. Server operators MAY include more than one SCT.
         </t>
         <t>
-          Similarly, a certificate authority MAY submit a Precertificate to more than one log, and all obtained SCTs can be directly embedded in the final certificate, by encoding the SignedCertificateTimestampList structure as an ASN.1 OCTET STRING and inserting the resulting data in the TBSCertificate as an X.509v3 certificate extension (OID 1.3.6.1.4.1.11129.2.4.2). Upon receiving the certificate, clients can reconstruct the original TBSCertificate to verify the SCT signature.
+          Similarly, a certificate authority MAY submit a Precertificate to more
+than one log, and all obtained SCTs can be directly embedded in the final
+certificate, by encoding the SignedCertificateTimestampList structure as an
+ASN.1 OCTET STRING and inserting the resulting data in the TBSCertificate as a
+non-critical X.509v3 certificate extension (OID 1.3.6.1.4.1.11129.2.4.2). Upon
+receiving the certificate, clients can reconstruct the original TBSCertificate
+to verify the SCT signature.
         </t>
         <t>
           The contents of the ASN.1 OCTET STRING embedded in an OCSP extension or X509v3 certificate extension are as follows:
