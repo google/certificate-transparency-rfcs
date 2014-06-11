@@ -694,10 +694,7 @@ for misbehavior or has had a key compromise).
         </t>
 <figure>
   <artwork>
-    enum { timestamped_entry(0), (255) }
-      MerkleLeafType;
-
-    enum { v1(0), (255) }
+    enum { v1(0), v2(1), (255) }
       LeafVersion;
 
     struct {
@@ -712,21 +709,18 @@ for misbehavior or has had a key compromise).
 
     struct {
         LeafVersion version;
-        MerkleLeafType leaf_type;
-        select (leaf_type) {
-            case timestamped_entry: TimestampedEntry;
-        }
+        TimestampedEntry timestamped_entry;
     } MerkleTreeLeaf;
   </artwork>
 </figure>
         <t>
-          Here, <spanx style="verb">version</spanx> is the version of the MerkleTreeLeaf structure. This version is v1.
-        </t>
-        <t>
-          <spanx style="verb">leaf_type</spanx> is the type of the leaf input. Currently, only <spanx style="verb">timestamped_entry</spanx> (corresponding to an SCT) is defined. Future revisions of this protocol version may add new MerkleLeafType types. <xref target="client_messages"/> explains how clients should handle unknown leaf types.
+          Here, <spanx style="verb">version</spanx> is the version of the MerkleTreeLeaf structure. This version is v2. Note that <xref target="RFC6962">MerkleTreeLeaf v1</xref> had another layer of indirection which is removed in v2.
         </t>
         <t>
           <spanx style="verb">timestamp</spanx> is the timestamp of the corresponding SCT issued for this certificate.
+        </t>
+        <t>
+          <spanx style="verb">entry_type</spanx> is the type of entry stored in <spanx style="verb">signed_entry</spanx>. New <spanx style="verb">LogEntryType</spanx> values may be added to <spanx style="verb">signed_entry</spanx> without increasing the <spanx style="verb">MerkleTreeLeaf</spanx> version. <xref target="client_messages"/> explains how clients should handle unknown entry types.
         </t>
         <t>
           <spanx style="verb">signed_entry</spanx> is the <spanx style="verb">signed_entry</spanx> of the corresponding SCT.
@@ -1037,8 +1031,8 @@ messages.
         <t>
           Note that this message is not signed -- the retrieved data can be
 verified by constructing the Merkle Tree Hash corresponding to a retrieved
-STH. All leaves MUST be v1. However, a compliant v1 client MUST NOT construe an
-unrecognized MerkleLeafType or LogEntryType value as an error. This means it
+STH. All leaves MUST be v1 or v2. However, a compliant v1 client MUST NOT construe an
+unrecognized LogEntryType value as an error. This means it
 may be unable to parse some entries, but note that each client can inspect the
 entries it does recognize as well as verify the integrity of the data by
 treating unrecognized leaves as opaque input to the tree.
