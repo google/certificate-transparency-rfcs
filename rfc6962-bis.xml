@@ -697,6 +697,9 @@ for misbehavior or has had a key compromise).
     enum { timestamped_entry(0), (255) }
       MerkleLeafType;
 
+    enum { v1(0), (255) }
+      LeafVersion;
+
     struct {
         uint64 timestamp;
         LogEntryType entry_type;
@@ -708,17 +711,16 @@ for misbehavior or has had a key compromise).
     } TimestampedEntry;
 
     struct {
-        Version version;
+        LeafVersion version;
         MerkleLeafType leaf_type;
         select (leaf_type) {
-            case timestamped_entry: TimestampedEntry;  
-        }    
+            case timestamped_entry: TimestampedEntry;
+        }
     } MerkleTreeLeaf;
   </artwork>
 </figure>
         <t>
-          Here, <spanx style="verb">version</spanx> is the version of the
-protocol to which the MerkleTreeLeaf corresponds. This version is v1.
+          Here, <spanx style="verb">version</spanx> is the version of the MerkleTreeLeaf structure. This version is v1.
         </t>
         <t>
           <spanx style="verb">leaf_type</spanx> is the type of the leaf input. Currently, only <spanx style="verb">timestamped_entry</spanx> (corresponding to an SCT) is defined. Future revisions of this protocol version may add new MerkleLeafType types. <xref target="client_messages"/> explains how clients should handle unknown leaf types.
@@ -745,8 +747,11 @@ protocol to which the MerkleTreeLeaf corresponds. This version is v1.
   <artwork>
     opaque CtSthExtensions&lt;0..2^16-1&gt;;
 
+    enum { v1(0), v2(1), (255) }
+      TreeHeadVersion;
+
     digitally-signed struct {
-        Version version;
+        TreeHeadVersion version;
         SignatureType signature_type = tree_hash;
         uint64 timestamp;
         uint64 tree_size;
@@ -757,8 +762,7 @@ protocol to which the MerkleTreeLeaf corresponds. This version is v1.
 </figure>
 
         <t>
-          <spanx style="verb">version</spanx> is the version of the protocol to
-which the TreeHeadSignature conforms. This version is v1.
+          <spanx style="verb">version</spanx> is the version of the TreeHeadSignature structure. This version is v2.
         </t>
         <t>
           <spanx style="verb">timestamp</spanx> is the current time. The timestamp MUST be at least as recent as the most recent SCT timestamp in the tree. Each subsequent timestamp MUST be more recent than the timestamp of the previous update.
@@ -770,7 +774,7 @@ which the TreeHeadSignature conforms. This version is v1.
           <spanx style="verb">sha256_root_hash</spanx> is the root of the Merkle Hash Tree.
         </t>
         <t>
-          <spanx style="verb">extensions</spanx> are future extensions to this protocol version (v1). Currently, no extensions are specified.
+          <spanx style="verb">extensions</spanx> are future extensions to TreeHeadSignature v2. Currently, no extensions are specified. Note that <xref target="RFC6962">TreeHeadSignature v1</xref> does not include this field. The purpose of the <spanx style="verb">extensions</spanx> field is to allow augmenting the TreeHeadSignature without increasing its version.
         </t>
         <t>Each log MUST produce on demand a Signed Tree Head that is no older than the Maximum Merge Delay. In the unlikely event that it receives no new submissions during an MMD period, the log SHALL sign the same Merkle Tree Hash with a fresh timestamp.
         </t>
