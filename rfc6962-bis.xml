@@ -93,7 +93,7 @@ responsible for have had certificates issued that they did not expect. What
 they do with this information, particularly when they find that a misissuance
 has happened, is beyond the scope of this document, but broadly speaking, they
 can invoke existing business mechanisms for dealing with misissued
-certificates. Of course, anyone who wants can monitor the logs and, if they
+certificates, such as working with the CA to get the certificate revoked, or with maintainers of trust anchor lists to get the CA removed. Of course, anyone who wants can monitor the logs and, if they
 believe a certificate is incorrectly issued, take action as they see fit.
       </t>
       <t>
