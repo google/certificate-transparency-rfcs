@@ -1353,6 +1353,8 @@ Carl Wallace for their valuable contributions.
 
     <?rfc include="reference.RFC.6125"?>
 
+    <?rfc include="reference.RFC.6962"?>
+
       <reference anchor="DSS" target="http://csrc.nist.gov/publications/fips/fips186-3/fips_186-3.pdf">
         <front>
           <title>Digital Signature Standard (DSS)</title>
