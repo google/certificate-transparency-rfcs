@@ -1224,7 +1224,7 @@ standalone service; or it might be a secondary function of a monitor.
     <section title="IANA Considerations">
       <section title="TLS Extension Type">
 	<t>
-          IANA has allocated an RFC 5246 ExtensionType value (18) for the SCT TLS extension. The extension name is "signed_certificate_timestamp".
+          IANA has allocated an RFC 5246 ExtensionType value (18) for the SCT TLS extension. The extension name is "signed_certificate_timestamp". IANA should update this extension type to point at this document.
 	</t>
       </section>
       <section title="Hash Algorithms" anchor="hash_algorithms">
