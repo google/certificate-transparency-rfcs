@@ -48,7 +48,7 @@
 
     <abstract>
       <t>
-        This document describes an experimental protocol for publicly logging
+        This document describes a protocol for publicly logging
 the existence of Transport Layer Security (TLS) certificates as they are issued
 or observed, in a manner that allows anyone to audit certificate authority (CA)
 activity and notice the issuance of suspect certificates as well as to audit
