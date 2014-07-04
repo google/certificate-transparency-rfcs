@@ -390,7 +390,7 @@ suggestions.)
   </artwork>
 </figure>
         <t>
-          Logs MAY limit the length of chain they will accept.
+          Logs SHOULD limit the length of chain they will accept.
         </t>
         <t>
           <spanx style="verb">entry_type</spanx> is the type of this entry. Future revisions of this protocol version may add new LogEntryType values. <xref target="client_messages"/> explains how clients should handle unknown entry types.
