@@ -1,5 +1,5 @@
-VERSION=03
-PREV=02
+VERSION=04
+PREV=03
 XML=rfc6962-bis.xml
 NAME=draft-ietf-trans-rfc6962-bis
 BASE=$(NAME)-$(VERSION)
