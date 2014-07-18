@@ -145,26 +145,26 @@ shape is uniquely determined by the number of leaves. (Note: This Merkle Tree is
 essentially the same as the <xref target='CrosbyWallach'>history tree</xref>
 proposal, except our definition handles non-full trees differently.)
         </t>
-      <section title="Merkle Audit Paths" anchor='merkle_paths'>
+      <section title="Merkle Inclusion Proofs" anchor='merkle_inclusion_proof'>
         <t>
-          A Merkle audit path for a leaf in a Merkle Hash Tree is the shortest
+          A Merkle inclusion proof for a leaf in a Merkle Hash Tree is the shortest
 list of additional nodes in the Merkle Tree required to compute the Merkle Tree
 Hash for that tree. Each node in the tree is either a leaf node or is computed
 from the two nodes immediately below it (i.e., towards the leaves). At each
-step up the tree (towards the root), a node from the audit path is combined
-with the node computed so far. In other words, the audit path consists of the
+step up the tree (towards the root), a node from the inclusion proof is combined
+with the node computed so far. In other words, the inclusion proof consists of the
 list of missing nodes required to compute the nodes leading from a leaf to the
-root of the tree. If the root computed from the audit path matches the true
-root, then the audit path is proof that the leaf exists in the tree.
+root of the tree. If the root computed from the inclusion proof matches the true
+root, then the inclusion proof proves that the leaf exists in the tree.
         </t>
-        <t> Given an ordered list of n inputs to the tree, D[n] = {d(0), ..., d(n-1)}, the Merkle audit path PATH(m, D[n]) for the (m+1)th input d(m), 0 &lt;= m &lt; n, is defined as follows:
+        <t> Given an ordered list of n inputs to the tree, D[n] = {d(0), ..., d(n-1)}, the Merkle inclusion proof PATH(m, D[n]) for the (m+1)th input d(m), 0 &lt;= m &lt; n, is defined as follows:
         </t>
         <t>
-          The path for the single leaf in a tree with a one-element input list D[1] = {d(0)} is empty:
+          The proof for the single leaf in a tree with a one-element input list D[1] = {d(0)} is empty:
           <vspace blankLines='1' />
           PATH(0, {d(0)}) = {}
           <vspace blankLines='1' />
-          For n &gt; 1, let k be the largest power of two smaller than n. The path for the (m+1)th element d(m) in a list of n &gt; m elements is then defined recursively as
+          For n &gt; 1, let k be the largest power of two smaller than n. The proof for the (m+1)th element d(m) in a list of n &gt; m elements is then defined recursively as
           <vspace blankLines='1' />
           PATH(m, D[n]) = PATH(m, D[0:k]) : MTH(D[k:n]) for m &lt; k; and
           <vspace blankLines='1' />
@@ -232,16 +232,16 @@ d0 d1   d2 d3  d4 d5
 </figure>
           </t>
           <t>
-            The audit path for d0 is [b, h, l].
+            The inclusion proof for d0 is [b, h, l].
           </t>
           <t>
-            The audit path for d3 is [c, g, l].
+            The inclusion proof for d3 is [c, g, l].
           </t>
           <t>
-            The audit path for d4 is [f, j, k].
+            The inclusion proof for d4 is [f, j, k].
           </t>
           <t>
-            The audit path for d6 is [i, k].
+            The inclusion proof for d6 is [i, k].
           </t>
           <t>
             The same tree, built incrementally in four steps:
@@ -947,7 +947,7 @@ messages.
         </t>
       </section>
 
-      <section title="Retrieve Merkle Audit Proof from Log by Leaf Hash" anchor="fetch_proof">
+      <section title="Retrieve Merkle Inclusion Proof from Log by Leaf Hash" anchor="fetch_proof">
         <t>
           GET https://&lt;log server&gt;/ct/v1/get-proof-by-hash
         </t>
@@ -1066,7 +1066,7 @@ entry specified by <spanx style="verb">start</spanx>.
         </t>
       </section>
 
-      <section title="Retrieve Entry+Merkle Audit Proof from Log">
+      <section title="Retrieve Entry+Merkle Inclusion Proof from Log">
         <t>
           GET https://&lt;log server&gt;/ct/v1/get-entry-and-proof
         </t>
@@ -1211,7 +1211,7 @@ standalone service; or it might be a secondary function of a monitor.
           Any pair of STHs from the same log can be verified by requesting a consistency proof (<xref target="fetch_consistency"/>).
         </t>
         <t>
-          A certificate accompanied by an SCT can be verified against any STH dated after the SCT timestamp + the Maximum Merge Delay by requesting a Merkle audit proof (<xref target="fetch_proof"/>).
+          A certificate accompanied by an SCT can be verified against any STH dated after the SCT timestamp + the Maximum Merge Delay by requesting a Merkle inclusion proof (<xref target="fetch_proof"/>).
         </t>
         <t>
           Auditors can fetch STHs from time to time of their own accord, of course (<xref target="fetch_sth"/>).
