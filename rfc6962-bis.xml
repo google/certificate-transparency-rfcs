@@ -1430,6 +1430,43 @@ target="http://csrc.nist.gov/publications/fips/fips180-4/fips-180-4.pdf">
         <format type="PDF" target="https://cabforum.org/wp-content/uploads/EV_Certificate_Guidelines.pdf"/>
       </reference>
 
+      <reference anchor="JsonLogList" target="http://www.certificate-transparency.org/known-logs/log_list.json">
+        <front>
+          <title>Log List in JSON format</title>
+          <author>
+            <organization>Google</organization>
+          </author>
+          <date year="2014"/>
+        </front>
+      </reference>
+
     </references>
+    <section title="Log Metadata" anchor="log-metadata" toc="default">
+    <t>
+    Metadata about logs is needed by clients to perform their assigned functions. A log's metadata includes:
+    </t>
+    <t>
+    <list style="symbols">
+      <t>
+      URL, including scheme.
+      </t>
+      <t>
+      Public key
+      </t>
+      <t>
+      Maximum Merge Delay
+      </t>
+      <t>
+      Operator (name of person or organization running the log, including contact details)
+      </t>
+      <t>
+      Hash algorithm used in the tree.
+      </t>
+    </list>
+    </t>
+    <t>
+    How the metadata is provided to clients is outside the scope of this document. It can be done, for example, by distributing <xref target='JsonLogList'>a JSON file</xref>.
+    </t>
+    </section>
   </back>
 </rfc>
