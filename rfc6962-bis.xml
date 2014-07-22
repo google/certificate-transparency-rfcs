@@ -1297,24 +1297,6 @@ certificates around the SCT timestamp.
         Auditing logs for integrity does not require third parties to maintain a copy of each entire log. The Signed Tree Heads can be updated as new entries become available, without recomputing entire trees. Third-party auditors need only fetch the Merkle consistency proofs against a log's existing STH to efficiently verify the append-only property of updates to their Merkle Trees, without auditing the entire tree.
       </t>
     </section>
-
-    <section title="Future Changes">
-      <t>
-        This section lists things we might address in a Standards Track version of this document.
-      
-<list style="symbols">
-      <t>
-        Rather than forcing a log operator to create a new log in order to change the log signing key, we may allow some key roll mechanism.
-      </t>
-      <t>
-        We may add hash and signing algorithm agility.
-      </t>
-      <t>
-        We may describe some gossip protocols.
-      </t>
-</list>
-</t>
-    </section>
     <section title="Acknowledgements">
       <t>
         The authors would like to thank Erwann Abelea, Robin Alden, Al Cutter,
