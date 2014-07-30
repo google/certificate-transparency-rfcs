@@ -457,7 +457,7 @@ having to perform any guesswork.
         </section>
         <section title="Using a Name-Constrained Intermediate CA">
           <t>
-            An intermediate CA certificate or Precertificate that contains the
+            An intermediate CA certificate or intermediate CA Precertificate that contains the
 critical or non-critical <xref target="RFC5280">Name Constraints</xref> extension
 MAY be logged in place of end-entity certificates issued by that intermediate
 CA, as long as all of the following conditions are met:
@@ -1130,7 +1130,7 @@ but it is expected there will be a variety.
       </section>
       <section title="TLS Client" anchor="tls_clients">
         <t>
-          TLS clients receive SCTs alongside or in server certificates. In
+          TLS clients receive SCTs alongside or in certificates, either for the server certificate itself or for intermediate CA Precertificates. In
 addition to normal validation of the certificate and its chain, TLS clients
 SHOULD validate the SCT by computing the signature input from the SCT data as
 well as the certificate and verifying the signature, using the corresponding
