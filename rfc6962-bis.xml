@@ -35,6 +35,14 @@
         <email>ekasper@google.com</email>
       </address>
     </author>
+    <author initials="E" surname="Messeri" fullname="Eran Messeri">
+      <organization abbrev="Google">
+        Google UK Ltd.
+      </organization>
+      <address>
+        <email>eranm@google.com</email>
+      </address>
+    </author>
     <author initials="R" surname="Stradling" fullname="Rob Stradling">
       <organization abbrev="Comodo">
         Comodo CA, Ltd.
