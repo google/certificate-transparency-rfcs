@@ -353,7 +353,7 @@ will be present in the final certificate (see
         </t>
         <t>
           Logs MUST verify that the submitted end-entity certificate or
-Precertificate has a valid signature chain leading back to a trusted root CA
+Precertificate has a valid signature chain leading back to a known root CA
 certificate, using the chain of intermediate CA certificates provided by the
 submitter. Logs MAY accept certificates that have expired, are not yet valid,
 have been revoked, or are otherwise not fully valid according to X.509
