@@ -1135,8 +1135,9 @@ addition to normal validation of the certificate and its chain, TLS clients
 SHOULD validate the SCT by computing the signature input from the SCT data as
 well as the certificate and verifying the signature, using the corresponding
 log's public key.
-          TLS clients MAY audit the corresponding log by requesting, and
-verifying, a Merkle audit proof for said certificate.
+          A TLS client MAY audit the corresponding log by requesting, and
+          verifying, a Merkle audit proof for said certificate.
+          If the TLS client holds an STH that predates the SCT, it MAY, in the process of auditing, request a new STH from the log (<xref target="get_sth"/>), then verify it by requesting a consistency proof (<xref target="fetch_consistency"/>).
           Note that this document does not describe how clients obtain the
 logs' public keys or URLs.
         </t>
@@ -1200,21 +1201,17 @@ the STH changes.
           </list>
         </t>
       </section>
-      <section title="Auditor">
+      <section title="Auditing">
         <t>
-          Auditors take partial information about a log as input and verify
-that this information is consistent with other partial information they
-have. An auditor might be an integral component of a TLS client; it might be a
-standalone service; or it might be a secondary function of a monitor.
+          Auditing is taking partial information about a log as input and verifying 
+          that this information is consistent with other partial information held. 
+          All clients described above may perform auditing as an additional function.
         </t>
         <t>
-          Any pair of STHs from the same log can be verified by requesting a consistency proof (<xref target="fetch_consistency"/>).
+          A <xref target="Monitor">monitor</xref> can audit by verifying the consistency of STHs it receives, ensure that each entry can be fetched and that the STH is indeed the result of making a tree from all fetched entries.
         </t>
         <t>
-          A certificate accompanied by an SCT can be verified against any STH dated after the SCT timestamp + the Maximum Merge Delay by requesting a Merkle inclusion proof (<xref target="fetch_proof"/>).
-        </t>
-        <t>
-          Auditors can fetch STHs from time to time of their own accord, of course (<xref target="fetch_sth"/>).
+          A <xref target="tls_clients">TLS client</xref> can audit by verifying an SCT against any STH dated after the SCT timestamp + the Maximum Merge Delay by requesting a Merkle inclusion proof (<xref target="fetch_proof"/>).
         </t>
       </section>
     </section>
