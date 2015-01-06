@@ -353,7 +353,9 @@ be omitted.
         <t>
           Logs MUST verify that the submitted certificate or Precertificate has
 a valid signature chain to an accepted root certificate, using the chain of
-intermediate CA certificates provided by the submitter. Logs MAY accept
+intermediate CA certificates provided by the submitter. Logs MUST accept
+certificates that are fully valid according to X.509 verification rules
+and are submitted with such a chain. Logs MAY accept
 certificates and Precertificates that have expired, are not yet valid, have been
 revoked, or are otherwise not fully valid according to X.509 verification rules
 in order to accommodate quirks of CA certificate-issuing software. However, logs
