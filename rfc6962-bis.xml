@@ -336,13 +336,14 @@ certificate. A Precertificate is a CMS <xref target="RFC5652"/>
 identified by the OID &lt;TBD&gt; in the
 <spanx style="verb">SignedData.encapContentInfo.eContentType</spanx> field.
 This TBSCertificate MAY redact certain domain name labels that will be present
-in the issued certificate (see <xref target="redacting_subdomains"/>), but it
-will be otherwise identical to the TBSCertificate in the issued certificate.
+in the issued certificate (see <xref target="redacting_subdomains"/>) and MUST
+NOT contain any SCTs, but it will be otherwise identical to the TBSCertificate
+in the issued certificate.
 <spanx style="verb">SignedData.signerInfos</spanx> MUST contain a signature from
 the same (root or intermediate) CA that will ultimately issue the certificate.
 This signature indicates the certificate authority's intent to issue the
 certificate. This intent is considered binding (i.e., misissuance of the
-Precertificate is considered equal to misissuance of the certificate).
+Precertificate is considered equivalent to misissuance of the certificate).
 As above, the Precertificate submission MUST be accompanied by all the
 additional certificates required to verify the chain up to an accepted root
 certificate. This does not involve using the
@@ -389,8 +390,10 @@ following components:
         ASN.1Cert certificate_chain&lt;0..2^24-1&gt;;
     } X509ChainEntry;
 
+    opaque CMSPrecert&lt;1..2^24-1&gt;;
+
     struct {
-        ASN.1Cert pre_certificate;
+        CMSPrecert pre_certificate;
         ASN.1Cert precertificate_chain&lt;0..2^24-1&gt;;
     } PrecertChainEntryV2;
   </artwork>
@@ -530,19 +533,11 @@ SEQUENCE {
 
       opaque TBSCertificate&lt;1..2^24-1&gt;;
 
-      struct {
-        opaque issuer_key_hash[32];
-        TBSCertificate tbs_certificate;
-      } PreCert;
-
       opaque CtExtensions&lt;0..2^16-1&gt;;
           </artwork>
         </figure>
         <t>
           <spanx style="verb">key_id</spanx> is the SHA-256 hash of the log's public key, calculated over the DER encoding of the key represented as SubjectPublicKeyInfo.
-        </t>
-        <t>
-          <spanx style="verb">issuer_key_hash</spanx> is the SHA-256 hash of the certificate issuer's public key, calculated over the DER encoding of the key represented as SubjectPublicKeyInfo. This is needed to bind the issuer to the issued certificate.
         </t>
         <t>
           <spanx style="verb">tbs_certificate</spanx> is the DER-encoded
@@ -566,7 +561,7 @@ labels extension.
             LogEntryType entry_type;
             select(entry_type) {
                 case x509_entry: ASN.1Cert;
-                case precert_entry_V2: PreCert;
+                case precert_entry_V2: TBSCertificate;
             } signed_entry;
            CtExtensions extensions;
         };
@@ -589,7 +584,7 @@ protocol to which the SCT conforms. This version is v2.
         <t>
           <spanx style="verb">signed_entry</spanx> is the <spanx
 style="verb">leaf_certificate</spanx> (in the case of an X509ChainEntry) or is the
-PreCert (in the case of a PrecertChainEntryV2), as described above.
+TBSCertificate (in the case of a PrecertChainEntryV2), as described above.
         </t>
         <t>
           <spanx style="verb">extensions</spanx> are future extensions to
