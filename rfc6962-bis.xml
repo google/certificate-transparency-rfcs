@@ -1255,14 +1255,13 @@ corrective action when a misissue is detected.
       </section>
       <section title="Redaction of Public Domain Name Labels">
         <t>
-          CAs SHOULD NOT redact domain name labels in Precertificates to the
-extent that domain name ownership becomes unclear
+          CAs SHOULD NOT redact domain name labels in Precertificates such that the entirety of the domain space below the unredacted part of the domain name is not owned or controlled by a single entity
 (e.g. <spanx style="verb">(PRIVATE).com</spanx> and
 <spanx style="verb">(PRIVATE).co.uk</spanx> would both be problematic). Logs
 MUST NOT reject any Precertificate that is overly redacted but which is
 otherwise considered compliant. It is expected that monitors will treat overly
 redacted Precertificates as potentially misissued. TLS clients MAY reject a
-certificate whose corresponding Precertificate would be overly redacted.
+certificate whose corresponding Precertificate would be overly redacted, perhaps using the same mechanism for determining whether a wildcard in a domain name of a certificate is too broad.
         </t>
       </section>
       <section title="Misbehaving Logs">
