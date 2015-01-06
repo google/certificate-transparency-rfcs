@@ -1116,10 +1116,10 @@ misbehavior.
 
       </t>
       <t>
-        All clients should gossip with each other, exchanging STHs at least;
-this is all that is required to ensure that they all have a consistent
-view. The exact mechanism for gossip will be described in a separate document,
-but it is expected there will be a variety.
+        Clients should somehow exchange STHs they see, or make them
+available for scrutiny, in order to ensure that they all have a
+consistent view. The exact mechanisms in separate documents, but it is
+expected there will be a variety.
       </t>
       <section title="Submitters">
         <t>
@@ -1283,7 +1283,7 @@ the audit proofs from the log) or request Merkle proofs for a batch of
 certificates around the SCT timestamp. 
         </t>
         <t>
-          Violation of the append-only property is detected by global gossiping, i.e., everyone auditing logs comparing their instances of the latest Signed Tree Heads. As soon as two conflicting Signed Tree Heads for the same log are detected, this is cryptographic proof of that log's misbehavior.
+          Violation of the append-only property can be detected by clients comparing their instances of the Signed Tree Heads. As soon as two conflicting Signed Tree Heads for the same log are detected, this is cryptographic proof of that log's misbehavior. There are various ways this could be done, for example via gossip (see http://trac.tools.ietf.org/id/draft-linus-trans-gossip-00.txt) or peer-to-peer communications or by sending STHs to monitors (who could then directly check against their own copy of the relevant log).
         </t>
       </section>
     </section>
