@@ -1118,8 +1118,8 @@ misbehavior.
       <t>
         Clients should somehow exchange STHs they see, or make them
 available for scrutiny, in order to ensure that they all have a
-consistent view. The exact mechanisms in separate documents, but it is
-expected there will be a variety.
+consistent view. The exact mechanisms will be in separate documents,
+but it is expected there will be a variety.
       </t>
       <section title="Submitters">
         <t>
