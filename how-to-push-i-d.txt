@@ -1,0 +1,21 @@
+1. make.
+
+2. Go to https://datatracker.ietf.org/submit/.
+
+3. Upload draft-ietf-trans-rfc6962-bis-NN.txt and rfc6962-bis.xml
+   (choose both, then upload).
+
+4. If there are errors, correct them and try again.
+
+5. Check sanity on the upload page. If insane, correct and go around.
+
+6. Click the button with your name on to submit and "post submission".
+
+7. Find verification email and follow instructions.
+
+8. git add draft-ietf-trans-rfc6962-bis-NN.txt.
+
+9. git commit.
+
+10. git push (I claim no review needed, since this is just recording
+    history).
