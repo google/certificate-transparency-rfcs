@@ -19,3 +19,11 @@
 
 10. git push (I claim no review needed, since this is just recording
     history).
+
+11. Bump versions in Makefile (VERSION and PREV).
+
+12. Bump version in rfc6962-bis.xml:
+
+<rfc ipr="trust200902" category="std" submissionType="IETF" docName="draft-ietf-trans-rfc6962-bis-NN">
+
+13. Commit and push (again, no review needed).
