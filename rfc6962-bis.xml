@@ -914,7 +914,7 @@ an accepted root certificate.
 
       <section title="Retrieve Merkle Consistency Proof between Two Signed Tree Heads" anchor="fetch_consistency">
         <t>
-          GET https://&lt;log server&gt;/ct/v1/get-sth-consistency
+          GET https://&lt;log server&gt;/ct/v2/get-sth-consistency
         </t>
         <t>
           Inputs:
@@ -1137,7 +1137,7 @@ well as the certificate and verifying the signature, using the corresponding
 log's public key.
           A TLS client MAY audit the corresponding log by requesting, and
           verifying, a Merkle audit proof for said certificate.
-          If the TLS client holds an STH that predates the SCT, it MAY, in the process of auditing, request a new STH from the log (<xref target="get_sth"/>), then verify it by requesting a consistency proof (<xref target="fetch_consistency"/>).
+          If the TLS client holds an STH that predates the SCT, it MAY, in the process of auditing, request a new STH from the log (<xref target="fetch_sth"/>), then verify it by requesting a consistency proof (<xref target="fetch_consistency"/>).
           Note that this document does not describe how clients obtain the
 logs' public keys or URLs.
         </t>
@@ -1145,7 +1145,7 @@ logs' public keys or URLs.
           TLS clients MUST reject SCTs whose timestamp is in the future.
         </t>
       </section>
-      <section title="Monitor">
+      <section title="Monitor" anchor="monitor">
         <t>
           Monitors watch logs and check that they behave correctly. They also watch for certificates of interest.
         </t>
@@ -1208,7 +1208,7 @@ the STH changes.
           All clients described above may perform auditing as an additional function.
         </t>
         <t>
-          A <xref target="Monitor">monitor</xref> can audit by verifying the consistency of STHs it receives, ensure that each entry can be fetched and that the STH is indeed the result of making a tree from all fetched entries.
+          A <xref target="monitor">monitor</xref> can audit by verifying the consistency of STHs it receives, ensure that each entry can be fetched and that the STH is indeed the result of making a tree from all fetched entries.
         </t>
         <t>
           A <xref target="tls_clients">TLS client</xref> can audit by verifying an SCT against any STH dated after the SCT timestamp + the Maximum Merge Delay by requesting a Merkle inclusion proof (<xref target="fetch_proof"/>).
