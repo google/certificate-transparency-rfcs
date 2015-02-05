@@ -936,7 +936,7 @@ an accepted root certificate.
             </list></t>
           </list>
 
-          Both tree sizes must be from existing v1 STHs (Signed Tree Heads).
+          Both tree sizes must be from existing v1 STHs (Signed Tree Heads). However, because of skew, the receiving server may not know one or both of the existing STHs. If both are known, the only the <spanx style="verb">consistency</spanx> output is returned. If the first is known but not the second, then the latest known STH is returned, along with a consisteny proof between the first STH and the latest.
         </t>
         <t>
           Outputs:
@@ -946,6 +946,18 @@ an accepted root certificate.
             <t hangText="consistency:">
 	      An array of Merkle Tree nodes, base64 encoded.
             </t>
+	    <t hangText="tree_size:">
+	      The size of the tree, in entries, in decimal.
+	    </t>
+	    <t hangText="timestamp:">
+	      The timestamp, in decimal.
+	    </t>
+	    <t hangText="sha256_root_hash:">
+	      The Merkle Tree Hash of the tree, in base64.
+	    </t>
+	    <t hangText="tree_head_signature:">
+	      A TreeHeadSignature for the above data.
+	    </t>
           </list></t>
         </list>
 
@@ -955,7 +967,7 @@ an accepted root certificate.
 
       <section title="Retrieve Merkle Inclusion Proof from Log by Leaf Hash" anchor="fetch_proof">
         <t>
-          GET https://&lt;log server&gt;/ct/v1/get-proof-by-hash
+          GET https://&lt;log server&gt;/ct/v2/get-proof-by-hash
         </t>
         <t>
           Inputs:
@@ -971,7 +983,7 @@ an accepted root certificate.
             </list></t>
 	  </list>
 
-          The <spanx style="verb">hash</spanx> must be calculated as defined in <xref target="tree"/>. The <spanx style="verb">tree_size</spanx> must designate an existing v1 STH.
+          The <spanx style="verb">hash</spanx> must be calculated as defined in <xref target="tree"/>. The <spanx style="verb">tree_size</spanx> must designate an existing v1 STH. Because of skew, the log server may not know the requested STH. In that case, it will return the latest STH it knows, along with an inclusion proof to that STH. If the server knows the requested STH then only <spanx style="verb">lead_index</spanx> and <spanx style="verb">audit_path</spanx> are returned.
         </t>
 
         <t>
@@ -984,6 +996,18 @@ an accepted root certificate.
 	      </t>
 	      <t hangText="audit_path:">
 		An array of base64-encoded Merkle Tree nodes proving the inclusion of the chosen certificate.
+	      </t>
+	      <t hangText="tree_size:">
+		The size of the tree, in entries, in decimal.
+	      </t>
+	      <t hangText="timestamp:">
+		The timestamp, in decimal.
+	      </t>
+	      <t hangText="sha256_root_hash:">
+		The Merkle Tree Hash of the tree, in base64.
+	      </t>
+	      <t hangText="tree_head_signature:">
+		A TreeHeadSignature for the above data.
 	      </t>
             </list></t>
           </list>
