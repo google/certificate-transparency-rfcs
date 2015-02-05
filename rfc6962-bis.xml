@@ -936,7 +936,7 @@ an accepted root certificate.
             </list></t>
           </list>
 
-          Both tree sizes must be from existing v1 STHs (Signed Tree Heads). However, because of skew, the receiving server may not know one or both of the existing STHs. If both are known, the only the <spanx style="verb">consistency</spanx> output is returned. If the first is known but not the second, then the latest known STH is returned, along with a consisteny proof between the first STH and the latest.
+          Both tree sizes must be from existing v1 STHs (Signed Tree Heads). However, because of skew, the receiving server may not know one or both of the existing STHs. If both are known, then only the <spanx style="verb">consistency</spanx> output is returned. If the first is known but not the second, then the latest known STH is returned, along with a consistency proof between the first STH and the latest.
         </t>
         <t>
           Outputs:
@@ -983,7 +983,7 @@ an accepted root certificate.
             </list></t>
 	  </list>
 
-          The <spanx style="verb">hash</spanx> must be calculated as defined in <xref target="tree"/>. The <spanx style="verb">tree_size</spanx> must designate an existing v1 STH. Because of skew, the log server may not know the requested STH. In that case, it will return the latest STH it knows, along with an inclusion proof to that STH. If the server knows the requested STH then only <spanx style="verb">lead_index</spanx> and <spanx style="verb">audit_path</spanx> are returned.
+          The <spanx style="verb">hash</spanx> must be calculated as defined in <xref target="tree"/>. The <spanx style="verb">tree_size</spanx> must designate an existing v1 STH. Because of skew, the log server may not know the requested STH. In that case, it will return the latest STH it knows, along with an inclusion proof to that STH. If the server knows the requested STH then only <spanx style="verb">leaf_index</spanx> and <spanx style="verb">audit_path</spanx> are returned.
         </t>
 
         <t>
@@ -1075,6 +1075,9 @@ than the permitted number of entries, the log SHALL return the maximum number
 of entries permissible. These entries SHALL be sequential beginning with the
 entry specified by <spanx style="verb">start</spanx>.
         </t>
+	<t>
+	  Because of skew, it is possible the log server will not have any entries between <spanx style="verb">start</spanx> and <spanx style="verb">end</spanx>. In this case it MUST return an empty <spanx style="verb">entries</spanx> array.
+	</t>
       </section>
       <section title="Retrieve Accepted Root Certificates">
         <t>
