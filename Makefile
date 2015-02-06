@@ -16,4 +16,4 @@ $(BASE).txt: $(XML)
 	xml2rfc --text -o $(BASE).txt $(XML)
 
 $(DIFF): $(NAME)-$(PREV).txt $(BASE).txt
-	rfcdiff --hwdiff --stdout $(NAME)-$(PREV).txt $(BASE).txt > $(DIFF)
+	rfcdiff --nostrip --stdout $(NAME)-$(PREV).txt $(BASE).txt > $(DIFF)
