@@ -667,7 +667,7 @@ for misbehavior, has had a key compromise or is not known to the client).
             Clients that support the extension SHOULD send a ClientHello extension with the appropriate type and empty <spanx style="verb">extension_data</spanx>.
           </t>
           <t>
-            Servers MUST only send SCTs to clients who have indicated support for the extension in the ClientHello, in which case the SCTs are sent by setting the <spanx style="verb">extension_data</spanx> to a <spanx style="verb">SignedCertificateTimestampList</spanx>.
+            Servers MUST only send SCTs in this TLS extension to clients who have indicated support for the extension in the ClientHello, in which case the SCTs are sent by setting the <spanx style="verb">extension_data</spanx> to a <spanx style="verb">SignedCertificateTimestampList</spanx>.
           </t>
           <t>
             Session resumption uses the original session information: clients SHOULD include the extension type in the ClientHello, but if the session is resumed, the server is not expected to process it or include the extension in the ServerHello.
