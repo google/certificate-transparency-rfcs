@@ -1035,7 +1035,22 @@ an accepted root certificate.
 	  </list>
 	</t>
 	<t>
-          The <spanx style="verb">hash</spanx> must be calculated as defined in <xref target="tree"/>. The <spanx style="verb">tree_size</spanx> must designate an existing v1 STH. Because of skew, the front-end may not know the requested STH. In that case, it will return the latest STH it knows, along with an inclusion proof to that STH. If the front-end knows the requested STH and it is the latest STH then only <spanx style="verb">leaf_index</spanx> and <spanx style="verb">audit_path</spanx> are returned. If the front-end knows the requested STH and there is a new STH available, then it returns the new STH, an <spanx style="verb">audit_path</spanx> for that STH and a consistency proof for that STH with the requested STH (see <xref target="fetch_consistency"/>).
+          The <spanx style="verb">hash</spanx> must be calculated as defined in <xref target="tree"/>. The <spanx style="verb">tree_size</spanx> must designate an existing v1 STH.
+	</t>
+	<t>
+	  Because of skew, the front-end may not know the requested STH or the requested hash, which leads to a number of cases.
+	  <list style="hanging">
+	    <t hangText="latest STH &lt; requested STH">
+	      Return latest STH.
+	    </t>
+	    <t hangText="latest STH &gt; requested STH">
+	      Return latest STH and a consistency proof between it and the requested STH (see <xref target="fetch_consistency"/>).
+	    </t>
+	    <t hangText="index of requested hash &lt; latest STH">
+	      Return <spanx style="verb">leaf_index</spanx> and <spanx style="verb">audit_path</spanx>.
+	    </t>
+	  </list>
+	  Note that more than one case can be true, in which case the returned data is their concatenation. It is also possible for none to be true, in which case the front-end should return an empty response.
         </t>
         <t>
           Outputs:
@@ -1060,7 +1075,7 @@ an accepted root certificate.
 		A TreeHeadSignature for the above data.
 	      </t>
               <t hangText="consistency:">
-		An array of Merkle Tree nodes, base64 encoded.
+		An array of base64-encoded Merkle Tree nodes proving the consistency of the requested STH and the returned STH.
               </t>
             </list></t>
           </list>
