@@ -659,6 +659,9 @@ SCTs whose versions they don't understand).
 logs are not acceptable to the client (for example, if a log has been struck off
 for misbehavior, has had a key compromise or is not known to the client).
         </t>
+	<t>
+	  The three mechanisms are provided because they have different tradeoffs. Embedding the SCTs in the certificate allows the use of unmodified TLS servers, but, because they cannot be changed without re-issuing the certificate, increases the risk that the certificate will be refused if the SCTs become invalid. OCSP Stapling is already widely (but not universally) implemented, and provides a mechanism by which TLS servers that already support it can serve SCTs that are generated on the fly. Finally, the TLS extension permits TLS servers to participate in CT without the cooperation of CAs, unlike the other two mecahnisms. It also allows SCTs to be updated on the fly.
+	</t>
         <section title="TLS Extension">
           <t>
             The SCT can be sent during the TLS handshake using a TLS extension with type "signed_certificate_timestamp".
