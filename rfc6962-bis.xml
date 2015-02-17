@@ -444,12 +444,12 @@ Validation Certificates</xref>.
         </section>
         <section title="Redacting Domain Name Labels in Precertificates" anchor="redacting_subdomains">
           <t>
-            When creating a Precertificate, the CA MAY substitute one or more of
-the complete leftmost labels in each DNS-ID with the literal string
-<spanx style="verb">(PRIVATE)</spanx>. For example, if a certificate contains a
+            When creating a Precertificate, the CA MAY substitute each of the
+one or more leftmost labels in each DNS-ID with the label
+<spanx style="verb">?</spanx>. For example, if a certificate contains a
 DNS-ID of <spanx style="verb">top.secret.example.com</spanx>, then the
 corresponding Precertificate could contain
-<spanx style="verb">(PRIVATE).example.com</spanx> instead. Labels in a
+<spanx style="verb">?.?.example.com</spanx> instead. Labels in a
 <xref target="RFC6125">CN-ID</xref> MUST remain unredacted.
           </t>
           <t>
@@ -1360,8 +1360,8 @@ corrective action when a misissue is detected.
       <section title="Redaction of Public Domain Name Labels">
         <t>
           CAs SHOULD NOT redact domain name labels in Precertificates such that the entirety of the domain space below the unredacted part of the domain name is not owned or controlled by a single entity
-(e.g. <spanx style="verb">(PRIVATE).com</spanx> and
-<spanx style="verb">(PRIVATE).co.uk</spanx> would both be problematic). Logs
+(e.g. <spanx style="verb">?.com</spanx> and
+<spanx style="verb">?.co.uk</spanx> would both be problematic). Logs
 MUST NOT reject any Precertificate that is overly redacted but which is
 otherwise considered compliant. It is expected that monitors will treat overly
 redacted Precertificates as potentially misissued. TLS clients MAY reject a
