@@ -1247,10 +1247,16 @@ but it is expected there will be a variety.
 	  <t hangText="Public Key">
 	    The public key used for signing.
 	  </t>
+	  <t hangText="Maximum Merge Delay">
+	    The MMD the log has committed to.
+	  </t>
 	  <t hangText="Final STH">
 	    If a log has been closed down (i.e. no longer accepts new entries), existing entries may still be valid. In this case, the client should know the final valid STH in the log to ensure no new entries can be added without detection.
 	  </t>
 	</list></t>
+	<t>
+	  <xref target="JSON.Metadata"/> is an example of a metadata format which includes the above elements.
+	</t>
       </section>
       <section title="Submitters">
         <t>
@@ -1542,6 +1548,16 @@ target="http://csrc.nist.gov/publications/fips/fips180-4/fips-180-4.pdf">
       <reference anchor="Chromium.Policy" target="http://www.chromium.org/Home/chromium-security/certificate-transparency">
 	<front>
 	  <title>Chromium Certificate Transparency</title>
+	  <author>
+	    <organization>The Chromium Projects</organization>
+	  </author>
+	  <date year="2014"/>
+	</front>
+      </reference>
+
+      <reference anchor="JSON.Metadata" target="http://www.certificate-transparency.org/known-logs/log_list_schema.json">
+	<front>
+	  <title>Chromium Log Metadata JSON Schema</title>
 	  <author>
 	    <organization>The Chromium Projects</organization>
 	  </author>
