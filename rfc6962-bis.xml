@@ -694,7 +694,7 @@ for misbehavior, has had a key compromise or is not known to the client).
         LogEntryType entry_type;
         select(entry_type) {
             case x509_entry: ASN.1Cert;
-            case precert_entry_V2: PreCert;
+            case precert_entry_V2: TBSCertificate;
         } signed_entry;
         CtExtensions extensions;
     } TimestampedEntry;
