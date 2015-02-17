@@ -1270,10 +1270,6 @@ log's public key.
           verifying, a Merkle audit proof for said certificate.
           If the TLS client holds an STH that predates the SCT, it MAY, in the process of auditing, request a new STH from the log (<xref target="fetch_sth"/>), then verify it by requesting a consistency proof (<xref target="fetch_consistency"/>).
 	</t>
-	<t>
-          Note that this document does not describe how clients obtain the
-logs' public keys or URLs.
-        </t>
         <t>
           TLS clients MUST reject SCTs whose timestamp is in the future.
         </t>
