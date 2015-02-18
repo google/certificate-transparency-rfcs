@@ -1230,7 +1230,7 @@ available for scrutiny, in order to ensure that they all have a
 consistent view. The exact mechanisms will be in separate documents,
 but it is expected there will be a variety.
       </t>
-      <section title="Metadata">
+      <section title="Metadata" anchor="metadata">
 	<t>
 	  In order to communicate with and verify a log, clients need metadata about the log.
 	</t>
@@ -1349,6 +1349,12 @@ the STH changes.
           A <xref target="tls_clients">TLS client</xref> can audit by verifying an SCT against any STH dated after the SCT timestamp + the Maximum Merge Delay by requesting a Merkle inclusion proof (<xref target="fetch_proof"/>).
         </t>
       </section>
+    </section>
+    
+    <section title="Algorithm Agility">
+      <t>
+	It is not possible for a log to change any of its algorithms part way through its lifetime. If it should become necessary to deprecate an algorithm used by a live log, then the log should be frozen as specified in <xref target="metadata"/> and a new log should be started. If necessary, the new log can contain existing entries from the frozen log, which monitors can verify are an exact match.
+      </t>
     </section>
 
     <section title="IANA Considerations">
