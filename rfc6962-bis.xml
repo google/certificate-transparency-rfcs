@@ -478,8 +478,8 @@ Precertificate's second DNS-ID; etc. There MUST NOT be more INTEGERs than there
 are DNS-IDs. If there are fewer INTEGERs than there are DNS-IDs, the shortfall
 is made up by implicitly repeating the last INTEGER. Each INTEGER MUST have a
 value of zero or more. The purpose of this extension is to enable TLS clients
-to accurately reconstruct the Precertificate from the certificate without
-having to perform any guesswork.
+to accurately reconstruct the TBSCertificate component of the Precertificate
+from the certificate without having to perform any guesswork.
           </t>
         </section>
         <section title="Using a Name-Constrained Intermediate CA">
