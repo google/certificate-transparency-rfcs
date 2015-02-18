@@ -445,8 +445,8 @@ Validation Certificates</xref>.
         <section title="Redacting Domain Name Labels in Precertificates" anchor="redacting_subdomains">
           <t>
             When creating a Precertificate, the CA MAY substitute one or more
-labels in each DNS-ID with the label
-<spanx style="verb">?</spanx>. Every label to the left of a
+labels in each DNS-ID with a corresponding number of
+<spanx style="verb">?</spanx> labels. Every label to the left of a
 <spanx style="verb">?</spanx> label MUST also be a
 <spanx style="verb">?</spanx> label. For example, if a certificate contains a
 DNS-ID of <spanx style="verb">top.secret.example.com</spanx>, then the
