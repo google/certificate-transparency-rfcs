@@ -465,10 +465,6 @@ Precertificate could contain
 <spanx style="verb">?.?.?.example.com</spanx> instead.
           </t>
           <t>
-            Labels in a <xref target="RFC6125">CN-ID</xref> MUST remain
-unredacted.
-          </t>
-          <t>
             When a Precertificate contains one or more redacted labels, a
 non-critical extension (OID 1.3.6.1.4.1.11129.2.4.6, whose extnValue OCTET STRING
 contains an ASN.1 SEQUENCE OF INTEGERs) MUST be added to the corresponding
@@ -480,6 +476,13 @@ is made up by implicitly repeating the last INTEGER. Each INTEGER MUST have a
 value of zero or more. The purpose of this extension is to enable TLS clients
 to accurately reconstruct the TBSCertificate component of the Precertificate
 from the certificate without having to perform any guesswork.
+          </t>
+          <t>
+            When a Precertificate contains that extension and contains a
+<xref target="RFC6125">CN-ID</xref>, the CN-ID MUST match the first DNS-ID and
+have the same labels redacted.  TLS clients will use the first
+entry in the SEQUENCE OF INTEGERs to reconstruct both the first DNS-ID and the
+CN-ID.
           </t>
         </section>
         <section title="Using a Name-Constrained Intermediate CA">
