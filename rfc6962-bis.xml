@@ -447,12 +447,26 @@ Validation Certificates</xref>.
             When creating a Precertificate, the CA MAY substitute one or more
 labels in each DNS-ID with a corresponding number of
 <spanx style="verb">?</spanx> labels. Every label to the left of a
-<spanx style="verb">?</spanx> label MUST also be a
-<spanx style="verb">?</spanx> label. For example, if a certificate contains a
-DNS-ID of <spanx style="verb">top.secret.example.com</spanx>, then the
-corresponding Precertificate could contain
-<spanx style="verb">?.?.example.com</spanx> instead. Labels in a
-<xref target="RFC6125">CN-ID</xref> MUST remain unredacted.
+<spanx style="verb">?</spanx> label MUST also be redacted. For example, if a
+certificate contains a DNS-ID of
+<spanx style="verb">top.secret.example.com</spanx>, then the corresponding
+Precertificate could contain <spanx style="verb">?.?.example.com</spanx>
+instead, but not <spanx style="verb">top.?.example.com</spanx> instead.
+          </t>
+          <t>
+            Wildcard <spanx style="verb">*</spanx> labels MUST NOT be redacted.
+However, if the complete leftmost label of a DNS-ID is
+<spanx style="verb">*</spanx>, it is considered redacted for the purposes of
+determining if the label to the right may be redacted. For example, if a
+certificate contains a DNS-ID of
+<spanx style="verb">*.top.secret.example.com</spanx>, then the corresponding
+Precertificate could contain
+<spanx style="verb">*.?.?.example.com</spanx> instead, but not
+<spanx style="verb">?.?.?.example.com</spanx> instead.
+          </t>
+          <t>
+            Labels in a <xref target="RFC6125">CN-ID</xref> MUST remain
+unredacted.
           </t>
           <t>
             When a Precertificate contains one or more redacted labels, a
