@@ -1168,6 +1168,9 @@ entry specified by <spanx style="verb">start</spanx>.
               <t hangText="certificates:">
 		An array of base64-encoded root certificates that are acceptable to the log.
               </t>
+	      <t hangText="max_chain:">
+		If the server has chosen to limit the length of chains it accepts, this is the maximum number of certificates in the chain, in decimal. If there is no limit, this is omitted.
+	      </t>
             </list></t>
           </list>
         </t>
