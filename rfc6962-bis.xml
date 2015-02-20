@@ -816,15 +816,19 @@ messages.
         If the log is unable to process a client's request, it MUST return an HTTP response code of 4xx/5xx (see <xref target="RFC2616"/>), and, in place of the responses outlined in the subsections below, the body SHOULD be a JSON structure containing at least the following field:
         <list style="hanging">
           <t hangText="error_message:">
-            <list>
-              <t>
                 A human-readable string describing the error which prevented the log from processing the request.
-              </t>
-              <t>
-                In the case of a malformed request, the string SHOULD provide sufficient detail for the error to be rectified.
-              </t>
-            </list>
           </t>
+          <t>
+                In the case of a malformed request, the string SHOULD provide sufficient detail for the error to be rectified.
+          </t>
+	  <t hangText="error_code:">
+	    An error code readable by the client. Some codes are generic and are detailed here. Others are detailed in the individual requests. Error codes are fixed text strings.
+            <list style="hanging">
+              <t hangText="not compliant">
+		The request is not compliant with this RFC.
+	      </t>
+	    </list>
+	  </t>
         </list>
       </t>
       <t>
@@ -835,6 +839,7 @@ messages.
           <artwork>
   {
     "error_message": "'start' cannot be greater than 'end'",
+    "error_code": "not compliant",
   }
           </artwork>
         </figure>
@@ -846,46 +851,51 @@ messages.
         <t>
           POST https://&lt;log server&gt;/ct/v1/add-chain
         </t>
-
         <t>
-          Inputs:
-
-	  <list>
-	    <t><list style="hanging">
-	      <t hangText="chain:">
-		An array of base64-encoded certificates. The first element is the end-entity certificate; the second chains to the first and so on to the last, which is either the root certificate or a certificate that chains to a known root certificate.
-	      </t>
-	    </list></t>
-	  </list>
-        </t>
-
-        <t>
-          Outputs:
-
-          <list>
-	    <t><list style="hanging">
-	      <t hangText="sct_version:">
-		The version of the SignedCertificateTimestamp structure, in decimal. A compliant v1 implementation MUST NOT expect this to be 0 (i.e., v1).
-	      </t>
-	      <t hangText="id:">
-		The log ID, base64 encoded.
-	      </t>
-	      <t hangText="timestamp:">
-		The SCT timestamp, in decimal.
-	      </t>
-	      <t hangText="extensions:">
-		An opaque type for future expansion. It is likely that not all participants will need to understand data in this field. Logs should set this to the empty string. Clients should decode the base64-encoded data and include it in the SCT.
-	      </t>
-	      <t hangText="signature:">
-		The SCT signature, base64 encoded.
-	      </t>
-            </list></t>
+	  <list style="hanging">
+            <t hangText="Inputs:">
+	      <list style="hanging">
+		<t hangText="chain:">
+		  An array of base64-encoded certificates. The first element is the end-entity certificate; the second chains to the first and so on to the last, which is either the root certificate or a certificate that chains to a known root certificate.
+		</t>
+	      </list>
+	    </t>
+            <t hangText="Outputs:">
+	      <list style="hanging">
+		<t hangText="sct_version:">
+		  The version of the SignedCertificateTimestamp structure, in decimal. A compliant v1 implementation MUST NOT expect this to be 0 (i.e., v1).
+		</t>
+		<t hangText="id:">
+		  The log ID, base64 encoded.
+		</t>
+		<t hangText="timestamp:">
+		  The SCT timestamp, in decimal.
+		</t>
+		<t hangText="extensions:">
+		  An opaque type for future expansion. It is likely that not all participants will need to understand data in this field. Logs should set this to the empty string. Clients should decode the base64-encoded data and include it in the SCT.
+		</t>
+		<t hangText="signature:">
+		  The SCT signature, base64 encoded.
+		</t>
+              </list>
+	    </t>
+            <t hangText="Errors:">
+	      <list style="hanging">
+		<t hangText="unknown root">
+		  The root of the chain is not one accepted by the log.
+		</t>
+		<t hangText="bad chain">
+		  The alleged chain is not actually a chain of certificates.
+		</t>
+	      </list>
+	    </t>
 	  </list>
 	</t>
 	<t>
           If the <spanx style="verb">sct_version</spanx> is not v1, then a v1 client may be unable to verify the signature. It MUST NOT construe this as an error. This is to avoid forcing an upgrade of compliant v1 clients that do not use the returned SCTs.
         </t>
       </section>
+
       <section title="Add PreCertChain to Log">
         <t>
           POST https://&lt;log server&gt;/ct/v1/add-pre-chain
@@ -908,7 +918,7 @@ an accepted root certificate.
           </list>
         </t>
         <t>
-          Outputs are the same as in <xref target="sct"/>.
+          Outputs and errors are the same as in <xref target="sct"/>.
         </t>
       </section>
 
@@ -946,47 +956,52 @@ an accepted root certificate.
           GET https://&lt;log server&gt;/ct/v2/get-sth-consistency
         </t>
         <t>
-          Inputs:
-
-          <list>
-	    <t><list style="hanging">
-	      <t hangText="first:">
-		The tree_size of the older tree, in decimal.
-	      </t>
-	      <t hangText="second:">
-		The tree_size of the newer tree, in decimal.
-	      </t>
-            </list></t>
-          </list>
-	</t>
-	<t>
-          Both tree sizes must be from existing v1 STHs (Signed Tree Heads). However, because of skew, the receiving front-end may not know one or both of the existing STHs. If both are known, then only the <spanx style="verb">consistency</spanx> output is returned. If the first is known but not the second, then the latest known STH is returned, along with a consistency proof between the first STH and the latest. If neither are known, then the latest known STH is returned without a consistency proof.
-        </t>
-        <t>
-          Outputs:
-
-        <list>
-	  <t><list style="hanging">
-            <t hangText="consistency:">
-	      An array of Merkle Tree nodes, base64 encoded.
+	  <list style="hanging">
+            <t hangText="Inputs:">
+	      <list style="hanging">
+		<t hangText="first:">
+		  The tree_size of the older tree, in decimal.
+		</t>
+		<t hangText="second:">
+		  The tree_size of the newer tree, in decimal.
+		</t>
+              </list>
+	    </t>
+	    <t>
+              Both tree sizes must be from existing v1 STHs (Signed Tree Heads). However, because of skew, the receiving front-end may not know one or both of the existing STHs. If both are known, then only the <spanx style="verb">consistency</spanx> output is returned. If the first is known but not the second, then the latest known STH is returned, along with a consistency proof between the first STH and the latest. If neither are known, then the latest known STH is returned without a consistency proof.
             </t>
-	    <t hangText="tree_size:">
-	      The size of the tree, in entries, in decimal.
+            <t hangText="Outputs:">
+	      <list style="hanging">
+		<t hangText="consistency:">
+		  An array of Merkle Tree nodes, base64 encoded.
+		</t>
+		<t hangText="tree_size:">
+		  The size of the tree, in entries, in decimal.
+		</t>
+		<t hangText="timestamp:">
+		  The timestamp, in decimal.
+		</t>
+		<t hangText="sha256_root_hash:">
+		  The Merkle Tree Hash of the tree, in base64.
+		</t>
+		<t hangText="tree_head_signature:">
+		  A TreeHeadSignature for the above data.
+		</t>
+              </list>
+              Note that no signature is required on this data, as it is used to verify an STH, which is signed.
+            </t>
+	    <t hangText="Errors:">
+	      <list style="hanging">
+		<t hangText="first unknown">
+		  <spanx style="verb">first</spanx> is before the latest known STH but is not from an existing STH.
+		</t>
+		<t hangText="second unknown">
+		  <spanx style="verb">second</spanx> is before the latest known STH but is not from an existing STH.
+		</t>
+	      </list>
 	    </t>
-	    <t hangText="timestamp:">
-	      The timestamp, in decimal.
-	    </t>
-	    <t hangText="sha256_root_hash:">
-	      The Merkle Tree Hash of the tree, in base64.
-	    </t>
-	    <t hangText="tree_head_signature:">
-	      A TreeHeadSignature for the above data.
-	    </t>
-          </list></t>
-        </list>
-
-          Note that no signature is required on this data, as it is used to verify an STH, which is signed.
-        </t>
+	  </list>
+	</t>
       </section>
 
       <section title="Retrieve Merkle Inclusion Proof from Log by Leaf Hash" anchor="fetch_proof">
@@ -994,47 +1009,50 @@ an accepted root certificate.
           GET https://&lt;log server&gt;/ct/v2/get-proof-by-hash
         </t>
         <t>
-          Inputs:
-
-          <list>
-	    <t><list style="hanging">
-	      <t hangText="hash:">
-		A base64-encoded v1 leaf hash.
-	      </t>
-	      <t hangText="tree_size:">
-		The tree_size of the tree on which to base the proof, in decimal.
-	      </t>
-            </list></t>
-	  </list>
-	</t>
-	<t>
-          The <spanx style="verb">hash</spanx> must be calculated as defined in <xref target="tree"/>. The <spanx style="verb">tree_size</spanx> must designate an existing v1 STH. Because of skew, the front-end may not know the requested STH. In that case, it will return the latest STH it knows, along with an inclusion proof to that STH. If the front-end knows the requested STH then only <spanx style="verb">leaf_index</spanx> and <spanx style="verb">audit_path</spanx> are returned.
-        </t>
-
-        <t>
-          Outputs:
-
-          <list>
-	    <t><list style="hanging">
-	      <t hangText="leaf_index:">
-		The 0-based index of the entry corresponding to the <spanx style="verb">hash</spanx> parameter.
-	      </t>
-	      <t hangText="audit_path:">
-		An array of base64-encoded Merkle Tree nodes proving the inclusion of the chosen certificate.
-	      </t>
-	      <t hangText="tree_size:">
-		The size of the tree, in entries, in decimal.
-	      </t>
-	      <t hangText="timestamp:">
-		The timestamp, in decimal.
-	      </t>
-	      <t hangText="sha256_root_hash:">
-		The Merkle Tree Hash of the tree, in base64.
-	      </t>
-	      <t hangText="tree_head_signature:">
-		A TreeHeadSignature for the above data.
-	      </t>
-            </list></t>
+	  <list style="hanging">
+            <t hangText="Inputs:">
+	      <list style="hanging">
+		<t hangText="hash:">
+		  A base64-encoded v1 leaf hash.
+		</t>
+		<t hangText="tree_size:">
+		  The tree_size of the tree on which to base the proof, in decimal.
+		</t>
+              </list>
+              The <spanx style="verb">hash</spanx> must be calculated as defined in <xref target="tree"/>. The <spanx style="verb">tree_size</spanx> must designate an existing v1 STH. Because of skew, the front-end may not know the requested STH. In that case, it will return the latest STH it knows, along with an inclusion proof to that STH. If the front-end knows the requested STH then only <spanx style="verb">leaf_index</spanx> and <spanx style="verb">audit_path</spanx> are returned.
+            </t>
+	    <t hangText="Outputs:">
+	      <list style="hanging">
+		<t hangText="leaf_index:">
+		  The 0-based index of the entry corresponding to the <spanx style="verb">hash</spanx> parameter.
+		</t>
+		<t hangText="audit_path:">
+		  An array of base64-encoded Merkle Tree nodes proving the inclusion of the chosen certificate.
+		</t>
+		<t hangText="tree_size:">
+		  The size of the tree, in entries, in decimal.
+		</t>
+		<t hangText="timestamp:">
+		  The timestamp, in decimal.
+		</t>
+		<t hangText="sha256_root_hash:">
+		  The Merkle Tree Hash of the tree, in base64.
+		</t>
+		<t hangText="tree_head_signature:">
+		  A TreeHeadSignature for the above data.
+		</t>
+              </list>
+	    </t>
+	    <t hangText="Errors:">
+	      <list style="hanging">
+		<t hangText="hash unknown">
+		  <spanx style="verb">hash</spanx> is not the hash of a known leaf (may be caused by skew).
+		</t>
+		<t hangText="tree_size unknown">
+		  <spanx style="verb">hash</spanx> is before the latest known STH but is not from an existing STH.
+		</t>
+	      </list>
+	    </t>
           </list>
         </t>
       </section>
@@ -1043,68 +1061,69 @@ an accepted root certificate.
         <t>
           GET https://&lt;log server&gt;/ct/v2/get-all-by-hash
         </t>
-        <t>
-          Inputs:
-
-          <list>
-	    <t><list style="hanging">
-	      <t hangText="hash:">
-		A base64-encoded v1 leaf hash.
-	      </t>
-	      <t hangText="tree_size:">
-		The tree_size of the tree on which to base the proofs, in decimal.
-	      </t>
-            </list></t>
-	  </list>
-	</t>
 	<t>
-          The <spanx style="verb">hash</spanx> must be calculated as defined in <xref target="tree"/>. The <spanx style="verb">tree_size</spanx> must designate an existing v1 STH.
-	</t>
-	<t>
-	  Because of skew, the front-end may not know the requested STH or the requested hash, which leads to a number of cases.
 	  <list style="hanging">
-	    <t hangText="latest STH &lt; requested STH">
-	      Return latest STH.
+            <t hangText="Inputs:">
+	      <list style="hanging">
+		<t hangText="hash:">
+		  A base64-encoded v1 leaf hash.
+		</t>
+		<t hangText="tree_size:">
+		  The tree_size of the tree on which to base the proofs, in decimal.
+		</t>
+              </list>
 	    </t>
-	    <t hangText="latest STH &gt; requested STH">
-	      Return latest STH and a consistency proof between it and the requested STH (see <xref target="fetch_consistency"/>).
+	    <t>
+              The <spanx style="verb">hash</spanx> must be calculated as defined in <xref target="tree"/>. The <spanx style="verb">tree_size</spanx> must designate an existing v1 STH.
 	    </t>
-	    <t hangText="index of requested hash &lt; latest STH">
-	      Return <spanx style="verb">leaf_index</spanx> and <spanx style="verb">audit_path</spanx>.
+	    <t>
+	      Because of skew, the front-end may not know the requested STH or the requested hash, which leads to a number of cases.
+	      <list style="hanging">
+		<t hangText="latest STH &lt; requested STH">
+		  Return latest STH.
+		</t>
+		<t hangText="latest STH &gt; requested STH">
+		  Return latest STH and a consistency proof between it and the requested STH (see <xref target="fetch_consistency"/>).
+		</t>
+		<t hangText="index of requested hash &lt; latest STH">
+		  Return <spanx style="verb">leaf_index</spanx> and <spanx style="verb">audit_path</spanx>.
+		</t>
+	      </list>
 	    </t>
+	    <t>
+	      Note that more than one case can be true, in which case the returned data is their concatenation. It is also possible for none to be true, in which case the front-end MUST return an empty response.
+            </t>
+            <t hangText="Outputs:">
+	      <list style="hanging">
+		<t hangText="leaf_index:">
+		  The 0-based index of the entry corresponding to the <spanx style="verb">hash</spanx> parameter.
+		</t>
+		<t hangText="audit_path:">
+		  An array of base64-encoded Merkle Tree nodes proving the inclusion of the chosen certificate.
+		</t>
+		<t hangText="tree_size:">
+		  The size of the tree, in entries, in decimal.
+		</t>
+		<t hangText="timestamp:">
+		  The timestamp, in decimal.
+		</t>
+		<t hangText="sha256_root_hash:">
+		  The Merkle Tree Hash of the tree, in base64.
+		</t>
+		<t hangText="tree_head_signature:">
+		  A TreeHeadSignature for the above data.
+		</t>
+		<t hangText="consistency:">
+		  An array of base64-encoded Merkle Tree nodes proving the consistency of the requested STH and the returned STH.
+		</t>
+              </list>
+	    </t>
+	    <t>
+	      Errors are the same as in <xref target="fetch_proof"/>.
+            </t>
 	  </list>
-	  Note that more than one case can be true, in which case the returned data is their concatenation. It is also possible for none to be true, in which case the front-end MUST return an empty response.
-        </t>
-        <t>
-          Outputs:
-          <list>
-	    <t><list style="hanging">
-	      <t hangText="leaf_index:">
-		The 0-based index of the entry corresponding to the <spanx style="verb">hash</spanx> parameter.
-	      </t>
-	      <t hangText="audit_path:">
-		An array of base64-encoded Merkle Tree nodes proving the inclusion of the chosen certificate.
-	      </t>
-	      <t hangText="tree_size:">
-		The size of the tree, in entries, in decimal.
-	      </t>
-	      <t hangText="timestamp:">
-		The timestamp, in decimal.
-	      </t>
-	      <t hangText="sha256_root_hash:">
-		The Merkle Tree Hash of the tree, in base64.
-	      </t>
-	      <t hangText="tree_head_signature:">
-		A TreeHeadSignature for the above data.
-	      </t>
-              <t hangText="consistency:">
-		An array of base64-encoded Merkle Tree nodes proving the consistency of the requested STH and the returned STH.
-              </t>
-            </list></t>
-          </list>
-        </t>
+	</t>
       </section>
-      
 
       <section title="Retrieve Entries from Log" anchor="fetch_entries">
         <t>
