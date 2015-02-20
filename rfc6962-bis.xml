@@ -468,7 +468,8 @@ Precertificate could contain
             When a Precertificate contains one or more redacted labels, a
 non-critical extension (OID 1.3.6.1.4.1.11129.2.4.6, whose extnValue OCTET STRING
 contains an ASN.1 SEQUENCE OF INTEGERs) MUST be added to the corresponding
-certificate: the first INTEGER indicates the number of labels redacted in the
+certificate: the first INTEGER indicates the total number of redacted labels
+and wildcard <spanx style="verb">*</spanx> labels in the
 Precertificate's first DNS-ID; the second INTEGER does the same for the
 Precertificate's second DNS-ID; etc. There MUST NOT be more INTEGERs than there
 are DNS-IDs. If there are fewer INTEGERs than there are DNS-IDs, the shortfall
