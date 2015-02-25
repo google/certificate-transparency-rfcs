@@ -887,6 +887,9 @@ messages.
 		<t hangText="bad chain">
 		  The alleged chain is not actually a chain of certificates.
 		</t>
+		<t hangText="bad certificate">
+		  One or more certificates in the chain are not valid (e.g. not properly encoded).
+		</t>
 	      </list>
 	    </t>
 	  </list>
@@ -1046,7 +1049,7 @@ an accepted root certificate.
 	    <t hangText="Errors:">
 	      <list style="hanging">
 		<t hangText="hash unknown">
-		  <spanx style="verb">hash</spanx> is not the hash of a known leaf (may be caused by skew).
+		  <spanx style="verb">hash</spanx> is not the hash of a known leaf (may be caused by skew or by a known certificate not yet merged).
 		</t>
 		<t hangText="tree_size unknown">
 		  <spanx style="verb">hash</spanx> is before the latest known STH but is not from an existing STH.
