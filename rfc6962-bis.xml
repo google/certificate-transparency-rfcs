@@ -879,7 +879,7 @@ messages.
 		</t>
               </list>
 	    </t>
-            <t hangText="Errors:">
+            <t hangText="Error codes:">
 	      <list style="hanging">
 		<t hangText="unknown root">
 		  The root of the chain is not one accepted by the log.
@@ -993,7 +993,7 @@ an accepted root certificate.
               </list>
               Note that no signature is required on this data, as it is used to verify an STH, which is signed.
             </t>
-	    <t hangText="Errors:">
+	    <t hangText="Error codes:">
 	      <list style="hanging">
 		<t hangText="first unknown">
 		  <spanx style="verb">first</spanx> is before the latest known STH but is not from an existing STH.
@@ -1046,7 +1046,7 @@ an accepted root certificate.
 		</t>
               </list>
 	    </t>
-	    <t hangText="Errors:">
+	    <t hangText="Error codes:">
 	      <list style="hanging">
 		<t hangText="hash unknown">
 		  <spanx style="verb">hash</spanx> is not the hash of a known leaf (may be caused by skew or by a known certificate not yet merged).
