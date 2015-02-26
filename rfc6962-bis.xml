@@ -903,21 +903,21 @@ messages.
         <t>
           POST https://&lt;log server&gt;/ct/v1/add-pre-chain
         </t>
-        <t>
-          Inputs:
-
-          <list>
-            <t><list style="hanging">
-              <t hangText="precertificate:">
-                The base64-encoded Precertificate.
-              </t>
-              <t hangText="chain:">
-                An array of base64-encoded CA certificates. The first element is
+	<t>
+	  <list style="hanging">
+            <t hangText="Inputs:">
+              <list style="hanging">
+		<t hangText="precertificate:">
+                  The base64-encoded Precertificate.
+		</t>
+		<t hangText="chain:">
+                  An array of base64-encoded CA certificates. The first element is
 the signer of the Precertificate; the second chains to the first and so on to
 the last, which is either the root certificate or a certificate that chains to
 an accepted root certificate.
-              </t>
-            </list></t>
+		</t>
+              </list>
+	    </t>
           </list>
         </t>
         <t>
@@ -933,23 +933,23 @@ an accepted root certificate.
           No inputs.
         </t>
         <t>
-          Outputs:
-
-          <list>
-	    <t><list style="hanging">
-	      <t hangText="tree_size:">
-		The size of the tree, in entries, in decimal.
-	      </t>
-	      <t hangText="timestamp:">
-		The timestamp, in decimal.
-	      </t>
-	      <t hangText="sha256_root_hash:">
-		The Merkle Tree Hash of the tree, in base64.
-	      </t>
-	      <t hangText="tree_head_signature:">
-		A TreeHeadSignature for the above data.
-	      </t>
-            </list></t>
+	  <list style="hanging">
+            <t hangText="Outputs:">
+	      <list style="hanging">
+		<t hangText="tree_size:">
+		  The size of the tree, in entries, in decimal.
+		</t>
+		<t hangText="timestamp:">
+		  The timestamp, in decimal.
+		</t>
+		<t hangText="sha256_root_hash:">
+		  The Merkle Tree Hash of the tree, in base64.
+		</t>
+		<t hangText="tree_head_signature:">
+		  A TreeHeadSignature for the above data.
+		</t>
+              </list>
+	    </t>
           </list>
         </t>
       </section>
@@ -1133,40 +1133,34 @@ an accepted root certificate.
           GET https://&lt;log server&gt;/ct/v1/get-entries
         </t>
         <t>
-          Inputs:
-
-          <list>
-            <t><list style="hanging">
-              <t hangText="start:">
-		0-based index of first entry to retrieve, in decimal.
-              </t>
-              <t hangText="end:">
-		0-based index of last entry to retrieve, in decimal.
-              </t>
-            </list></t>
+	  <list style="hanging">
+            <t hangText="Inputs:">
+              <list style="hanging">
+		<t hangText="start:">
+		  0-based index of first entry to retrieve, in decimal.
+		</t>
+		<t hangText="end:">
+		  0-based index of last entry to retrieve, in decimal.
+		</t>
+              </list>
+	    </t>
+            <t hangText="Outputs:">
+              <list style="hanging">
+		<t hangText="entries:">
+		  An array of objects, each consisting of
+		  <list style="hanging">
+                    <t hangText="leaf_input:">
+                      The base64-encoded MerkleTreeLeaf structure.
+                    </t>
+                    <t hangText="extra_data:">
+                      The base64-encoded unsigned data pertaining to the log entry. In the case of an X509ChainEntry, this is the <spanx style="verb">certificate_chain</spanx>. In the case of a PrecertChainEntryV2, this is the whole <spanx style="verb">PrecertChainEntryV2</spanx>.
+                    </t>
+		  </list>
+		</t>
+              </list>
+	    </t>
           </list>
         </t>
-
-        <t>
-          Outputs:
-
-          <list>
-            <t><list style="hanging">
-              <t hangText="entries:">
-		An array of objects, each consisting of
-		<list style="hanging">
-                  <t hangText="leaf_input:">
-                    The base64-encoded MerkleTreeLeaf structure.
-                  </t>
-                  <t hangText="extra_data:">
-                    The base64-encoded unsigned data pertaining to the log entry. In the case of an X509ChainEntry, this is the <spanx style="verb">certificate_chain</spanx>. In the case of a PrecertChainEntryV2, this is the whole <spanx style="verb">PrecertChainEntryV2</spanx>.
-                  </t>
-		</list>
-	      </t>
-            </list></t>
-        </list>
-        </t>
-
         <t>
           Note that this message is not signed -- the retrieved data can be
 verified by constructing the Merkle Tree Hash corresponding to a retrieved
@@ -1193,6 +1187,7 @@ entry specified by <spanx style="verb">start</spanx>.
 	  Because of skew, it is possible the log server will not have any entries between <spanx style="verb">start</spanx> and <spanx style="verb">end</spanx>. In this case it MUST return an empty <spanx style="verb">entries</spanx> array.
 	</t>
       </section>
+
       <section title="Retrieve Accepted Root Certificates">
         <t>
           GET https://&lt;log server&gt;/ct/v1/get-roots
@@ -1201,58 +1196,56 @@ entry specified by <spanx style="verb">start</spanx>.
           No inputs.
         </t>
         <t>
-          Outputs:
-
-          <list>
-            <t><list style="hanging">
-              <t hangText="certificates:">
-		An array of base64-encoded root certificates that are acceptable to the log.
-              </t>
-	      <t hangText="max_chain:">
-		If the server has chosen to limit the length of chains it accepts, this is the maximum number of certificates in the chain, in decimal. If there is no limit, this is omitted.
-	      </t>
-            </list></t>
+	  <list style="hanging">
+            <t hangText="Outputs:">
+              <list style="hanging">
+		<t hangText="certificates:">
+		  An array of base64-encoded root certificates that are acceptable to the log.
+		</t>
+		<t hangText="max_chain:">
+		  If the server has chosen to limit the length of chains it accepts, this is the maximum number of certificates in the chain, in decimal. If there is no limit, this is omitted.
+		</t>
+              </list>
+	    </t>
           </list>
         </t>
       </section>
-
+      
       <section title="Retrieve Entry+Merkle Inclusion Proof from Log">
         <t>
           GET https://&lt;log server&gt;/ct/v1/get-entry-and-proof
         </t>
         <t>
-          Inputs:
-
-          <list>
-            <t><list style="hanging">
-              <t hangText="leaf_index:">
-		The index of the desired entry.
-              </t>
-              <t hangText="tree_size:">
-		The tree_size of the tree for which the proof is desired.
-              </t>
-            </list></t>
+	  <list style="hanging">
+            <t hangText="Inputs:">
+              <list style="hanging">
+		<t hangText="leaf_index:">
+		  The index of the desired entry.
+		</t>
+		<t hangText="tree_size:">
+		  The tree_size of the tree for which the proof is desired.
+		</t>
+              </list>
+	    </t>
+	    <t>
+              The tree size must designate an existing STH.
+            </t>
+            <t hangText="Outputs:">
+              <list style="hanging">
+		<t hangText="leaf_input:">
+		  The base64-encoded MerkleTreeLeaf structure.
+		</t>
+		<t hangText="extra_data:">
+		  The base64-encoded unsigned data, same as in <xref target='fetch_entries'/>.
+		</t>
+		<t hangText="audit_path:">
+		  An array of base64-encoded Merkle Tree nodes proving the inclusion of the chosen certificate.
+		</t>
+              </list>
+	    </t>
           </list>
-
-          The tree size must designate an existing STH.
-        </t>
-        <t>
-          Outputs:
-
-          <list>
-            <t><list style="hanging">
-              <t hangText="leaf_input:">
-		The base64-encoded MerkleTreeLeaf structure.
-              </t>
-              <t hangText="extra_data:">
-		The base64-encoded unsigned data, same as in <xref target='fetch_entries'/>.
-              </t>
-              <t hangText="audit_path:">
-		An array of base64-encoded Merkle Tree nodes proving the inclusion of the chosen certificate.
-              </t>
-            </list></t>
-          </list>
-
+	</t>
+	<t>
           This API is probably only useful for debugging.
         </t>
       </section>
