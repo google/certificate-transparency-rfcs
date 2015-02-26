@@ -966,12 +966,12 @@ an accepted root certificate.
 		  The tree_size of the older tree, in decimal.
 		</t>
 		<t hangText="second:">
-		  The tree_size of the newer tree, in decimal.
+		  The tree_size of the newer tree, in decimal (optional).
 		</t>
               </list>
 	    </t>
 	    <t>
-              Both tree sizes must be from existing v1 STHs (Signed Tree Heads). However, because of skew, the receiving front-end may not know one or both of the existing STHs. If both are known, then only the <spanx style="verb">consistency</spanx> output is returned. If the first is known but not the second, then the latest known STH is returned, along with a consistency proof between the first STH and the latest. If neither are known, then the latest known STH is returned without a consistency proof.
+              Both tree sizes must be from existing v1 STHs (Signed Tree Heads). However, because of skew, the receiving front-end may not know one or both of the existing STHs. If both are known, then only the <spanx style="verb">consistency</spanx> output is returned. If the first is known but the second is not (or has been omitted), then the latest known STH is returned, along with a consistency proof between the first STH and the latest. If neither are known, then the latest known STH is returned without a consistency proof.
             </t>
             <t hangText="Outputs:">
 	      <list style="hanging">
@@ -1208,45 +1208,6 @@ entry specified by <spanx style="verb">start</spanx>.
               </list>
 	    </t>
           </list>
-        </t>
-      </section>
-      
-      <section title="Retrieve Entry+Merkle Inclusion Proof from Log">
-        <t>
-          GET https://&lt;log server&gt;/ct/v1/get-entry-and-proof
-        </t>
-        <t>
-	  <list style="hanging">
-            <t hangText="Inputs:">
-              <list style="hanging">
-		<t hangText="leaf_index:">
-		  The index of the desired entry.
-		</t>
-		<t hangText="tree_size:">
-		  The tree_size of the tree for which the proof is desired.
-		</t>
-              </list>
-	    </t>
-	    <t>
-              The tree size must designate an existing STH.
-            </t>
-            <t hangText="Outputs:">
-              <list style="hanging">
-		<t hangText="leaf_input:">
-		  The base64-encoded MerkleTreeLeaf structure.
-		</t>
-		<t hangText="extra_data:">
-		  The base64-encoded unsigned data, same as in <xref target='fetch_entries'/>.
-		</t>
-		<t hangText="audit_path:">
-		  An array of base64-encoded Merkle Tree nodes proving the inclusion of the chosen certificate.
-		</t>
-              </list>
-	    </t>
-          </list>
-	</t>
-	<t>
-          This API is probably only useful for debugging.
         </t>
       </section>
     </section>
