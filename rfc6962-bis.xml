@@ -1320,7 +1320,7 @@ log's public key.
       </section>
       <section title="Monitor" anchor="monitor">
         <t>
-          Monitors watch logs and check that they behave correctly. They also watch for certificates of interest.
+          Monitors watch logs and check that they behave correctly. Monitors may additionally watch for certificates of interest. For example, a monitor may be configured to report on all certificates that apply to a specific domain name when fetching new entries for consistency validation.
         </t>
         <t>
           A monitor needs to, at least, inspect every new entry in each log it watches. It may also want to keep copies of entire logs. In order to do this, it should follow these steps for each log:
