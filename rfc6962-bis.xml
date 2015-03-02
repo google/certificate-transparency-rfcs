@@ -893,6 +893,12 @@ messages.
 	<t>
           If the <spanx style="verb">sct_version</spanx> is not v1, then a v1 client may be unable to verify the signature. It MUST NOT construe this as an error. This is to avoid forcing an upgrade of compliant v1 clients that do not use the returned SCTs.
         </t>
+	<t>
+	  If a log detects bad encoding in a chain that otherwise verifies correctly (e.g. some software will accept BER instead of DER encodings in certificates, or incorrect character encodings, even though these are technically incorrect) then the log MAY still log the certificate but SHOULD NOT return an SCT. It should instead return the "bad certificate" error. Logging the certificate is useful, because <xref target="monitor" format="none">monitors</xref> can then detect these encoding errors, which may be accepted by some TLS clients.
+	</t>
+	<t>
+	  Note that not all certificate handling software is capable of detecting all encoding errors.
+	</t>
       </section>
 
       <section title="Add PreCertChain to Log">
