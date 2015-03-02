@@ -749,26 +749,22 @@ for misbehavior, has had a key compromise or is not known to the client).
         Every time a log appends new entries to the tree, the log SHOULD sign the corresponding tree hash and tree information (see the corresponding Signed Tree Head client message in <xref target="fetch_sth"/>). The signature for that data is structured as follows:
         </t>
 
-<figure>
-  <artwork>
-    opaque CtSthExtensions&lt;0..2^16-1&gt;;
+	<figure>
+	  <artwork>
+	    enum { v1(0), (255) } TreeHeadVersion;
 
-    enum { v1(0), v2(1), (255) }
-      TreeHeadVersion;
-
-    digitally-signed struct {
-        TreeHeadVersion version;
-        SignatureType signature_type = tree_hash;
-        uint64 timestamp;
-        uint64 tree_size;
-        opaque sha256_root_hash[32];
-        CtSthExtensions extensions;
-    } TreeHeadSignature;
-  </artwork>
-</figure>
+	    digitally-signed struct {
+              TreeHeadVersion version;
+              SignatureType signature_type = tree_hash;
+              uint64 timestamp;
+              uint64 tree_size;
+              opaque sha256_root_hash[32];
+	    } TreeHeadSignature;
+	  </artwork>
+	</figure>
 
         <t>
-          <spanx style="verb">version</spanx> is the version of the TreeHeadSignature structure. This version is v2.
+          <spanx style="verb">version</spanx> is the version of the TreeHeadSignature structure. This version is v1.
         </t>
         <t>
           <spanx style="verb">timestamp</spanx> is the current time. The timestamp MUST be at least as recent as the most recent SCT timestamp in the tree. Each subsequent timestamp MUST be more recent than the timestamp of the previous update.
