@@ -486,7 +486,7 @@ entry in the SEQUENCE OF INTEGERs to reconstruct both the first DNS-ID and the
 CN-ID.
           </t>
         </section>
-        <section title="Using a Name-Constrained Intermediate CA">
+        <section title="Using a Name-Constrained Intermediate CA" anchor="name_constrained">
           <t>
             An intermediate CA certificate or intermediate CA Precertificate that contains the
 critical or non-critical <xref target="RFC5280">Name Constraints</xref> extension
@@ -1376,15 +1376,13 @@ the STH changes.
       </section>
       <section title="Auditing">
         <t>
-          Auditing is taking partial information about a log as input and verifying 
-          that this information is consistent with other partial information held. 
-          All clients described above may perform auditing as an additional function.
+          Auditing is taking partial information about a log as input and verifying that this information is consistent with other partial information held. All clients described above may perform auditing as an additional function. The action taken by the client if audit fails is not specified, but note that in general if audit fails, the client is in possession of signed proof of the log's misbehaviour.
         </t>
         <t>
           A <xref target="monitor">monitor</xref> can audit by verifying the consistency of STHs it receives, ensure that each entry can be fetched and that the STH is indeed the result of making a tree from all fetched entries.
         </t>
         <t>
-          A <xref target="tls_clients">TLS client</xref> can audit by verifying an SCT against any STH dated after the SCT timestamp + the Maximum Merge Delay by requesting a Merkle inclusion proof (<xref target="fetch_proof"/>).
+          A <xref target="tls_clients">TLS client</xref> can audit by verifying an SCT against any STH dated after the SCT timestamp + the Maximum Merge Delay by requesting a Merkle inclusion proof (<xref target="fetch_proof"/>). It can also verify that the SCT corresponds to the certificate it arrived with (i.e. the log entry is that certificate, is a Precertificate for that certificate or is an approprite name-constrained intermediate [see <xref target="name_constrained"/>]).
         </t>
       </section>
     </section>
