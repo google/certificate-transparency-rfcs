@@ -298,7 +298,7 @@ d0 d1   d2 d3           d0 d1   d2 d3  d4 d5
           <t>
             Various data structures are signed. A log MUST use either elliptic
 curve signatures using the NIST P-256 curve (Section D.1.2.3 of the <xref
-target="DSS">Digital Signature Standard </xref>) or RSA signatures (RSASSA-PKCS1-V1_5 with SHA-256,
+target="DSS">Digital Signature Standard </xref>) or RSA signatures (RSASSA-PKCS1-v1_5 with SHA-256,
 Section 8.2 of <xref target="RFC3447"/>) using a key of at least 2048 bits.
           </t>
         </section>
@@ -1339,13 +1339,13 @@ the STH changes.
       </section>
       <section title="Auditing">
         <t>
-          Auditing is taking partial information about a log as input and verifying that this information is consistent with other partial information held. All clients described above may perform auditing as an additional function. The action taken by the client if audit fails is not specified, but note that in general if audit fails, the client is in possession of signed proof of the log's misbehaviour.
+          Auditing is taking partial information about a log as input and verifying that this information is consistent with other partial information held. All clients described above may perform auditing as an additional function. The action taken by the client if audit fails is not specified, but note that in general if audit fails, the client is in possession of signed proof of the log's misbehavior.
         </t>
         <t>
           A <xref target="monitor">monitor</xref> can audit by verifying the consistency of STHs it receives, ensure that each entry can be fetched and that the STH is indeed the result of making a tree from all fetched entries.
         </t>
         <t>
-          A <xref target="tls_clients">TLS client</xref> can audit by verifying an SCT against any STH dated after the SCT timestamp + the Maximum Merge Delay by requesting a Merkle inclusion proof (<xref target="fetch_proof"/>). It can also verify that the SCT corresponds to the certificate it arrived with (i.e. the log entry is that certificate, is a Precertificate for that certificate or is an approprite name-constrained intermediate [see <xref target="name_constrained"/>]).
+          A <xref target="tls_clients">TLS client</xref> can audit by verifying an SCT against any STH dated after the SCT timestamp + the Maximum Merge Delay by requesting a Merkle inclusion proof (<xref target="fetch_proof"/>). It can also verify that the SCT corresponds to the certificate it arrived with (i.e. the log entry is that certificate, is a Precertificate for that certificate or is an appropriate name-constrained intermediate [see <xref target="name_constrained"/>]).
         </t>
       </section>
     </section>
