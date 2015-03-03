@@ -775,9 +775,6 @@ for misbehavior, has had a key compromise or is not known to the client).
         <t>
           <spanx style="verb">sha256_root_hash</spanx> is the root of the Merkle Hash Tree.
         </t>
-        <t>
-          <spanx style="verb">extensions</spanx> are future extensions to TreeHeadSignature v2. Currently, no extensions are specified. Note that <xref target="RFC6962">TreeHeadSignature v1</xref> does not include this field. The purpose of the <spanx style="verb">extensions</spanx> field is to allow augmenting the TreeHeadSignature without increasing its version.
-        </t>
         <t>Each log MUST produce on demand a Signed Tree Head that is no older than the Maximum Merge Delay. In the unlikely event that it receives no new submissions during an MMD period, the log SHALL sign the same Merkle Tree Hash with a fresh timestamp.
         </t>
       </section>
