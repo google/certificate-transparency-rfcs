@@ -1426,7 +1426,7 @@ certificates around the SCT timestamp.
       </section>
       <section title="Multiple SCTs">
 	<t>
-	  TLS servers may wish to offer multiple SCTs from different logs.
+	  TLS servers may wish to offer multiple SCTs, each from a different log.
 	  <list style="symbols">
 	    <t>
 	      If a CA and a log collude, it is possible to temporarily hide misissuance from clients. Incorporating SCTs from different logs makes it more difficult to mount this attack.
