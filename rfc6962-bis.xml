@@ -1424,6 +1424,22 @@ certificates around the SCT timestamp.
           Violation of the append-only property can be detected by clients comparing their instances of the Signed Tree Heads. As soon as two conflicting Signed Tree Heads for the same log are detected, this is cryptographic proof of that log's misbehavior. There are various ways this could be done, for example via gossip (see http://trac.tools.ietf.org/id/draft-linus-trans-gossip-00.txt) or peer-to-peer communications or by sending STHs to monitors (who could then directly check against their own copy of the relevant log).
         </t>
       </section>
+      <section title="Multiple SCTs">
+	<t>
+	  TLS servers may wish to offer multiple SCTs from different logs.
+	  <list style="symbols">
+	    <t>
+	      If a CA and a log collude, it is possible to temporarily hide misissuance from clients. Incorporating SCTs from different logs makes it more difficult to mount this attack.
+	    </t>
+	    <t>
+	      If a log misbehaves, a consequence may be that clients cease to trust it. Since the time an SCT may be in use can be considerable (several years is common in current practice when the SCT is embedded in a certificate), servers may wish to reduce the probability of their certificates being rejected as a result by including SCTs from different logs.
+	    </t>
+	    <t>
+	      TLS clients may have policies related to the above risks requiring servers to present multiple SCTs. For example <xref target="Chromium.Log.Policy">Chromium</xref> currently requires multiple SCTs to be presented with EV certificates in order for the EV indicator to be shown.
+	    </t>
+	  </list>
+	</t>
+      </section>
     </section>
     <section title="Efficiency Considerations">
       <t>
@@ -1570,6 +1586,16 @@ target="http://csrc.nist.gov/publications/fips/fips180-4/fips-180-4.pdf">
 	</front>
       </reference>
 
+      <reference anchor="Chromium.Log.Policy" target="http://www.chromium.org/Home/chromium-security/certificate-transparency/log-policy">
+	<front>
+	  <title>Chromium Certificate Transparency Log Policy</title>
+	  <author>
+	    <organization>The Chromium Projects</organization>
+	  </author>
+	  <date year="2014"/>
+	</front>
+      </reference>
+      
     </references>
   </back>
 </rfc>
