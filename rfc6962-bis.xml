@@ -58,7 +58,7 @@
       <t>
         This document describes a protocol for publicly logging
 the existence of Transport Layer Security (TLS) certificates as they are issued
-or observed, in a manner that allows anyone to audit certificate authority (CA)
+or observed, in a manner that allows anyone to audit certification authority (CA)
 activity and notice the issuance of suspect certificates as well as to audit
 the certificate logs themselves. The intent is that eventually clients would
 refuse to honor certificates that do not appear in a log, effectively forcing
@@ -81,7 +81,7 @@ certificates are added to it. The logs do not themselves prevent misissue, but
 they ensure that interested parties (particularly those named in certificates)
 can detect such misissuance. Note that this is a general mechanism, but in this
 document, we only describe its use for public TLS server certificates issued by
-public certificate authorities (CAs).
+public certification authorities (CAs).
       </t>
       <t>
         Each log consists of certificate chains, which can be submitted by
@@ -325,7 +325,7 @@ log is a single, ever-growing, append-only Merkle Tree of such certificates.
           In order to enable attribution of each logged certificate to its issuer, each submitted certificate MUST be accompanied by all additional certificates required to verify the certificate chain up to an accepted root certificate. The root certificate itself MAY be omitted from the chain submitted to the log server. The log SHALL allow retrieval of a list of accepted root certificates (this list might usefully be the union of root certificates trusted by major browser vendors). 
         </t>
         <t>
-          Alternatively, (root as well as intermediate) certificate authorities
+          Alternatively, (root as well as intermediate) certification authorities
 may preannounce a certificate to logs prior to issuance in order to incorporate
 the SCT in the issued certificate. To do this, the CA submits a Precertificate
 that the log can use to create an entry that will be valid against the issued
@@ -341,7 +341,7 @@ NOT contain any SCTs, but it will be otherwise identical to the TBSCertificate
 in the issued certificate.
 <spanx style="verb">SignedData.signerInfos</spanx> MUST contain a signature from
 the same (root or intermediate) CA that will ultimately issue the certificate.
-This signature indicates the certificate authority's intent to issue the
+This signature indicates the certification authority's intent to issue the
 certificate. This intent is considered binding (i.e., misissuance of the
 Precertificate is considered equivalent to misissuance of the certificate).
 As above, the Precertificate submission MUST be accompanied by all the
@@ -641,7 +641,7 @@ body:
           At least one SCT MUST be included. Server operators MAY include more than one SCT.
         </t>
         <t>
-          Similarly, a certificate authority MAY submit a Precertificate to more
+          Similarly, a certification authority MAY submit a Precertificate to more
 than one log, and all obtained SCTs can be directly embedded in the issued
 certificate, by encoding the SignedCertificateTimestampList structure as an
 ASN.1 OCTET STRING and inserting the resulting data in the TBSCertificate as a
