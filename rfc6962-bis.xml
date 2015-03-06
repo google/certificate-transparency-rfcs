@@ -1455,41 +1455,33 @@ Carl Wallace for their valuable contributions.
       </t>
     </section>
   </middle>
+
   <back>
+    <references title="Normative References">
 
+      <?rfc include="reference.RFC.2119" ?>
 
+      <?rfc include="reference.RFC.2560"?>
 
-    <references title="Normative Reference">
+      <?rfc include="reference.RFC.2616"?>
 
-    <?rfc include="reference.RFC.2119" ?>
+      <?rfc include="reference.RFC.3447"?>
 
-</references>
+      <?rfc include="reference.RFC.4627"?>
 
-<references title="Informative References">
+      <?rfc include="reference.RFC.4648"?>
 
-    <?rfc include="reference.RFC.2616"?>
+      <?rfc include="reference.RFC.5246"?>
 
-    <?rfc include="reference.RFC.2560"?>
+      <?rfc include="reference.RFC.5280"?>
 
-    <?rfc include="reference.RFC.3447"?>
+      <?rfc include="reference.RFC.5652"?>
 
-    <?rfc include="reference.RFC.4627"?>
+      <?rfc include="reference.RFC.5905"?>
 
-    <?rfc include="reference.RFC.4648"?>
+      <?rfc include="reference.RFC.6066"?>
 
-    <?rfc include="reference.RFC.5246"?>
-
-    <?rfc include="reference.RFC.5280"?>
-
-    <?rfc include="reference.RFC.5652"?>
-
-    <?rfc include="reference.RFC.5905"?>
-
-    <?rfc include="reference.RFC.6066"?>
-
-    <?rfc include="reference.RFC.6125"?>
-
-    <?rfc include="reference.RFC.6962"?>
+      <?rfc include="reference.RFC.6125"?>
 
       <reference anchor="DSS" target="http://csrc.nist.gov/publications/fips/fips186-3/fips_186-3.pdf">
         <front>
@@ -1504,21 +1496,16 @@ Technology</organization>
         <format type="PDF" target="http://csrc.nist.gov/publications/fips/fips186-3/fips_186-3.pdf"/>
       </reference>
 
-      <reference anchor="CrosbyWallach"
-target="http://static.usenix.org/event/sec09/tech/full_papers/crosby.pdf">
+      <reference anchor="FIPS.180-4"
+target="http://csrc.nist.gov/publications/fips/fips180-4/fips-180-4.pdf">
         <front>
-          <title>Efficient Data Structures for Tamper-Evident Logging</title>
-          <author initials='S.' surname='Crosby' fullname='Scott A. Crosby'>
-            <organization/>
+          <title>Secure Hash Standard</title>
+          <author>
+            <organization>National Institute of Standards and Technology</organization>
           </author>
-          <author initials='D.' surname='Wallach' fullname='Dan S. Wallach'>
-            <organization/>
-          </author>
-          <date month="August" year="2009"/>
+          <date month="March" year="2012"/>
         </front>
-<seriesInfo name="Proceedings of the 18th USENIX Security Symposium,"
-value="Montreal"/>
-        <format type="PDF" target="http://static.usenix.org/event/sec09/tech/full_papers/crosby.pdf"/>
+        <seriesInfo name="FIPS" value="PUB 180-4"/>
       </reference>
 
       <reference anchor="HTML401" target="http://www.w3.org/TR/1999/REC-html401-19991224">
@@ -1539,17 +1526,27 @@ value="Montreal"/>
         <format type="HTML" target="http://www.w3.org/TR/1999/REC-html401-19991224"/>
       </reference>
 
+    </references>
 
-      <reference anchor="FIPS.180-4"
-target="http://csrc.nist.gov/publications/fips/fips180-4/fips-180-4.pdf">
+<references title="Informative References">
+
+    <?rfc include="reference.RFC.6962"?>
+
+      <reference anchor="CrosbyWallach"
+target="http://static.usenix.org/event/sec09/tech/full_papers/crosby.pdf">
         <front>
-          <title>Secure Hash Standard</title>
-          <author>
-            <organization>National Institute of Standards and Technology</organization>
+          <title>Efficient Data Structures for Tamper-Evident Logging</title>
+          <author initials='S.' surname='Crosby' fullname='Scott A. Crosby'>
+            <organization/>
           </author>
-          <date month="March" year="2012"/>
+          <author initials='D.' surname='Wallach' fullname='Dan S. Wallach'>
+            <organization/>
+          </author>
+          <date month="August" year="2009"/>
         </front>
-        <seriesInfo name="FIPS" value="PUB 180-4"/>
+<seriesInfo name="Proceedings of the 18th USENIX Security Symposium,"
+value="Montreal"/>
+        <format type="PDF" target="http://static.usenix.org/event/sec09/tech/full_papers/crosby.pdf"/>
       </reference>
 
       <reference anchor="EVSSLGuidelines" target="https://cabforum.org/wp-content/uploads/EV_Certificate_Guidelines.pdf">
