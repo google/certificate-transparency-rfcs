@@ -71,7 +71,7 @@ submissions and queries that are defined in this document.
     </abstract>
   </front>
   <middle>
-    <section title="Informal Introduction">
+    <section title="Introduction">
       <t>
         Certificate transparency aims to mitigate the problem of misissued
 certificates by providing publicly auditable, append-only, untrusted logs of
@@ -312,7 +312,7 @@ it is expected that certificate owners or their CAs will usually submit them. A
 log is a single, ever-growing, append-only Merkle Tree of such certificates.
       </t>
       <t>
-        When a valid certificate is submitted to a log, the log MUST return a Signed Certificate Timestamp (SCT). The SCT is the log's promise to incorporate the certificate in the Merkle Tree within a fixed amount of time known as the Maximum Merge Delay (MMD). If the log has previously seen the certificate, it MAY return the same SCT as it returned before (note that if a certificate was previously logged as a Precertificate, then the Precertificate's SCT would not be appropriate, instead a fresh SCT of type x509_entry should be generated). TLS servers MUST present an SCT from one or more logs to the TLS client together with the certificate. A certificate not accompanied by an SCT (either for the end-entity certificate or for a name-constrained intermediate the end-entity certificate chains to) MUST NOT be considered compliant by TLS clients.
+        When a valid certificate is submitted to a log, the log MUST return a Signed Certificate Timestamp (SCT). The SCT is the log's promise to incorporate the certificate in the Merkle Tree within a fixed amount of time known as the Maximum Merge Delay (MMD). If the log has previously seen the certificate, it MAY return the same SCT as it returned before (note that if a certificate was previously logged as a precertificate, then the precertificate's SCT would not be appropriate, instead a fresh SCT of type x509_entry should be generated). TLS servers MUST present an SCT from one or more logs to the TLS client together with the certificate. A certificate not accompanied by an SCT (either for the end-entity certificate or for a name-constrained intermediate the end-entity certificate chains to) MUST NOT be considered compliant by TLS clients.
       </t>
       <t>
         Periodically, each log appends all its new entries to the Merkle Tree and signs the root of the tree. The log MUST incorporate a certificate in its Merkle Tree within the Maximum Merge Delay period after the issuance of the SCT. When encountering an SCT, an Auditor can verify that the certificate was added to the Merkle Tree within that timeframe.
@@ -327,9 +327,9 @@ log is a single, ever-growing, append-only Merkle Tree of such certificates.
         <t>
           Alternatively, (root as well as intermediate) certification authorities
 may preannounce a certificate to logs prior to issuance in order to incorporate
-the SCT in the issued certificate. To do this, the CA submits a Precertificate
+the SCT in the issued certificate. To do this, the CA submits a precertificate
 that the log can use to create an entry that will be valid against the issued
-certificate. A Precertificate is a CMS <xref target="RFC5652"/>
+certificate. A precertificate is a CMS <xref target="RFC5652"/>
 <spanx style="verb">signed-data</spanx> object that contains a TBSCertificate
 <xref target="RFC5280"/> in its
 <spanx style="verb">SignedData.encapContentInfo.eContent</spanx> field,
@@ -343,26 +343,26 @@ in the issued certificate.
 the same (root or intermediate) CA that will ultimately issue the certificate.
 This signature indicates the certification authority's intent to issue the
 certificate. This intent is considered binding (i.e., misissuance of the
-Precertificate is considered equivalent to misissuance of the certificate).
-As above, the Precertificate submission MUST be accompanied by all the
+precertificate is considered equivalent to misissuance of the certificate).
+As above, the precertificate submission MUST be accompanied by all the
 additional certificates required to verify the chain up to an accepted root
 certificate. This does not involve using the
 <spanx style="verb">SignedData.certificates</spanx> field, so that field SHOULD
 be omitted.
         </t>
         <t>
-          Logs MUST verify that the submitted certificate or Precertificate has
+          Logs MUST verify that the submitted certificate or precertificate has
 a valid signature chain to an accepted root certificate, using the chain of
 intermediate CA certificates provided by the submitter. Logs MUST accept
 certificates that are fully valid according to X.509 verification rules
 and are submitted with such a chain. Logs MAY accept
-certificates and Precertificates that have expired, are not yet valid, have been
+certificates and precertificates that have expired, are not yet valid, have been
 revoked, or are otherwise not fully valid according to X.509 verification rules
 in order to accommodate quirks of CA certificate-issuing software. However, logs
 MUST reject certificates without a valid signature chain to an accepted root
 certificate. If a certificate is accepted and an SCT issued, the accepting log
 MUST store the entire chain used for verification, including the certificate or
-Precertificate itself and including the root certificate used to verify the
+precertificate itself and including the root certificate used to verify the
 chain (even if it was omitted from the submission), and MUST present this chain
 for auditing upon request. This chain is required to prevent a CA from avoiding
 blame by logging a partial or empty chain. (Note: This effectively excludes
@@ -370,7 +370,7 @@ self-signed and DANE-based certificates until some mechanism to limit the
 submission of spurious certificates is found. The authors welcome suggestions.)
         </t>
         <t>
-          Each certificate or Precertificate entry in a log MUST include the
+          Each certificate or precertificate entry in a log MUST include the
 following components:
         </t>
 <figure>
@@ -413,10 +413,10 @@ following components:
           <spanx style="verb">certificate_chain</spanx> is a chain of additional certificates required to verify the end-entity certificate. The first certificate MUST certify the end-entity certificate. Each following certificate MUST directly certify the one preceding it. The final certificate MUST either be, or be issued by, a root certificate accepted by the log.
         </t>
         <t>
-          <spanx style="verb">pre_certificate</spanx> is the Precertificate submitted for auditing.
+          <spanx style="verb">pre_certificate</spanx> is the precertificate submitted for auditing.
         </t>
         <t>
-          <spanx style="verb">precertificate_chain</spanx> is a chain of additional certificates required to verify the Precertificate submission. The first certificate MUST certify the Precertificate. Each following certificate MUST directly certify the one preceding it. The final certificate MUST be a root certificate accepted by the log.
+          <spanx style="verb">precertificate_chain</spanx> is a chain of additional certificates required to verify the precertificate submission. The first certificate MUST certify the precertificate. Each following certificate MUST directly certify the one preceding it. The final certificate MUST be a root certificate accepted by the log.
         </t>
       </section>
       <section title="Private Domain Name Labels">
@@ -444,13 +444,13 @@ Validation Certificates</xref>.
         </section>
         <section title="Redacting Domain Name Labels in Precertificates" anchor="redacting_subdomains">
           <t>
-            When creating a Precertificate, the CA MAY substitute one or more
+            When creating a precertificate, the CA MAY substitute one or more
 labels in each DNS-ID with a corresponding number of
 <spanx style="verb">?</spanx> labels. Every label to the left of a
 <spanx style="verb">?</spanx> label MUST also be redacted. For example, if a
 certificate contains a DNS-ID of
 <spanx style="verb">top.secret.example.com</spanx>, then the corresponding
-Precertificate could contain <spanx style="verb">?.?.example.com</spanx>
+precertificate could contain <spanx style="verb">?.?.example.com</spanx>
 instead, but not <spanx style="verb">top.?.example.com</spanx> instead.
           </t>
           <t>
@@ -460,26 +460,26 @@ However, if the complete leftmost label of a DNS-ID is
 determining if the label to the right may be redacted. For example, if a
 certificate contains a DNS-ID of
 <spanx style="verb">*.top.secret.example.com</spanx>, then the corresponding
-Precertificate could contain
+precertificate could contain
 <spanx style="verb">*.?.?.example.com</spanx> instead, but not
 <spanx style="verb">?.?.?.example.com</spanx> instead.
           </t>
           <t>
-            When a Precertificate contains one or more redacted labels, a
+            When a precertificate contains one or more redacted labels, a
 non-critical extension (OID 1.3.6.1.4.1.11129.2.4.6, whose extnValue OCTET STRING
 contains an ASN.1 SEQUENCE OF INTEGERs) MUST be added to the corresponding
 certificate: the first INTEGER indicates the total number of redacted labels
 and wildcard <spanx style="verb">*</spanx> labels in the
-Precertificate's first DNS-ID; the second INTEGER does the same for the
-Precertificate's second DNS-ID; etc. There MUST NOT be more INTEGERs than there
+precertificate's first DNS-ID; the second INTEGER does the same for the
+precertificate's second DNS-ID; etc. There MUST NOT be more INTEGERs than there
 are DNS-IDs. If there are fewer INTEGERs than there are DNS-IDs, the shortfall
 is made up by implicitly repeating the last INTEGER. Each INTEGER MUST have a
 value of zero or more. The purpose of this extension is to enable TLS clients
-to accurately reconstruct the TBSCertificate component of the Precertificate
+to accurately reconstruct the TBSCertificate component of the precertificate
 from the certificate without having to perform any guesswork.
           </t>
           <t>
-            When a Precertificate contains that extension and contains a
+            When a precertificate contains that extension and contains a
 <xref target="RFC6125">CN-ID</xref>, the CN-ID MUST match the first DNS-ID and
 have the same labels redacted.  TLS clients will use the first
 entry in the SEQUENCE OF INTEGERs to reconstruct both the first DNS-ID and the
@@ -488,7 +488,7 @@ CN-ID.
         </section>
         <section title="Using a Name-Constrained Intermediate CA" anchor="name_constrained">
           <t>
-            An intermediate CA certificate or intermediate CA Precertificate that contains the
+            An intermediate CA certificate or intermediate CA precertificate that contains the
 critical or non-critical <xref target="RFC5280">Name Constraints</xref> extension
 MAY be logged in place of end-entity certificates issued by that intermediate
 CA, as long as all of the following conditions are met:
@@ -563,7 +563,7 @@ SEQUENCE {
         </t>
         <t>
           <spanx style="verb">tbs_certificate</spanx> is the DER-encoded
-TBSCertificate component of the Precertificate. Note that it is also possible to
+TBSCertificate component of the precertificate. Note that it is also possible to
 reconstruct this TBSCertificate from the issued certificate by extracting the
 TBSCertificate from it, redacting the domain name labels indicated by the
 redacted labels extension, and deleting the SCT list extension and redacted
@@ -641,7 +641,7 @@ body:
           At least one SCT MUST be included. Server operators MAY include more than one SCT.
         </t>
         <t>
-          Similarly, a certification authority MAY submit a Precertificate to more
+          Similarly, a certification authority MAY submit a precertificate to more
 than one log, and all obtained SCTs can be directly embedded in the issued
 certificate, by encoding the SignedCertificateTimestampList structure as an
 ASN.1 OCTET STRING and inserting the resulting data in the TBSCertificate as a
@@ -907,11 +907,11 @@ messages.
             <t hangText="Inputs:">
               <list style="hanging">
 		<t hangText="precertificate:">
-                  The base64-encoded Precertificate.
+                  The base64-encoded precertificate.
 		</t>
 		<t hangText="chain:">
                   An array of base64-encoded CA certificates. The first element is
-the signer of the Precertificate; the second chains to the first and so on to
+the signer of the precertificate; the second chains to the first and so on to
 the last, which is either the root certificate or a certificate that chains to
 an accepted root certificate.
 		</t>
@@ -1258,12 +1258,12 @@ but it is expected there will be a variety.
       </section>
       <section title="Submitters">
         <t>
-          Submitters submit certificates or Precertificates to the log as described above. When a Submitter intends to use the returned SCT directly in a TLS handshake or to construct a certificate, they SHOULD validate the SCT as described in <xref target="tls_clients"/> if they understand its format.
+          Submitters submit certificates or precertificates to the log as described above. When a Submitter intends to use the returned SCT directly in a TLS handshake or to construct a certificate, they SHOULD validate the SCT as described in <xref target="tls_clients"/> if they understand its format.
         </t>
       </section>
       <section title="TLS Client" anchor="tls_clients">
         <t>
-          TLS clients receive SCTs alongside or in certificates, either for the server certificate itself or for intermediate CA Precertificates. In
+          TLS clients receive SCTs alongside or in certificates, either for the server certificate itself or for intermediate CA precertificates. In
 addition to normal validation of the certificate and its chain, TLS clients
 SHOULD validate the SCT by computing the signature input from the SCT data as
 well as the certificate and verifying the signature, using the corresponding
@@ -1342,7 +1342,7 @@ the STH changes.
           A <xref target="monitor">monitor</xref> can audit by verifying the consistency of STHs it receives, ensure that each entry can be fetched and that the STH is indeed the result of making a tree from all fetched entries.
         </t>
         <t>
-          A <xref target="tls_clients">TLS client</xref> can audit by verifying an SCT against any STH dated after the SCT timestamp + the Maximum Merge Delay by requesting a Merkle inclusion proof (<xref target="fetch_proof"/>). It can also verify that the SCT corresponds to the certificate it arrived with (i.e. the log entry is that certificate, is a Precertificate for that certificate or is an appropriate name-constrained intermediate [see <xref target="name_constrained"/>]).
+          A <xref target="tls_clients">TLS client</xref> can audit by verifying an SCT against any STH dated after the SCT timestamp + the Maximum Merge Delay by requesting a Merkle inclusion proof (<xref target="fetch_proof"/>). It can also verify that the SCT corresponds to the certificate it arrived with (i.e. the log entry is that certificate, is a precertificate for that certificate or is an appropriate name-constrained intermediate [see <xref target="name_constrained"/>]).
         </t>
       </section>
     </section>
@@ -1391,13 +1391,13 @@ corrective action when a misissue is detected.
       </section>
       <section title="Redaction of Public Domain Name Labels">
         <t>
-          CAs SHOULD NOT redact domain name labels in Precertificates such that the entirety of the domain space below the unredacted part of the domain name is not owned or controlled by a single entity
+          CAs SHOULD NOT redact domain name labels in precertificates such that the entirety of the domain space below the unredacted part of the domain name is not owned or controlled by a single entity
 (e.g. <spanx style="verb">?.com</spanx> and
 <spanx style="verb">?.co.uk</spanx> would both be problematic). Logs
-MUST NOT reject any Precertificate that is overly redacted but which is
+MUST NOT reject any precertificate that is overly redacted but which is
 otherwise considered compliant. It is expected that monitors will treat overly
-redacted Precertificates as potentially misissued. TLS clients MAY reject a
-certificate whose corresponding Precertificate would be overly redacted, perhaps using the same mechanism for determining whether a wildcard in a domain name of a certificate is too broad.
+redacted precertificates as potentially misissued. TLS clients MAY reject a
+certificate whose corresponding precertificate would be overly redacted, perhaps using the same mechanism for determining whether a wildcard in a domain name of a certificate is too broad.
         </t>
       </section>
       <section title="Misbehaving Logs">
