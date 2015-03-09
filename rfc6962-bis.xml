@@ -619,7 +619,7 @@ SignedCertificateTimestamp v2. Currently, no extensions are specified.
 from at least one log must be included in the TLS handshake by using one or more
 of the mechanisms listed below. Three mechanisms are provided because they have
 different tradeoffs. TLS clients MUST implement all three mechanisms. TLS
-servers MUST implement at least one of the three mechanisms.
+servers MUST present SCTs using at least one of the three mechanisms.
           <list style="symbols">
             <t>
               A TLS extension (Section 7.4.1.4 of <xref target='RFC5246'/>) with
