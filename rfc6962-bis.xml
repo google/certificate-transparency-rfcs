@@ -622,14 +622,14 @@ different tradeoffs. TLS clients MUST implement all three mechanisms. TLS
 servers MUST implement at least one of the three mechanisms.
           <list style="symbols">
             <t>
-              a TLS extension (Section 7.4.1.4 of <xref target='RFC5246'/>) with
+              A TLS extension (Section 7.4.1.4 of <xref target='RFC5246'/>) with
 type <spanx style="verb">signed_certificate_timestamp</spanx>
 (see <xref target="tls_sctlist_extension"/>). This mechanism allows TLS servers
 to participate in CT without the cooperation of CAs, unlike the other two
 mechanisms. It also allows SCTs to be updated on the fly.
             </t>
             <t>
-              an <xref target='RFC6960'>Online Certificate Status Protocol
+              An <xref target='RFC6960'>Online Certificate Status Protocol
 (OCSP)</xref> response extension (see <xref target="ocsp_sctlist_extension"/>),
 where the OCSP response is provided in the
 <spanx style="verb">certificate_status</spanx> TLS extension (Section 8 of
@@ -638,7 +638,7 @@ already widely (but not universally) implemented. It also allows SCTs to be
 updated on the fly.
             </t>
             <t>
-              an X509v3 certificate extension
+              An X509v3 certificate extension
 (see <xref target="cert_sctlist_extension"/>). This mechanism allows the use of
 unmodified TLS servers, but, because the included SCTs cannot be changed without
 re-issuing the certificate, increases the risk that the certificate will be
