@@ -350,6 +350,9 @@ certificate. This does not involve using the
 <spanx style="verb">SignedData.certificates</spanx> field, so that field SHOULD
 be omitted.
         </t>
+	<t>
+	  The CMS object MUST be DER encoded.
+	</t>
         <t>
           Logs MUST verify that the submitted certificate or precertificate has
 a valid signature chain to an accepted root certificate, using the chain of
