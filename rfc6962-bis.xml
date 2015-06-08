@@ -794,9 +794,9 @@ signatures.
           The leaves of the Merkle Tree are the leaf hashes of the corresponding <spanx style="verb">MerkleTreeLeaf</spanx> structures.
         </t>
       </section>
-      <section title="Signed Tree Head">
+      <section title="Signed Tree Head" anchor="STH">
         <t>
-        Every time a log appends new entries to the tree, the log SHOULD sign the corresponding tree hash and tree information (see the corresponding Signed Tree Head client message in <xref target="fetch_sth"/>). The signature for that data is structured as follows:
+        Periodically the log SHOULD sign the corresponding tree hash and tree information (see the corresponding Signed Tree Head client message in <xref target="fetch_sth"/>). The signature for that data is structured as follows:
         </t>
 
 	<figure>
@@ -825,7 +825,7 @@ signatures.
         <t>
           <spanx style="verb">sha256_root_hash</spanx> is the root of the Merkle Hash Tree.
         </t>
-        <t>Each log MUST produce on demand a Signed Tree Head that is no older than the Maximum Merge Delay. In the unlikely event that it receives no new submissions during an MMD period, the log SHALL sign the same Merkle Tree Hash with a fresh timestamp.
+        <t>Each log MUST produce on demand a Signed Tree Head that is no older than the Maximum Merge Delay. However, Signed Tree Heads could be used to mark individual clients (by producing a new one for each query), so logs MUST NOT produce them more frequently than is declared in their metadata. In general, there is no need to produce a new Signed Tree Head unless there are new entries in the log, however, in the unlikely event that it receives no new submissions during an MMD period, the log SHALL sign the same Merkle Tree Hash with a fresh timestamp.
         </t>
       </section>
     </section>
@@ -1297,6 +1297,12 @@ but it is expected there will be a variety.
 	  </t>
 	  <t hangText="Maximum Merge Delay">
 	    The MMD the log has committed to.
+	  </t>
+	  <t hangText="STH Frequency Period">
+	    The time, in seconds, over which <spanx style="verb">STH Frequency Count</spanx> is measured (see <xref target="STH"/>).
+	  </t>
+	  <t hangText="STH Frequency Count">
+	    The maximum number of STHs the log may produce in any <spanx style="verb">STH Frequency Period</spanx> (see <xref target="STH"/>).
 	  </t>
 	  <t hangText="Final STH">
 	    If a log has been closed down (i.e. no longer accepts new entries), existing entries may still be valid. In this case, the client should know the final valid STH in the log to ensure no new entries can be added without detection.
