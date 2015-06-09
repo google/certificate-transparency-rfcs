@@ -1295,11 +1295,8 @@ but it is expected there will be a variety.
 	  <t hangText="Maximum Merge Delay">
 	    The MMD the log has committed to.
 	  </t>
-	  <t hangText="STH Frequency Period">
-	    The time, in seconds, over which <spanx style="verb">STH Frequency Count</spanx> is measured (see <xref target="STH"/>).
-	  </t>
 	  <t hangText="STH Frequency Count">
-	    The maximum number of STHs the log may produce in any <spanx style="verb">STH Frequency Period</spanx> (see <xref target="STH"/>).
+	    The maximum number of STHs the log may produce in any period equal to the <spanx style="verb">Maximum Merge Delay</spanx> (see <xref target="STH"/>).
 	  </t>
 	  <t hangText="Final STH">
 	    If a log has been closed down (i.e. no longer accepts new entries), existing entries may still be valid. In this case, the client should know the final valid STH in the log to ensure no new entries can be added without detection.
