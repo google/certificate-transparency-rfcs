@@ -1298,6 +1298,9 @@ but it is expected there will be a variety.
 	  <t hangText="Maximum Merge Delay">
 	    The MMD the log has committed to.
 	  </t>
+          <t hangText="Version">
+            The version of the protocol supported by the log (currently 1 or 2).
+          </t>
 	  <t hangText="Final STH">
 	    If a log has been closed down (i.e. no longer accepts new entries), existing entries may still be valid. In this case, the client should know the final valid STH in the log to ensure no new entries can be added without detection.
 	  </t>
