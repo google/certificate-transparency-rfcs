@@ -351,7 +351,7 @@ certificate. This does not involve using the
 be omitted.
         </t>
 	<t>
-	  The CMS object MUST be DER encoded.
+	  The CMS object MUST be DER encoded. Note that, because of the structure of CMS, the signature on the CMS object will not be a valid X.509v3 signature and so cannot be used to construct a certificate from the precertificate.
 	</t>
         <t>
           Logs MUST verify that the submitted certificate or precertificate has
