@@ -363,7 +363,7 @@ certificates and precertificates that have expired, are not yet valid, have been
 revoked, or are otherwise not fully valid according to X.509 verification rules
 in order to accommodate quirks of CA certificate-issuing software. However, logs
 MUST reject certificates without a valid signature chain to an accepted root
-certificate. Logs MUST also reject precertifictes that are not valid DER encoded CMS signed-data objects. If a certificate is accepted and an SCT issued, the accepting log
+certificate. Logs MUST also reject precertificates that are not valid DER encoded CMS signed-data objects. If a certificate is accepted and an SCT issued, the accepting log
 MUST store the entire chain used for verification, including the certificate or
 precertificate itself and including the root certificate used to verify the
 chain (even if it was omitted from the submission), and MUST present this chain
