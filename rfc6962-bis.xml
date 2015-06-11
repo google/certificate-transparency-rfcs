@@ -380,14 +380,6 @@ following components:
   <artwork>
     enum { x509_entry(0), precert_entry_V2(3), (65535) } LogEntryType;
 
-    struct {
-        LogEntryType entry_type;
-        select (entry_type) {
-            case x509_entry: X509ChainEntry;
-            case precert_entry_V2: PrecertChainEntryV2;
-        } entry;
-    } LogEntry;
-
     opaque ASN.1Cert&lt;1..2^24-1&gt;;
 
     struct {
