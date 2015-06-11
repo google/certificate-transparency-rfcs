@@ -577,10 +577,10 @@ labels extension.
             uint64 timestamp;
             LogEntryType entry_type;
             select(entry_type) {
-                case x509_entry: ASN.1Cert;
+                case x509_entry: TBSCertificate;
                 case precert_entry_V2: TBSCertificate;
             } signed_entry;
-           CtExtensions extensions;
+            CtExtensions extensions;
         };
     } SignedCertificateTimestamp;
           </artwork>
@@ -599,9 +599,7 @@ protocol to which the SCT conforms. This version is v2.
           <spanx style="verb">entry_type</spanx> may be implicit from the context in which the SCT is presented.
         </t>
         <t>
-          <spanx style="verb">signed_entry</spanx> is the <spanx
-style="verb">leaf_certificate</spanx> (in the case of an X509ChainEntry) or is the
-TBSCertificate (in the case of a PrecertChainEntryV2), as described above.
+          <spanx style="verb">signed_entry</spanx> is the TBSCertificate from either the <spanx style="verb">leaf_certificate</spanx> (in the case of an X509ChainEntry) or the <spanx style="verb">pre_certificate</spanx> (in the case of a PrecertChainEntryV2).
         </t>
         <t>
           <spanx style="verb">extensions</spanx> are future extensions to
@@ -755,7 +753,7 @@ signatures.
         uint64 timestamp;
         LogEntryType entry_type;
         select(entry_type) {
-            case x509_entry: ASN.1Cert;
+            case x509_entry: TBSCertificate;
             case precert_entry_V2: TBSCertificate;
         } signed_entry;
         CtExtensions extensions;
