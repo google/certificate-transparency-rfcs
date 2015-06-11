@@ -1179,7 +1179,7 @@ an accepted root certificate.
 
       <section title="Retrieve Entries from Log" anchor="fetch_entries">
         <t>
-          GET https://&lt;log server&gt;/ct/v1/get-entries
+          GET https://&lt;log server&gt;/ct/v2/get-entries
         </t>
         <t>
 	  <list style="hanging">
@@ -1189,7 +1189,7 @@ an accepted root certificate.
 		  0-based index of first entry to retrieve, in decimal.
 		</t>
 		<t hangText="end:">
-		  0-based index of last entry to retrieve, in decimal.
+		  (optional) 0-based index of last entry to retrieve, in decimal.  If this parameter is not specified, then the log should treat it as being equal to the <spanx style="verb">tree_size - 1</spanx>.
 		</t>
               </list>
 	    </t>
