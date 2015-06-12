@@ -382,16 +382,13 @@ following components:
 
     opaque ASN.1Cert&lt;1..2^24-1&gt;;
 
-    struct {
-        ASN.1Cert leaf_certificate;
-        ASN.1Cert certificate_chain&lt;0..2^24-1&gt;;
-    } X509ChainEntry;
+    ASN.1Cert CertificateChain&lt;0..2^24-1&gt;;
 
     opaque CMSPrecert&lt;1..2^24-1&gt;;
 
     struct {
         CMSPrecert pre_certificate;
-        ASN.1Cert precertificate_chain&lt;0..2^24-1&gt;;
+        CertificateChain precertificate_chain;
     } PrecertChainEntryV2;
   </artwork>
 </figure>
@@ -405,7 +402,7 @@ following components:
           <spanx style="verb">leaf_certificate</spanx> is the end-entity certificate submitted for auditing.
         </t>
         <t>
-          <spanx style="verb">certificate_chain</spanx> is a chain of additional certificates required to verify the end-entity certificate. The first certificate MUST certify the end-entity certificate. Each following certificate MUST directly certify the one preceding it. The final certificate MUST either be, or be issued by, a root certificate accepted by the log.
+          <spanx style="verb">CertificateChain</spanx> is a chain of additional certificates required to verify the end-entity certificate. The first certificate MUST certify the end-entity certificate. Each following certificate MUST directly certify the one preceding it. The final certificate MUST either be, or be issued by, a root certificate accepted by the log.
         </t>
         <t>
           <spanx style="verb">pre_certificate</spanx> is the precertificate submitted for auditing.
@@ -576,10 +573,7 @@ labels extension.
             SignatureType signature_type = certificate_timestamp;            
             uint64 timestamp;
             LogEntryType entry_type;
-            select(entry_type) {
-                case x509_entry: TBSCertificate;
-                case precert_entry_V2: TBSCertificate;
-            } signed_entry;
+            TBSCertificate signed_entry;
             CtExtensions extensions;
         };
     } SignedCertificateTimestamp;
@@ -599,7 +593,7 @@ protocol to which the SCT conforms. This version is v2.
           <spanx style="verb">entry_type</spanx> may be implicit from the context in which the SCT is presented.
         </t>
         <t>
-          <spanx style="verb">signed_entry</spanx> is the TBSCertificate from either the <spanx style="verb">leaf_certificate</spanx> (in the case of an X509ChainEntry) or the <spanx style="verb">pre_certificate</spanx> (in the case of a PrecertChainEntryV2).
+          <spanx style="verb">signed_entry</spanx> is the TBSCertificate from the end-entity certificate submitted for auditing, whether that be an X509 certificate or a precertificate.
         </t>
         <t>
           <spanx style="verb">extensions</spanx> are future extensions to
@@ -1192,7 +1186,7 @@ an accepted root certificate.
                       The base64-encoded MerkleTreeLeaf structure.
                     </t>
                     <t hangText="extra_data:">
-                      The base64-encoded unsigned data pertaining to the log entry. In the case of an X509ChainEntry, this is the <spanx style="verb">certificate_chain</spanx>. In the case of a PrecertChainEntryV2, this is the whole <spanx style="verb">PrecertChainEntryV2</spanx>.
+                      The base64-encoded unsigned data pertaining to the log entry. When the <spanx style="verb">leaf_input</spanx> has <spanx style="verb">entry_type == x509_entry</spanx>, then this is a <spanx style="verb">CertificateChain</spanx>.  When the <spanx style="verb">leaf_input</spanx> has <spanx style="verb">entry_type == precert_entry_V2</spanx>, this is a <spanx style="verb">PrecertChainEntryV2</spanx>.
                     </t>
 		  </list>
 		</t>
