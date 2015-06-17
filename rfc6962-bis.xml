@@ -1167,9 +1167,9 @@ an accepted root certificate.
 	</t>
       </section>
 
-      <section title="Retrieve Entries from Log" anchor="fetch_entries">
+      <section title="Retrieve Entries and STH from Log" anchor="fetch_entries">
         <t>
-          GET https://&lt;log server&gt;/ct/v1/get-entries
+          GET https://&lt;log server&gt;/ct/v2/get-entries
         </t>
         <t>
 	  <list style="hanging">
@@ -1196,6 +1196,18 @@ an accepted root certificate.
                     </t>
 		  </list>
 		</t>
+		<t hangText="tree_size:">
+		  The size of the tree, in entries, in decimal.
+		</t>
+		<t hangText="timestamp:">
+		  The timestamp, in decimal.
+		</t>
+		<t hangText="sha256_root_hash:">
+		  The Merkle Tree Hash of the tree, in base64.
+		</t>
+		<t hangText="tree_head_signature:">
+		  A TreeHeadSignature for the above data.
+		</t>
               </list>
 	    </t>
           </list>
@@ -1212,8 +1224,11 @@ treating unrecognized leaves as opaque input to the tree.
         <t>
           The <spanx style="verb">start</spanx> and <spanx style="verb">end</spanx> parameters SHOULD be within the range 0 &lt;= x &lt; <spanx style="verb">tree_size</spanx> as returned by <spanx style="verb">get-sth</spanx> in <xref target="fetch_sth"/>.
         </t>
+	<t>
+	  The <spanx style="verb">start</spanx> parameter MUST be less than or equal to the <spanx style="verb">end</spanx> parameter.
+	</t>
         <t>
-          Logs MAY honor requests where 0 &lt;= <spanx style="verb">start</spanx> &lt; <spanx style="verb">tree_size</spanx> and <spanx style="verb">end</spanx> &gt;= <spanx style="verb">tree_size</spanx> by returning a partial response covering only the valid entries in the specified range. Note that the following restriction may also apply:
+          Log servers MUST honor requests where 0 &lt;= <spanx style="verb">start</spanx> &lt; <spanx style="verb">tree_size</spanx> and <spanx style="verb">end</spanx> &gt;= <spanx style="verb">tree_size</spanx> by returning a partial response covering only the valid entries in the specified range. <spanx style="verb">end</spanx> &gt;= <spanx style="verb">tree_size</spanx> could be caused by skew. Note that the following restriction may also apply:
         </t>
         <t>
           Logs MAY restrict the number of entries that can be retrieved per
@@ -1224,6 +1239,9 @@ entry specified by <spanx style="verb">start</spanx>.
         </t>
 	<t>
 	  Because of skew, it is possible the log server will not have any entries between <spanx style="verb">start</spanx> and <spanx style="verb">end</spanx>. In this case it MUST return an empty <spanx style="verb">entries</spanx> array.
+	</t>
+	<t>
+	  In any case, the log server MUST return the latest STH it knows about.
 	</t>
       </section>
 
