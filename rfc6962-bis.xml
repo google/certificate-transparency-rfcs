@@ -1243,7 +1243,7 @@ entry specified by <spanx style="verb">start</spanx>.
 	  Because of skew, it is possible the log server will not have any entries between <spanx style="verb">start</spanx> and <spanx style="verb">end</spanx>. In this case it MUST return an empty <spanx style="verb">entries</spanx> array.
 	</t>
 	<t>
-	  In any case, the log server MUST return the latest STH it knows about in case of skew.
+	  In any case, the log server MUST return the latest STH it knows about when <spanx style="verb">start</spanx> is beyond that STH, and also when the last entry returned is the last entry corresponding to that STH. The log server MAY return the latest STH it knows at any other time.
 	</t>
       </section>
 
