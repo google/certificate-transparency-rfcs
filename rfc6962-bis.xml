@@ -1196,6 +1196,9 @@ an accepted root certificate.
                     <t hangText="extra_data:">
                       The base64-encoded unsigned data pertaining to the log entry. In the case of an X509ChainEntry, this is the <spanx style="verb">certificate_chain</spanx>. In the case of a PrecertChainEntryV2, this is the whole <spanx style="verb">PrecertChainEntryV2</spanx>.
                     </t>
+		    <t hangText="sct:">
+		      A base64-encoded <spanx style="verb">SignedCertificateTimestamp</spanx> for this entry. Note that more than one SCT may have been returned for the same entry - only one of those is returned in this field. It may not be possible to retrieve others.
+		    </t>
 		  </list>
 		</t>
               </list>
