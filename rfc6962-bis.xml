@@ -1169,7 +1169,7 @@ an accepted root certificate.
 
       <section title="Retrieve Entries from Log" anchor="fetch_entries">
         <t>
-          GET https://&lt;log server&gt;/ct/v1/get-entries
+          GET https://&lt;log server&gt;/ct/v2/get-entries
         </t>
         <t>
 	  <list style="hanging">
@@ -1193,6 +1193,9 @@ an accepted root certificate.
                     </t>
                     <t hangText="extra_data:">
                       The base64-encoded unsigned data pertaining to the log entry. In the case of an X509ChainEntry, this is the <spanx style="verb">certificate_chain</spanx>. In the case of a PrecertChainEntryV2, this is the whole <spanx style="verb">PrecertChainEntryV2</spanx>.
+                    </t>
+                    <t hangText="signed_certificate_timestamp:">
+                      A Signed Certificate Timestamp for the entry, in the same format as in <xref target="sct"/>.
                     </t>
 		  </list>
 		</t>
