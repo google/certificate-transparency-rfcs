@@ -378,21 +378,21 @@ following components:
         </t>
 <figure>
   <artwork>
-   enum { x509_entry(0), precert_entry_V2(3), (65535) } LogEntryType;
+    enum { x509_entry(0), precert_entry_V2(3), (65535) } LogEntryType;
 
-   opaque ASN.1Cert&lt;1..2^24-1&gt;;
+    opaque ASN.1Cert&lt;1..2^24-1&gt;;
 
-   struct {
-       ASN.1Cert leaf_certificate;
-       ASN.1Cert certificate_chain&lt;0..2^24-1&gt;;
-   } X509ChainEntry;
+    struct {
+        ASN.1Cert leaf_certificate;
+        ASN.1Cert certificate_chain&lt;0..2^24-1&gt;;
+    } X509ChainEntry;
 
-   opaque CMSPrecert&lt;1..2^24-1&gt;;
+    opaque CMSPrecert&lt;1..2^24-1&gt;;
 
-   struct {
-       CMSPrecert pre_certificate;
-       ASN.1Cert precertificate_chain&lt;0..2^24-1&gt;;
-   } PrecertChainEntryV2;
+    struct {
+        CMSPrecert pre_certificate;
+        ASN.1Cert precertificate_chain&lt;0..2^24-1&gt;;
+    } PrecertChainEntryV2;
   </artwork>
 </figure>
         <t>
@@ -791,16 +791,16 @@ signatures.
 
 	<figure>
 	  <artwork>
-            enum { v1(0), (255) } TreeHeadVersion;
+	    enum { v1(0), (255) } TreeHeadVersion;
 
-            digitally-signed struct {
+	    digitally-signed struct {
               TreeHeadVersion version;
               SignatureType signature_type = tree_hash;
               uint64 timestamp;
               uint64 tree_size;
               opaque sha256_root_hash[32];
-            } TreeHeadSignature;
-          </artwork>
+	    } TreeHeadSignature;
+	  </artwork>
 	</figure>
 
         <t>
