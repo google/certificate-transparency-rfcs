@@ -1466,16 +1466,7 @@ the STH changes.
                  For each <spanx style="verb">i</spanx> from <spanx style="verb">0</spanx> up to <spanx style="verb">tree_size - 1</spanx>:
                  <list style="numbers">
                    <t>Push <spanx style="verb">HASH(0x00 || entries[i])</spanx> to <spanx style="verb">stack</spanx>.</t>
-                   <t>
-                     If <spanx style="verb">i + 1</spanx> is equal to <spanx style="verb">tree_size</spanx> then:
-                     <list style="empty">
-                       <t>Set <spanx style="verb">merge_count</spanx> to <spanx style="verb">LENGTH(stack) - 1</spanx>.</t>
-                     </list>
-                     Otherwise:
-                     <list style="empty">
-                       <t>Set <spanx style="verb">merge_count</spanx> to the lowest value (<spanx style="verb">0</spanx> included) such that <spanx style="verb">LSB(i >> merge_count)</spanx> is not set.  In other words, set <spanx style="verb">merge_count</spanx> to the number of consecutive <spanx style="verb">1</spanx>s found starting at the least significant bit of <spanx style="verb">i</spanx>.</t>
-                     </list>
-                   </t>
+                   <t>Set <spanx style="verb">merge_count</spanx> to the lowest value (<spanx style="verb">0</spanx> included) such that <spanx style="verb">LSB(i >> merge_count)</spanx> is not set.  In other words, set <spanx style="verb">merge_count</spanx> to the number of consecutive <spanx style="verb">1</spanx>s found starting at the least significant bit of <spanx style="verb">i</spanx>.</t>
                    <t>
                      Repeat <spanx style="verb">merge_count</spanx> times:
                      <list style="numbers">
@@ -1486,6 +1477,7 @@ the STH changes.
                    </t>
                  </list>
                </t>
+               <t>If there is more than one element in the <spanx style="verb">stack</spanx>, repeat the same merge procedure (Step 2.3 above) until only a single element remains.</t>
                <t>The remaining element in <spanx style="verb">stack</spanx> is the Merkle Tree hash for the given <spanx style="verb">tree_size</spanx> and should be compared by equality against the supplied <spanx style="verb">sha256_root_hash</spanx>.</t>
             </list>
           </t>
