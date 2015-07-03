@@ -1444,7 +1444,7 @@ the STH changes.
                     <vspace blankLines="0" />
                     Set <spanx style="verb">sr</spanx> to <spanx style="verb">HASH(0x01 || c || sr)</spanx>
                   </t>
-                  <t>If <spanx style="verb">LSB(fn)</spanx> is not set, then right-shift both <spanx style="verb">fn</spanx> and <spanx style="verb">fn</spanx> equally until <spanx style="verb">LSB(fn)</spanx> is set.</t>
+                  <t>If <spanx style="verb">LSB(fn)</spanx> is not set, then right-shift both <spanx style="verb">fn</spanx> and <spanx style="verb">sn</spanx> equally until <spanx style="verb">LSB(fn)</spanx> is set.</t>
                 </list>
                 Otherwise:
                 <list style="empty">
