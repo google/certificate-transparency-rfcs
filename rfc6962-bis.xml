@@ -1015,10 +1015,10 @@ an accepted root certificate.
 		  The Merkle Tree Hash of the tree, in base64.
 		</t>
 		<t hangText="tree_head_signature:">
-		  A TreeHeadSignature for the <spanx style="verb">tree_size</spanx>, <spanx style="verb">timestamp</spanx> and <spanx style="verb">sha256_root_hash</spanx>.
+		  A TreeHeadSignature for <spanx style="verb">tree_size</spanx>, <spanx style="verb">timestamp</spanx> and <spanx style="verb">sha256_root_hash</spanx>.
 		</t>
               </list>
-              Note that no signature is required on the <spanx style="verb">consistency</spanx> output, as it is used to verify an STH, which is signed.
+              Note that no signature is required for the <spanx style="verb">consistency</spanx> output as it is used to verify an STH, which is signed.
             </t>
 	    <t hangText="Error codes:">
 	      <list style="hanging">
@@ -1069,10 +1069,10 @@ an accepted root certificate.
 		  The Merkle Tree Hash of the tree, in base64.
 		</t>
 		<t hangText="tree_head_signature:">
-		  A TreeHeadSignature for the <spanx style="verb">tree_size</spanx>, <spanx style="verb">timestamp</spanx> and <spanx style="verb">sha256_root_hash</spanx>.
+		  A TreeHeadSignature for <spanx style="verb">tree_size</spanx>, <spanx style="verb">timestamp</spanx> and <spanx style="verb">sha256_root_hash</spanx>.
 		</t>
               </list>
-              Note that no signature is required on the <spanx style="verb">leaf_index</spanx>, <spanx style="verb">audit_path</spanx> output, as this is used to verify inclusion in an STH, which is signed.
+              Note that no signature is required for the <spanx style="verb">leaf_index</spanx> or <spanx style="verb">audit_path</spanx> output as this is used to verify inclusion in an STH, which is signed.
 	    </t>
 	    <t hangText="Error codes:">
 	      <list style="hanging">
@@ -1142,13 +1142,13 @@ an accepted root certificate.
 		  The Merkle Tree Hash of the tree, in base64.
 		</t>
 		<t hangText="tree_head_signature:">
-		  A TreeHeadSignature for the <spanx style="verb">tree_size</spanx>, <spanx style="verb">timestamp</spanx> and <spanx style="verb">sha256_root_hash</spanx>.
+		  A TreeHeadSignature for <spanx style="verb">tree_size</spanx>, <spanx style="verb">timestamp</spanx> and <spanx style="verb">sha256_root_hash</spanx>.
 		</t>
 		<t hangText="consistency:">
 		  An array of base64-encoded Merkle Tree nodes proving the consistency of the requested STH and the returned STH.
 		</t>
               </list>
-              Note that no signature is required on the <spanx style="verb">leaf_index</spanx>, <spanx style="verb">audit_path</spanx> or <spanx style="verb">consistency</spanx> output, as this is used to verify inclusion in and consistency of an STH, which is signed.
+              Note that no signature is required for the <spanx style="verb">leaf_index</spanx>, <spanx style="verb">audit_path</spanx> or <spanx style="verb">consistency</spanx> output as this is used to verify inclusion in and consistency of an STH, which is signed.
 	    </t>
 	    <t>
 	      Errors are the same as in <xref target="fetch_proof"/>.
@@ -1199,7 +1199,7 @@ an accepted root certificate.
 		  The Merkle Tree Hash of the tree, in base64.
 		</t>
 		<t hangText="tree_head_signature:">
-		  A TreeHeadSignature for the <spanx style="verb">tree_size</spanx>, <spanx style="verb">timestamp</spanx> and <spanx style="verb">sha256_root_hash</spanx>.
+		  A TreeHeadSignature for <spanx style="verb">tree_size</spanx>, <spanx style="verb">timestamp</spanx> and <spanx style="verb">sha256_root_hash</spanx>.
 		</t>
               </list>
 	    </t>
