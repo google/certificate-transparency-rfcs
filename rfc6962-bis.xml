@@ -541,7 +541,7 @@ SEQUENCE {
     enum { certificate_timestamp(0), tree_hash(1), (255) }
       SignatureType;
 
-    enum { v1(0), v2(1), (255) }
+    enum { v2(1), (255) }
       Version;
 
       struct {
@@ -590,7 +590,7 @@ labels extension.
         </t>
         <t>
           <spanx style="verb">sct_version</spanx> is the version of the
-protocol to which the SCT conforms. This version is v2.
+protocol to which the SCT conforms. This version is v2. Note that <xref target="RFC6962">SignedCertificateTimestamp v1</xref> had a different definition of <spanx style="verb">signed_entry</spanx>.
         </t>
         <t>
           <spanx style="verb">timestamp</spanx> is the current <xref target="RFC5905">NTP Time</xref>, measured since the epoch (January 1, 1970, 00:00), ignoring leap seconds, in milliseconds.
@@ -916,7 +916,7 @@ messages.
 	  </list>
 	</t>
 	<t>
-          If the version of <spanx style="verb">sct</spanx> is not v1 or v2, then a v2 client may be unable to verify the signature. It MUST NOT construe this as an error. This is to avoid forcing an upgrade of compliant v2 clients that do not use the returned SCTs.
+          If the version of <spanx style="verb">sct</spanx> is not v2, then a v2 client may be unable to verify the signature. It MUST NOT construe this as an error. This is to avoid forcing an upgrade of compliant v2 clients that do not use the returned SCTs.
         </t>
 	<t>
 	  If a log detects bad encoding in a chain that otherwise verifies correctly then the log MAY still log the certificate but SHOULD NOT return an SCT. It should instead return the "bad certificate" error. Logging the certificate is useful, because <xref target="monitor">monitors</xref> can then detect these encoding errors, which may be accepted by some TLS clients.
