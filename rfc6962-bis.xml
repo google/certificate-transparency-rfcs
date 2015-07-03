@@ -550,11 +550,19 @@ SEQUENCE {
 
       opaque TBSCertificate&lt;1..2^24-1&gt;;
 
+      struct {
+          opaque issuer_key_hash[32];
+          TBSCertificate tbs_certificate;
+      } CertInfo;
+
       opaque CtExtensions&lt;0..2^16-1&gt;;
           </artwork>
         </figure>
         <t>
           <spanx style="verb">key_id</spanx> is the SHA-256 hash of the log's public key, calculated over the DER encoding of the key represented as SubjectPublicKeyInfo.
+        </t>
+        <t>
+          <spanx style="verb">issuer_key_hash</spanx> is the SHA-256 hash of the certificate issuer's public key, calculated over the DER encoding of the key represented as SubjectPublicKeyInfo. This is needed to bind the issuer to the final certificate, making it impossible for the SCT to be valid for any other certificate.
         </t>
         <t>
           <spanx style="verb">tbs_certificate</spanx> is the DER-encoded
@@ -577,8 +585,8 @@ labels extension.
             uint64 timestamp;
             LogEntryType entry_type;
             select(entry_type) {
-                case x509_entry: TBSCertificate;
-                case precert_entry_V2: TBSCertificate;
+                case x509_entry: CertInfo;
+                case precert_entry_V2: CertInfo;
             } signed_entry;
             CtExtensions extensions;
         };
@@ -599,7 +607,7 @@ protocol to which the SCT conforms. This version is v2. Note that <xref target="
           <spanx style="verb">entry_type</spanx> may be implicit from the context in which the SCT is presented.
         </t>
         <t>
-          <spanx style="verb">signed_entry</spanx> is the TBSCertificate from either the <spanx style="verb">leaf_certificate</spanx> (in the case of an X509ChainEntry) or the <spanx style="verb">pre_certificate</spanx> (in the case of a PrecertChainEntryV2).
+          <spanx style="verb">signed_entry</spanx> includes the TBSCertificate from either the <spanx style="verb">leaf_certificate</spanx> (in the case of an X509ChainEntry) or the <spanx style="verb">pre_certificate</spanx> (in the case of a PrecertChainEntryV2).
         </t>
         <t>
           <spanx style="verb">extensions</spanx> are future extensions to
@@ -753,8 +761,8 @@ signatures.
         uint64 timestamp;
         LogEntryType entry_type;
         select(entry_type) {
-            case x509_entry: TBSCertificate;
-            case precert_entry_V2: TBSCertificate;
+            case x509_entry: CertInfo;
+            case precert_entry_V2: CertInfo;
         } signed_entry;
         CtExtensions extensions;
     } TimestampedEntry;
