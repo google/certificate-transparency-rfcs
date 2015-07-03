@@ -761,8 +761,8 @@ signatures.
         uint64 timestamp;
         LogEntryType entry_type;
         select(entry_type) {
-            case x509_entry: TBSCertificate;
-            case precert_entry_V2: TBSCertificate;
+            case x509_entry: CertInfo;
+            case precert_entry_V2: CertInfo;
         } signed_entry;
         CtExtensions extensions;
     } TimestampedEntry;
