@@ -125,9 +125,9 @@ Section 4 of <xref target="RFC5246"/>.
     <section title="Cryptographic Components">
       <section title="Merkle Hash Trees">
         <t>
-          Logs use a binary Merkle Hash Tree for efficient auditing. The hashing algorithm used by each log is expected to be specified as part of the metadata relating to that log. We have established a registry of acceptable algorithms, see <xref target="hash_algorithms"/>. The hashing algorithm in use is referred to as HASH throughout this document. The input to the Merkle Tree Hash is a list
+          Logs use a binary Merkle Hash Tree for efficient auditing. The hashing algorithm used by each log is expected to be specified as part of the metadata relating to that log. We have established a registry of acceptable algorithms, see <xref target="hash_algorithms"/>. The hashing algorithm in use is referred to as HASH throughout this document and the size of its output in bytes as HASH_SIZE. The input to the Merkle Tree Hash is a list
 of data entries; these entries will be hashed to form the leaves of the Merkle
-Hash Tree. The output is a single 32-byte Merkle Tree Hash. Given an ordered
+Hash Tree. The output is a single HASH_SIZE Merkle Tree Hash. Given an ordered
 list of n inputs, D[n] = {d(0), d(1), ..., d(n-1)}, the Merkle Tree Hash (MTH)
 is thus defined as follows:
         </t>
@@ -405,7 +405,7 @@ following components:
           <spanx style="verb">leaf_certificate</spanx> is the end-entity certificate submitted for auditing.
         </t>
         <t>
-          <spanx style="verb">certificate_chain</spanx> is a chain of additional certificates required to verify the end-entity certificate. The first certificate MUST certify the end-entity certificate. Each following certificate MUST directly certify the one preceding it. The final certificate MUST either be, or be issued by, a root certificate accepted by the log.
+          <spanx style="verb">certificate_chain</spanx> is an array of additional certificates required to verify the end-entity certificate. The first certificate MUST certify the end-entity certificate. Each following certificate MUST directly certify the one preceding it. The final certificate MUST either be, or be issued by, a root certificate accepted by the log. If the end-entity certificate is a root certificate, then this array is empty.
         </t>
         <t>
           <spanx style="verb">pre_certificate</spanx> is the precertificate submitted for auditing.
@@ -545,13 +545,13 @@ SEQUENCE {
       Version;
 
       struct {
-          opaque key_id[32];
+          opaque key_id[HASH_SIZE];
       } LogID;
 
       opaque TBSCertificate&lt;1..2^24-1&gt;;
 
       struct {
-          opaque issuer_key_hash[32];
+          opaque issuer_key_hash[HASH_SIZE];
           TBSCertificate tbs_certificate;
       } CertInfo;
 
@@ -806,7 +806,7 @@ signatures.
               SignatureType signature_type = tree_hash;
               uint64 timestamp;
               uint64 tree_size;
-              opaque root_hash[32];
+              opaque root_hash[HASH_SIZE];
             } TreeHeadSignature;
           </artwork>
 	</figure>
