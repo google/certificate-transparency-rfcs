@@ -562,7 +562,7 @@ SEQUENCE {
           <spanx style="verb">key_id</spanx> is the SHA-256 hash of the log's public key, calculated over the DER encoding of the key represented as SubjectPublicKeyInfo.
         </t>
         <t>
-          <spanx style="verb">issuer_key_hash</spanx> is the SHA-256 hash of the certificate issuer's public key, calculated over the DER encoding of the key represented as SubjectPublicKeyInfo. This is needed to bind the issuer to the final certificate.
+          <spanx style="verb">issuer_key_hash</spanx> is the SHA-256 hash of the certificate issuer's public key, calculated over the DER encoding of the key represented as SubjectPublicKeyInfo. This is needed to bind the issuer to the final certificate, making it impossible for the SCT to be valid for any other certificate.
         </t>
         <t>
           <spanx style="verb">tbs_certificate</spanx> is the DER-encoded
