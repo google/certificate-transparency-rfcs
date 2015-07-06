@@ -1039,6 +1039,7 @@ an accepted root certificate.
 	    </t>
 	  </list>
 	</t>
+        <t>See <xref target="verify_consistency" /> for an outline of how to use the <spanx style="verb">consistency</spanx> array.</t>
       </section>
 
       <section title="Retrieve Merkle Inclusion Proof from Log by Leaf Hash" anchor="fetch_proof">
@@ -1093,6 +1094,7 @@ an accepted root certificate.
 	    </t>
           </list>
         </t>
+        <t>See <xref target="verify_inclusion" /> for an outline of how to use the <spanx style="verb">audit_path</spanx> array.</t>
       </section>
 
       <section title="Retrieve Merkle Inclusion Proof, Signed Tree Head and Consistency Proof by Leaf Hash">
@@ -1162,6 +1164,7 @@ an accepted root certificate.
             </t>
 	  </list>
 	</t>
+        <t>See <xref target="verify_inclusion" /> for an outline of how to use the <spanx style="verb">audit_path</spanx> array and see <xref target="verify_consistency" /> for an outline of how to use the <spanx style="verb">consistency</spanx> array.</t>
       </section>
 
       <section title="Retrieve Entries and STH from Log" anchor="fetch_entries">
@@ -1243,6 +1246,7 @@ entry specified by <spanx style="verb">start</spanx>.
 	<t>
 	  In any case, the log server MUST return the latest STH it knows about.
 	</t>
+        <t>See <xref target="verify_hash" /> for an outline of how to use a complete list of <spanx style="verb">leaf_input</spanx> entries to verify the <spanx style="verb">root_hash</spanx>.</t>
       </section>
 
       <section title="Retrieve Accepted Root Certificates">
@@ -1408,6 +1412,92 @@ the STH changes.
         <t>
           A <xref target="tls_clients">TLS client</xref> can audit by verifying an SCT against any STH dated after the SCT timestamp + the Maximum Merge Delay by requesting a Merkle inclusion proof (<xref target="fetch_proof"/>). It can also verify that the SCT corresponds to the certificate it arrived with (i.e. the log entry is that certificate, is a precertificate for that certificate or is an appropriate name-constrained intermediate [see <xref target="name_constrained"/>]).
         </t>
+        <t>
+          The following algorithm outlines may be useful for clients that wish to perform various audit operations.
+        </t>
+        <section title="Verifying an inclusion proof" anchor="verify_inclusion">
+          <t>
+            When a client has received an <spanx style="verb">audit_path</spanx> and <spanx style="verb">leaf_index</spanx> and wishes to verify inclusion of an input <spanx style="verb">hash</spanx> for an STH with a given <spanx style="verb">tree_size</spanx> and <spanx style="verb">root_hash</spanx>, the following algorithm may be used to prove the <spanx style="verb">hash</spanx> was included in the <spanx style="verb">root_hash</spanx>:
+            <list style="numbers">
+              <t>Set <spanx style="verb">fn</spanx> to <spanx style="verb">leaf_index</spanx> and <spanx style="verb">sn</spanx> to <spanx style="verb">tree_size - 1</spanx>.</t>
+              <t>Set <spanx style="verb">r</spanx> to <spanx style="verb">hash</spanx>.</t>
+              <t>
+                For each value <spanx style="verb">p</spanx> in the <spanx style="verb">audit_path</spanx> array:
+                <vspace blankLines="1" />
+                If <spanx style="verb">LSB(fn)</spanx> is set, or if <spanx style="verb">fn</spanx> is equal to <spanx style="verb">sn</spanx>, then:
+                <list style="numbers">
+                  <t>
+                    Set <spanx style="verb">r</spanx> to <spanx style="verb">HASH(0x01 || p || r)</spanx>
+                  </t>
+                  <t>If <spanx style="verb">LSB(fn)</spanx> is not set, then right-shift both <spanx style="verb">fn</spanx> and <spanx style="verb">sn</spanx> equally until either <spanx style="verb">LSB(fn)</spanx> is set or <spanx style="verb">fn</spanx> is <spanx style="verb">0</spanx>.</t>
+                </list>
+                Otherwise:
+                <list style="empty">
+                  <t>Set <spanx style="verb">r</spanx> to <spanx style="verb">HASH(0x01 || r || p)</spanx></t>
+                </list>
+                <vspace blankLines="1" />
+                Finally, right-shift both <spanx style="verb">fn</spanx> and <spanx style="verb">sn</spanx> one time.
+              </t>
+              <t>Compare <spanx style="verb">r</spanx> against the <spanx style="verb">root_hash</spanx>. If they are equal, then the log has proven the inclusion of <spanx style="verb">hash</spanx>.</t>
+            </list>
+          </t>
+        </section>
+        <section title="Verifying consistency between two STHs" anchor="verify_consistency">
+          <t>
+            When a client has an STH <spanx style="verb">first_hash</spanx> for tree size <spanx style="verb">first</spanx>, an STH <spanx style="verb">second_hash</spanx> for tree size <spanx style="verb">second</spanx> where <spanx style="verb">0 &lt; first &lt; second</spanx>, and has received a <spanx style="verb">consistency</spanx> array that they wish to use to verify both hashes, the following algorithm may be used:
+            <list style="numbers">
+              <t>If <spanx style="verb">first</spanx> is an exact power of 2, then prepend <spanx style="verb">first_hash</spanx> to the <spanx style="verb">consistency</spanx> array.</t>
+              <t>Set <spanx style="verb">fn</spanx> to <spanx style="verb">first - 1</spanx> and <spanx style="verb">sn</spanx> to <spanx style="verb">second - 1</spanx>.</t>
+              <t>If <spanx style="verb">LSB(fn)</spanx> is set, then right-shift both <spanx style="verb">fn</spanx> and <spanx style="verb">sn</spanx> equally until <spanx style="verb">LSB(fn)</spanx> is not set.</t>
+              <t>Set both <spanx style="verb">fr</spanx> and <spanx style="verb">sr</spanx> to the first value in the <spanx style="verb">consistency</spanx> array.</t>
+              <t>
+                For each subsequent value <spanx style="verb">c</spanx> in the <spanx style="verb">consistency</spanx> array:
+                <vspace blankLines="1" />
+                If <spanx style="verb">LSB(fn)</spanx> is set, or if <spanx style="verb">fn</spanx> is equal to <spanx style="verb">sn</spanx>, then:
+                <list style="numbers">
+                  <t>
+                    Set <spanx style="verb">fr</spanx> to <spanx style="verb">HASH(0x01 || c || fr)</spanx>
+                    <vspace blankLines="0" />
+                    Set <spanx style="verb">sr</spanx> to <spanx style="verb">HASH(0x01 || c || sr)</spanx>
+                  </t>
+                  <t>If <spanx style="verb">LSB(fn)</spanx> is not set, then right-shift both <spanx style="verb">fn</spanx> and <spanx style="verb">sn</spanx> equally until either <spanx style="verb">LSB(fn)</spanx> is set or <spanx style="verb">fn</spanx> is <spanx style="verb">0</spanx>.</t>
+                </list>
+                Otherwise:
+                <list style="empty">
+                  <t>Set <spanx style="verb">sr</spanx> to <spanx style="verb">HASH(0x01 || sr || c)</spanx></t>
+                </list>
+                <vspace blankLines="1" />
+                Finally, right-shift both <spanx style="verb">fn</spanx> and <spanx style="verb">sn</spanx> one time.
+              </t>
+              <t>After completing iterating through the <spanx style="verb">consistency</spanx> array as described above, verify that the <spanx style="verb">fr</spanx> calculated is equal to the <spanx style="verb">first_hash</spanx> supplied and that the <spanx style="verb">sr</spanx> calculated is equal to the <spanx style="verb">second_hash</spanx> supplied.</t>
+            </list>
+          </t>
+        </section>
+        <section title="Verifying root hash given entries" anchor="verify_hash">
+          <t>
+            When a client has a complete list of leaf input <spanx style="verb">entries</spanx> from <spanx style="verb">0</spanx> up to <spanx style="verb">tree_size - 1</spanx> and wishes to verify this list against an STH <spanx style="verb">root_hash</spanx> returned by the log for the same <spanx style="verb">tree_size</spanx>, the following algorithm may be used:
+            <list style="numbers">
+              <t>Set <spanx style="verb">stack</spanx> to an empty stack.</t>
+              <t>
+                 For each <spanx style="verb">i</spanx> from <spanx style="verb">0</spanx> up to <spanx style="verb">tree_size - 1</spanx>:
+                 <list style="numbers">
+                   <t>Push <spanx style="verb">HASH(0x00 || entries[i])</spanx> to <spanx style="verb">stack</spanx>.</t>
+                   <t>Set <spanx style="verb">merge_count</spanx> to the lowest value (<spanx style="verb">0</spanx> included) such that <spanx style="verb">LSB(i >> merge_count)</spanx> is not set.  In other words, set <spanx style="verb">merge_count</spanx> to the number of consecutive <spanx style="verb">1</spanx>s found starting at the least significant bit of <spanx style="verb">i</spanx>.</t>
+                   <t>
+                     Repeat <spanx style="verb">merge_count</spanx> times:
+                     <list style="numbers">
+                       <t>Pop <spanx style="verb">right</spanx> from <spanx style="verb">stack</spanx>.</t>
+                       <t>Pop <spanx style="verb">left</spanx> from <spanx style="verb">stack</spanx>.</t>
+                       <t>Push <spanx style="verb">HASH(0x01 || left || right)</spanx> to <spanx style="verb">stack</spanx>.</t>
+                     </list>
+                   </t>
+                 </list>
+               </t>
+               <t>If there is more than one element in the <spanx style="verb">stack</spanx>, repeat the same merge procedure (Step 2.3 above) until only a single element remains.</t>
+               <t>The remaining element in <spanx style="verb">stack</spanx> is the Merkle Tree hash for the given <spanx style="verb">tree_size</spanx> and should be compared by equality against the supplied <spanx style="verb">root_hash</spanx>.</t>
+            </list>
+          </t>
+        </section>
       </section>
     </section>
     
