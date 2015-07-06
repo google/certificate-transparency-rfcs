@@ -789,7 +789,7 @@ signatures.
           <spanx style="verb">extensions</spanx> are <spanx style="verb">extensions</spanx> of the corresponding SCT.
         </t>
         <t>
-          The leaves of the Merkle Tree are the leaf hashes of the corresponding <spanx style="verb">MerkleTreeLeaf</spanx> structures. Note that leaf hashes are calculated as HASH(0x00 || MerkleTreeLeaf). See <xref target="mht"/> for further details.
+          The leaves of the Merkle Tree are the leaf hashes of the corresponding <spanx style="verb">MerkleTreeLeaf</spanx> structures. Note that <xref target="mht">leaf hashes</xref> are calculated as HASH(0x00 || MerkleTreeLeaf).
         </t>
       </section>
       <section title="Signed Tree Head" anchor="STH">
