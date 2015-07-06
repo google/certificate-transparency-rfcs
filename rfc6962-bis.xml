@@ -378,7 +378,7 @@ following components:
         </t>
 <figure>
   <artwork>
-   enum { x509_entry(0), precert_entry_V2(3), (65535) } LogEntryType;
+   enum { x509_entry(0), precert_entry_V2(2), (65535) } LogEntryType;
 
    opaque ASN.1Cert&lt;1..2^24-1&gt;;
 
