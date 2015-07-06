@@ -1409,18 +1409,24 @@ the STH changes.
           <t>
             When a client has received an <spanx style="verb">audit_path</spanx> and <spanx style="verb">leaf_index</spanx> and wishes to verify inclusion of an input <spanx style="verb">hash</spanx> for an STH with a given <spanx style="verb">tree_size</spanx> and <spanx style="verb">sha256_root_hash</spanx>, the following algorithm may be used to prove the <spanx style="verb">hash</spanx> was included in the <spanx style="verb">sha256_root_hash</spanx>:
             <list style="numbers">
+              <t>Set <spanx style="verb">fn</spanx> to <spanx style="verb">leaf_index</spanx> and <spanx style="verb">sn</spanx> to <spanx style="verb">tree_size - 1</spanx>.</t>
               <t>Set <spanx style="verb">r</spanx> to <spanx style="verb">hash</spanx>.</t>
               <t>
-                For each <spanx style="verb">i</spanx> from <spanx style="verb">0</spanx> up to <spanx style="verb">LENGTH(audit_path) - 1</spanx>:
+                For each value <spanx style="verb">p</spanx> in the <spanx style="verb">audit_path</spanx> array:
                 <vspace blankLines="1" />
-                If the <spanx style="verb">LSB(leaf_index >> i)</spanx> is set, then:
-                <list style="empty">
-                  <t>Set <spanx style="verb">r</spanx> to <spanx style="verb">HASH(0x01 || audit_path[i] || r)</spanx></t>
+                If <spanx style="verb">LSB(fn)</spanx> is set, or if <spanx style="verb">fn</spanx> is equal to <spanx style="verb">sn</spanx>, then:
+                <list style="numbers">
+                  <t>
+                    Set <spanx style="verb">r</spanx> to <spanx style="verb">HASH(0x01 || p || r)</spanx>
+                  </t>
+                  <t>If <spanx style="verb">LSB(fn)</spanx> is not set, then right-shift both <spanx style="verb">fn</spanx> and <spanx style="verb">sn</spanx> equally until <spanx style="verb">LSB(fn)</spanx> is set.</t>
                 </list>
                 Otherwise:
                 <list style="empty">
-                  <t>Set <spanx style="verb">r</spanx> to <spanx style="verb">HASH(0x01 || r || audit_path[i])</spanx></t>
+                  <t>Set <spanx style="verb">r</spanx> to <spanx style="verb">HASH(0x01 || r || p)</spanx></t>
                 </list>
+                <vspace blankLines="1" />
+                Finally, right-shift both <spanx style="verb">fn</spanx> and <spanx style="verb">sn</spanx> one time.
               </t>
               <t>Compare <spanx style="verb">r</spanx> against the <spanx style="verb">sha256_root_hash</spanx>. If they are equal, then the log has proven the inclusion of <spanx style="verb">hash</spanx>.</t>
             </list>
