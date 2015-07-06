@@ -897,14 +897,14 @@ messages.
             <t hangText="Inputs:">
 	      <list style="hanging">
 		<t hangText="chain:">
-		  An array of base64-encoded certificates. The first element is the end-entity certificate; the second chains to the first and so on to the last, which is either the root certificate or a certificate that chains to a known root certificate.
+		  An array of base64 encoded certificates. The first element is the end-entity certificate; the second chains to the first and so on to the last, which is either the root certificate or a certificate that chains to a known root certificate.
 		</t>
 	      </list>
 	    </t>
             <t hangText="Outputs:">
 	      <list style="hanging">
 		<t hangText="sct:">
-		  The base64-encoded <spanx style="verb">SignedCertificateTimestamp</spanx> for the submitted certificate.
+		  The base64 encoded <spanx style="verb">SignedCertificateTimestamp</spanx> for the submitted certificate.
 		</t>
               </list>
 	    </t>
@@ -943,10 +943,10 @@ messages.
             <t hangText="Inputs:">
               <list style="hanging">
 		<t hangText="precertificate:">
-                  The base64-encoded precertificate.
+                  The base64 encoded precertificate.
 		</t>
 		<t hangText="chain:">
-                  An array of base64-encoded CA certificates. The first element is
+                  An array of base64 encoded CA certificates. The first element is
 the signer of the precertificate; the second chains to the first and so on to
 the last, which is either the root certificate or a certificate that chains to
 an accepted root certificate.
@@ -978,10 +978,10 @@ an accepted root certificate.
 		  The timestamp, in decimal.
 		</t>
 		<t hangText="sha256_root_hash:">
-		  The Merkle Tree Hash of the tree, in base64.
+		  The base64 encoded Merkle Tree Hash of the tree.
 		</t>
 		<t hangText="tree_head_signature:">
-		  A base64-encoded TreeHeadSignature for <spanx style="verb">tree_size</spanx>, <spanx style="verb">timestamp</spanx> and <spanx style="verb">sha256_root_hash</spanx>.
+		  A base64 encoded TreeHeadSignature for <spanx style="verb">tree_size</spanx>, <spanx style="verb">timestamp</spanx> and <spanx style="verb">sha256_root_hash</spanx>.
 		</t>
               </list>
 	    </t>
@@ -1011,7 +1011,7 @@ an accepted root certificate.
             <t hangText="Outputs:">
 	      <list style="hanging">
 		<t hangText="consistency:">
-		  An array of Merkle Tree nodes, base64 encoded.
+		  An array of base64 encoded Merkle Tree nodes.
 		</t>
 		<t hangText="tree_size:">
 		  The size of the tree, in entries, in decimal.
@@ -1020,10 +1020,10 @@ an accepted root certificate.
 		  The timestamp, in decimal.
 		</t>
 		<t hangText="sha256_root_hash:">
-		  The Merkle Tree Hash of the tree, in base64.
+		  The base64 encoded Merkle Tree Hash of the tree.
 		</t>
 		<t hangText="tree_head_signature:">
-		  A base64-encoded TreeHeadSignature for <spanx style="verb">tree_size</spanx>, <spanx style="verb">timestamp</spanx> and <spanx style="verb">sha256_root_hash</spanx>.
+		  A base64 encoded TreeHeadSignature for <spanx style="verb">tree_size</spanx>, <spanx style="verb">timestamp</spanx> and <spanx style="verb">sha256_root_hash</spanx>.
 		</t>
               </list>
               Note that no signature is required for the <spanx style="verb">consistency</spanx> output as it is used to verify an STH, which is signed.
@@ -1051,7 +1051,7 @@ an accepted root certificate.
             <t hangText="Inputs:">
 	      <list style="hanging">
 		<t hangText="hash:">
-		  A base64-encoded v1 leaf hash.
+		  A base64 encoded v1 leaf hash.
 		</t>
 		<t hangText="tree_size:">
 		  The tree_size of the tree on which to base the proof, in decimal.
@@ -1065,7 +1065,7 @@ an accepted root certificate.
 		  The 0-based index of the entry corresponding to the <spanx style="verb">hash</spanx> parameter.
 		</t>
 		<t hangText="audit_path:">
-		  An array of base64-encoded Merkle Tree nodes proving the inclusion of the chosen certificate.
+		  An array of base64 encoded Merkle Tree nodes proving the inclusion of the chosen certificate.
 		</t>
 		<t hangText="tree_size:">
 		  The size of the tree, in entries, in decimal.
@@ -1074,10 +1074,10 @@ an accepted root certificate.
 		  The timestamp, in decimal.
 		</t>
 		<t hangText="sha256_root_hash:">
-		  The Merkle Tree Hash of the tree, in base64.
+		  The base64 encoded Merkle Tree Hash of the tree.
 		</t>
 		<t hangText="tree_head_signature:">
-		  A base64-encoded TreeHeadSignature for <spanx style="verb">tree_size</spanx>, <spanx style="verb">timestamp</spanx> and <spanx style="verb">sha256_root_hash</spanx>.
+		  A base64 encoded TreeHeadSignature for <spanx style="verb">tree_size</spanx>, <spanx style="verb">timestamp</spanx> and <spanx style="verb">sha256_root_hash</spanx>.
 		</t>
               </list>
               Note that no signature is required for the <spanx style="verb">leaf_index</spanx> or <spanx style="verb">audit_path</spanx> output as this is used to verify inclusion in an STH, which is signed.
@@ -1105,7 +1105,7 @@ an accepted root certificate.
             <t hangText="Inputs:">
 	      <list style="hanging">
 		<t hangText="hash:">
-		  A base64-encoded v1 leaf hash.
+		  A base64 encoded v1 leaf hash.
 		</t>
 		<t hangText="tree_size:">
 		  The tree_size of the tree on which to base the proofs, in decimal.
@@ -1138,7 +1138,7 @@ an accepted root certificate.
 		  The 0-based index of the entry corresponding to the <spanx style="verb">hash</spanx> parameter.
 		</t>
 		<t hangText="audit_path:">
-		  An array of base64-encoded Merkle Tree nodes proving the inclusion of the chosen certificate.
+		  An array of base64 encoded Merkle Tree nodes proving the inclusion of the chosen certificate.
 		</t>
 		<t hangText="tree_size:">
 		  The size of the tree, in entries, in decimal.
@@ -1147,13 +1147,13 @@ an accepted root certificate.
 		  The timestamp, in decimal.
 		</t>
 		<t hangText="sha256_root_hash:">
-		  The Merkle Tree Hash of the tree, in base64.
+		  The base64 encoded Merkle Tree Hash of the tree.
 		</t>
 		<t hangText="tree_head_signature:">
-		  A base64-encoded TreeHeadSignature for <spanx style="verb">tree_size</spanx>, <spanx style="verb">timestamp</spanx> and <spanx style="verb">sha256_root_hash</spanx>.
+		  A base64 encoded TreeHeadSignature for <spanx style="verb">tree_size</spanx>, <spanx style="verb">timestamp</spanx> and <spanx style="verb">sha256_root_hash</spanx>.
 		</t>
 		<t hangText="consistency:">
-		  An array of base64-encoded Merkle Tree nodes proving the consistency of the requested STH and the returned STH.
+		  An array of base64 encoded Merkle Tree nodes proving the consistency of the requested STH and the returned STH.
 		</t>
               </list>
               Note that no signature is required for the <spanx style="verb">leaf_index</spanx>, <spanx style="verb">audit_path</spanx> or <spanx style="verb">consistency</spanx> output as this is used to verify inclusion in and consistency of an STH, which is signed.
@@ -1187,13 +1187,13 @@ an accepted root certificate.
 		  An array of objects, each consisting of
 		  <list style="hanging">
                     <t hangText="leaf_input:">
-                      The base64-encoded MerkleTreeLeaf structure.
+                      The base64 encoded MerkleTreeLeaf structure.
                     </t>
                     <t hangText="extra_data:">
-                      The base64-encoded unsigned data pertaining to the log entry. In the case of an X509ChainEntry, this is the whole <spanx style="verb">X509ChainEntry</spanx>. In the case of a PrecertChainEntryV2, this is the whole <spanx style="verb">PrecertChainEntryV2</spanx>.
+                      The base64 encoded unsigned data pertaining to the log entry. In the case of an X509ChainEntry, this is the whole <spanx style="verb">X509ChainEntry</spanx>. In the case of a PrecertChainEntryV2, this is the whole <spanx style="verb">PrecertChainEntryV2</spanx>.
                     </t>
 		    <t hangText="sct:">
-		      A base64-encoded <spanx style="verb">SignedCertificateTimestamp</spanx> for this entry. Note that more than one SCT may have been returned for the same entry - only one of those is returned in this field. It may not be possible to retrieve others.
+		      A base64 encoded <spanx style="verb">SignedCertificateTimestamp</spanx> for this entry. Note that more than one SCT may have been returned for the same entry - only one of those is returned in this field. It may not be possible to retrieve others.
 		    </t>
 		  </list>
 		</t>
@@ -1204,10 +1204,10 @@ an accepted root certificate.
 		  The timestamp, in decimal.
 		</t>
 		<t hangText="sha256_root_hash:">
-		  The Merkle Tree Hash of the tree, in base64.
+		  The base64 encoded Merkle Tree Hash of the tree.
 		</t>
 		<t hangText="tree_head_signature:">
-		  A base64-encoded TreeHeadSignature for <spanx style="verb">tree_size</spanx>, <spanx style="verb">timestamp</spanx> and <spanx style="verb">sha256_root_hash</spanx>.
+		  A base64 encoded TreeHeadSignature for <spanx style="verb">tree_size</spanx>, <spanx style="verb">timestamp</spanx> and <spanx style="verb">sha256_root_hash</spanx>.
 		</t>
               </list>
 	    </t>
@@ -1258,7 +1258,7 @@ entry specified by <spanx style="verb">start</spanx>.
             <t hangText="Outputs:">
               <list style="hanging">
 		<t hangText="certificates:">
-		  An array of base64-encoded root certificates that are acceptable to the log.
+		  An array of base64 encoded root certificates that are acceptable to the log.
 		</t>
 		<t hangText="max_chain:">
 		  If the server has chosen to limit the length of chains it accepts, this is the maximum number of certificates in the chain, in decimal. If there is no limit, this is omitted.
