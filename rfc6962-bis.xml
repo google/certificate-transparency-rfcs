@@ -1307,6 +1307,9 @@ but it is expected there will be a variety.
 	  <t hangText="Maximum Merge Delay">
 	    The MMD the log has committed to.
 	  </t>
+	  <t hangText="Version">
+	    The version of the protocol supported by the log (currently 1 or 2).
+	  </t>
 	  <t hangText="STH Frequency Count">
 	    The maximum number of STHs the log may produce in any period equal to the <spanx style="verb">Maximum Merge Delay</spanx> (see <xref target="STH"/>).
 	  </t>
