@@ -76,7 +76,7 @@ def lsb(x):
 ##########################################################################################
 # The following algorithms are implemented as specified in the RFC
 ##########################################################################################
-def calc_mth_via_rfc_algorithm(entries, tree_size, sha256_root_hash):
+def calc_mth_via_rfc_algorithm(entries, tree_size):
   #  1.  Set "stack" to an empty stack.
   stack = []
 
@@ -113,14 +113,13 @@ def calc_mth_via_rfc_algorithm(entries, tree_size, sha256_root_hash):
     #      3.  Push "HASH(0x01 || left || right)" to "stack".
     stack.append(sha256(chr(1) + left + right).digest())
 
-   #4.  The remaining element in "stack" is the Merkle Tree hash for the
-   #    given "tree_size" and should be compared by equality against the
-   #    supplied "sha256_root_hash".
-  if stack[0] != sha256_root_hash:
-    raise
+  #4.  The remaining element in "stack" is the Merkle Tree hash for the
+  #    given "tree_size" and should be compared by equality against the
+  #    supplied "sha256_root_hash".
+  return stack[0]
 
 
-def check_consistency_via_rfc_algorithm(first, second, first_hash, second_hash, consistency):
+def check_consistency_via_rfc_algorithm(first, second, first_hash, consistency):
   #1.  If "first" is an exact power of 2, then prepend "first_hash" to
   #      the "consistency" array.
   if is_pow2(first):
@@ -160,11 +159,10 @@ def check_consistency_via_rfc_algorithm(first, second, first_hash, second_hash, 
   #     described above, verify that the "fr" calculated is equal to the
   #     "first_hash" supplied and that the "sr" calculated is equal to
   #     the "second_hash" supplied.
-  if fr != first_hash or sr != second_hash:
-    raise
+  return fr, sr
 
 
-def check_inclusion_via_rfc_algorithm(hash, leaf_index, audit_path, sha256_root_hash, tree_size):
+def check_inclusion_via_rfc_algorithm(hash, leaf_index, audit_path, tree_size):
   # 1.  Set "fn" to "leaf_index" and "sn" to "tree_size - 1".
   fn, sn = leaf_index, tree_size - 1
 
@@ -193,46 +191,51 @@ def check_inclusion_via_rfc_algorithm(hash, leaf_index, audit_path, sha256_root_
 
   # 4.  Compare "r" against the "sha256_root_hash".  If they are equal,
   #     then the log has proven the inclusion of "hash".
-  if r != sha256_root_hash:
-    raise
+  return r
+
 
 ##########################################################################################
 # The following are extracted from https://github.com/google/certificate-transparency
 # and are used to cross-check the algorithms in the RFC.
 ##########################################################################################
-def cross_check_consistency_against_opensource_algorithm(first, second, first_hash, second_hash, consistency):
-  node = first - 1
-  last_node = second - 1
+def cross_check_consistency_against_opensource_algorithm(first, second, first_hash, consistency):
+  try:
+    node = first - 1
+    last_node = second - 1
 
-  while node & 1:
-    node >>= 1
-    last_node >>= 1
+    while node & 1:
+      node >>= 1
+      last_node >>= 1
 
-  p = iter(consistency)
-  if node:
-    old_hash = p.next()
-  else: # old was 2 ** n
-    old_hash = first_hash
-  new_hash = old_hash
+    p = iter(consistency)
+    if node:
+      old_hash = p.next()
+    else: # old was 2 ** n
+      old_hash = first_hash
+    new_hash = old_hash
 
-  while node:
-    if node & 1:
-      x = p.next()
-      old_hash = sha256(chr(1) + x + old_hash).digest()
-      new_hash = sha256(chr(1) + x + new_hash).digest()
-    elif node < last_node:
+    while node:
+      if node & 1:
+        x = p.next()
+        old_hash = sha256(chr(1) + x + old_hash).digest()
+        new_hash = sha256(chr(1) + x + new_hash).digest()
+      elif node < last_node:
+        new_hash = sha256(chr(1) + new_hash + p.next()).digest()
+      node >>= 1
+      last_node >>= 1
+    while last_node:
       new_hash = sha256(chr(1) + new_hash + p.next()).digest()
-    node >>= 1
-    last_node >>= 1
-  while last_node:
-    new_hash = sha256(chr(1) + new_hash + p.next()).digest()
-    last_node >>= 1
+      last_node >>= 1
 
-  if first_hash != old_hash or second_hash != new_hash:
-    raise
+    for remaining in p:
+      return None, None  # we shouldn't have any elements left over
+
+    return old_hash, new_hash
+  except StopIteration:
+    return None, None  # ran out of elements
 
 
-def cross_check_inclusion_via_opensource(hash, leaf_index, audit_path, sha256_root_hash, tree_size):
+def cross_check_inclusion_via_opensource(hash, leaf_index, audit_path, tree_size):
   audit_path = audit_path[:]
 
   node_index = leaf_index
@@ -240,8 +243,8 @@ def cross_check_inclusion_via_opensource(hash, leaf_index, audit_path, sha256_ro
   last_node = tree_size - 1
   while last_node > 0:
       if not audit_path:
-          raise ('Proof too short: left with node index '
-                                 '%d' % node_index)
+          return None
+
       if node_index % 2:
           audit_hash = audit_path.pop(0)
           calculated_hash = sha256(chr(1) + audit_hash + calculated_hash).digest()
@@ -254,45 +257,98 @@ def cross_check_inclusion_via_opensource(hash, leaf_index, audit_path, sha256_ro
       node_index //= 2
       last_node //= 2
   if audit_path:
-      raise ('Proof too long: Left with %d hashes.' %
-                             len(audit_path))
+      return None
 
-  if calculated_hash != sha256_root_hash:
-      raise
+  return calculated_hash
 
 
 ##########################################################################################
 # Test algorithms on a Merkle tree with random data, if no exceptions are raised, we are good!
 ##########################################################################################
-size = 130
+size = 300
 t = MerkleTree(size)
+t2 = MerkleTree(size)
 
-count = 0
 for tree_size in range(1, size + 1):
   sha256_root_hash = t.calc_mth(0, tree_size)
-  print 'Checking calculation of MTH for size %s...' % tree_size
-  calc_mth_via_rfc_algorithm(t.entries, tree_size, sha256_root_hash)
-  count += 1
+  print 'Checking calculation of MTH for size %s...' % tree_size,
+  assert calc_mth_via_rfc_algorithm(t.entries, tree_size) == sha256_root_hash
+  assert calc_mth_via_rfc_algorithm(t2.entries, tree_size) != sha256_root_hash
+  print 'SUCCESS.'
 
 for tree_size in range(1, size + 1):
   sha256_root_hash = t.calc_mth(0, tree_size)
   for leaf_index in range(0, tree_size - 1):
-    print 'Checking inclusion proof of %i to %i...' % (leaf_index, tree_size)
+    print 'Checking inclusion proof of %i to %i...' % (leaf_index, tree_size),
     audit_path = t.inclusion_proof(leaf_index, tree_size)
     hash = sha256(chr(0) + t.entries[leaf_index]).digest()
-    check_inclusion_via_rfc_algorithm(hash, leaf_index, audit_path, sha256_root_hash, tree_size)
-    count += 1
-    cross_check_inclusion_via_opensource(hash, leaf_index, audit_path, sha256_root_hash, tree_size)
+
+    assert check_inclusion_via_rfc_algorithm(hash, leaf_index, audit_path, tree_size) == sha256_root_hash
+    assert cross_check_inclusion_via_opensource(hash, leaf_index, audit_path, tree_size) == sha256_root_hash
+
+    audit_path = t2.inclusion_proof(leaf_index, tree_size)
+
+    assert check_inclusion_via_rfc_algorithm(hash, leaf_index, audit_path, tree_size) != sha256_root_hash
+    assert cross_check_inclusion_via_opensource(hash, leaf_index, audit_path, tree_size) != sha256_root_hash
+
+    audit_path = t.inclusion_proof(leaf_index, tree_size) + t.inclusion_proof(leaf_index, tree_size)
+
+    assert check_inclusion_via_rfc_algorithm(hash, leaf_index, audit_path, tree_size) != sha256_root_hash
+    assert cross_check_inclusion_via_opensource(hash, leaf_index, audit_path, tree_size) != sha256_root_hash
+
+    audit_path = t.inclusion_proof(leaf_index, tree_size)[:-1]
+
+    assert check_inclusion_via_rfc_algorithm(hash, leaf_index, audit_path, tree_size) != sha256_root_hash
+    assert cross_check_inclusion_via_opensource(hash, leaf_index, audit_path, tree_size) != sha256_root_hash
+
+    print 'SUCCESS.'
+
 
 for first in range(1, size - 1):
   first_hash = t.calc_mth(0, first)
   for second in range(first + 1, size):
-    print 'Checking consistency proof of %i to %i...' % (first, second)
+    print 'Checking consistency proof of %i to %i...' % (first, second),
     second_hash = t.calc_mth(0, second)
     consistency = t.proof(first, second)
 
-    check_consistency_via_rfc_algorithm(first, second, first_hash, second_hash, consistency)
-    count += 1
-    cross_check_consistency_against_opensource_algorithm(first, second, first_hash, second_hash, consistency)
+    if is_pow2(first): # no point checking first:
+      assert check_consistency_via_rfc_algorithm(first, second, first_hash, consistency)[1] == second_hash
+      assert cross_check_consistency_against_opensource_algorithm(first, second, first_hash, consistency)[1] == second_hash
+    else: # pass random value for first hash since we shouldn't need it
+      assert check_consistency_via_rfc_algorithm(first, second, pack('!Q', getrandbits(64)), consistency)[0] == first_hash
+      assert check_consistency_via_rfc_algorithm(first, second, pack('!Q', getrandbits(64)), consistency)[1] == second_hash
+      assert cross_check_consistency_against_opensource_algorithm(first, second, pack('!Q', getrandbits(64)), consistency)[0] == first_hash
+      assert cross_check_consistency_against_opensource_algorithm(first, second, pack('!Q', getrandbits(64)), consistency)[1] == second_hash
 
-print '%i tests successful.' % count
+    consistency = t2.proof(first, second)
+
+    if is_pow2(first): # no point checking first:
+      assert check_consistency_via_rfc_algorithm(first, second, first_hash, consistency)[1] != second_hash
+      assert cross_check_consistency_against_opensource_algorithm(first, second, first_hash, consistency)[1] != second_hash
+    else: # pass random value for first hash since we shouldn't need it
+      assert check_consistency_via_rfc_algorithm(first, second, pack('!Q', getrandbits(64)), consistency)[0] != first_hash
+      assert check_consistency_via_rfc_algorithm(first, second, pack('!Q', getrandbits(64)), consistency)[1] != second_hash
+      assert cross_check_consistency_against_opensource_algorithm(first, second, pack('!Q', getrandbits(64)), consistency)[0] != first_hash
+      assert cross_check_consistency_against_opensource_algorithm(first, second, pack('!Q', getrandbits(64)), consistency)[1] != second_hash
+
+    consistency = t.proof(first, second) + t.proof(first, second)
+
+    if is_pow2(first): # no point checking first:
+      assert check_consistency_via_rfc_algorithm(first, second, first_hash, consistency)[1] != second_hash
+      assert cross_check_consistency_against_opensource_algorithm(first, second, first_hash, consistency)[1] != second_hash
+    else: # pass random value for first hash since we shouldn't need it
+      assert check_consistency_via_rfc_algorithm(first, second, pack('!Q', getrandbits(64)), consistency)[0] != first_hash
+      assert check_consistency_via_rfc_algorithm(first, second, pack('!Q', getrandbits(64)), consistency)[1] != second_hash
+      assert cross_check_consistency_against_opensource_algorithm(first, second, pack('!Q', getrandbits(64)), consistency)[0] != first_hash
+      assert cross_check_consistency_against_opensource_algorithm(first, second, pack('!Q', getrandbits(64)), consistency)[1] != second_hash
+
+    consistency = t.proof(first, second)[:-1]
+
+    if is_pow2(first): # no point checking first:
+      assert check_consistency_via_rfc_algorithm(first, second, first_hash, consistency)[1] != second_hash
+      assert cross_check_consistency_against_opensource_algorithm(first, second, first_hash, consistency)[1] != second_hash
+    else: # pass random value for first hash since we shouldn't need it
+      assert check_consistency_via_rfc_algorithm(first, second, pack('!Q', getrandbits(64)), consistency)[1] != second_hash
+      assert cross_check_consistency_against_opensource_algorithm(first, second, pack('!Q', getrandbits(64)), consistency)[1] != second_hash
+
+    print 'SUCCESS.'
