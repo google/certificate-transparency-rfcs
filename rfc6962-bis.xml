@@ -357,10 +357,10 @@ be omitted.
           Logs MUST verify that the submitted certificate or precertificate has
 a valid signature chain to an accepted root certificate, using the chain of
 intermediate CA certificates provided by the submitter. Logs MUST accept
-certificates that are fully valid according to X.509 verification rules
+certificates that are fully valid according to <xref target="RFC5280">RFC 5280</xref> verification rules
 and are submitted with such a chain. Logs MAY accept
 certificates and precertificates that have expired, are not yet valid, have been
-revoked, or are otherwise not fully valid according to X.509 verification rules
+revoked, or are otherwise not fully valid according to RFC 5280 verification rules
 in order to accommodate quirks of CA certificate-issuing software. However, logs
 MUST reject certificates without a valid signature chain to an accepted root
 certificate. Logs MUST also reject precertificates that are not valid DER encoded CMS <spanx style="verb">signed-data</spanx> objects. If a certificate is accepted and an SCT issued, the accepting log
