@@ -296,9 +296,8 @@ d0 d1   d2 d3           d0 d1   d2 d3  d4 d5
         </section>
         <section title="Signatures" anchor="signatures">
           <t>
-            Various data structures are signed. A log MUST use either elliptic
-curve signatures using the NIST P-256 curve (Section D.1.2.3 of the <xref
-target="DSS">Digital Signature Standard </xref>) or RSA signatures (RSASSA-PKCS1-v1_5 with SHA-256,
+            Various data structures are signed. A log MUST use either <xref target="RFC6979">deterministic ECDSA</xref> using the NIST P-256 curve (Section D.1.2.3 of the <xref
+target="DSS">Digital Signature Standard </xref>) and HMAC-SHA256 or RSA signatures (RSASSA-PKCS1-v1_5 with SHA-256,
 Section 8.2 of <xref target="RFC3447"/>) using a key of at least 2048 bits.
           </t>
         </section>
@@ -1547,6 +1546,8 @@ Carl Wallace for their valuable contributions.
       <?rfc include="reference.RFC.6125"?>
 
       <?rfc include="reference.RFC.6960"?>
+
+      <?rfc include="reference.RFC.6979"?>
 
       <reference anchor="DSS" target="http://csrc.nist.gov/publications/fips/fips186-3/fips_186-3.pdf">
         <front>
