@@ -123,7 +123,7 @@ Section 4 of <xref target="RFC5246"/>.
       </section>
     </section>
     <section title="Cryptographic Components">
-      <section title="Merkle Hash Trees" anchor="merkle_hash_trees">
+      <section title="Merkle Hash Trees">
         <t>
           Logs use a binary Merkle Hash Tree for efficient auditing. The hashing algorithm used by each log is expected to be specified as part of the metadata relating to that log. We have established a registry of acceptable algorithms, see <xref target="hash_algorithms"/>. The hashing algorithm in use is referred to as HASH throughout this document. The input to the Merkle Tree Hash is a list
 of data entries; these entries will be hashed to form the leaves of the Merkle
@@ -781,7 +781,7 @@ signatures.
           <spanx style="verb">extensions</spanx> are <spanx style="verb">extensions</spanx> of the corresponding SCT.
         </t>
         <t>
-          The leaves of the Merkle Tree are the leaf hashes of the corresponding <spanx style="verb">MerkleTreeLeaf</spanx> structures. Note that leaf hashes are calculated as <spanx style="verb">HASH(0x00 || MerkleTreeLeaf)</spanx>. See <xref target="merkle_hash_trees"/> for further details.
+          The leaves of the Merkle Tree are the leaf hashes of the corresponding <spanx style="verb">MerkleTreeLeaf</spanx> structures.
         </t>
       </section>
       <section title="Signed Tree Head" anchor="STH">
@@ -1239,7 +1239,7 @@ entry specified by <spanx style="verb">start</spanx>.
 	<t>
 	  In any case, the log server MUST return the latest STH it knows about.
 	</t>
-        <t>See <xref target="verify_hash" /> for an outline of how to use a complete list of <spanx style="verb">leaf_input</spanx> entries to verify the <spanx style="verb">sha256_root_hash</spanx>.</t>
+        <t>See <xref target="verify_hash" /> for an outline of how to use a complete list of <spanx style="verb">leaf_input</spanx> entries to verify the <spanx style="verb">root_hash</spanx>.</t>
       </section>
 
       <section title="Retrieve Accepted Root Certificates">
@@ -1407,7 +1407,7 @@ the STH changes.
         </t>
         <section title="Verifying an inclusion proof" anchor="verify_inclusion">
           <t>
-            When a client has received an <spanx style="verb">audit_path</spanx> and <spanx style="verb">leaf_index</spanx> and wishes to verify inclusion of an input <spanx style="verb">hash</spanx> for an STH with a given <spanx style="verb">tree_size</spanx> and <spanx style="verb">sha256_root_hash</spanx>, the following algorithm may be used to prove the <spanx style="verb">hash</spanx> was included in the <spanx style="verb">sha256_root_hash</spanx>:
+            When a client has received an <spanx style="verb">audit_path</spanx> and <spanx style="verb">leaf_index</spanx> and wishes to verify inclusion of an input <spanx style="verb">hash</spanx> for an STH with a given <spanx style="verb">tree_size</spanx> and <spanx style="verb">root_hash</spanx>, the following algorithm may be used to prove the <spanx style="verb">hash</spanx> was included in the <spanx style="verb">root_hash</spanx>:
             <list style="numbers">
               <t>Set <spanx style="verb">fn</spanx> to <spanx style="verb">leaf_index</spanx> and <spanx style="verb">sn</spanx> to <spanx style="verb">tree_size - 1</spanx>.</t>
               <t>Set <spanx style="verb">r</spanx> to <spanx style="verb">hash</spanx>.</t>
@@ -1419,7 +1419,7 @@ the STH changes.
                   <t>
                     Set <spanx style="verb">r</spanx> to <spanx style="verb">HASH(0x01 || p || r)</spanx>
                   </t>
-                  <t>If <spanx style="verb">LSB(fn)</spanx> is not set, then right-shift both <spanx style="verb">fn</spanx> and <spanx style="verb">sn</spanx> equally until <spanx style="verb">LSB(fn)</spanx> is set.</t>
+                  <t>If <spanx style="verb">LSB(fn)</spanx> is not set, then right-shift both <spanx style="verb">fn</spanx> and <spanx style="verb">sn</spanx> equally until either <spanx style="verb">LSB(fn)</spanx> is set or <spanx style="verb">fn</spanx> is <spanx style="verb">0</spanx>.</t>
                 </list>
                 Otherwise:
                 <list style="empty">
@@ -1428,7 +1428,7 @@ the STH changes.
                 <vspace blankLines="1" />
                 Finally, right-shift both <spanx style="verb">fn</spanx> and <spanx style="verb">sn</spanx> one time.
               </t>
-              <t>Compare <spanx style="verb">r</spanx> against the <spanx style="verb">sha256_root_hash</spanx>. If they are equal, then the log has proven the inclusion of <spanx style="verb">hash</spanx>.</t>
+              <t>Compare <spanx style="verb">r</spanx> against the <spanx style="verb">root_hash</spanx>. If they are equal, then the log has proven the inclusion of <spanx style="verb">hash</spanx>.</t>
             </list>
           </t>
         </section>
@@ -1450,7 +1450,7 @@ the STH changes.
                     <vspace blankLines="0" />
                     Set <spanx style="verb">sr</spanx> to <spanx style="verb">HASH(0x01 || c || sr)</spanx>
                   </t>
-                  <t>If <spanx style="verb">LSB(fn)</spanx> is not set, then right-shift both <spanx style="verb">fn</spanx> and <spanx style="verb">sn</spanx> equally until <spanx style="verb">LSB(fn)</spanx> is set.</t>
+                  <t>If <spanx style="verb">LSB(fn)</spanx> is not set, then right-shift both <spanx style="verb">fn</spanx> and <spanx style="verb">sn</spanx> equally until either <spanx style="verb">LSB(fn)</spanx> is set or <spanx style="verb">fn</spanx> is <spanx style="verb">0</spanx>.</t>
                 </list>
                 Otherwise:
                 <list style="empty">
@@ -1465,7 +1465,7 @@ the STH changes.
         </section>
         <section title="Verifying root hash given entries" anchor="verify_hash">
           <t>
-            When a client has a complete list of leaf input <spanx style="verb">entries</spanx> from <spanx style="verb">0</spanx> up to <spanx style="verb">tree_size - 1</spanx> and wishes to verify this list against an STH <spanx style="verb">sha256_root_hash</spanx> returned by the log for the same <spanx style="verb">tree_size</spanx>, the following algorithm may be used:
+            When a client has a complete list of leaf input <spanx style="verb">entries</spanx> from <spanx style="verb">0</spanx> up to <spanx style="verb">tree_size - 1</spanx> and wishes to verify this list against an STH <spanx style="verb">root_hash</spanx> returned by the log for the same <spanx style="verb">tree_size</spanx>, the following algorithm may be used:
             <list style="numbers">
               <t>Set <spanx style="verb">stack</spanx> to an empty stack.</t>
               <t>
@@ -1484,7 +1484,7 @@ the STH changes.
                  </list>
                </t>
                <t>If there is more than one element in the <spanx style="verb">stack</spanx>, repeat the same merge procedure (Step 2.3 above) until only a single element remains.</t>
-               <t>The remaining element in <spanx style="verb">stack</spanx> is the Merkle Tree hash for the given <spanx style="verb">tree_size</spanx> and should be compared by equality against the supplied <spanx style="verb">sha256_root_hash</spanx>.</t>
+               <t>The remaining element in <spanx style="verb">stack</spanx> is the Merkle Tree hash for the given <spanx style="verb">tree_size</spanx> and should be compared by equality against the supplied <spanx style="verb">root_hash</spanx>.</t>
             </list>
           </t>
         </section>

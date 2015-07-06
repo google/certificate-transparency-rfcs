@@ -146,8 +146,8 @@ def check_consistency_via_rfc_algorithm(first, second, first_hash, second_hash, 
       fr, sr = sha256(chr(1) + c + fr).digest(), sha256(chr(1) + c + sr).digest()
 
       # 2.  If "LSB(fn)" is not set, then right-shift both "fn" and "sn"
-      #     equally until "LSB(fn)" is set.
-      while not lsb(fn): fn, sn = fn >> 1, sn >> 1
+      #     equally until either "LSB(fn)" is set or "fn" is "0".
+      while not ((fn == 0) or lsb(fn)): fn, sn = fn >> 1, sn >> 1
     #   Otherwise:
     else:
       #    Set "sr" to "HASH(0x01 || sr || c)"
@@ -179,8 +179,8 @@ def check_inclusion_via_rfc_algorithm(hash, leaf_index, audit_path, sha256_root_
       r = sha256(chr(1) + p + r).digest()
 
       # 2.  If "LSB(fn)" is not set, then right-shift both "fn" and "sn"
-      #     equally until "LSB(fn)" is set.
-      while not lsb(fn):
+      #     equally until either "LSB(fn)" is set or "fn" is "fn".
+      while not ((fn == 0) or lsb(fn)):
         fn >>= 1
         sn >>= 1
     # Otherwise:
