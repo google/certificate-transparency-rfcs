@@ -305,50 +305,45 @@ for tree_size in range(1, size + 1):
 
   print 'SUCCESS.'
 
+def check_consistency(first, second, first_hash, consistency, second_hash):
+  if is_pow2(first):
+    r1 = check_consistency_via_rfc_algorithm(first, second, first_hash, consistency)[1] == second_hash
+    r2 = cross_check_consistency_against_opensource_algorithm(first, second, first_hash, consistency)[1] == second_hash
+    assert r1 == r2
+    return r1
+  else:
+    r1 = check_consistency_via_rfc_algorithm(first, second, pack('!Q', getrandbits(64)), consistency)[0] == first_hash
+    r2 = check_consistency_via_rfc_algorithm(first, second, pack('!Q', getrandbits(64)), consistency)[1] == second_hash
+    assert r1 == r2
+    r3 = cross_check_consistency_against_opensource_algorithm(first, second, pack('!Q', getrandbits(64)), consistency)[0] == first_hash
+    assert r1 == r3
+    r4 = cross_check_consistency_against_opensource_algorithm(first, second, pack('!Q', getrandbits(64)), consistency)[1] == second_hash
+    assert r1 == r4
+    return r1
 
 for first in range(1, size - 1):
   first_hash = t.calc_mth(0, first)
   print 'Checking consistency proofs from %i...' % first,
   for second in range(first + 1, size):
     second_hash = t.calc_mth(0, second)
+    
     consistency = t.proof(first, second)
-
-    if is_pow2(first): # no point checking first:
-      assert check_consistency_via_rfc_algorithm(first, second, first_hash, consistency)[1] == second_hash
-      assert cross_check_consistency_against_opensource_algorithm(first, second, first_hash, consistency)[1] == second_hash
-    else: # pass random value for first hash since we shouldn't need it
-      assert check_consistency_via_rfc_algorithm(first, second, pack('!Q', getrandbits(64)), consistency)[0] == first_hash
-      assert check_consistency_via_rfc_algorithm(first, second, pack('!Q', getrandbits(64)), consistency)[1] == second_hash
-      assert cross_check_consistency_against_opensource_algorithm(first, second, pack('!Q', getrandbits(64)), consistency)[0] == first_hash
-      assert cross_check_consistency_against_opensource_algorithm(first, second, pack('!Q', getrandbits(64)), consistency)[1] == second_hash
+    assert check_consistency(first, second, first_hash, consistency,
+                             second_hash)
 
     consistency = t2.proof(first, second)
-
-    if is_pow2(first): # no point checking first:
-      assert check_consistency_via_rfc_algorithm(first, second, first_hash, consistency)[1] != second_hash
-      assert cross_check_consistency_against_opensource_algorithm(first, second, first_hash, consistency)[1] != second_hash
-    else: # pass random value for first hash since we shouldn't need it
-      assert check_consistency_via_rfc_algorithm(first, second, pack('!Q', getrandbits(64)), consistency)[0] != first_hash
-      assert check_consistency_via_rfc_algorithm(first, second, pack('!Q', getrandbits(64)), consistency)[1] != second_hash
-      assert cross_check_consistency_against_opensource_algorithm(first, second, pack('!Q', getrandbits(64)), consistency)[0] != first_hash
-      assert cross_check_consistency_against_opensource_algorithm(first, second, pack('!Q', getrandbits(64)), consistency)[1] != second_hash
+    assert not check_consistency(first, second, first_hash, consistency,
+                                 second_hash)
 
     consistency = t.proof(first, second) + t.proof(first, second)
-
-    if is_pow2(first): # no point checking first:
-      assert check_consistency_via_rfc_algorithm(first, second, first_hash, consistency)[1] != second_hash
-      assert cross_check_consistency_against_opensource_algorithm(first, second, first_hash, consistency)[1] != second_hash
-    else: # pass random value for first hash since we shouldn't need it
-      assert check_consistency_via_rfc_algorithm(first, second, pack('!Q', getrandbits(64)), consistency)[0] != first_hash
-      assert check_consistency_via_rfc_algorithm(first, second, pack('!Q', getrandbits(64)), consistency)[1] != second_hash
-      assert cross_check_consistency_against_opensource_algorithm(first, second, pack('!Q', getrandbits(64)), consistency)[0] != first_hash
-      assert cross_check_consistency_against_opensource_algorithm(first, second, pack('!Q', getrandbits(64)), consistency)[1] != second_hash
+    assert not check_consistency(first, second, first_hash, consistency,
+                                 second_hash)
 
     consistency = t.proof(first, second)[:-1]
 
     if is_pow2(first): # no point checking first:
-      assert check_consistency_via_rfc_algorithm(first, second, first_hash, consistency)[1] != second_hash
-      assert cross_check_consistency_against_opensource_algorithm(first, second, first_hash, consistency)[1] != second_hash
+      assert not check_consistency(first, second, first_hash, consistency,
+                                   second_hash)
     else: # pass random value for first hash since we shouldn't need it
       assert check_consistency_via_rfc_algorithm(first, second, pack('!Q', getrandbits(64)), consistency)[1] != second_hash
       assert cross_check_consistency_against_opensource_algorithm(first, second, pack('!Q', getrandbits(64)), consistency)[1] != second_hash
