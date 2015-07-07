@@ -1603,9 +1603,7 @@ certificates around the SCT timestamp.
     <section title="Acknowledgements">
       <t>
         The authors would like to thank Erwann Abelea, Robin Alden, Al Cutter,
-Francis Dupont, Stephen Farrell, Brad Hill, Jeff Hodges, Paul Hoffman, Jeffrey
-Hutzelman, SM, Alexey Melnikov, Chris Palmer, Trevor Perrin, Ryan Sleevi and
-Carl Wallace for their valuable contributions.
+Francis Dupont, Adam Eijdenberg, Stephen Farrell, Brad Hill, Jeff Hodges, Paul Hoffman, Jeffrey Hutzelman, Stephen Kent, SM, Alexey Melnikov, Chris Palmer, Trevor Perrin, Melinda Shore, Ryan Sleevi, Carl Wallace and Paul Wouters for their valuable contributions.
       </t>
     </section>
   </middle>
