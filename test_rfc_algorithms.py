@@ -115,7 +115,7 @@ def calc_mth_via_rfc_algorithm(entries, tree_size):
 
   #4.  The remaining element in "stack" is the Merkle Tree hash for the
   #    given "tree_size" and should be compared by equality against the
-  #    supplied "sha256_root_hash".
+  #    supplied "root_hash".
   return stack[0]
 
 
@@ -189,7 +189,7 @@ def check_inclusion_via_rfc_algorithm(hash, leaf_index, audit_path, tree_size):
     fn >>= 1
     sn >>= 1
 
-  # 4.  Compare "r" against the "sha256_root_hash".  If they are equal,
+  # 4.  Compare "r" against the "root_hash".  If they are equal,
   #     then the log has proven the inclusion of "hash".
   return r
 
@@ -270,36 +270,36 @@ t = MerkleTree(size)
 t2 = MerkleTree(size)
 
 for tree_size in range(1, size + 1):
-  sha256_root_hash = t.calc_mth(0, tree_size)
+  root_hash = t.calc_mth(0, tree_size)
   print 'Checking calculation of MTH for size %s...' % tree_size,
-  assert calc_mth_via_rfc_algorithm(t.entries, tree_size) == sha256_root_hash
-  assert calc_mth_via_rfc_algorithm(t2.entries, tree_size) != sha256_root_hash
+  assert calc_mth_via_rfc_algorithm(t.entries, tree_size) == root_hash
+  assert calc_mth_via_rfc_algorithm(t2.entries, tree_size) != root_hash
   print 'SUCCESS.'
 
 for tree_size in range(1, size + 1):
-  sha256_root_hash = t.calc_mth(0, tree_size)
+  root_hash = t.calc_mth(0, tree_size)
   print 'Checking inclusion proofs to %i...' % tree_size,
   for leaf_index in range(0, tree_size - 1):
     audit_path = t.inclusion_proof(leaf_index, tree_size)
     hash = sha256(chr(0) + t.entries[leaf_index]).digest()
 
-    assert check_inclusion_via_rfc_algorithm(hash, leaf_index, audit_path, tree_size) == sha256_root_hash
-    assert cross_check_inclusion_via_opensource(hash, leaf_index, audit_path, tree_size) == sha256_root_hash
+    assert check_inclusion_via_rfc_algorithm(hash, leaf_index, audit_path, tree_size) == root_hash
+    assert cross_check_inclusion_via_opensource(hash, leaf_index, audit_path, tree_size) == root_hash
 
     audit_path = t2.inclusion_proof(leaf_index, tree_size)
 
-    assert check_inclusion_via_rfc_algorithm(hash, leaf_index, audit_path, tree_size) != sha256_root_hash
-    assert cross_check_inclusion_via_opensource(hash, leaf_index, audit_path, tree_size) != sha256_root_hash
+    assert check_inclusion_via_rfc_algorithm(hash, leaf_index, audit_path, tree_size) != root_hash
+    assert cross_check_inclusion_via_opensource(hash, leaf_index, audit_path, tree_size) != root_hash
 
     audit_path = t.inclusion_proof(leaf_index, tree_size) + t.inclusion_proof(leaf_index, tree_size)
 
-    assert check_inclusion_via_rfc_algorithm(hash, leaf_index, audit_path, tree_size) != sha256_root_hash
-    assert cross_check_inclusion_via_opensource(hash, leaf_index, audit_path, tree_size) != sha256_root_hash
+    assert check_inclusion_via_rfc_algorithm(hash, leaf_index, audit_path, tree_size) != root_hash
+    assert cross_check_inclusion_via_opensource(hash, leaf_index, audit_path, tree_size) != root_hash
 
     audit_path = t.inclusion_proof(leaf_index, tree_size)[:-1]
 
-    assert check_inclusion_via_rfc_algorithm(hash, leaf_index, audit_path, tree_size) != sha256_root_hash
-    assert cross_check_inclusion_via_opensource(hash, leaf_index, audit_path, tree_size) != sha256_root_hash
+    assert check_inclusion_via_rfc_algorithm(hash, leaf_index, audit_path, tree_size) != root_hash
+    assert cross_check_inclusion_via_opensource(hash, leaf_index, audit_path, tree_size) != root_hash
 
   print 'SUCCESS.'
 
