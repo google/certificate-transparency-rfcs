@@ -278,8 +278,8 @@ for tree_size in range(1, size + 1):
 
 for tree_size in range(1, size + 1):
   sha256_root_hash = t.calc_mth(0, tree_size)
+  print 'Checking inclusion proofs to %i...' % tree_size,
   for leaf_index in range(0, tree_size - 1):
-    print 'Checking inclusion proof of %i to %i...' % (leaf_index, tree_size),
     audit_path = t.inclusion_proof(leaf_index, tree_size)
     hash = sha256(chr(0) + t.entries[leaf_index]).digest()
 
@@ -301,13 +301,13 @@ for tree_size in range(1, size + 1):
     assert check_inclusion_via_rfc_algorithm(hash, leaf_index, audit_path, tree_size) != sha256_root_hash
     assert cross_check_inclusion_via_opensource(hash, leaf_index, audit_path, tree_size) != sha256_root_hash
 
-    print 'SUCCESS.'
+  print 'SUCCESS.'
 
 
 for first in range(1, size - 1):
   first_hash = t.calc_mth(0, first)
+  print 'Checking consistency proofs from %i...' % first,
   for second in range(first + 1, size):
-    print 'Checking consistency proof of %i to %i...' % (first, second),
     second_hash = t.calc_mth(0, second)
     consistency = t.proof(first, second)
 
@@ -351,4 +351,4 @@ for first in range(1, size - 1):
       assert check_consistency_via_rfc_algorithm(first, second, pack('!Q', getrandbits(64)), consistency)[1] != second_hash
       assert cross_check_consistency_against_opensource_algorithm(first, second, pack('!Q', getrandbits(64)), consistency)[1] != second_hash
 
-    print 'SUCCESS.'
+  print 'SUCCESS.'
