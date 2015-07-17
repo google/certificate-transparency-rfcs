@@ -555,7 +555,16 @@ SEQUENCE {
           TBSCertificate tbs_certificate;
       } CertInfo;
 
-      opaque CtExtensions&lt;0..2^16-1&gt;;
+    uint16 CtExtensionId;
+
+    opaque CtExtensionValue&lt;0..2^16-1&gt;;
+
+    struct {
+        CtExtensionId id;
+        CtExtensionValue value;
+    } CtExtension;
+
+    CtExtension CtExtensions&lt;0..2^16-1&gt;;
           </artwork>
         </figure>
         <t>
@@ -571,6 +580,15 @@ reconstruct this TBSCertificate from the issued certificate by extracting the
 TBSCertificate from it, redacting the domain name labels indicated by the
 redacted labels extension, and deleting the SCT list extension and redacted
 labels extension.
+        </t>
+        <t>
+          <spanx style="verb">id</spanx> identifies a single extension from the IANA registry in <xref target="extension_ids"/>.
+        </t>
+        <t>
+          The interpretation of the <spanx style="verb">value</spanx> field is determined solely by the value of the <spanx style="verb">id</spanx> field, and each document that registers a new extension ID must describe how to interpret the corresponding extension value.
+        </t>
+        <t>
+          The <spanx style="verb">CtExtensions</spanx> type is a vector of 0 or more extensions. This vector MUST NOT include more than one extension with the same ID. All of the extensions in the vector MUST appear in order of increasing IDs.
         </t>
         <figure>
           <artwork>
@@ -610,8 +628,7 @@ protocol to which the SCT conforms. This version is v2. Note that <xref target="
           <spanx style="verb">signed_entry</spanx> includes the TBSCertificate from either the <spanx style="verb">leaf_certificate</spanx> (in the case of an X509ChainEntry) or the <spanx style="verb">pre_certificate</spanx> (in the case of a PrecertChainEntryV2).
         </t>
         <t>
-          <spanx style="verb">extensions</spanx> are future extensions to
-SignedCertificateTimestamp v2. Currently, no extensions are specified.
+          <spanx style="verb">extensions</spanx> are future extensions to SignedCertificateTimestamp v2. Currently, no extensions are specified. If an implementation sees an extension that it does not understand, it SHOULD ignore that extension. Furthermore, an implementation MAY choose to ignore any extension(s) that it does understand.
         </t>
       </section>
       <section title="Including the Signed Certificate Timestamp in the TLS Handshake">
@@ -1433,6 +1450,18 @@ the STH changes.
 	  <c>0</c><c><xref target="FIPS.180-4">SHA-256</xref></c>
 	</texttable>
 	</section>
+      <section title="CT Extension IDs" anchor="extension_ids">
+        <t>
+          IANA is asked to establish a registry of CT extension IDs, initially consisting of:
+        </t>
+        <texttable>
+          <ttcol>ID</ttcol><ttcol>Extension</ttcol>
+          <c>65535</c><c>reserved</c>
+        </texttable>
+        <t>
+          TBD: policy for adding to the registry
+        </t>
+      </section>
     </section>
 
     <section title="Security Considerations">
