@@ -555,16 +555,16 @@ SEQUENCE {
           TBSCertificate tbs_certificate;
       } CertInfo;
 
-    uint16 CtExtensionId;
-
-    opaque CtExtensionValue&lt;0..2^16-1&gt;;
+    enum {
+        reserved(65535)
+    } CtExtensionType;
 
     struct {
-        CtExtensionId id;
-        CtExtensionValue value;
+        CtExtensionType extension_type;
+        opaque extension_data&lt;0..2^16-1&gt;;
     } CtExtension;
 
-    CtExtension CtExtensions&lt;0..2^16-1&gt;;
+    CtExtension extensions&lt;0..2^16-1&gt;;
           </artwork>
         </figure>
         <t>
@@ -582,13 +582,13 @@ redacted labels extension, and deleting the SCT list extension and redacted
 labels extension.
         </t>
         <t>
-          <spanx style="verb">id</spanx> identifies a single extension from the IANA registry in <xref target="extension_ids"/>.
+          <spanx style="verb">extension_type</spanx> identifies a single extension from the IANA registry in <xref target="extension_types"/>.
         </t>
         <t>
-          The interpretation of the <spanx style="verb">value</spanx> field is determined solely by the value of the <spanx style="verb">id</spanx> field, and each document that registers a new extension ID must describe how to interpret the corresponding extension value.
+          The interpretation of the <spanx style="verb">extension_data</spanx> field is determined solely by the value of the <spanx style="verb">extension_type</spanx> field. Each document that registers a new <spanx style="verb">extension_type</spanx> must describe how to interpret the corresponding <spanx style="verb">extension_data</spanx>.
         </t>
         <t>
-          The <spanx style="verb">CtExtensions</spanx> type is a vector of 0 or more extensions. This vector MUST NOT include more than one extension with the same ID. All of the extensions in the vector MUST appear in order of increasing IDs.
+          <spanx style="verb">extensions</spanx> is a vector of 0 or more extensions. This vector MUST NOT include more than one extension with the same <spanx style="verb">extension_type</spanx>. The extensions in the vector MUST be ordered by the value of the <spanx style="verb">extension_type</spanx> field, smallest value first.
         </t>
         <figure>
           <artwork>
@@ -1540,12 +1540,12 @@ the STH changes.
 	  <c>0</c><c><xref target="FIPS.180-4">SHA-256</xref></c>
 	</texttable>
 	</section>
-      <section title="CT Extension IDs" anchor="extension_ids">
+      <section title="CT Extensions" anchor="extension_types">
         <t>
-          IANA is asked to establish a registry of CT extension IDs, initially consisting of:
+          IANA is asked to establish a registry of CT extensions, initially consisting of:
         </t>
         <texttable>
-          <ttcol>ID</ttcol><ttcol>Extension</ttcol>
+          <ttcol>Type</ttcol><ttcol>Extension</ttcol>
           <c>65535</c><c>reserved</c>
         </texttable>
         <t>
