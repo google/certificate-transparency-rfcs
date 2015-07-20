@@ -362,14 +362,10 @@ certificates and precertificates that have expired, are not yet valid, have been
 revoked, or are otherwise not fully valid according to RFC 5280 verification rules
 in order to accommodate quirks of CA certificate-issuing software. However, logs
 MUST reject certificates without a valid signature chain to an accepted root
-certificate. Logs MUST also reject precertificates that are not valid DER encoded CMS <spanx style="verb">signed-data</spanx> objects. If a certificate is accepted and an SCT issued, the accepting log
-MUST store the entire chain used for verification, including the certificate or
-precertificate itself and including the root certificate used to verify the
-chain (even if it was omitted from the submission), and MUST present this chain
-for auditing upon request. This chain is required to prevent a CA from avoiding
-blame by logging a partial or empty chain. (Note: This effectively excludes
-self-signed and DANE-based certificates until some mechanism to limit the
-submission of spurious certificates is found. The authors welcome suggestions.)
+certificate. Logs MUST also reject precertificates that are not valid DER encoded CMS <spanx style="verb">signed-data</spanx> objects.
+        </t>
+        <t>
+          If a certificate is accepted and an SCT issued, the accepting log MUST store the entire chain used for verification. This chain MUST include the certificate or precertificate itself, the zero or more intermediate CA certificates provided by the submitter, and the root certificate used to verify the chain (even if it was omitted from the submission). The log MUST present this chain for auditing upon request. This chain is required to prevent a CA from avoiding blame by logging a partial or empty chain. (Note: This effectively excludes self-signed and DANE-based certificates until some mechanism to limit the submission of spurious certificates is found. The authors welcome suggestions.)
         </t>
         <t>
           Each certificate or precertificate entry in a log MUST include the
