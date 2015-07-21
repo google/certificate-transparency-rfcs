@@ -93,7 +93,7 @@ public certification authorities (CAs).
 anyone. It is expected that public CAs will contribute all their newly issued
 certificates to one or more logs, however certificate holders
 can also contribute their own certificate chains, as can third parties. In order to avoid logs being
-rendered useless by submitting large numbers of spurious certificates, it is required that each chain is rooted in a 
+rendered useless by submitting large numbers of spurious certificates, it is required that each chain is rooted in a
 CA certificate accepted by the log. When a chain is submitted to a log, a signed timestamp is
 returned, which can later be used to provide evidence to TLS clients that the chain
 has been submitted. TLS clients can thus require that all certificates they accept as valid
@@ -189,7 +189,7 @@ root, then the inclusion proof proves that the leaf exists in the tree.
 
       <section title="Merkle Consistency Proofs" anchor='consistency'>
         <t>
-          Merkle consistency proofs prove the append-only property of the tree. A Merkle consistency proof for a Merkle Tree Hash MTH(D[n]) and a previously advertised hash MTH(D[0:m]) of the first m leaves, m &lt;= n, is the list of nodes in the Merkle Tree required to verify that the first m inputs D[0:m] are equal in both trees. Thus, a consistency proof must contain a set of intermediate nodes (i.e., commitments to inputs) sufficient to verify MTH(D[n]), such that (a subset of) the same nodes can be used to verify MTH(D[0:m]). We define an algorithm that outputs the (unique) minimal consistency proof. 
+          Merkle consistency proofs prove the append-only property of the tree. A Merkle consistency proof for a Merkle Tree Hash MTH(D[n]) and a previously advertised hash MTH(D[0:m]) of the first m leaves, m &lt;= n, is the list of nodes in the Merkle Tree required to verify that the first m inputs D[0:m] are equal in both trees. Thus, a consistency proof must contain a set of intermediate nodes (i.e., commitments to inputs) sufficient to verify MTH(D[n]), such that (a subset of) the same nodes can be used to verify MTH(D[0:m]). We define an algorithm that outputs the (unique) minimal consistency proof.
         </t>
         <t>
           Given an ordered list of n inputs to the tree, D[n] = {d(0), ..., d(n-1)}, the Merkle consistency proof PROOF(m, D[n]) for a previous Merkle Tree Hash MTH(D[0:m]), 0 &lt; m &lt; n, is defined as:
@@ -203,7 +203,7 @@ root, then the inclusion proof proves that the leaf exists in the tree.
            The subproof for m = n is the Merkle Tree Hash committing inputs D[0:m]; otherwise:
           <vspace blankLines='1' />
           SUBPROOF(m, D[m], false) = {MTH(D[m])}
-          <vspace blankLines='1' />    
+          <vspace blankLines='1' />
           For m &lt; n, let k be the largest power of two smaller than n. The subproof is then defined recursively.
           <vspace blankLines='1' />
 If m &lt;= k, the right subtree entries D[k:n] only exist in the current tree. We prove that the left subtree entries D[0:k] are consistent and add a commitment to D[k:n]:
@@ -225,7 +225,7 @@ If m > k, the left subtree entries D[0:k] are identical in both trees. We prove 
           <t>
             The binary Merkle Tree with 7 leaves:
 <figure>
-<artwork>    
+<artwork>
             hash
            /    \
           /      \
@@ -234,13 +234,13 @@ If m > k, the left subtree entries D[0:k] are identical in both trees. We prove 
        /            \
       k              l
      / \            / \
-    /   \          /   \ 
-   /     \        /     \    
+    /   \          /   \
+   /     \        /     \
   g       h      i      j
  / \     / \    / \     |
- a b     c d    e f     d6       
- | |     | |    | |                               
-d0 d1   d2 d3  d4 d5    
+ a b     c d    e f     d6
+ | |     | |    | |
+d0 d1   d2 d3  d4 d5
 </artwork>
 </figure>
           </t>
@@ -259,15 +259,15 @@ d0 d1   d2 d3  d4 d5
           <t>
             The same tree, built incrementally in four steps:
 <figure>
-<artwork>    
-    hash0          hash1=k 
-    / \              /  \  
-   /   \            /    \ 
-  /     \          /      \ 
-  g      c         g       h 
- / \     |        / \     / \ 
- a b     d2       a b     c d 
- | |              | |     | |                   
+<artwork>
+    hash0          hash1=k
+    / \              /  \
+   /   \            /    \
+  /     \          /      \
+  g      c         g       h
+ / \     |        / \     / \
+ a b     d2       a b     c d
+ | |              | |     | |
 d0 d1            d0 d1   d2 d3
 
           hash2                    hash
@@ -279,12 +279,12 @@ d0 d1            d0 d1   d2 d3
      k            i          k              l
     / \          / \        / \            / \
    /   \         e f       /   \          /   \
-  /     \        | |      /     \        /     \    
+  /     \        | |      /     \        /     \
  g       h      d4 d5    g       h      i      j
 / \     / \             / \     / \    / \     |
-a b     c d             a b     c d    e f     d6       
-| |     | |             | |     | |    | |                               
-d0 d1   d2 d3           d0 d1   d2 d3  d4 d5    
+a b     c d             a b     c d    e f     d6
+| |     | |             | |     | |    | |
+d0 d1   d2 d3           d0 d1   d2 d3  d4 d5
 </artwork>
 </figure>
           </t>
@@ -326,7 +326,7 @@ log is a single, ever-growing, append-only Merkle Tree of such certificates.
       </t>
       <section title="Log Entries">
         <t>
-          In order to enable attribution of each logged certificate to its issuer, each submitted certificate MUST be accompanied by all additional certificates required to verify the certificate chain up to an accepted root certificate. The root certificate itself MAY be omitted from the chain submitted to the log server. The log SHALL allow retrieval of a list of accepted root certificates (this list might usefully be the union of root certificates trusted by major browser vendors). 
+          In order to enable attribution of each logged certificate to its issuer, each submitted certificate MUST be accompanied by all additional certificates required to verify the certificate chain up to an accepted root certificate. The root certificate itself MAY be omitted from the chain submitted to the log server. The log SHALL allow retrieval of a list of accepted root certificates (this list might usefully be the union of root certificates trusted by major browser vendors).
         </t>
         <t>
           Alternatively, (root as well as intermediate) certification authorities
@@ -599,7 +599,7 @@ labels extension.
         CtExtensions extensions;
         digitally-signed struct {
             Version sct_version;
-            SignatureType signature_type = certificate_timestamp;            
+            SignatureType signature_type = certificate_timestamp;
             uint64 timestamp;
             LogEntryType entry_type;
             select(entry_type) {
@@ -672,7 +672,7 @@ client). Multiple SCTs are combined into an SCT list as follows:
         </t>
         <figure>
           <artwork>
-     opaque SerializedSCT&lt;1..2^16-1&gt;; 
+     opaque SerializedSCT&lt;1..2^16-1&gt;;
 
      struct {
          SerializedSCT sct_list &lt;1..2^16-1&gt;;
@@ -1518,7 +1518,7 @@ the STH changes.
         </section>
       </section>
     </section>
-    
+
     <section title="Algorithm Agility">
       <t>
 	It is not possible for a log to change any of its algorithms part way through its lifetime. If it should become necessary to deprecate an algorithm used by a live log, then the log should be frozen as specified in <xref target="metadata"/> and a new log should be started. If necessary, the new log can contain existing entries from the frozen log, which monitors can verify are an exact match.
@@ -1563,7 +1563,7 @@ the STH changes.
       </t>
       <section title="Misissued Certificates">
         <t>
-          Misissued certificates that have not been publicly logged, and thus do not have a valid SCT, will be rejected by TLS clients. Misissued certificates that do have an SCT from a log will appear in that public log within the Maximum Merge Delay, assuming the log is operating correctly. Thus, the maximum period of time during which a misissued certificate can be used without being available for audit is the MMD. 
+          Misissued certificates that have not been publicly logged, and thus do not have a valid SCT, will be rejected by TLS clients. Misissued certificates that do have an SCT from a log will appear in that public log within the Maximum Merge Delay, assuming the log is operating correctly. Thus, the maximum period of time during which a misissued certificate can be used without being available for audit is the MMD.
         </t>
       </section>
       <section title="Detection of Misissue">
@@ -1599,7 +1599,7 @@ need only be done once per each certificate. In order to protect the clients'
 privacy, these checks need not reveal the exact certificate to the log. Clients
 can instead request the proof from a trusted auditor (since anyone can compute
 the audit proofs from the log) or request Merkle proofs for a batch of
-certificates around the SCT timestamp. 
+certificates around the SCT timestamp.
         </t>
         <t>
           Violation of the append-only property can be detected by clients comparing their instances of the Signed Tree Heads. As soon as two conflicting Signed Tree Heads for the same log are detected, this is cryptographic proof of that log's misbehavior. There are various ways this could be done, for example via gossip (see http://trac.tools.ietf.org/id/draft-linus-trans-gossip-00.txt) or peer-to-peer communications or by sending STHs to monitors (who could then directly check against their own copy of the relevant log).
@@ -1773,7 +1773,7 @@ value="Montreal"/>
 	  <date year="2014"/>
 	</front>
       </reference>
-      
+
     </references>
   </back>
 </rfc>
