@@ -378,21 +378,21 @@ following components:
         </t>
 <figure>
   <artwork>
-   enum { x509_entry(0), precert_entry_V2(2), (65535) } LogEntryType;
+    enum { x509_entry(0), precert_entry_V2(2), (65535) } LogEntryType;
 
-   opaque ASN.1Cert&lt;1..2^24-1&gt;;
+    opaque ASN.1Cert&lt;1..2^24-1&gt;;
 
-   struct {
-       ASN.1Cert leaf_certificate;
-       ASN.1Cert certificate_chain&lt;0..2^24-1&gt;;
-   } X509ChainEntry;
+    struct {
+        ASN.1Cert leaf_certificate;
+        ASN.1Cert certificate_chain&lt;0..2^24-1&gt;;
+    } X509ChainEntry;
 
-   opaque CMSPrecert&lt;1..2^24-1&gt;;
+    opaque CMSPrecert&lt;1..2^24-1&gt;;
 
-   struct {
-       CMSPrecert pre_certificate;
-       ASN.1Cert precertificate_chain&lt;0..2^24-1&gt;;
-   } PrecertChainEntryV2;
+    struct {
+        CMSPrecert pre_certificate;
+        ASN.1Cert precertificate_chain&lt;0..2^24-1&gt;;
+    } PrecertChainEntryV2;
   </artwork>
 </figure>
         <t>
@@ -509,28 +509,28 @@ conditions:
           </t>
           <figure>
             <artwork>
-SEQUENCE {
-  OBJECT IDENTIFIER '2 5 29 30'
-  OCTET STRING, encapsulates {
     SEQUENCE {
-      [0] {
+      OBJECT IDENTIFIER '2 5 29 30'
+      OCTET STRING, encapsulates {
         SEQUENCE {
-          [2] 'example.com'
-          }
-        }
-      [1] {
-        SEQUENCE {
-          [7] 00 00 00 00 00 00 00 00
-          }
-        SEQUENCE {
-          [7]
-            00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-            00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+          [0] {
+            SEQUENCE {
+              [2] 'example.com'
+              }
+            }
+          [1] {
+            SEQUENCE {
+              [7] 00 00 00 00 00 00 00 00
+              }
+            SEQUENCE {
+              [7]
+                00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+                00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+              }
+            }
           }
         }
       }
-    }
-  }
             </artwork>
           </figure>
         </section>
@@ -544,16 +544,16 @@ SEQUENCE {
     enum { v2(1), (255) }
       Version;
 
-      struct {
-          opaque key_id[HASH_SIZE];
-      } LogID;
+    struct {
+        opaque key_id[HASH_SIZE];
+    } LogID;
 
-      opaque TBSCertificate&lt;1..2^24-1&gt;;
+    opaque TBSCertificate&lt;1..2^24-1&gt;;
 
-      struct {
-          opaque issuer_key_hash[HASH_SIZE];
-          TBSCertificate tbs_certificate;
-      } CertInfo;
+    struct {
+        opaque issuer_key_hash[HASH_SIZE];
+        TBSCertificate tbs_certificate;
+    } CertInfo;
 
     enum {
         reserved(65535)
@@ -672,11 +672,11 @@ client). Multiple SCTs are combined into an SCT list as follows:
         </t>
         <figure>
           <artwork>
-     opaque SerializedSCT&lt;1..2^16-1&gt;;
+    opaque SerializedSCT&lt;1..2^16-1&gt;;
 
-     struct {
-         SerializedSCT sct_list &lt;1..2^16-1&gt;;
-     } SignedCertificateTimestampList;</artwork>
+    struct {
+        SerializedSCT sct_list&lt;1..2^16-1&gt;;
+    } SignedCertificateTimestampList;</artwork>
         </figure>
         <t>
           Here, <spanx style="verb">SerializedSCT</spanx> is an opaque
@@ -727,7 +727,7 @@ responses pertaining to the end-entity certificate, by including a non-critical
             </t>
             <figure>
               <artwork>
-     CertificateSCTList ::= OCTET STRING</artwork>
+    CertificateSCTList ::= OCTET STRING</artwork>
             </figure>
             <t>
               <spanx style="verb">CertificateSCTList</spanx> contains a
@@ -746,7 +746,7 @@ certificate, by including a non-critical X.509v3 extension with OID
             </t>
             <figure>
               <artwork>
-     PrecertificateSCTList ::= OCTET STRING</artwork>
+    PrecertificateSCTList ::= OCTET STRING</artwork>
             </figure>
             <t>
               <spanx style="verb">PrecertificateSCTList</spanx> contains a
@@ -816,15 +816,15 @@ signatures.
 
 	<figure>
 	  <artwork>
-            enum { v1(0), (255) } TreeHeadVersion;
+    enum { v1(0), (255) } TreeHeadVersion;
 
-            digitally-signed struct {
-              TreeHeadVersion version;
-              SignatureType signature_type = tree_hash;
-              uint64 timestamp;
-              uint64 tree_size;
-              opaque root_hash[HASH_SIZE];
-            } TreeHeadSignature;
+    digitally-signed struct {
+        TreeHeadVersion version;
+        SignatureType signature_type = tree_hash;
+        uint64 timestamp;
+        uint64 tree_size;
+        opaque root_hash[HASH_SIZE];
+    } TreeHeadSignature;
           </artwork>
 	</figure>
 
@@ -895,10 +895,10 @@ messages.
             e.g. In response to a request of <spanx style="verb">/ct/v2/get-entries?start=100&amp;end=99</spanx>, the log would return a <spanx style="verb">400 Bad Request</spanx> response code with a body similar to the following:
           </preamble>
           <artwork>
-  {
-    "error_message": "'start' cannot be greater than 'end'",
-    "error_code": "not compliant",
-  }
+    {
+        "error_message": "'start' cannot be greater than 'end'",
+        "error_code": "not compliant",
+    }
           </artwork>
         </figure>
       </t>
