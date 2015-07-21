@@ -224,8 +224,8 @@ If m > k, the left subtree entries D[0:k] are identical in both trees. We prove 
         <section title="Example">
           <t>
             The binary Merkle Tree with 7 leaves:
-<figure>
-<artwork>
+          <figure>
+            <artwork>
             hash
            /    \
           /      \
@@ -241,7 +241,7 @@ If m > k, the left subtree entries D[0:k] are identical in both trees. We prove 
  a b     c d    e f     d6
  | |     | |    | |
 d0 d1   d2 d3  d4 d5</artwork>
-</figure>
+          </figure>
           </t>
           <t>
             The inclusion proof for d0 is [b, h, l].
@@ -257,8 +257,8 @@ d0 d1   d2 d3  d4 d5</artwork>
           </t>
           <t>
             The same tree, built incrementally in four steps:
-<figure>
-<artwork>
+          <figure>
+            <artwork>
     hash0          hash1=k
     / \              /  \
    /   \            /    \
@@ -284,7 +284,7 @@ d0 d1            d0 d1   d2 d3
 a b     c d             a b     c d    e f     d6
 | |     | |             | |     | |    | |
 d0 d1   d2 d3           d0 d1   d2 d3  d4 d5</artwork>
-</figure>
+          </figure>
           </t>
           <t>
             The consistency proof between hash0 and hash is PROOF(3, D[7]) = [c, d, g, l]. c, g are used to verify hash0, and d, l are additionally used to show hash is consistent with hash0.
@@ -374,8 +374,8 @@ certificate. Logs MUST also reject precertificates that are not valid DER encode
           Each certificate or precertificate entry in a log MUST include the
 following components:
         </t>
-<figure>
-  <artwork>
+        <figure>
+          <artwork>
     enum { x509_entry(0), precert_entry_V2(2), (65535) } LogEntryType;
 
     opaque ASN.1Cert&lt;1..2^24-1&gt;;
@@ -391,7 +391,7 @@ following components:
         CMSPrecert pre_certificate;
         ASN.1Cert precertificate_chain&lt;0..2^24-1&gt;;
     } PrecertChainEntryV2;</artwork>
-</figure>
+        </figure>
         <t>
           Logs SHOULD limit the length of chain they will accept.
         </t>
@@ -763,8 +763,8 @@ signatures.
         <t>
           Structure of the Merkle Tree input:
         </t>
-<figure>
-  <artwork>
+        <figure>
+          <artwork>
     enum { v1(0), v2(1), (255) }
       LeafVersion;
 
@@ -782,7 +782,7 @@ signatures.
         LeafVersion version;
         TimestampedEntry timestamped_entry;
     } MerkleTreeLeaf;</artwork>
-</figure>
+        </figure>
         <t>
           Here, <spanx style="verb">version</spanx> is the version of the MerkleTreeLeaf structure. This version is v2. Note that <xref target="RFC6962">MerkleTreeLeaf v1</xref> had another layer of indirection which is removed in v2.
         </t>
@@ -806,9 +806,8 @@ signatures.
         <t>
         Periodically the log SHOULD sign the corresponding tree hash and tree information (see the corresponding Signed Tree Head client message in <xref target="fetch_sth"/>). The signature for that data is structured as follows:
         </t>
-
-	<figure>
-	  <artwork>
+        <figure>
+          <artwork>
     enum { v1(0), (255) } TreeHeadVersion;
 
     digitally-signed struct {
@@ -818,8 +817,7 @@ signatures.
         uint64 tree_size;
         opaque root_hash[HASH_SIZE];
     } TreeHeadSignature;</artwork>
-	</figure>
-
+        </figure>
         <t>
           <spanx style="verb">version</spanx> is the version of the TreeHeadSignature structure. This version is v1.
         </t>
@@ -882,16 +880,16 @@ messages.
         </list>
       </t>
       <t>
-        <figure>
-          <preamble>
-            e.g. In response to a request of <spanx style="verb">/ct/v2/get-entries?start=100&amp;end=99</spanx>, the log would return a <spanx style="verb">400 Bad Request</spanx> response code with a body similar to the following:
-          </preamble>
-          <artwork>
+      <figure>
+        <preamble>
+          e.g. In response to a request of <spanx style="verb">/ct/v2/get-entries?start=100&amp;end=99</spanx>, the log would return a <spanx style="verb">400 Bad Request</spanx> response code with a body similar to the following:
+        </preamble>
+        <artwork>
     {
         "error_message": "'start' cannot be greater than 'end'",
         "error_code": "not compliant",
     }</artwork>
-        </figure>
+      </figure>
       </t>
       <t>
         Clients SHOULD treat <spanx style="verb">500 Internal Server Error</spanx> and <spanx style="verb">503 Service Unavailable</spanx> responses as transient failures and MAY retry the same request without modification at a later date.  Note that as per <xref target="RFC2616"/>, in the case of a 503 response the log MAY include a <spanx style="verb">Retry-After:</spanx> header in order to request a minimum time for the client to wait before retrying the request.
