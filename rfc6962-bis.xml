@@ -222,10 +222,10 @@ If m > k, the left subtree entries D[0:k] are identical in both trees. We prove 
       </section>
 
         <section title="Example">
-          <t>
-            The binary Merkle Tree with 7 leaves:
-          </t>
           <figure>
+            <preamble>
+              The binary Merkle Tree with 7 leaves:
+            </preamble>
             <artwork>
             hash
            /    \
@@ -255,10 +255,10 @@ d0 d1   d2 d3  d4 d5</artwork>
           <t>
             The inclusion proof for d6 is [i, k].
           </t>
-          <t>
-            The same tree, built incrementally in four steps:
-          </t>
           <figure>
+            <preamble>
+              The same tree, built incrementally in four steps:
+            </preamble>
             <artwork>
     hash0          hash1=k
     / \              /  \
@@ -370,11 +370,10 @@ certificate. Logs MUST also reject precertificates that are not valid DER encode
         <t>
           If a certificate is accepted and an SCT issued, the accepting log MUST store the entire chain used for verification. This chain MUST include the certificate or precertificate itself, the zero or more intermediate CA certificates provided by the submitter, and the root certificate used to verify the chain (even if it was omitted from the submission). The log MUST present this chain for auditing upon request. This chain is required to prevent a CA from avoiding blame by logging a partial or empty chain. (Note: This effectively excludes self-signed and DANE-based certificates until some mechanism to limit the submission of spurious certificates is found. The authors welcome suggestions.)
         </t>
-        <t>
-          Each certificate or precertificate entry in a log MUST include the
-following components:
-        </t>
         <figure>
+          <preamble>
+            Each certificate or precertificate entry in a log MUST include the following components:
+          </preamble>
           <artwork>
     enum {
         x509_entry(0), precert_entry_V2(2), (65535)
@@ -502,11 +501,10 @@ ranges.
               </t>
             </list>
           </t>
-          <t>
-            Below is an example Name Constraints extension that meets these
-conditions:
-          </t>
           <figure>
+            <preamble>
+              Below is an example Name Constraints extension that meets these conditions:
+            </preamble>
             <artwork>
     SEQUENCE {
       OBJECT IDENTIFIER '2 5 29 30'
@@ -666,9 +664,12 @@ refused if any of the SCTs become invalid.
           TLS servers SHOULD send SCTs from multiple logs in case one or more
 logs are not acceptable to the TLS client (for example, if a log has been struck
 off for misbehavior, has had a key compromise or is not known to the TLS
-client). Multiple SCTs are combined into an SCT list as follows:
+client).
         </t>
         <figure>
+          <preamble>
+            Multiple SCTs are combined into an SCT list as follows:
+          </preamble>
           <artwork>
     opaque SerializedSCT&lt;1..2^16-1&gt;;
 
@@ -717,13 +718,10 @@ Instead, we have to wrap it inside an additional OCTET STRING (see below),
 which we then put into the <spanx style="verb">extnValue</spanx> field.
           </t>
           <section title="OCSP Response Extension" anchor="ocsp_sctlist_extension">
-            <t>
-              A certification authority may embed one or more SCTs in OCSP
-responses pertaining to the end-entity certificate, by including a non-critical
-<spanx style="verb">singleExtensions</spanx> extension with OID
-1.3.6.1.4.1.11129.2.4.5 whose <spanx style="verb">extnValue</spanx> contains:
-            </t>
             <figure>
+              <preamble>
+                A certification authority may embed one or more SCTs in OCSP responses pertaining to the end-entity certificate, by including a non-critical <spanx style="verb">singleExtensions</spanx> extension with OID 1.3.6.1.4.1.11129.2.4.5 whose <spanx style="verb">extnValue</spanx> contains:
+              </preamble>
               <artwork>
     CertificateSCTList ::= OCTET STRING</artwork>
             </figure>
@@ -735,14 +733,10 @@ the <spanx style="verb">x509_entry</spanx>
             </t>
           </section>
           <section title="Certificate Extension" anchor="cert_sctlist_extension">
-            <t>
-              A certification authority that has submitted a precertificate to
-one or more logs may embed the obtained SCTs in the
-<spanx style="verb">TBSCertificate</spanx> that will be signed to produce the
-certificate, by including a non-critical X.509v3 extension with OID
-1.3.6.1.4.1.11129.2.4.2 whose <spanx style="verb">extnValue</spanx> contains:
-            </t>
             <figure>
+              <preamble>
+                A certification authority that has submitted a precertificate to one or more logs may embed the obtained SCTs in the <spanx style="verb">TBSCertificate</spanx> that will be signed to produce the certificate, by including a non-critical X.509v3 extension with OID 1.3.6.1.4.1.11129.2.4.2 whose <spanx style="verb">extnValue</spanx> contains:
+              </preamble>
               <artwork>
     PrecertificateSCTList ::= OCTET STRING</artwork>
             </figure>
@@ -764,10 +758,10 @@ signatures.
         <t>
           The hashing algorithm for the Merkle Tree Hash is specified in the log's metadata.
         </t>
-        <t>
-          Structure of the Merkle Tree input:
-        </t>
         <figure>
+          <preamble>
+            Structure of the Merkle Tree input:
+          </preamble>
           <artwork>
     enum {
         v1(0), v2(1), (255)
@@ -809,9 +803,12 @@ signatures.
       </section>
       <section title="Signed Tree Head" anchor="STH">
         <t>
-        Periodically the log SHOULD sign the corresponding tree hash and tree information (see the corresponding Signed Tree Head client message in <xref target="fetch_sth"/>). The signature for that data is structured as follows:
+          Periodically the log SHOULD sign the corresponding tree hash and tree information (see the corresponding Signed Tree Head client message in <xref target="fetch_sth"/>).
         </t>
         <figure>
+          <preamble>
+            The signature for that data is structured as follows:
+          </preamble>
           <artwork>
     enum {
         v1(0), (255)
