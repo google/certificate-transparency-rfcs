@@ -224,6 +224,7 @@ If m > k, the left subtree entries D[0:k] are identical in both trees. We prove 
         <section title="Example">
           <t>
             The binary Merkle Tree with 7 leaves:
+          </t>
           <figure>
             <artwork>
             hash
@@ -242,7 +243,6 @@ If m > k, the left subtree entries D[0:k] are identical in both trees. We prove 
  | |     | |    | |
 d0 d1   d2 d3  d4 d5</artwork>
           </figure>
-          </t>
           <t>
             The inclusion proof for d0 is [b, h, l].
           </t>
@@ -257,6 +257,7 @@ d0 d1   d2 d3  d4 d5</artwork>
           </t>
           <t>
             The same tree, built incrementally in four steps:
+          </t>
           <figure>
             <artwork>
     hash0          hash1=k
@@ -285,7 +286,6 @@ a b     c d             a b     c d    e f     d6
 | |     | |             | |     | |    | |
 d0 d1   d2 d3           d0 d1   d2 d3  d4 d5</artwork>
           </figure>
-          </t>
           <t>
             The consistency proof between hash0 and hash is PROOF(3, D[7]) = [c, d, g, l]. c, g are used to verify hash0, and d, l are additionally used to show hash is consistent with hash0.
           </t>
@@ -879,7 +879,6 @@ messages.
 	  </t>
         </list>
       </t>
-      <t>
       <figure>
         <preamble>
           e.g. In response to a request of <spanx style="verb">/ct/v2/get-entries?start=100&amp;end=99</spanx>, the log would return a <spanx style="verb">400 Bad Request</spanx> response code with a body similar to the following:
@@ -890,7 +889,6 @@ messages.
         "error_code": "not compliant",
     }</artwork>
       </figure>
-      </t>
       <t>
         Clients SHOULD treat <spanx style="verb">500 Internal Server Error</spanx> and <spanx style="verb">503 Service Unavailable</spanx> responses as transient failures and MAY retry the same request without modification at a later date.  Note that as per <xref target="RFC2616"/>, in the case of a 503 response the log MAY include a <spanx style="verb">Retry-After:</spanx> header in order to request a minimum time for the client to wait before retrying the request.
       </t>
