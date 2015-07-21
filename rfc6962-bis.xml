@@ -240,8 +240,7 @@ If m > k, the left subtree entries D[0:k] are identical in both trees. We prove 
  / \     / \    / \     |
  a b     c d    e f     d6
  | |     | |    | |
-d0 d1   d2 d3  d4 d5
-</artwork>
+d0 d1   d2 d3  d4 d5</artwork>
 </figure>
           </t>
           <t>
@@ -284,8 +283,7 @@ d0 d1            d0 d1   d2 d3
 / \     / \             / \     / \    / \     |
 a b     c d             a b     c d    e f     d6
 | |     | |             | |     | |    | |
-d0 d1   d2 d3           d0 d1   d2 d3  d4 d5
-</artwork>
+d0 d1   d2 d3           d0 d1   d2 d3  d4 d5</artwork>
 </figure>
           </t>
           <t>
@@ -392,8 +390,7 @@ following components:
     struct {
         CMSPrecert pre_certificate;
         ASN.1Cert precertificate_chain&lt;0..2^24-1&gt;;
-    } PrecertChainEntryV2;
-  </artwork>
+    } PrecertChainEntryV2;</artwork>
 </figure>
         <t>
           Logs SHOULD limit the length of chain they will accept.
@@ -530,8 +527,7 @@ conditions:
             }
           }
         }
-      }
-            </artwork>
+      }</artwork>
           </figure>
         </section>
       </section>
@@ -564,8 +560,7 @@ conditions:
         opaque extension_data&lt;0..2^16-1&gt;;
     } CtExtension;
 
-    CtExtension extensions&lt;0..2^16-1&gt;;
-          </artwork>
+    CtExtension extensions&lt;0..2^16-1&gt;;</artwork>
         </figure>
         <t>
           <spanx style="verb">key_id</spanx> is the HASH of the log's public key, calculated over the DER encoding of the key represented as SubjectPublicKeyInfo.
@@ -608,8 +603,7 @@ labels extension.
             } signed_entry;
             CtExtensions extensions;
         };
-    } SignedCertificateTimestamp;
-          </artwork>
+    } SignedCertificateTimestamp;</artwork>
         </figure>
         <t>
           The encoding of the digitally-signed element is defined in <xref target='RFC5246'/>.
@@ -787,8 +781,7 @@ signatures.
     struct {
         LeafVersion version;
         TimestampedEntry timestamped_entry;
-    } MerkleTreeLeaf;
-  </artwork>
+    } MerkleTreeLeaf;</artwork>
 </figure>
         <t>
           Here, <spanx style="verb">version</spanx> is the version of the MerkleTreeLeaf structure. This version is v2. Note that <xref target="RFC6962">MerkleTreeLeaf v1</xref> had another layer of indirection which is removed in v2.
@@ -824,8 +817,7 @@ signatures.
         uint64 timestamp;
         uint64 tree_size;
         opaque root_hash[HASH_SIZE];
-    } TreeHeadSignature;
-          </artwork>
+    } TreeHeadSignature;</artwork>
 	</figure>
 
         <t>
@@ -898,8 +890,7 @@ messages.
     {
         "error_message": "'start' cannot be greater than 'end'",
         "error_code": "not compliant",
-    }
-          </artwork>
+    }</artwork>
         </figure>
       </t>
       <t>
