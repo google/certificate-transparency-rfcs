@@ -311,7 +311,7 @@ Section 8.2 of <xref target="RFC3447"/>) using a key of at least 2048 bits.
         Anyone can submit certificates to certificate logs for public auditing;
 however, since certificates will not be accepted by TLS clients unless logged,
 it is expected that certificate owners or their CAs will usually submit them. A
-log is a single, ever-growing, append-only Merkle Tree of such certificates.
+log is a single, append-only Merkle Tree of such certificates.
       </t>
       <t>
         When a valid certificate is submitted to a log, the log MUST return a Signed Certificate Timestamp (SCT). The SCT is the log's promise to incorporate the certificate in the Merkle Tree within a fixed amount of time known as the Maximum Merge Delay (MMD). If the log has previously seen the certificate, it MAY return the same SCT as it returned before (note that if a certificate was previously logged as a precertificate, then the precertificate's SCT would not be appropriate, instead a fresh SCT of type x509_entry should be generated). TLS servers MUST present an SCT from one or more logs to the TLS client together with the certificate. A certificate not accompanied by an SCT (either for the end-entity certificate or for a name-constrained intermediate the end-entity certificate chains to) MUST NOT be considered compliant by TLS clients.
