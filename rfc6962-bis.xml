@@ -335,7 +335,7 @@ certificate. A precertificate is a CMS <xref target="RFC5652"/>
 <spanx style="verb">signed-data</spanx> object that contains a TBSCertificate
 <xref target="RFC5280"/> in its
 <spanx style="verb">SignedData.encapContentInfo.eContent</spanx> field,
-identified by the OID &lt;TBD&gt; in the
+identified by the OID 1.3.6.1.4.1.11129.2.4.8 in the
 <spanx style="verb">SignedData.encapContentInfo.eContentType</spanx> field.
 This TBSCertificate MAY redact certain domain name labels that will be present
 in the issued certificate (see <xref target="redacting_subdomains"/>) and MUST
