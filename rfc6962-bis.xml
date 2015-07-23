@@ -394,7 +394,7 @@ certificate. Logs MUST also reject precertificates that are not valid DER encode
     } PrecertChainEntryV2;</artwork>
         </figure>
         <t>
-          Logs SHOULD limit the length of chain they will accept.
+          Logs SHOULD limit the length of chain they will accept. The maximum chain length is specified in the log's metadata.
         </t>
         <t>
           <spanx style="verb">entry_type</spanx> is the type of this entry. Future revisions of this protocol may add new LogEntryType values. <xref target="client_messages"/> explains how clients should handle unknown entry types.
@@ -1321,6 +1321,9 @@ but it is expected there will be a variety.
 	  </t>
 	  <t hangText="Version">
 	    The version of the protocol supported by the log (currently 1 or 2).
+	  </t>
+	  <t hangText="Maximum Chain Length">
+	    The longest chain submission the log is willing to accept, if the log chose to limit it.
 	  </t>
 	  <t hangText="STH Frequency Count">
 	    The maximum number of STHs the log may produce in any period equal to the <spanx style="verb">Maximum Merge Delay</spanx> (see <xref target="STH"/>).
