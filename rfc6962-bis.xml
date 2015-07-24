@@ -96,8 +96,7 @@ can also contribute their own certificate chains, as can third parties. In order
 rendered useless by submitting large numbers of spurious certificates, it is required that each chain is rooted in a
 CA certificate accepted by the log. When a chain is submitted to a log, a signed timestamp is
 returned, which can later be used to provide evidence to TLS clients that the chain
-has been submitted. TLS clients can thus require that all certificates they accept as valid
-have been logged.
+has been submitted. TLS clients can thus require that all certificates they accept as valid are accompanied by signed timestamps.
       </t>
       <t>
         Those who are concerned about misissue can monitor the logs, asking
@@ -653,10 +652,7 @@ updated on the fly.
             </t>
             <t>
               An X509v3 certificate extension
-(see <xref target="cert_sctlist_extension"/>). This mechanism allows the use of
-unmodified TLS servers, but, because the included SCTs cannot be changed without
-re-issuing the certificate, increases the risk that the certificate will be
-refused if any of the SCTs become invalid.
+(see <xref target="cert_sctlist_extension"/>). This mechanism allows the use of unmodified TLS servers, but the SCTs cannot be updated on the fly. Since the logs that signed the SCTs won't necessarily be accepted by TLS clients for the full lifetime of the certificate, there is a risk that TLS clients will subsequently consider the certificate to be non-compliant and in need of re-issuance.
             </t>
           </list>
         </t>
@@ -1285,7 +1281,7 @@ entry specified by <spanx style="verb">start</spanx>.
     <section title="Clients">
       <t>
         There are various different functions clients of logs might perform. We
-describe here some typical clients and how they could function. Any
+describe here some typical clients and how they should function. Any
 inconsistency may be used as evidence that a log has not behaved correctly, and
 the signatures on the data structures prevent the log from denying that
 misbehavior.
@@ -1347,7 +1343,7 @@ but it is expected there will be a variety.
 addition to normal validation of the certificate and its chain, TLS clients
 SHOULD validate the SCT by computing the signature input from the SCT data as
 well as the certificate and verifying the signature, using the corresponding
-log's public key.
+log's public key. By validating SCTs, TLS clients can thus determine whether certificates are compliant. However, specifying the TLS clients' behaviour once compliance or non-compliance has been determined (for example, whether a certificate should be rejected due to the lack of valid SCTs) is outside the scope of this document.
 	</t>
 	<t>
           A TLS client MAY audit the corresponding log by requesting, and
@@ -1569,7 +1565,7 @@ the STH changes.
       </t>
       <section title="Misissued Certificates">
         <t>
-          Misissued certificates that have not been publicly logged, and thus do not have a valid SCT, will be rejected by TLS clients. Misissued certificates that do have an SCT from a log will appear in that public log within the Maximum Merge Delay, assuming the log is operating correctly. Thus, the maximum period of time during which a misissued certificate can be used without being available for audit is the MMD.
+          Misissued certificates that have not been publicly logged, and thus do not have a valid SCT, are not considered compliant (so TLS clients may decide, for example, to reject them). Misissued certificates that do have an SCT from a log will appear in that public log within the Maximum Merge Delay, assuming the log is operating correctly. Thus, the maximum period of time during which a misissued certificate can be used without being available for audit is the MMD.
         </t>
       </section>
       <section title="Detection of Misissue">
