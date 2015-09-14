@@ -1015,7 +1015,7 @@ an accepted root certificate.
               </list>
 	    </t>
 	    <t>
-              Both tree sizes must be from existing v1 STHs (Signed Tree Heads). However, because of skew, the receiving front-end may not know one or both of the existing STHs. If both are known, then only the <spanx style="verb">consistency</spanx> output is returned. If the first is known but the second is not (or has been omitted), then the latest known STH is returned, along with a consistency proof between the first STH and the latest. If neither are known, then the latest known STH is returned without a consistency proof.
+              Both tree sizes must be from existing v2 STHs (Signed Tree Heads). However, because of skew, the receiving front-end may not know one or both of the existing STHs. If both are known, then only the <spanx style="verb">consistency</spanx> output is returned. If the first is known but the second is not (or has been omitted), then the latest known STH is returned, along with a consistency proof between the first STH and the latest. If neither are known, then the latest known STH is returned without a consistency proof.
             </t>
             <t hangText="Outputs:">
 	      <list style="hanging">
@@ -1067,7 +1067,7 @@ an accepted root certificate.
 		  The tree_size of the tree on which to base the proof, in decimal.
 		</t>
               </list>
-              The <spanx style="verb">hash</spanx> must be calculated as defined in <xref target="tree"/>. The <spanx style="verb">tree_size</spanx> must designate an existing v1 STH. Because of skew, the front-end may not know the requested STH. In that case, it will return the latest STH it knows, along with an inclusion proof to that STH. If the front-end knows the requested STH then only <spanx style="verb">leaf_index</spanx> and <spanx style="verb">audit_path</spanx> are returned.
+              The <spanx style="verb">hash</spanx> must be calculated as defined in <xref target="tree"/>. The <spanx style="verb">tree_size</spanx> must designate an existing v2 STH. Because of skew, the front-end may not know the requested STH. In that case, it will return the latest STH it knows, along with an inclusion proof to that STH. If the front-end knows the requested STH then only <spanx style="verb">leaf_index</spanx> and <spanx style="verb">audit_path</spanx> are returned.
             </t>
 	    <t hangText="Outputs:">
 	      <list style="hanging">
@@ -1124,7 +1124,7 @@ an accepted root certificate.
               </list>
 	    </t>
 	    <t>
-              The <spanx style="verb">hash</spanx> must be calculated as defined in <xref target="tree"/>. The <spanx style="verb">tree_size</spanx> must designate an existing v1 STH.
+              The <spanx style="verb">hash</spanx> must be calculated as defined in <xref target="tree"/>. The <spanx style="verb">tree_size</spanx> must designate an existing v2 STH.
 	    </t>
 	    <t>
 	      Because of skew, the front-end may not know the requested STH or the requested hash, which leads to a number of cases.
