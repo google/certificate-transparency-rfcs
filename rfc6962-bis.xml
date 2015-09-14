@@ -811,19 +811,20 @@ signatures.
           </preamble>
           <artwork>
     enum {
-        v1(0), (255)
+        v2(1), (255)
     } TreeHeadVersion;
 
     digitally-signed struct {
         TreeHeadVersion version;
         SignatureType signature_type = tree_hash;
+        LogID id;
         uint64 timestamp;
         uint64 tree_size;
         opaque root_hash[HASH_SIZE];
     } TreeHeadSignature;</artwork>
         </figure>
         <t>
-          <spanx style="verb">version</spanx> is the version of the TreeHeadSignature structure. This version is v1.
+          <spanx style="verb">version</spanx> is the version of the TreeHeadSignature structure. This version is v2. Note that <xref target="RFC6962">TreeHeadSignature v1</xref> did not include the log id.
         </t>
         <t>
           <spanx style="verb">timestamp</spanx> is the current time. The timestamp MUST be at least as recent as the most recent SCT timestamp in the tree. Each subsequent timestamp MUST be more recent than the timestamp of the previous update.
