@@ -41,7 +41,7 @@ We describe a method for fetching Certificate Transparency inclusion proofs over
 
 # Introduction
 
-Certificate Transparency improves the certificate ecosystem by requiring certificates be submitted to logs in order to be considered secure.  To prove that a certificate has been included in a public log clients should request inclusion proofs from logs as descrbed in {{RFC6962}}.
+Certificate Transparency improves the certificate ecosystem by requiring certificates be submitted to logs in order to be considered secure.  To prove that a certificate has been included in a public log clients should request inclusion proofs from logs as described in {{RFC6962}}.
 
 However by fetching an inclusion proof directly from a log server the client reveals to the log server the certificate that they are interested in, and thus leaks their browsing history.
 
