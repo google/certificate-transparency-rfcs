@@ -555,14 +555,14 @@ ranges.
 
     enum {
         reserved(65535)
-    } CtExtensionType;
+    } SctExtensionType;
 
     struct {
-        CtExtensionType extension_type;
-        opaque extension_data&lt;0..2^16-1&gt;;
-    } CtExtension;
+        SctExtensionType sct_extension_type;
+        opaque sct_extension_data&lt;0..2^16-1&gt;;
+    } SctExtension;
 
-    CtExtension extensions&lt;0..2^16-1&gt;;</artwork>
+    SctExtension SctExtensions&lt;0..2^16-1&gt;;</artwork>
         </figure>
         <t>
           <spanx style="verb">key_id</spanx> is the HASH of the log's public key, calculated over the DER encoding of the key represented as SubjectPublicKeyInfo.
@@ -579,13 +579,13 @@ redacted labels extension, and deleting the SCT list extension and redacted
 labels extension.
         </t>
         <t>
-          <spanx style="verb">extension_type</spanx> identifies a single extension from the IANA registry in <xref target="extension_types"/>.
+          <spanx style="verb">sct_extension_type</spanx> identifies a single extension from the IANA registry in <xref target="sct_extension_types"/>.
         </t>
         <t>
-          The interpretation of the <spanx style="verb">extension_data</spanx> field is determined solely by the value of the <spanx style="verb">extension_type</spanx> field. Each document that registers a new <spanx style="verb">extension_type</spanx> must describe how to interpret the corresponding <spanx style="verb">extension_data</spanx>.
+          The interpretation of the <spanx style="verb">sct_extension_data</spanx> field is determined solely by the value of the <spanx style="verb">sct_extension_type</spanx> field. Each document that registers a new <spanx style="verb">sct_extension_type</spanx> must describe how to interpret the corresponding <spanx style="verb">sct_extension_data</spanx>.
         </t>
         <t>
-          <spanx style="verb">extensions</spanx> is a vector of 0 or more extensions. This vector MUST NOT include more than one extension with the same <spanx style="verb">extension_type</spanx>. The extensions in the vector MUST be ordered by the value of the <spanx style="verb">extension_type</spanx> field, smallest value first.
+          The <spanx style="verb">SctExtensions</spanx> type is a vector of 0 or more extensions. This vector MUST NOT include more than one extension with the same <spanx style="verb">sct_extension_type</spanx>. The extensions in the vector MUST be ordered by the value of the <spanx style="verb">sct_extension_type</spanx> field, smallest value first.
         </t>
         <figure>
           <artwork>
@@ -593,7 +593,7 @@ labels extension.
         Version sct_version;
         LogID id;
         uint64 timestamp;
-        CtExtensions extensions;
+        SctExtensions extensions;
         digitally-signed struct {
             Version sct_version;
             SignatureType signature_type = certificate_timestamp;
@@ -603,7 +603,7 @@ labels extension.
                 case x509_entry: CertInfo;
                 case precert_entry_V2: CertInfo;
             } signed_entry;
-            CtExtensions extensions;
+            SctExtensions extensions;
         };
     } SignedCertificateTimestamp;</artwork>
         </figure>
@@ -774,7 +774,7 @@ signatures.
             case x509_entry: CertInfo;
             case precert_entry_V2: CertInfo;
         } signed_entry;
-        CtExtensions extensions;
+        SctExtensions extensions;
     } TimestampedEntry;
 
     struct {
@@ -795,7 +795,7 @@ signatures.
           <spanx style="verb">signed_entry</spanx> is the <spanx style="verb">signed_entry</spanx> of the corresponding SCT.
         </t>
         <t>
-          <spanx style="verb">extensions</spanx> are <spanx style="verb">extensions</spanx> of the corresponding SCT.
+          <spanx style="verb">extensions</spanx> are the <spanx style="verb">extensions</spanx> of the corresponding SCT.
         </t>
         <t>
           The leaves of the Merkle Tree are the leaf hashes of the corresponding <spanx style="verb">MerkleTreeLeaf</spanx> structures. Note that <xref target="mht">leaf hashes</xref> are calculated as HASH(0x00 || MerkleTreeLeaf).
@@ -1573,9 +1573,9 @@ the STH changes.
 	  <c>0</c><c><xref target="FIPS.180-4">SHA-256</xref></c>
 	</texttable>
 	</section>
-      <section title="CT Extensions" anchor="extension_types">
+      <section title="SCT Extensions" anchor="sct_extension_types">
         <t>
-          IANA is asked to establish a registry of CT extensions, initially consisting of:
+          IANA is asked to establish a registry of SCT extensions, initially consisting of:
         </t>
         <texttable>
           <ttcol>Type</ttcol><ttcol>Extension</ttcol>
