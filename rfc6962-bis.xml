@@ -971,7 +971,7 @@ an accepted root certificate.
 
       <section title="Retrieve Latest Signed Tree Head" anchor="fetch_sth">
         <t>
-          GET https://&lt;log server&gt;/ct/v1/get-sth
+          GET https://&lt;log server&gt;/ct/v2/get-sth
         </t>
         <t>
           No inputs.
