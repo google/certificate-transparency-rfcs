@@ -859,7 +859,7 @@ signatures.
             <spanx style="verb">version</spanx> is the version of the SignedTreeHead structure. This version is v2. Note that <xref target="RFC6962">TreeHeadSignature v1</xref> only included the inner <spanx style="verb">digitally-signed struct</spanx> and did not include the <spanx style="verb">id</spanx> or <spanx style="verb">extensions</spanx> fields.
           </t>
           <t>
-            <spanx style="verb">timestamp</spanx> is the current time. The timestamp MUST be at least as recent as the most recent SCT timestamp in the tree. Each subsequent timestamp MUST be more recent than the timestamp of the previous update.
+            <spanx style="verb">timestamp</spanx> is the current NTP Time [RFC5905], measured since the epoch (January 1, 1970, 00:00), ignoring leap seconds, in milliseconds. The timestamp MUST be at least as recent as the most recent SCT timestamp in the tree. Each subsequent timestamp MUST be more recent than the timestamp of the previous update.
           </t>
           <t>
             <spanx style="verb">tree_size</spanx> equals the number of entries in the new tree.
