@@ -801,15 +801,15 @@ signatures.
           The leaves of the Merkle Tree are the leaf hashes of the corresponding <spanx style="verb">MerkleTreeLeaf</spanx> structures. Note that <xref target="mht">leaf hashes</xref> are calculated as HASH(0x00 || MerkleTreeLeaf).
         </t>
       </section>
-      <section title="Signed Tree Head" anchor="STH">
+      <section title="Signed Tree Head (STH)" anchor="STH">
         <t>
           Periodically the log SHOULD sign the corresponding tree hash and tree information (see the corresponding Signed Tree Head client message in <xref target="fetch_sth"/>).
         </t>
-        <figure>
-          <preamble>
-            The signature for that data is structured as follows:
-          </preamble>
-          <artwork>
+        <t>Each log MUST produce on demand a Signed Tree Head that is no older than the Maximum Merge Delay. However, Signed Tree Heads could be used to mark individual clients (by producing a new one for each query), so logs MUST NOT produce them more frequently than is declared in their metadata. In general, there is no need to produce a new Signed Tree Head unless there are new entries in the log, however, in the unlikely event that it receives no new submissions during an MMD period, the log SHALL sign the same Merkle Tree Hash with a fresh timestamp.
+        </t>
+        <section title="Structure of the STH" anchor="sth_struct">
+          <figure>
+            <artwork>
     enum {
         v2(1), (255)
     } TreeHeadVersion;
@@ -824,18 +824,18 @@ signatures.
     } SthExtension;
 
     SthExtension SthExtensions&lt;0..2^16-1&gt;;</artwork>
-        </figure>
-        <t>
-          <spanx style="verb">sth_extension_type</spanx> identifies a single extension from the IANA registry in <xref target="sth_extension_types"/>.
-        </t>
-        <t>
-          The interpretation of the <spanx style="verb">sth_extension_data</spanx> field is determined solely by the value of the <spanx style="verb">sth_extension_type</spanx> field. Each document that registers a new <spanx style="verb">sth_extension_type</spanx> must describe how to interpret the corresponding <spanx style="verb">sth_extension_data</spanx>.
-        </t>
-        <t>
-          The <spanx style="verb">SthExtensions</spanx> type is a vector of 0 or more extensions. This vector MUST NOT include more than one extension with the same <spanx style="verb">sth_extension_type</spanx>. The extensions in the vector MUST be ordered by the value of the <spanx style="verb">sth_extension_type</spanx> field, smallest value first.
-        </t>
-        <figure>
-          <artwork>
+          </figure>
+          <t>
+            <spanx style="verb">sth_extension_type</spanx> identifies a single extension from the IANA registry in <xref target="sth_extension_types"/>.
+          </t>
+          <t>
+            The interpretation of the <spanx style="verb">sth_extension_data</spanx> field is determined solely by the value of the <spanx style="verb">sth_extension_type</spanx> field. Each document that registers a new <spanx style="verb">sth_extension_type</spanx> must describe how to interpret the corresponding <spanx style="verb">sth_extension_data</spanx>.
+          </t>
+          <t>
+            The <spanx style="verb">SthExtensions</spanx> type is a vector of 0 or more extensions. This vector MUST NOT include more than one extension with the same <spanx style="verb">sth_extension_type</spanx>. The extensions in the vector MUST be ordered by the value of the <spanx style="verb">sth_extension_type</spanx> field, smallest value first.
+          </t>
+          <figure>
+            <artwork>
     struct {
         TreeHeadVersion version;
         LogID id;
@@ -853,24 +853,23 @@ signatures.
             SthExtensions extensions;
         };
     } SignedTreeHead;</artwork>
-        </figure>
-        <t>
-          <spanx style="verb">version</spanx> is the version of the SignedTreeHead structure. This version is v2. Note that <xref target="RFC6962">TreeHeadSignature v1</xref> only included the inner <spanx style="verb">digitally-signed struct</spanx> and did not include the <spanx style="verb">id</spanx> or <spanx style="verb">extensions</spanx> fields.
-        </t>
-        <t>
-          <spanx style="verb">timestamp</spanx> is the current time. The timestamp MUST be at least as recent as the most recent SCT timestamp in the tree. Each subsequent timestamp MUST be more recent than the timestamp of the previous update.
-        </t>
-        <t>
-          <spanx style="verb">tree_size</spanx> equals the number of entries in the new tree.
-        </t>
-        <t>
-          <spanx style="verb">root_hash</spanx> is the root of the Merkle Hash Tree.
-        </t>
-        <t>
-          <spanx style="verb">extensions</spanx> are future extensions to SignedTreeHead v2. Currently, no extensions are specified. If an implementation sees an extension that it does not understand, it SHOULD ignore that extension. Furthermore, an implementation MAY choose to ignore any extension(s) that it does understand.
-        </t>
-        <t>Each log MUST produce on demand a Signed Tree Head that is no older than the Maximum Merge Delay. However, Signed Tree Heads could be used to mark individual clients (by producing a new one for each query), so logs MUST NOT produce them more frequently than is declared in their metadata. In general, there is no need to produce a new Signed Tree Head unless there are new entries in the log, however, in the unlikely event that it receives no new submissions during an MMD period, the log SHALL sign the same Merkle Tree Hash with a fresh timestamp.
-        </t>
+         </figure>
+          <t>
+            <spanx style="verb">version</spanx> is the version of the SignedTreeHead structure. This version is v2. Note that <xref target="RFC6962">TreeHeadSignature v1</xref> only included the inner <spanx style="verb">digitally-signed struct</spanx> and did not include the <spanx style="verb">id</spanx> or <spanx style="verb">extensions</spanx> fields.
+          </t>
+          <t>
+            <spanx style="verb">timestamp</spanx> is the current time. The timestamp MUST be at least as recent as the most recent SCT timestamp in the tree. Each subsequent timestamp MUST be more recent than the timestamp of the previous update.
+          </t>
+          <t>
+            <spanx style="verb">tree_size</spanx> equals the number of entries in the new tree.
+          </t>
+          <t>
+            <spanx style="verb">root_hash</spanx> is the root of the Merkle Hash Tree.
+          </t>
+          <t>
+            <spanx style="verb">extensions</spanx> are future extensions to SignedTreeHead v2. Currently, no extensions are specified. If an implementation sees an extension that it does not understand, it SHOULD ignore that extension. Furthermore, an implementation MAY choose to ignore any extension(s) that it does understand.
+          </t>
+        </section>
       </section>
     </section>
     <section title="Log Client Messages" anchor="client_messages">
