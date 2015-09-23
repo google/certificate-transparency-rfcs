@@ -1051,6 +1051,8 @@ an accepted root certificate.
 		  A base64 encoded SignedTreeHead.
 		</t>
               </list>
+            </t>
+            <t>
               Note that no signature is required for the <spanx style="verb">consistency</spanx> output as it is used to verify <spanx style="verb">sth</spanx>, which is signed.
             </t>
 	    <t hangText="Error codes:">
@@ -1083,6 +1085,8 @@ an accepted root certificate.
 		  The tree_size of the tree on which to base the proof, in decimal.
 		</t>
               </list>
+            </t>
+            <t>
               The <spanx style="verb">hash</spanx> must be calculated as defined in <xref target="tree"/>. The <spanx style="verb">tree_size</spanx> must designate an existing v2 STH. Because of skew, the front-end may not know the requested STH. In that case, it will return the latest STH it knows, along with an inclusion proof to that STH. If the front-end knows the requested STH then only <spanx style="verb">leaf_index</spanx> and <spanx style="verb">audit_path</spanx> are returned.
             </t>
 	    <t hangText="Outputs:">
@@ -1097,6 +1101,8 @@ an accepted root certificate.
 		  A base64 encoded SignedTreeHead.
 		</t>
               </list>
+            </t>
+            <t>
               Note that no signature is required for the <spanx style="verb">leaf_index</spanx> or <spanx style="verb">audit_path</spanx> outputs as they are used to verify inclusion in <spanx style="verb">sth</spanx>, which is signed.
 	    </t>
 	    <t hangText="Error codes:">
@@ -1135,6 +1141,8 @@ an accepted root certificate.
 	    </t>
 	    <t>
 	      Because of skew, the front-end may not know the requested STH or the requested hash, which leads to a number of cases.
+	    </t>
+	    <t>
 	      <list style="hanging">
 		<t hangText="latest STH &lt; requested STH">
 		  Return latest STH.
@@ -1165,13 +1173,15 @@ an accepted root certificate.
 		  An array of base64 encoded Merkle Tree nodes proving the consistency of the requested STH and the returned STH.
 		</t>
               </list>
-              Note that no signature is required for the <spanx style="verb">leaf_index</spanx>, <spanx style="verb">audit_path</spanx> or <spanx style="verb">consistency</spanx> outputs as they are used to verify inclusion in and consistency of <spanx style="verb">sth</spanx>, which is signed.
 	    </t>
 	    <t>
-	      Errors are the same as in <xref target="fetch_proof"/>.
-            </t>
+              Note that no signature is required for the <spanx style="verb">leaf_index</spanx>, <spanx style="verb">audit_path</spanx> or <spanx style="verb">consistency</spanx> outputs as they are used to verify inclusion in and consistency of <spanx style="verb">sth</spanx>, which is signed.
+	    </t>
 	  </list>
 	</t>
+	<t>
+	  Errors are the same as in <xref target="fetch_proof"/>.
+        </t>
         <t>See <xref target="verify_inclusion" /> for an outline of how to use the <spanx style="verb">audit_path</spanx> array and see <xref target="verify_consistency" /> for an outline of how to use the <spanx style="verb">consistency</spanx> array.</t>
       </section>
 
