@@ -195,6 +195,20 @@ def check_inclusion_via_rfc_algorithm(hash, leaf_index, audit_path, tree_size, r
 
 
 ##########################################################################################
+# The following algorithm is specified in the DNS RFC and tested here
+##########################################################################################
+def audit_path_length(index, tree_size):
+  length = 0
+  ln = tree_size - 1
+  li = index
+  while ln:
+    if li & 1 or li < ln:
+      length += 1
+    li >>= 1
+    ln >>= 1
+  return length
+
+##########################################################################################
 # The following are extracted from https://github.com/google/certificate-transparency
 # and are used to cross-check the algorithms in the RFC.
 ##########################################################################################
@@ -287,21 +301,24 @@ for tree_size in range(1, size + 1):
 for tree_size in range(1, size + 1):
   root_hash = t.calc_mth(0, tree_size)
   print 'Checking inclusion proofs to %i...' % tree_size,
-  for leaf_index in range(0, tree_size - 1):
+  for leaf_index in range(0, tree_size):
+    apl = audit_path_length(leaf_index, tree_size)
     audit_path = t.inclusion_proof(leaf_index, tree_size)
+    assert apl == len(audit_path)
     hash = sha256(chr(0) + t.entries[leaf_index]).digest()
 
     assert check_inclusion(hash, leaf_index, audit_path, tree_size, root_hash)
 
     audit_path = t2.inclusion_proof(leaf_index, tree_size)
-    assert not check_inclusion(hash, leaf_index, audit_path, tree_size,
+    assert audit_path_length(leaf_index, tree_size) == len(audit_path)
+    assert len(audit_path) ^ check_inclusion(hash, leaf_index, audit_path, tree_size,
                                root_hash)
-
     audit_path = t.inclusion_proof(leaf_index, tree_size) + t.inclusion_proof(leaf_index, tree_size)
-    assert not check_inclusion(hash, leaf_index, audit_path, tree_size, root_hash)
+    assert len(audit_path) ^ check_inclusion(hash, leaf_index, audit_path, tree_size, root_hash)
 
     audit_path = t.inclusion_proof(leaf_index, tree_size)[:-1]
-    assert not check_inclusion(hash, leaf_index, audit_path, tree_size, root_hash)
+    if apl:
+      assert not check_inclusion(hash, leaf_index, audit_path, tree_size, root_hash)
 
   print 'SUCCESS.'
 
@@ -326,7 +343,7 @@ for first in range(1, size - 1):
   print 'Checking consistency proofs from %i...' % first,
   for second in range(first + 1, size):
     second_hash = t.calc_mth(0, second)
-    
+
     consistency = t.proof(first, second)
     assert check_consistency(first, second, first_hash, consistency,
                              second_hash)
