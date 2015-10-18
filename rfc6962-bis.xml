@@ -318,25 +318,6 @@ Section 8.2 of <xref target="RFC3447"/>) using a key of at least 2048 bits.
         </t>
       </section>
       <section title="Precertificates">
-      </section>
-    </section>
-    <section title="Log Format and Operation">
-      <t>
-        A log is a single, append-only Merkle Tree of such certificates.
-      </t>
-      <t>
-         The SCT is the log's promise to incorporate the certificate in the Merkle Tree within a fixed amount of time known as the Maximum Merge Delay (MMD). If the log has previously seen the certificate, it MAY return the same SCT as it returned before (note that if a certificate was previously logged as a precertificate, then the precertificate's SCT would not be appropriate, instead a fresh SCT of type x509_entry should be generated). TLS servers MUST present an SCT from one or more logs to the TLS client together with the certificate. A certificate not accompanied by an SCT (either for the end-entity certificate or for a name-constrained intermediate the end-entity certificate chains to) MUST NOT be considered compliant by TLS clients.
-      </t>
-      <t>
-        Periodically, each log appends all its new entries to the Merkle Tree and signs the root of the tree. The log MUST incorporate a certificate in its Merkle Tree within the Maximum Merge Delay period after the issuance of the SCT. When encountering an SCT, an Auditor can verify that the certificate was added to the Merkle Tree within that timeframe.
-      </t>
-      <t>
-        Log operators MUST NOT impose any conditions on retrieving or sharing data from the log.
-      </t>
-      <section title="Log Entries">
-        <t>
-          The log SHALL allow retrieval of a list of accepted root certificates (this list might usefully be the union of root certificates trusted by major browser vendors).
-        </t>
         <t>
           Alternatively, (root as well as intermediate) certification authorities
 may preannounce a certificate to logs prior to issuance in order to incorporate
@@ -365,6 +346,25 @@ be omitted.
         </t>
         <t>
           The CMS object MUST be DER encoded. Note that, because of the structure of CMS, the signature on the CMS object will not be a valid X.509v3 signature and so cannot be used to construct a certificate from the precertificate.
+        </t>
+      </section>
+    </section>
+    <section title="Log Format and Operation">
+      <t>
+        A log is a single, append-only Merkle Tree of such certificates.
+      </t>
+      <t>
+        The SCT is the log's promise to incorporate the certificate in the Merkle Tree within a fixed amount of time known as the Maximum Merge Delay (MMD). If the log has previously seen the certificate, it MAY return the same SCT as it returned before (note that if a certificate was previously logged as a precertificate, then the precertificate's SCT would not be appropriate, instead a fresh SCT of type x509_entry should be generated). TLS servers MUST present an SCT from one or more logs to the TLS client together with the certificate. A certificate not accompanied by an SCT (either for the end-entity certificate or for a name-constrained intermediate the end-entity certificate chains to) MUST NOT be considered compliant by TLS clients.
+      </t>
+      <t>
+        Periodically, each log appends all its new entries to the Merkle Tree and signs the root of the tree. The log MUST incorporate a certificate in its Merkle Tree within the Maximum Merge Delay period after the issuance of the SCT. When encountering an SCT, an Auditor can verify that the certificate was added to the Merkle Tree within that timeframe.
+      </t>
+      <t>
+        Log operators MUST NOT impose any conditions on retrieving or sharing data from the log.
+      </t>
+      <section title="Log Entries">
+        <t>
+          The log SHALL allow retrieval of a list of accepted root certificates (this list might usefully be the union of root certificates trusted by major browser vendors).
         </t>
         <t>
           Logs MUST verify that the submitted certificate or precertificate has
