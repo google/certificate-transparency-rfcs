@@ -307,7 +307,7 @@ Section 8.2 of <xref target="RFC3447"/>) using a key of at least 2048 bits.
     </section>
     <section title="Submitters">
       <t>
-        Submitters submit certificates or precertificates to logs for public auditing, as described below. In order to enable attribution of each logged certificate to its issuer, each submitted certificate MUST be accompanied by all additional certificates required to verify the certificate chain up to an accepted root certificate. The root certificate itself MAY be omitted from the chain submitted to the log server.
+        Submitters submit certificates or precertificates to logs for public auditing, as described below. In order to enable attribution of each logged certificate or precertificate to its issuer, each submission MUST be accompanied by all additional certificates required to verify the chain up to an accepted root certificate. The root certificate itself MAY be omitted from the submission.
       </t>
       <t>
         When a Submitter intends to use the returned SCT directly in a TLS handshake or to construct a certificate, they SHOULD validate the SCT as described in <xref target="tls_clients"/> if they understand its format.
