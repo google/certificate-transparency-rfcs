@@ -305,6 +305,11 @@ Section 8.2 of <xref target="RFC3447"/>) using a key of at least 2048 bits.
         </section>
       </section>
     </section>
+    <section title="Submitters">
+      <t>
+        Submitters submit certificates or precertificates to the log as described above. When a Submitter intends to use the returned SCT directly in a TLS handshake or to construct a certificate, they SHOULD validate the SCT as described in <xref target="tls_clients"/> if they understand its format.
+      </t>
+    </section>
     <section title="Log Format and Operation">
       <t>
         Anyone can submit certificates to certificate logs for public auditing;
@@ -1330,11 +1335,6 @@ but it is expected there will be a variety.
         </list></t>
         <t>
           <xref target="JSON.Metadata"/> is an example of a metadata format which includes the above elements.
-        </t>
-      </section>
-      <section title="Submitters">
-        <t>
-          Submitters submit certificates or precertificates to the log as described above. When a Submitter intends to use the returned SCT directly in a TLS handshake or to construct a certificate, they SHOULD validate the SCT as described in <xref target="tls_clients"/> if they understand its format.
         </t>
       </section>
       <section title="TLS Client" anchor="tls_clients">
