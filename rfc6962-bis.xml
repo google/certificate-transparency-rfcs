@@ -307,12 +307,12 @@ Section 8.2 of <xref target="RFC3447"/>) using a key of at least 2048 bits.
     </section>
     <section title="Submitters">
       <t>
-        Submitters submit certificates or precertificates to the log as described above. When a Submitter intends to use the returned SCT directly in a TLS handshake or to construct a certificate, they SHOULD validate the SCT as described in <xref target="tls_clients"/> if they understand its format.
+        Submitters submit certificates or precertificates to logs for public auditing, as described below. When a Submitter intends to use the returned SCT directly in a TLS handshake or to construct a certificate, they SHOULD validate the SCT as described in <xref target="tls_clients"/> if they understand its format.
       </t>
     </section>
     <section title="Log Format and Operation">
       <t>
-        Anyone can submit certificates to certificate logs for public auditing;
+        Anyone can submit certificates to certificate logs;
 however, since certificates will not be accepted by TLS clients unless logged,
 it is expected that certificate owners or their CAs will usually submit them. A
 log is a single, append-only Merkle Tree of such certificates.
