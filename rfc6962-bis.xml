@@ -314,12 +314,12 @@ Section 8.2 of <xref target="RFC3447"/>) using a key of at least 2048 bits.
       </t>
       <section title="Certificates">
         <t>
-          Anyone can <xref target="add_chain">submit a certificate</xref> to a log. Since certificates may not be accepted by TLS clients unless logged, it is expected that certificate owners or their CAs will usually submit them.
+          Anyone can <xref target="add-chain">submit a certificate</xref> to a log. Since certificates may not be accepted by TLS clients unless logged, it is expected that certificate owners or their CAs will usually submit them.
         </t>
       </section>
       <section title="Precertificates">
         <t>
-          Alternatively, (root as well as intermediate) CAs may preannounce a certificate prior to issuance by <xref target="add_pre_chain">submitting a precertificate</xref> that the log can use to create an entry that will be valid against the issued certificate. The CA MAY incorporate the returned SCT in the issued certificate.
+          Alternatively, (root as well as intermediate) CAs may preannounce a certificate prior to issuance by <xref target="add-pre-chain">submitting a precertificate</xref> that the log can use to create an entry that will be valid against the issued certificate. The CA MAY incorporate the returned SCT in the issued certificate.
         </t>
         <t>
           A precertificate is a CMS <xref target="RFC5652"/> <spanx style="verb">signed-data</spanx> object that conforms to the following requirements:
@@ -933,7 +933,7 @@ messages.
       <t>
         Clients SHOULD treat <spanx style="verb">500 Internal Server Error</spanx> and <spanx style="verb">503 Service Unavailable</spanx> responses as transient failures and MAY retry the same request without modification at a later date.  Note that as per <xref target="RFC2616"/>, in the case of a 503 response the log MAY include a <spanx style="verb">Retry-After:</spanx> header in order to request a minimum time for the client to wait before retrying the request.
       </t>
-      <section title="Add Chain to Log" anchor="add_chain">
+      <section title="Add Chain to Log" anchor="add-chain">
         <t>
           POST https://&lt;log server&gt;/ct/v2/add-chain
         </t>
@@ -979,7 +979,7 @@ messages.
         </t>
       </section>
 
-      <section title="Add PreCertChain to Log" anchor="add_pre_chain">
+      <section title="Add PreCertChain to Log" anchor="add-pre-chain">
         <t>
           POST https://&lt;log server&gt;/ct/v2/add-pre-chain
         </t>
@@ -1001,7 +1001,7 @@ an accepted root certificate.
           </list>
         </t>
         <t>
-          Outputs and errors are the same as in <xref target="add_chain"/>.
+          Outputs and errors are the same as in <xref target="add-chain"/>.
         </t>
       </section>
 
