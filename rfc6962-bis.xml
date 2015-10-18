@@ -322,29 +322,24 @@ Section 8.2 of <xref target="RFC3447"/>) using a key of at least 2048 bits.
           Alternatively, (root as well as intermediate) CAs may preannounce a certificate prior to issuance by <xref target="add_pre_chain">submitting a precertificate</xref> that the log can use to create an entry that will be valid against the issued certificate. The CA MAY incorporate the returned SCT in the issued certificate.
         </t>
         <t>
-          A precertificate is a CMS <xref target="RFC5652"/>
-<spanx style="verb">signed-data</spanx> object that contains a TBSCertificate
-<xref target="RFC5280"/> in its
-<spanx style="verb">SignedData.encapContentInfo.eContent</spanx> field,
-identified by the OID &lt;TBD&gt; in the
-<spanx style="verb">SignedData.encapContentInfo.eContentType</spanx> field.
-This TBSCertificate MAY redact certain domain name labels that will be present
-in the issued certificate (see <xref target="redacting_subdomains"/>) and MUST
-NOT contain any SCTs, but it will be otherwise identical to the TBSCertificate
-in the issued certificate.
-<spanx style="verb">SignedData.signerInfos</spanx> MUST contain a signature from
-the same (root or intermediate) CA that will ultimately issue the certificate.
-This signature indicates the certification authority's intent to issue the
-certificate. This intent is considered binding (i.e., misissuance of the
-precertificate is considered equivalent to misissuance of the certificate).
-As above, the precertificate submission MUST be accompanied by all the
-additional certificates required to verify the chain up to an accepted root
-certificate. This does not involve using the
-<spanx style="verb">SignedData.certificates</spanx> field, so that field SHOULD
-be omitted.
-        </t>
-        <t>
-          The CMS object MUST be DER encoded. Note that, because of the structure of CMS, the signature on the CMS object will not be a valid X.509v3 signature and so cannot be used to construct a certificate from the precertificate.
+          A precertificate is a CMS <xref target="RFC5652"/> <spanx style="verb">signed-data</spanx> object that conforms to the following requirements:
+          <list style="symbols">
+            <t>
+              It MUST be DER encoded.
+            </t>
+            <t>
+              <spanx style="verb">SignedData.encapContentInfo.eContentType</spanx> MUST be the OID &lt;TBD&gt;.
+            </t>
+            <t>
+              <spanx style="verb">SignedData.encapContentInfo.eContent</spanx> MUST contain a TBSCertificate <xref target="RFC5280"/>, which MAY redact certain domain name labels that will be present in the issued certificate (see <xref target="redacting_subdomains"/>) and MUST NOT contain any SCTs, but which will be otherwise identical to the TBSCertificate in the issued certificate.
+            </t>
+            <t>
+              <spanx style="verb">SignedData.signerInfos</spanx> MUST contain a signature from the same (root or intermediate) CA that will ultimately issue the certificate. This signature indicates the CA's intent to issue the certificate. This intent is considered binding (i.e. misissuance of the precertificate is considered equivalent to misissuance of the certificate). (Note that, because of the structure of CMS, the signature on the CMS object will not be a valid X.509v3 signature and so cannot be used to construct a certificate from the precertificate).
+            </t>
+            <t>
+              <spanx style="verb">SignedData.certificates</spanx> SHOULD be omitted.
+            </t>
+          </list>
         </t>
       </section>
     </section>
