@@ -440,11 +440,11 @@ Section 8.2 of <xref target="RFC3447"/>) using a key of at least 2048 bits.
       </section>
       <section title="Log Entries">
         <t>
-          If a certificate is accepted and an SCT issued, the accepting log MUST store the entire chain used for verification. This chain MUST include the certificate or precertificate itself, the zero or more intermediate CA certificates provided by the submitter, and the root certificate used to verify the chain (even if it was omitted from the submission). The log MUST present this chain for auditing upon request. This chain is required to prevent a CA from avoiding blame by logging a partial or empty chain.
+          If a submission is accepted and an SCT issued, the accepting log MUST store the entire chain used for verification. This chain MUST include the certificate or precertificate itself, the zero or more intermediate CA certificates provided by the submitter, and the root certificate used to verify the chain (even if it was omitted from the submission). The log MUST present this chain for auditing upon request. This chain is required to prevent a CA from avoiding blame by logging a partial or empty chain.
         </t>
         <figure>
           <preamble>
-            Each certificate or precertificate entry in a log MUST include the following components:
+            Each certificate entry in a log MUST include a <spanx style="verb">X509ChainEntry</spanx> structure, and each precertificate entry MUST include a <spanx style="verb">PrecertChainEntryV2</spanx> structure:
           </preamble>
           <artwork>
     enum {
@@ -469,16 +469,16 @@ Section 8.2 of <xref target="RFC3447"/>) using a key of at least 2048 bits.
           <spanx style="verb">entry_type</spanx> is the type of this entry. Future revisions of this protocol may add new LogEntryType values. <xref target="client_messages"/> explains how clients should handle unknown entry types.
         </t>
         <t>
-          <spanx style="verb">leaf_certificate</spanx> is the end-entity certificate submitted for auditing.
+          <spanx style="verb">leaf_certificate</spanx> is a submitted certificate that has been accepted by the log.
         </t>
         <t>
-          <spanx style="verb">certificate_chain</spanx> is an array of additional certificates required to verify the end-entity certificate. The first certificate MUST certify the end-entity certificate. Each following certificate MUST directly certify the one preceding it. The final certificate MUST either be, or be issued by, a root certificate accepted by the log. If the end-entity certificate is a root certificate, then this array is empty.
+          <spanx style="verb">certificate_chain</spanx> is a vector of 0 or more additional certificates required to verify <spanx style="verb">leaf_certificate</spanx>. The first certificate MUST certify <spanx style="verb">leaf_certificate</spanx>. Each following certificate MUST directly certify the one preceding it. The final certificate MUST be a root certificate accepted by the log. If <spanx style="verb">leaf_certificate</spanx> is a root certificate, then this vector is empty.
         </t>
         <t>
-          <spanx style="verb">pre_certificate</spanx> is the precertificate submitted for auditing.
+          <spanx style="verb">pre_certificate</spanx> is a submitted precertificate that has been accepted by the log.
         </t>
         <t>
-          <spanx style="verb">precertificate_chain</spanx> is a chain of additional certificates required to verify the precertificate submission. The first certificate MUST certify the precertificate. Each following certificate MUST directly certify the one preceding it. The final certificate MUST be a root certificate accepted by the log.
+          <spanx style="verb">precertificate_chain</spanx> is a vector of 1 or more additional certificates required to verify <spanx style="verb">pre_certificate</spanx>. The first certificate MUST certify <spanx style="verb">pre_certificate</spanx>. Each following certificate MUST directly certify the one preceding it. The final certificate MUST be a root certificate accepted by the log.
         </t>
       </section>
       <section title="Structure of the Signed Certificate Timestamp">
