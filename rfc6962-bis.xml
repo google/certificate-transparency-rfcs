@@ -419,7 +419,7 @@ Section 8.2 of <xref target="RFC3447"/>) using a key of at least 2048 bits.
         A log is a single, append-only Merkle Tree of such certificates.
       </t>
       <t>
-        The SCT is the log's promise to incorporate the certificate in the Merkle Tree within a fixed amount of time known as the Maximum Merge Delay (MMD). If the log has previously seen the certificate, it MAY return the same SCT as it returned before (note that if a certificate was previously logged as a precertificate, then the precertificate's SCT would not be appropriate, instead a fresh SCT of type x509_entry should be generated). TLS servers MUST present an SCT from one or more logs to the TLS client together with the certificate. A certificate not accompanied by an SCT (either for the end-entity certificate or for a name-constrained intermediate the end-entity certificate chains to) MUST NOT be considered compliant by TLS clients.
+        The SCT is the log's promise to incorporate the certificate in the Merkle Tree within a fixed amount of time known as the Maximum Merge Delay (MMD). If the log has previously seen the certificate, it MAY return the same SCT as it returned before (note that if a certificate was previously logged as a precertificate, then the precertificate's SCT would not be appropriate, instead a fresh SCT of type x509_entry should be generated).
       </t>
       <t>
         Periodically, each log appends all its new entries to the Merkle Tree and signs the root of the tree. The log MUST incorporate a certificate in its Merkle Tree within the Maximum Merge Delay period after the issuance of the SCT. When encountering an SCT, an Auditor can verify that the certificate was added to the Merkle Tree within that timeframe.
@@ -583,130 +583,6 @@ protocol to which the SCT conforms. This version is v2. Note that <xref target="
         <t>
           <spanx style="verb">extensions</spanx> are future extensions to SignedCertificateTimestamp v2. Currently, no extensions are specified. If an implementation sees an extension that it does not understand, it SHOULD ignore that extension. Furthermore, an implementation MAY choose to ignore any extension(s) that it does understand.
         </t>
-      </section>
-      <section title="Including the Signed Certificate Timestamp in the TLS Handshake">
-        <t>
-          The SCT data corresponding to at least one certificate in the chain
-from at least one log must be included in the TLS handshake by using one or more
-of the mechanisms listed below. Three mechanisms are provided because they have
-different tradeoffs. TLS clients MUST implement all three mechanisms. TLS
-servers MUST present SCTs using at least one of the three mechanisms.
-          <list style="symbols">
-            <t>
-              A TLS extension (Section 7.4.1.4 of <xref target='RFC5246'/>) with
-type <spanx style="verb">signed_certificate_timestamp</spanx>
-(see <xref target="tls_sctlist_extension"/>). This mechanism allows TLS servers
-to participate in CT without the cooperation of CAs, unlike the other two
-mechanisms. It also allows SCTs to be updated on the fly.
-            </t>
-            <t>
-              An <xref target='RFC6960'>Online Certificate Status Protocol
-(OCSP)</xref> response extension (see <xref target="ocsp_sctlist_extension"/>),
-where the OCSP response is provided in the
-<spanx style="verb">certificate_status</spanx> TLS extension (Section 8 of
-<xref target='RFC6066'/>), also known as OCSP stapling. This mechanism is
-already widely (but not universally) implemented. It also allows SCTs to be
-updated on the fly.
-            </t>
-            <t>
-              An X509v3 certificate extension
-(see <xref target="cert_sctlist_extension"/>). This mechanism allows the use of unmodified TLS servers, but the SCTs cannot be updated on the fly. Since the logs that signed the SCTs won't necessarily be accepted by TLS clients for the full lifetime of the certificate, there is a risk that TLS clients will subsequently consider the certificate to be non-compliant and in need of re-issuance.
-            </t>
-          </list>
-        </t>
-        <t>
-          TLS servers SHOULD send SCTs from multiple logs in case one or more
-logs are not acceptable to the TLS client (for example, if a log has been struck
-off for misbehavior, has had a key compromise or is not known to the TLS
-client).
-        </t>
-        <figure>
-          <preamble>
-            Multiple SCTs are combined into an SCT list as follows:
-          </preamble>
-          <artwork>
-    opaque SerializedSCT&lt;1..2^16-1&gt;;
-
-    struct {
-        SerializedSCT sct_list&lt;1..2^16-1&gt;;
-    } SignedCertificateTimestampList;</artwork>
-        </figure>
-        <t>
-          Here, <spanx style="verb">SerializedSCT</spanx> is an opaque
-byte string that contains the serialized SCT structure. This encoding ensures
-that TLS clients can decode each SCT individually (i.e., if there is a version
-upgrade, out-of-date clients can still parse old SCTs while skipping over new
-SCTs whose versions they don't understand).
-        </t>
-        <section title="TLS Extension" anchor="tls_sctlist_extension">
-          <t>
-            One or more SCTs can be sent during the TLS handshake using a TLS
-extension with type <spanx style="verb">signed_certificate_timestamp</spanx>.
-          </t>
-          <t>
-            TLS clients that support the extension SHOULD send a ClientHello
-extension with the appropriate type and empty
-<spanx style="verb">extension_data</spanx>.
-          </t>
-          <t>
-            TLS servers MUST only send SCTs in this TLS extension to TLS clients
-that have indicated support for the extension in the ClientHello, in which case
-the SCTs are sent by setting the <spanx style="verb">extension_data</spanx>
-to a <spanx style="verb">SignedCertificateTimestampList</spanx>.
-          </t>
-          <t>
-            Session resumption uses the original session information: TLS
-clients SHOULD include the extension type in the ClientHello, but if the session
-is resumed, the TLS server is not expected to process it or include the
-extension in the ServerHello.
-          </t>
-        </section>
-        <section title="X.509v3 Extension" anchor="x509v3_extension">
-          <t>
-            One or more SCTs can be embedded in an X.509v3 extension that is
-included in a certificate or an OCSP response. Since RFC5280 requires the
-<spanx style="verb">extnValue</spanx> field (an OCTET STRING) of each X.509v3
-extension to include the DER encoding of an ASN.1 value, we cannot embed a
-<spanx style="verb">SignedCertificateTimestampList</spanx> directly.
-Instead, we have to wrap it inside an additional OCTET STRING (see below),
-which we then put into the <spanx style="verb">extnValue</spanx> field.
-          </t>
-          <section title="OCSP Response Extension" anchor="ocsp_sctlist_extension">
-            <figure>
-              <preamble>
-                A certification authority may embed one or more SCTs in OCSP responses pertaining to the end-entity certificate, by including a non-critical <spanx style="verb">singleExtensions</spanx> extension with OID 1.3.6.1.4.1.11129.2.4.5 whose <spanx style="verb">extnValue</spanx> contains:
-              </preamble>
-              <artwork>
-    CertificateSCTList ::= OCTET STRING</artwork>
-            </figure>
-            <t>
-              <spanx style="verb">CertificateSCTList</spanx> contains a
-<spanx style="verb">SignedCertificateTimestampList</spanx> whose SCTs all have
-the <spanx style="verb">x509_entry</spanx>
-<spanx style="verb">LogEntryType</spanx>.
-            </t>
-          </section>
-          <section title="Certificate Extension" anchor="cert_sctlist_extension">
-            <figure>
-              <preamble>
-                A certification authority that has submitted a precertificate to one or more logs may embed the obtained SCTs in the <spanx style="verb">TBSCertificate</spanx> that will be signed to produce the certificate, by including a non-critical X.509v3 extension with OID 1.3.6.1.4.1.11129.2.4.2 whose <spanx style="verb">extnValue</spanx> contains:
-              </preamble>
-              <artwork>
-    PrecertificateSCTList ::= OCTET STRING</artwork>
-            </figure>
-            <t>
-              <spanx style="verb">PrecertificateSCTList</spanx> contains a
-<spanx style="verb">SignedCertificateTimestampList</spanx> whose SCTs all have
-the <spanx style="verb">precert_entry_V2</spanx>
-<spanx style="verb">LogEntryType</spanx>.
-            </t>
-            <t>
-              Upon receiving the certificate, clients can reconstruct the
-original <spanx style="verb">TBSCertificate</spanx> to verify the SCT
-signatures.
-            </t>
-          </section>
-        </section>
       </section>
       <section title="Merkle Tree" anchor="tree">
         <t>
@@ -1236,6 +1112,133 @@ entry specified by <spanx style="verb">start</spanx>.
       </section>
     </section>
     <section title="TLS Servers">
+      <section title="Including the Signed Certificate Timestamp in the TLS Handshake">
+        <t>
+          TLS servers MUST present an SCT from one or more logs to the TLS client together with the certificate. A certificate not accompanied by an SCT (either for the end-entity certificate or for a name-constrained intermediate the end-entity certificate chains to) MUST NOT be considered compliant by TLS clients.
+        </t>
+        <t>
+          The SCT data corresponding to at least one certificate in the chain
+from at least one log must be included in the TLS handshake by using one or more
+of the mechanisms listed below. Three mechanisms are provided because they have
+different tradeoffs. TLS clients MUST implement all three mechanisms. TLS
+servers MUST present SCTs using at least one of the three mechanisms.
+          <list style="symbols">
+            <t>
+              A TLS extension (Section 7.4.1.4 of <xref target='RFC5246'/>) with
+type <spanx style="verb">signed_certificate_timestamp</spanx>
+(see <xref target="tls_sctlist_extension"/>). This mechanism allows TLS servers
+to participate in CT without the cooperation of CAs, unlike the other two
+mechanisms. It also allows SCTs to be updated on the fly.
+            </t>
+            <t>
+              An <xref target='RFC6960'>Online Certificate Status Protocol
+(OCSP)</xref> response extension (see <xref target="ocsp_sctlist_extension"/>),
+where the OCSP response is provided in the
+<spanx style="verb">certificate_status</spanx> TLS extension (Section 8 of
+<xref target='RFC6066'/>), also known as OCSP stapling. This mechanism is
+already widely (but not universally) implemented. It also allows SCTs to be
+updated on the fly.
+            </t>
+            <t>
+              An X509v3 certificate extension
+(see <xref target="cert_sctlist_extension"/>). This mechanism allows the use of unmodified TLS servers, but the SCTs cannot be updated on the fly. Since the logs that signed the SCTs won't necessarily be accepted by TLS clients for the full lifetime of the certificate, there is a risk that TLS clients will subsequently consider the certificate to be non-compliant and in need of re-issuance.
+            </t>
+          </list>
+        </t>
+        <t>
+          TLS servers SHOULD send SCTs from multiple logs in case one or more
+logs are not acceptable to the TLS client (for example, if a log has been struck
+off for misbehavior, has had a key compromise or is not known to the TLS
+client).
+        </t>
+        <figure>
+          <preamble>
+            Multiple SCTs are combined into an SCT list as follows:
+          </preamble>
+          <artwork>
+    opaque SerializedSCT&lt;1..2^16-1&gt;;
+
+    struct {
+        SerializedSCT sct_list&lt;1..2^16-1&gt;;
+    } SignedCertificateTimestampList;</artwork>
+        </figure>
+        <t>
+          Here, <spanx style="verb">SerializedSCT</spanx> is an opaque
+byte string that contains the serialized SCT structure. This encoding ensures
+that TLS clients can decode each SCT individually (i.e., if there is a version
+upgrade, out-of-date clients can still parse old SCTs while skipping over new
+SCTs whose versions they don't understand).
+        </t>
+        <section title="TLS Extension" anchor="tls_sctlist_extension">
+          <t>
+            One or more SCTs can be sent during the TLS handshake using a TLS
+extension with type <spanx style="verb">signed_certificate_timestamp</spanx>.
+          </t>
+          <t>
+            TLS clients that support the extension SHOULD send a ClientHello
+extension with the appropriate type and empty
+<spanx style="verb">extension_data</spanx>.
+          </t>
+          <t>
+            TLS servers MUST only send SCTs in this TLS extension to TLS clients
+that have indicated support for the extension in the ClientHello, in which case
+the SCTs are sent by setting the <spanx style="verb">extension_data</spanx>
+to a <spanx style="verb">SignedCertificateTimestampList</spanx>.
+          </t>
+          <t>
+            Session resumption uses the original session information: TLS
+clients SHOULD include the extension type in the ClientHello, but if the session
+is resumed, the TLS server is not expected to process it or include the
+extension in the ServerHello.
+          </t>
+        </section>
+        <section title="X.509v3 Extension" anchor="x509v3_extension">
+          <t>
+            One or more SCTs can be embedded in an X.509v3 extension that is
+included in a certificate or an OCSP response. Since RFC5280 requires the
+<spanx style="verb">extnValue</spanx> field (an OCTET STRING) of each X.509v3
+extension to include the DER encoding of an ASN.1 value, we cannot embed a
+<spanx style="verb">SignedCertificateTimestampList</spanx> directly.
+Instead, we have to wrap it inside an additional OCTET STRING (see below),
+which we then put into the <spanx style="verb">extnValue</spanx> field.
+          </t>
+          <section title="OCSP Response Extension" anchor="ocsp_sctlist_extension">
+            <figure>
+              <preamble>
+                A certification authority may embed one or more SCTs in OCSP responses pertaining to the end-entity certificate, by including a non-critical <spanx style="verb">singleExtensions</spanx> extension with OID 1.3.6.1.4.1.11129.2.4.5 whose <spanx style="verb">extnValue</spanx> contains:
+              </preamble>
+              <artwork>
+    CertificateSCTList ::= OCTET STRING</artwork>
+            </figure>
+            <t>
+              <spanx style="verb">CertificateSCTList</spanx> contains a
+<spanx style="verb">SignedCertificateTimestampList</spanx> whose SCTs all have
+the <spanx style="verb">x509_entry</spanx>
+<spanx style="verb">LogEntryType</spanx>.
+            </t>
+          </section>
+          <section title="Certificate Extension" anchor="cert_sctlist_extension">
+            <figure>
+              <preamble>
+                A certification authority that has submitted a precertificate to one or more logs may embed the obtained SCTs in the <spanx style="verb">TBSCertificate</spanx> that will be signed to produce the certificate, by including a non-critical X.509v3 extension with OID 1.3.6.1.4.1.11129.2.4.2 whose <spanx style="verb">extnValue</spanx> contains:
+              </preamble>
+              <artwork>
+    PrecertificateSCTList ::= OCTET STRING</artwork>
+            </figure>
+            <t>
+              <spanx style="verb">PrecertificateSCTList</spanx> contains a
+<spanx style="verb">SignedCertificateTimestampList</spanx> whose SCTs all have
+the <spanx style="verb">precert_entry_V2</spanx>
+<spanx style="verb">LogEntryType</spanx>.
+            </t>
+            <t>
+              Upon receiving the certificate, clients can reconstruct the
+original <spanx style="verb">TBSCertificate</spanx> to verify the SCT
+signatures.
+            </t>
+          </section>
+        </section>
+      </section>
     </section>
     <section title="Clients">
       <t>
