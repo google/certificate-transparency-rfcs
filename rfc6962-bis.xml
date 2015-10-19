@@ -1145,10 +1145,7 @@ entry specified by <spanx style="verb">start</spanx>.
       </t>
       <section title="TLS Extension" anchor="tls_sctlist_extension">
         <t>
-          If a TLS client includes the <spanx style="verb">signed_certificate_timestamp</spanx> extension type in the ClientHello, the TLS server MAY include the <spanx style="verb">signed_certificate_timestamp</spanx> extension in the ServerHello with the <spanx style="verb">extension_data</spanx> set to a <spanx style="verb">SignedCertificateTimestampList</spanx>.
-        </t>
-        <t>
-          Session resumption uses the original session information: TLS clients SHOULD include the extension type in the ClientHello, but if the session is resumed, the TLS server is not expected to process it or include the extension in the ServerHello.
+          If a TLS client includes the <spanx style="verb">signed_certificate_timestamp</spanx> extension type in the ClientHello, the TLS server MAY include the <spanx style="verb">signed_certificate_timestamp</spanx> extension in the ServerHello with <spanx style="verb">extension_data</spanx> set to a <spanx style="verb">SignedCertificateTimestampList</spanx>. The TLS server is not expected to process or include this extension when a TLS session is resumed, since session resumption uses the original session information.
         </t>
       </section>
     </section>
