@@ -1113,7 +1113,7 @@ entry specified by <spanx style="verb">start</spanx>.
     </section>
     <section title="TLS Servers">
       <t>
-        TLS servers MUST present an SCT from one or more logs to the TLS client together with the certificate. A certificate not accompanied by an SCT (either for the end-entity certificate or for a name-constrained intermediate the end-entity certificate chains to) MUST NOT be considered compliant by TLS clients.
+        TLS servers MUST present an SCT from one or more logs to the TLS client together with the certificate.
       </t>
       <t>
         The SCT data corresponding to at least one certificate in the chain from at least one log must be included in the TLS handshake by using one or more of the mechanisms listed below. Three mechanisms are provided because they have different tradeoffs. TLS clients MUST implement all three mechanisms. TLS servers MUST present SCTs using at least one of the three mechanisms.
@@ -1251,11 +1251,7 @@ but it is expected there will be a variety.
       </section>
       <section title="TLS Client" anchor="tls_clients">
         <t>
-          TLS clients receive SCTs alongside or in certificates, either for the server certificate itself or for intermediate CA precertificates. In
-addition to normal validation of the certificate and its chain, TLS clients
-SHOULD validate the SCT by computing the signature input from the SCT data as
-well as the certificate and verifying the signature, using the corresponding
-log's public key. By validating SCTs, TLS clients can thus determine whether certificates are compliant. However, specifying the TLS clients' behaviour once compliance or non-compliance has been determined (for example, whether a certificate should be rejected due to the lack of valid SCTs) is outside the scope of this document.
+          TLS clients receive SCTs alongside or in certificates, either for the server certificate itself or for a name-constrained intermediate the server certificate chains to. In addition to normal validation of the certificate and its chain, TLS clients SHOULD validate the SCT by computing the signature input from the SCT data as well as the certificate and verifying the signature, using the corresponding log's public key. By validating SCTs, TLS clients can thus determine whether certificates are compliant. A certificate not accompanied by a valid SCT MUST NOT be considered compliant by TLS clients. However, specifying the TLS clients' behavior once compliance or non-compliance has been determined (for example, whether a certificate should be rejected due to the lack of valid SCTs) is outside the scope of this document.
         </t>
         <t>
           A TLS client MAY audit the corresponding log by requesting, and
