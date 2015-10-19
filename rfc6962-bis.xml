@@ -317,7 +317,7 @@ Section 8.2 of <xref target="RFC3447"/>) using a key of at least 2048 bits.
           Anyone can <xref target="add-chain">submit a certificate</xref> to a log. Since certificates may not be accepted by TLS clients unless logged, it is expected that certificate owners or their CAs will usually submit them.
         </t>
       </section>
-      <section title="Precertificates">
+      <section title="Precertificates" anchor="Precertificates">
         <t>
           Alternatively, (root as well as intermediate) CAs may preannounce a certificate prior to issuance by <xref target="add-pre-chain">submitting a precertificate</xref> that the log can use to create an entry that will be valid against the issued certificate. The CA MAY incorporate the returned SCT in the issued certificate.
         </t>
@@ -421,27 +421,24 @@ Section 8.2 of <xref target="RFC3447"/>) using a key of at least 2048 bits.
       <t>
         When it receives a valid submission, the log MUST return an SCT that corresponds to the submitted certificate or precertificate. If the log has previously seen this valid submission, it MAY return the same SCT as it returned before (note that if a certificate was previously logged as a precertificate, then the precertificate's SCT would not be appropriate, instead a fresh SCT of type x509_entry should be generated).
       </t>
+      <t>
         An SCT is the log's promise to incorporate the submitted entry in its Merkle Tree no later than a fixed amount of time, known as the Maximum Merge Delay (MMD), after the issuance of the SCT. Periodically, the log MUST append all its new entries to its Merkle Tree and sign the root of the tree. This provides auditable evidence that the log kept all its promises.
       </t>
       <t>
         Log operators MUST NOT impose any conditions on retrieving or sharing data from the log.
       </t>
+      <section title="Accepting Submissions">
+        <t>
+          Logs MUST verify that each submitted certificate or precertificate has a valid signature chain to an accepted root certificate, using the chain of intermediate CA certificates provided by the submitter. Logs MUST accept certificates and precertificates that are fully valid according to <xref target="RFC5280">RFC 5280</xref> verification rules and are submitted with such a chain. Logs MAY accept certificates and precertificates that have expired, are not yet valid, have been revoked, or are otherwise not fully valid according to RFC 5280 verification rules in order to accommodate quirks of CA certificate-issuing software. However, logs MUST reject submissions without a valid signature chain to an accepted root certificate. Logs MUST also reject precertificates that do not conform to the requirements in <xref target="Precertificates"/>.
+        </t>
+        <t>
+          Logs SHOULD limit the length of chain they will accept. The maximum chain length is specified in the log's metadata.
+        </t>
+        <t>
+          The log SHALL allow retrieval of its list of accepted root certificates (see <xref target="get-roots"/>). This list might usefully be the union of root certificates trusted by major browser vendors.
+        </t>
+      </section>
       <section title="Log Entries">
-        <t>
-          The log SHALL allow retrieval of a list of accepted root certificates (this list might usefully be the union of root certificates trusted by major browser vendors).
-        </t>
-        <t>
-          Logs MUST verify that the submitted certificate or precertificate has
-a valid signature chain to an accepted root certificate, using the chain of
-intermediate CA certificates provided by the submitter. Logs MUST accept
-certificates that are fully valid according to <xref target="RFC5280">RFC 5280</xref> verification rules
-and are submitted with such a chain. Logs MAY accept
-certificates and precertificates that have expired, are not yet valid, have been
-revoked, or are otherwise not fully valid according to RFC 5280 verification rules
-in order to accommodate quirks of CA certificate-issuing software. However, logs
-MUST reject certificates without a valid signature chain to an accepted root
-certificate. Logs MUST also reject precertificates that are not valid DER encoded CMS <spanx style="verb">signed-data</spanx> objects.
-        </t>
         <t>
           If a certificate is accepted and an SCT issued, the accepting log MUST store the entire chain used for verification. This chain MUST include the certificate or precertificate itself, the zero or more intermediate CA certificates provided by the submitter, and the root certificate used to verify the chain (even if it was omitted from the submission). The log MUST present this chain for auditing upon request. This chain is required to prevent a CA from avoiding blame by logging a partial or empty chain.
         </t>
@@ -468,9 +465,6 @@ certificate. Logs MUST also reject precertificates that are not valid DER encode
         ASN.1Cert precertificate_chain&lt;0..2^24-1&gt;;
     } PrecertChainEntryV2;</artwork>
         </figure>
-        <t>
-          Logs SHOULD limit the length of chain they will accept. The maximum chain length is specified in the log's metadata.
-        </t>
         <t>
           <spanx style="verb">entry_type</spanx> is the type of this entry. Future revisions of this protocol may add new LogEntryType values. <xref target="client_messages"/> explains how clients should handle unknown entry types.
         </t>
@@ -1087,7 +1081,7 @@ entry specified by <spanx style="verb">start</spanx>.
         <t>See <xref target="verify_hash" /> for an outline of how to use a complete list of <spanx style="verb">leaf_input</spanx> entries to verify the <spanx style="verb">root_hash</spanx>.</t>
       </section>
 
-      <section title="Retrieve Accepted Root Certificates">
+      <section title="Retrieve Accepted Root Certificates" anchor="get-roots">
         <t>
           GET https://&lt;log server&gt;/ct/v1/get-roots
         </t>
