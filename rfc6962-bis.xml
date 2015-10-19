@@ -1160,6 +1160,8 @@ entry specified by <spanx style="verb">start</spanx>.
           Session resumption uses the original session information: TLS clients SHOULD include the extension type in the ClientHello, but if the session is resumed, the TLS server is not expected to process it or include the extension in the ServerHello.
         </t>
       </section>
+    </section>
+    <section title="Certification Authorities">
       <section title="X.509v3 Extension" anchor="x509v3_extension">
         <t>
           One or more SCTs can be embedded in an X.509v3 extension that is included in a certificate or an OCSP response. Since RFC5280 requires the <spanx style="verb">extnValue</spanx> field (an OCTET STRING) of each X.509v3 extension to include the DER encoding of an ASN.1 value, we cannot embed a <spanx style="verb">SignedCertificateTimestampList</spanx> directly. Instead, we have to wrap it inside an additional OCTET STRING (see below), which we then put into the <spanx style="verb">extnValue</spanx> field.
