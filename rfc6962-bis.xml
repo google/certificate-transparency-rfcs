@@ -310,7 +310,7 @@ Section 8.2 of <xref target="RFC3447"/>) using a key of at least 2048 bits.
         Submitters submit certificates or precertificates to logs for public auditing, as described below. In order to enable attribution of each logged certificate or precertificate to its issuer, each submission MUST be accompanied by all additional certificates required to verify the chain up to an accepted root certificate. The root certificate itself MAY be omitted from the submission.
       </t>
       <t>
-        If a log accepts a submission, it will return a Signed Certificate Timestamp (SCT). The submitter SHOULD validate the returned SCT as described in <xref target="tls_clients"/> if they understand its format and they intend to use it directly in a TLS handshake or to construct a certificate.
+        If a log accepts a submission, it will return a Signed Certificate Timestamp (SCT) (see <xref target="sct"/>). The submitter SHOULD validate the returned SCT as described in <xref target="tls_clients"/> if they understand its format and they intend to use it directly in a TLS handshake or to construct a certificate.
       </t>
       <section title="Certificates">
         <t>
@@ -563,7 +563,7 @@ Section 8.2 of <xref target="RFC3447"/>) using a key of at least 2048 bits.
           <spanx style="verb">sct_extensions</spanx> are the <spanx style="verb">sct_extensions</spanx> of the corresponding SCT.
         </t>
       </section>
-      <section title="Signed Certificate Timestamp (SCT)">
+      <section title="Signed Certificate Timestamp (SCT)" anchor="sct">
         <figure>
           <preamble>
             An SCT is a <spanx style="verb">TransItem</spanx> structure of type <spanx style="verb">x509_sct</spanx> or <spanx style="verb">precert_sct</spanx>. This version (v2) encapsulates a <spanx style="verb">SignedCertificateTimestampDataV2</spanx> structure:
