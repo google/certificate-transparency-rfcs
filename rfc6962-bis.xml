@@ -565,15 +565,10 @@ Section 8.2 of <xref target="RFC3447"/>) using a key of at least 2048 bits.
       </section>
       <section title="Structure of the Signed Certificate Timestamp">
         <figure>
+          <preamble>
+            An SCT is a <spanx style="verb">TransItem</spanx> structure of type <spanx style="verb">x509_sct</spanx> or <spanx style="verb">precert_sct</spanx>. This version (v2) encapsulates a <spanx style="verb">SignedCertificateTimestampDataV2</spanx> structure:
+          </preamble>
           <artwork>
-    enum {
-        certificate_timestamp(0), tree_hash(1), (255)
-    } SignatureType;
-
-    enum {
-        v2(1), (255)
-    } Version;
-
     opaque LogID&lt;2..127&gt;;
 
     opaque TBSCertificate&lt;1..2^24-1&gt;;
@@ -592,25 +587,14 @@ Section 8.2 of <xref target="RFC3447"/>) using a key of at least 2048 bits.
         opaque sct_extension_data&lt;0..2^16-1&gt;;
     } SctExtension;
 
-    SctExtension SctExtensions&lt;0..2^16-1&gt;;
-
     struct {
-        Version sct_version;
         LogID log_id;
         uint64 timestamp;
-        SctExtensions extensions;
+        SctExtension sct_extensions&lt;0..2^16-1&gt;;
         digitally-signed struct {
-            Version sct_version;
-            SignatureType signature_type = certificate_timestamp;
-            uint64 timestamp;
-            LogEntryType entry_type;
-            select(entry_type) {
-                case x509_entry: CertInfo;
-                case precert_entry_V2: CertInfo;
-            } signed_entry;
-            SctExtensions extensions;
-        };
-    } SignedCertificateTimestamp;</artwork>
+            TransItem timestamped_entry;
+        } signature;
+    } SignedCertificateTimestampDataV2;</artwork>
         </figure>
         <t>
           <spanx style="verb">issuer_key_hash</spanx> is the HASH of the certificate issuer's public key, calculated over the DER encoding of the key represented as SubjectPublicKeyInfo. This is needed to bind the issuer to the final certificate, making it impossible for the SCT to be valid for any other certificate.
@@ -624,35 +608,25 @@ redacted labels extension, and deleting the SCT list extension and redacted
 labels extension.
         </t>
         <t>
-          <spanx style="verb">sct_extension_type</spanx> identifies a single extension from the IANA registry in <xref target="sct_extension_types"/>.
-        </t>
-        <t>
-          The interpretation of the <spanx style="verb">sct_extension_data</spanx> field is determined solely by the value of the <spanx style="verb">sct_extension_type</spanx> field. Each document that registers a new <spanx style="verb">sct_extension_type</spanx> must describe how to interpret the corresponding <spanx style="verb">sct_extension_data</spanx>.
-        </t>
-        <t>
-          The <spanx style="verb">SctExtensions</spanx> type is a vector of 0 or more extensions. This vector MUST NOT include more than one extension with the same <spanx style="verb">sct_extension_type</spanx>. The extensions in the vector MUST be ordered by the value of the <spanx style="verb">sct_extension_type</spanx> field, smallest value first.
-        </t>
-        <t>
-          The encoding of the digitally-signed element is defined in <xref target='RFC5246'/>.
-        </t>
-        <t>
-          <spanx style="verb">sct_version</spanx> is the version of the
-protocol to which the SCT conforms. This version is v2. Note that <xref target="RFC6962">SignedCertificateTimestamp v1</xref> had a different definition of <spanx style="verb">signed_entry</spanx>.
-        </t>
-        <t>
           <spanx style="verb">log_id</spanx> is the DER encoding of an OID, excluding the ASN.1 tag and length bytes, that the log operator has allocated for the purpose of uniquely identifying this log. Note that the ASN.1 length and the opaque vector length are identical in size (1 byte) and value, so the DER encoding of the OID can be reproduced simply by prepending an OBJECT IDENTIFIER tag (0x06) to the opaque vector length and contents. This OID is specified in the log's metadata.
         </t>
         <t>
           <spanx style="verb">timestamp</spanx> is the current <xref target="RFC5905">NTP Time</xref>, measured since the epoch (January 1, 1970, 00:00), ignoring leap seconds, in milliseconds.
         </t>
         <t>
-          <spanx style="verb">entry_type</spanx> may be implicit from the context in which the SCT is presented.
+          <spanx style="verb">sct_extension_type</spanx> identifies a single extension from the IANA registry in <xref target="sct_extension_types"/>. Currently, no extensions are specified.
         </t>
         <t>
-          <spanx style="verb">signed_entry</spanx> includes the TBSCertificate from either the <spanx style="verb">leaf_certificate</spanx> (in the case of an X509ChainEntry) or the <spanx style="verb">pre_certificate</spanx> (in the case of a PrecertChainEntryV2).
+          The interpretation of the <spanx style="verb">sct_extension_data</spanx> field is determined solely by the value of the <spanx style="verb">sct_extension_type</spanx> field. Each document that registers a new <spanx style="verb">sct_extension_type</spanx> must describe how to interpret the corresponding <spanx style="verb">sct_extension_data</spanx>.
         </t>
         <t>
-          <spanx style="verb">extensions</spanx> are future extensions to SignedCertificateTimestamp v2. Currently, no extensions are specified. If an implementation sees an extension that it does not understand, it SHOULD ignore that extension. Furthermore, an implementation MAY choose to ignore any extension(s) that it does understand.
+          <spanx style="verb">sct_extensions</spanx> is a vector of 0 or more SCT extensions. This vector MUST NOT include more than one extension with the same <spanx style="verb">sct_extension_type</spanx>. The extensions in the vector MUST be ordered by the value of the <spanx style="verb">sct_extension_type</spanx> field, smallest value first. If an implementation sees an extension that it does not understand, it SHOULD ignore that extension. Furthermore, an implementation MAY choose to ignore any extension(s) that it does understand.
+        </t>
+        <t>
+          The encoding of the digitally-signed element is defined in <xref target='RFC5246'/>.
+        </t>
+        <t>
+          <spanx style="verb">timestamped_entry</spanx> is a <spanx style="verb">TransItem</spanx> structure that MUST be of type <spanx style="verb">x509_entry</spanx> or <spanx style="verb">precert_entry</spanx> and that MUST have an empty <spanx style="verb">item_extensions</spanx> vector. This version (v2) encapsulates a <spanx style="verb">TimestampedCertificateEntryDataV2</spanx> structure whose <spanx style="verb">signed_entry</spanx> includes the TBSCertificate from either the <spanx style="verb">leaf_certificate</spanx> (in the case of an X509ChainEntry) or the <spanx style="verb">pre_certificate</spanx> (in the case of a PrecertChainEntryV2).
         </t>
       </section>
       <section title="Signed Tree Head (STH)" anchor="STH">
