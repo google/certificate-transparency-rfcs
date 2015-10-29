@@ -458,7 +458,7 @@ Section 8.2 of <xref target="RFC3447"/>) using a key of at least 2048 bits.
 
     struct {
         CMSPrecert pre_certificate;
-        ASN.1Cert precertificate_chain&lt;0..2^24-1&gt;;
+        ASN.1Cert precertificate_chain&lt;1..2^24-1&gt;;
     } PrecertChainEntryV2;</artwork>
         </figure>
         <t>
