@@ -542,50 +542,25 @@ Section 8.2 of <xref target="RFC3447"/>) using a key of at least 2048 bits.
         </t>
       </section>
       <section title="Merkle Tree" anchor="tree">
-        <t>
-          The hashing algorithm for the Merkle Tree Hash is specified in the log's metadata.
-        </t>
         <figure>
           <preamble>
-            Structure of the Merkle Tree input:
+            Each leaf of a log's Merkle Tree is the <xref target="mht">leaf hash</xref> of a <spanx style="verb">TransItem</spanx> structure of type <spanx style="verb">x509_entry</spanx> or <spanx style="verb">precert_entry</spanx>, which in this version (v2) encapsulates a <spanx style="verb">TimestampedCertificateEntryDataV2</spanx> structure. Note that leaf hashes are calculated as HASH(0x00 || TransItem), where the hashing algorithm is specified in the log's metadata.
           </preamble>
           <artwork>
-    enum {
-        v1(0), v2(1), (255)
-    } LeafVersion;
-
     struct {
         uint64 timestamp;
-        LogEntryType entry_type;
-        select(entry_type) {
-            case x509_entry: CertInfo;
-            case precert_entry_V2: CertInfo;
-        } signed_entry;
-        SctExtensions extensions;
-    } TimestampedEntry;
-
-    struct {
-        LeafVersion version;
-        TimestampedEntry timestamped_entry;
-    } MerkleTreeLeaf;</artwork>
+        CertInfo signed_entry;
+        SctExtensions sct_extensions;
+    } TimestampedCertificateEntryDataV2;</artwork>
         </figure>
         <t>
-          Here, <spanx style="verb">version</spanx> is the version of the MerkleTreeLeaf structure. This version is v2. Note that <xref target="RFC6962">MerkleTreeLeaf v1</xref> had another layer of indirection which is removed in v2.
-        </t>
-        <t>
-          <spanx style="verb">timestamp</spanx> is the timestamp of the corresponding SCT issued for this certificate.
-        </t>
-        <t>
-          <spanx style="verb">entry_type</spanx> is the type of entry stored in <spanx style="verb">signed_entry</spanx>. New <spanx style="verb">LogEntryType</spanx> values may be added to <spanx style="verb">signed_entry</spanx> without increasing the <spanx style="verb">MerkleTreeLeaf</spanx> version. <xref target="client_messages"/> explains how clients should handle unknown entry types.
+          <spanx style="verb">timestamp</spanx> is the timestamp of the corresponding SCT issued for this certificate or precertificate.
         </t>
         <t>
           <spanx style="verb">signed_entry</spanx> is the <spanx style="verb">signed_entry</spanx> of the corresponding SCT.
         </t>
         <t>
-          <spanx style="verb">extensions</spanx> are the <spanx style="verb">extensions</spanx> of the corresponding SCT.
-        </t>
-        <t>
-          The leaves of the Merkle Tree are the leaf hashes of the corresponding <spanx style="verb">MerkleTreeLeaf</spanx> structures. Note that <xref target="mht">leaf hashes</xref> are calculated as HASH(0x00 || MerkleTreeLeaf).
+          <spanx style="verb">sct_extensions</spanx> are the <spanx style="verb">sct_extensions</spanx> of the corresponding SCT.
         </t>
       </section>
       <section title="Structure of the Signed Certificate Timestamp">
