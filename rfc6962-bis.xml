@@ -481,6 +481,73 @@ Section 8.2 of <xref target="RFC3447"/>) using a key of at least 2048 bits.
           <spanx style="verb">precertificate_chain</spanx> is a vector of 1 or more additional certificates required to verify <spanx style="verb">pre_certificate</spanx>. The first certificate MUST certify <spanx style="verb">pre_certificate</spanx>. Each following certificate MUST directly certify the one preceding it. The final certificate MUST be a root certificate accepted by the log.
         </t>
       </section>
+      <section title="The TransItem Structure">
+        <figure>
+          <preamble>
+            Various data structures produced by logs are encapsulated in the <spanx style="verb">TransItem</spanx> structure to ensure that the type and version of each one is identified in a common fashion:
+          </preamble>
+          <artwork>
+    enum {
+        v1(0), v2(1), (255)
+    } Version;
+
+    enum {
+        x509_entry(0), precert_entry(1), x509_sct(2), precert_sct(3),
+        tree_head(4), signed_tree_head(5), consistency_proof(6),
+        inclusion_proof(7), (65535)
+    } TransType;
+
+    enum {
+        reserved(65535)
+    } ItemExtensionType;
+
+    struct {
+        ItemExtensionType item_extension_type;
+        opaque item_extension_data&lt;0..2^16-1&gt;;
+    } ItemExtension;
+
+    struct {
+        TransType type;
+        select (type) {
+            case x509_entry: TimestampedCertificateEntryDataV2;
+            case precert_entry: TimestampedCertificateEntryDataV2;
+            case x509_sct: SignedCertificateTimestampDataV2;
+            case precert_sct: SignedCertificateTimestampDataV2;
+            case tree_head: TreeHeadDataV2;
+            case signed_tree_head: SignedTreeHeadDataV2;
+            case consistency_proof: ConsistencyProofDataV2;
+            case inclusion_proof: InclusionProofDataV2;
+        } data;
+        ItemExtension item_extensions&lt;0..2^16-1&gt;;
+    } TransItemV2;
+
+    struct {
+        Version version;
+        select (version) {
+            case v1: TransItemV1;
+            case v2: TransItemV2;
+        }
+    } TransItem;</artwork>
+        </figure>
+        <t>
+          <spanx style="verb">version</spanx> is the earliest version of this protocol to which the encapsulated data structure conforms. This document is v2. Note that <xref target="RFC6962">v1</xref> did not define <spanx style="verb">TransItem</spanx>, but this document specifies a mechanism (see <xref target="TransItemV1"/>) for v2 implementations to encapsulate existing v1 objects in the <spanx style="verb">TransItem</spanx> structure. Note also that, since each <spanx style="verb">TransItem</spanx> object is individually versioned, future revisions to this protocol could conceivably update some encapsulated data structures without having to update all of them.
+        </t>
+        <t>
+          <spanx style="verb">type</spanx> is the type of the encapsulated data structure. (Note that <spanx style="verb">TransType</spanx> combines the v1 type enumerations <spanx style="verb">LogEntryType</spanx>, <spanx style="verb">SignatureType</spanx> and <spanx style="verb">MerkleLeafType</spanx>). Future revisions of this protocol may add new <spanx style="verb">TransType</spanx> values.
+        </t>
+        <t>
+          <spanx style="verb">data</spanx> is the encapsulated data structure. The various structures named with the <spanx style="verb">DataV2</spanx> suffix are defined in later sections of this document.
+        </t>
+        <t>
+          <spanx style="verb">item_extension_type</spanx> identifies a single extension from the IANA registry in <xref target="item_extension_types"/>.
+        </t>
+        <t>
+          The interpretation of the <spanx style="verb">item_extension_data</spanx> field is determined solely by the value of the <spanx style="verb">item_extension_type</spanx> field. Each document that registers a new <spanx style="verb">item_extension_type</spanx> must describe how to interpret the corresponding <spanx style="verb">item_extension_data</spanx>.
+        </t>
+        <t>
+          <spanx style="verb">item_extensions</spanx> is a vector of 0 or more item extensions. This vector MUST NOT include more than one extension with the same <spanx style="verb">item_extension_type</spanx>. The extensions in the vector MUST be ordered by the value of the <spanx style="verb">item_extension_type</spanx> field, smallest value first.
+        </t>
+      </section>
       <section title="Structure of the Signed Certificate Timestamp">
         <figure>
           <artwork>
@@ -1420,7 +1487,19 @@ the STH changes.
           <ttcol>Index</ttcol><ttcol>Hash</ttcol>
           <c>0</c><c><xref target="FIPS.180-4">SHA-256</xref></c>
         </texttable>
-        </section>
+      </section>
+      <section title="TransItem Extensions" anchor="item_extension_types">
+        <t>
+          IANA is asked to establish a registry of TransItem extensions, initially consisting of:
+        </t>
+        <texttable>
+          <ttcol>Type</ttcol><ttcol>Extension</ttcol>
+          <c>65535</c><c>reserved</c>
+        </texttable>
+        <t>
+          TBD: policy for adding to the registry
+        </t>
+      </section>
       <section title="SCT Extensions" anchor="sct_extension_types">
         <t>
           IANA is asked to establish a registry of SCT extensions, initially consisting of:
@@ -1668,5 +1747,11 @@ value="Montreal"/>
       </reference>
 
     </references>
+
+    <section title="TransItemV1" anchor="TransItemV1">
+      <t>
+        TODO: write this section.
+      </t>
+    </section>
   </back>
 </rfc>
