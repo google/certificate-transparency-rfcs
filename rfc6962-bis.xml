@@ -440,7 +440,7 @@ Section 8.2 of <xref target="RFC3447"/>) using a key of at least 2048 bits.
       </section>
       <section title="Log Entries">
         <t>
-          If a submission is accepted and an SCT issued, the accepting log MUST store the entire chain used for verification. This chain MUST include the certificate or precertificate itself, the zero or more intermediate CA certificates provided by the submitter, and the root certificate used to verify the chain (even if it was omitted from the submission). The log MUST present this chain for auditing upon request. This chain is required to prevent a CA from avoiding blame by logging a partial or empty chain.
+          If a submission is accepted and an SCT issued, the accepting log MUST store the entire chain used for verification. This chain MUST include the certificate or precertificate itself, the zero or more intermediate CA certificates provided by the submitter, and the root certificate used to verify the chain (even if it was omitted from the submission). The log MUST present this chain for auditing upon request (see <xref target="get-entries"/>). This chain is required to prevent a CA from avoiding blame by logging a partial or empty chain.
         </t>
         <figure>
           <preamble>
@@ -1064,7 +1064,7 @@ an accepted root certificate.
         <t>See <xref target="verify_inclusion" /> for an outline of how to use the <spanx style="verb">audit_path</spanx> array and see <xref target="verify_consistency" /> for an outline of how to use the <spanx style="verb">consistency</spanx> array.</t>
       </section>
 
-      <section title="Retrieve Entries and STH from Log" anchor="fetch_entries">
+      <section title="Retrieve Entries and STH from Log" anchor="get-entries">
         <t>
           GET https://&lt;log server&gt;/ct/v2/get-entries
         </t>
@@ -1319,7 +1319,7 @@ but it is expected there will be a variety.
               Verify the STH signature.
             </t>
             <t>
-              Fetch all the entries in the tree corresponding to the STH (<xref target="fetch_entries"/>).
+              Fetch all the entries in the tree corresponding to the STH (<xref target="get-entries"/>).
             </t>
             <t>
               Confirm that the tree made from the fetched entries produces the same hash as that in the STH.
@@ -1333,7 +1333,7 @@ the STH changes.
             </t>
             <t>
               Fetch all the new entries in the tree corresponding to the STH
-(<xref target="fetch_entries"/>). If they remain unavailable for an extended period, then this should be viewed as misbehavior on the part of the log.
+(<xref target="get-entries"/>). If they remain unavailable for an extended period, then this should be viewed as misbehavior on the part of the log.
             </t>
             <t>
               Either:
