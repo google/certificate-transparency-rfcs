@@ -447,10 +447,6 @@ Section 8.2 of <xref target="RFC3447"/>) using a key of at least 2048 bits.
             Each certificate entry in a log MUST include a <spanx style="verb">X509ChainEntry</spanx> structure, and each precertificate entry MUST include a <spanx style="verb">PrecertChainEntryV2</spanx> structure:
           </preamble>
           <artwork>
-    enum {
-        x509_entry(0), precert_entry_V2(2), (65535)
-    } LogEntryType;
-
     opaque ASN.1Cert&lt;1..2^24-1&gt;;
 
     struct {
@@ -465,9 +461,6 @@ Section 8.2 of <xref target="RFC3447"/>) using a key of at least 2048 bits.
         ASN.1Cert precertificate_chain&lt;0..2^24-1&gt;;
     } PrecertChainEntryV2;</artwork>
         </figure>
-        <t>
-          <spanx style="verb">entry_type</spanx> is the type of this entry. Future revisions of this protocol may add new LogEntryType values. <xref target="client_messages"/> explains how clients should handle unknown entry types.
-        </t>
         <t>
           <spanx style="verb">leaf_certificate</spanx> is a submitted certificate that has been accepted by the log.
         </t>
