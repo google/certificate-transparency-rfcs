@@ -657,7 +657,7 @@ Section 8.2 of <xref target="RFC3447"/>) using a key of at least 2048 bits.
       </section>
       <section title="Signed Tree Head (STH)" anchor="STH">
         <t>
-          Periodically each log SHOULD sign its current tree head information (see <xref target="tree_head"/>) to produce an STH. When a client requests a log's latest STH (see <xref target="fetch_sth"/>), the log MUST return an STH that is no older than the log's MMD. However, STHs could be used to mark individual clients (by producing a new one for each query), so logs MUST NOT produce them more frequently than is declared in their metadata. In general, there is no need to produce a new STH unless there are new entries in the log; however, in the unlikely event that it receives no new submissions during an MMD period, the log SHALL sign the same Merkle Tree Hash with a fresh timestamp.
+          Periodically each log SHOULD sign its current tree head information (see <xref target="tree_head"/>) to produce an STH. When a client requests a log's latest STH (see <xref target="get-sth"/>), the log MUST return an STH that is no older than the log's MMD. However, STHs could be used to mark individual clients (by producing a new one for each query), so logs MUST NOT produce them more frequently than is declared in their metadata. In general, there is no need to produce a new STH unless there are new entries in the log; however, in the unlikely event that it receives no new submissions during an MMD period, the log SHALL sign the same Merkle Tree Hash with a fresh timestamp.
         </t>
         <section title="Structure of the STH" anchor="sth_struct">
           <figure>
@@ -854,7 +854,7 @@ an accepted root certificate.
         </t>
       </section>
 
-      <section title="Retrieve Latest Signed Tree Head" anchor="fetch_sth">
+      <section title="Retrieve Latest Signed Tree Head" anchor="get-sth">
         <t>
           GET https://&lt;log server&gt;/ct/v2/get-sth
         </t>
@@ -874,7 +874,7 @@ an accepted root certificate.
         </t>
       </section>
 
-      <section title="Retrieve Merkle Consistency Proof between Two Signed Tree Heads" anchor="fetch_consistency">
+      <section title="Retrieve Merkle Consistency Proof between Two Signed Tree Heads" anchor="get-sth-consistency">
         <t>
           GET https://&lt;log server&gt;/ct/v2/get-sth-consistency
         </t>
@@ -999,7 +999,7 @@ an accepted root certificate.
                   Return latest STH.
                 </t>
                 <t hangText="latest STH &gt; requested STH">
-                  Return latest STH and a consistency proof between it and the requested STH (see <xref target="fetch_consistency"/>).
+                  Return latest STH and a consistency proof between it and the requested STH (see <xref target="get-sth-consistency"/>).
                 </t>
                 <t hangText="index of requested hash &lt; latest STH">
                   Return <spanx style="verb">leaf_index</spanx> and <spanx style="verb">audit_path</spanx>.
@@ -1085,7 +1085,7 @@ entries it does recognize as well as verify the integrity of the data by
 treating unrecognized leaves as opaque input to the tree.
         </t>
         <t>
-          The <spanx style="verb">start</spanx> and <spanx style="verb">end</spanx> parameters SHOULD be within the range 0 &lt;= x &lt; <spanx style="verb">tree_size</spanx> as returned by <spanx style="verb">get-sth</spanx> in <xref target="fetch_sth"/>.
+          The <spanx style="verb">start</spanx> and <spanx style="verb">end</spanx> parameters SHOULD be within the range 0 &lt;= x &lt; <spanx style="verb">tree_size</spanx> as returned by <spanx style="verb">get-sth</spanx> in <xref target="get-sth"/>.
         </t>
         <t>
           The <spanx style="verb">start</spanx> parameter MUST be less than or equal to the <spanx style="verb">end</spanx> parameter.
@@ -1274,7 +1274,7 @@ but it is expected there will be a variety.
         <t>
           A TLS client MAY audit the corresponding log by requesting, and
           verifying, a Merkle audit proof for said certificate.
-          If the TLS client holds an STH that predates the SCT, it MAY, in the process of auditing, request a new STH from the log (<xref target="fetch_sth"/>), then verify it by requesting a consistency proof (<xref target="fetch_consistency"/>).
+          If the TLS client holds an STH that predates the SCT, it MAY, in the process of auditing, request a new STH from the log (<xref target="get-sth"/>), then verify it by requesting a consistency proof (<xref target="get-sth-consistency"/>).
         </t>
       </section>
       <section title="Monitor" anchor="monitor">
@@ -1285,7 +1285,7 @@ but it is expected there will be a variety.
           A monitor needs to, at least, inspect every new entry in each log it watches. It may also want to keep copies of entire logs. In order to do this, it should follow these steps for each log:
           <list style="numbers">
             <t>
-              Fetch the current STH (<xref target="fetch_sth"/>).
+              Fetch the current STH (<xref target="get-sth"/>).
             </t>
             <t>
               Verify the STH signature.
@@ -1297,8 +1297,7 @@ but it is expected there will be a variety.
               Confirm that the tree made from the fetched entries produces the same hash as that in the STH.
             </t>
             <t anchor="monitor_loop">
-              Fetch the current STH (<xref target="fetch_sth"/>). Repeat until
-the STH changes.
+              Fetch the current STH (<xref target="get-sth"/>). Repeat until the STH changes.
             </t>
             <t>
               Verify the STH signature.
@@ -1317,7 +1316,7 @@ the STH changes.
               Or, if it is not keeping all log entries:
               <list style="numbers">
                 <t>
-                  Fetch a consistency proof for the new STH with the previous STH (<xref target="fetch_consistency"/>).
+                  Fetch a consistency proof for the new STH with the previous STH (<xref target="get-sth-consistency"/>).
                 </t>
                 <t>
                   Verify the consistency proof.
