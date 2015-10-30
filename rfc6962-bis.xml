@@ -921,7 +921,7 @@ an accepted root certificate.
         <t>See <xref target="verify_consistency" /> for an outline of how to use the <spanx style="verb">consistency</spanx> array.</t>
       </section>
 
-      <section title="Retrieve Merkle Inclusion Proof from Log by Leaf Hash" anchor="fetch_proof">
+      <section title="Retrieve Merkle Inclusion Proof from Log by Leaf Hash" anchor="get-proof-by-hash">
         <t>
           GET https://&lt;log server&gt;/ct/v2/get-proof-by-hash
         </t>
@@ -971,7 +971,7 @@ an accepted root certificate.
         <t>See <xref target="verify_inclusion" /> for an outline of how to use the <spanx style="verb">audit_path</spanx> array.</t>
       </section>
 
-      <section title="Retrieve Merkle Inclusion Proof, Signed Tree Head and Consistency Proof by Leaf Hash">
+      <section title="Retrieve Merkle Inclusion Proof, Signed Tree Head and Consistency Proof by Leaf Hash" anchor="get-all-by-hash">
         <t>
           GET https://&lt;log server&gt;/ct/v2/get-all-by-hash
         </t>
@@ -1031,7 +1031,7 @@ an accepted root certificate.
           </list>
         </t>
         <t>
-          Errors are the same as in <xref target="fetch_proof"/>.
+          Errors are the same as in <xref target="get-proof-by-hash"/>.
         </t>
         <t>See <xref target="verify_inclusion" /> for an outline of how to use the <spanx style="verb">audit_path</spanx> array and see <xref target="verify_consistency" /> for an outline of how to use the <spanx style="verb">consistency</spanx> array.</t>
       </section>
@@ -1340,7 +1340,7 @@ but it is expected there will be a variety.
           A <xref target="monitor">monitor</xref> can audit by verifying the consistency of STHs it receives, ensure that each entry can be fetched and that the STH is indeed the result of making a tree from all fetched entries.
         </t>
         <t>
-          A <xref target="tls_clients">TLS client</xref> can audit by verifying an SCT against any STH dated after the SCT timestamp + the Maximum Merge Delay by requesting a Merkle inclusion proof (<xref target="fetch_proof"/>). It can also verify that the SCT corresponds to the certificate it arrived with (i.e. the log entry is that certificate, is a precertificate for that certificate or is an appropriate name-constrained intermediate [see <xref target="name_constrained"/>]).
+          A <xref target="tls_clients">TLS client</xref> can audit by verifying an SCT against any STH dated after the SCT timestamp + the Maximum Merge Delay by requesting a Merkle inclusion proof (<xref target="get-proof-by-hash"/>). It can also verify that the SCT corresponds to the certificate it arrived with (i.e. the log entry is that certificate, is a precertificate for that certificate or is an appropriate name-constrained intermediate [see <xref target="name_constrained"/>]).
         </t>
         <t>
           The following algorithm outlines may be useful for clients that wish to perform various audit operations.
