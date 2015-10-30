@@ -550,27 +550,20 @@ Section 8.2 of <xref target="RFC3447"/>) using a key of at least 2048 bits.
     opaque TBSCertificate&lt;1..2^24-1&gt;;
 
     struct {
+        uint64 timestamp;
         opaque issuer_key_hash[HASH_SIZE];
         TBSCertificate tbs_certificate;
-    } CertInfo;
-
-    struct {
-        uint64 timestamp;
-        CertInfo signed_entry;
         SctExtensions sct_extensions;
     } TimestampedCertificateEntryDataV2;</artwork>
         </figure>
+        <t>
+          <spanx style="verb">timestamp</spanx> is the <xref target="RFC5905">NTP Time</xref> at which the certificate or precertificate was accepted by the log, measured in milliseconds since the epoch (January 1, 1970, 00:00), ignoring leap seconds.
+        </t>
         <t>
           <spanx style="verb">issuer_key_hash</spanx> is the HASH of the certificate issuer's public key, calculated over the DER encoding of the key represented as SubjectPublicKeyInfo. This is needed to bind the issuer to the final certificate, making it impossible for the SCT to be valid for any other certificate.
         </t>
         <t>
           <spanx style="verb">tbs_certificate</spanx> is the DER encoded TBSCertificate component of the certificate or precertificate. (Note that a precertificate's TBSCertificate can be reconstructed from the issued certificate's TBSCertificate by redacting the domain name labels indicated by the redacted labels extension, and deleting the SCT list extension and redacted labels extension).
-        </t>
-        <t>
-          <spanx style="verb">timestamp</spanx> is the <xref target="RFC5905">NTP Time</xref> at which the certificate or precertificate was accepted by the log, measured in milliseconds since the epoch (January 1, 1970, 00:00), ignoring leap seconds.
-        </t>
-        <t>
-          <spanx style="verb">signed_entry</spanx> is the <spanx style="verb">signed_entry</spanx> of the corresponding SCT.
         </t>
         <t>
           <spanx style="verb">sct_extensions</spanx> are the <spanx style="verb">sct_extensions</spanx> of the corresponding SCT.
