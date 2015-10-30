@@ -627,6 +627,34 @@ Section 8.2 of <xref target="RFC3447"/>) using a key of at least 2048 bits.
           <spanx style="verb">timestamped_entry</spanx> is a <spanx style="verb">TransItem</spanx> structure that MUST be of type <spanx style="verb">x509_entry</spanx> or <spanx style="verb">precert_entry</spanx> (see <xref target="tree"/>) and MUST have an empty <spanx style="verb">item_extensions</spanx> vector.
         </t>
       </section>
+      <section title="Merkle Tree Head" anchor="tree_head">
+        <figure>
+          <preamble>
+            The log stores information about its Merkle Tree in a <spanx style="verb">TransItem</spanx> structure of type <spanx style="verb">tree_head</spanx>, which in this version (v2) encapsulates a <spanx style="verb">TreeHeadDataV2</spanx> structure:
+          </preamble>
+          <artwork>
+    opaque NodeHash[HASH_SIZE];
+
+    struct {
+        uint64 timestamp;
+        uint64 tree_size;
+        NodeHash root_hash;
+        SthExtensions sth_extensions;
+    } TreeHeadDataV2;</artwork>
+        </figure>
+        <t>
+          <spanx style="verb">timestamp</spanx> is the current <xref target="RFC5905">NTP Time</xref>, measured in milliseconds since the epoch (January 1, 1970, 00:00), ignoring leap seconds.
+        </t>
+        <t>
+          <spanx style="verb">tree_size</spanx> equals the number of entries currently in the log's Merkle Tree.
+        </t>
+        <t>
+          <spanx style="verb">root_hash</spanx> is the root of the Merkle Hash Tree.
+        </t>
+        <t>
+          <spanx style="verb">sth_extensions</spanx> are the <spanx style="verb">sth_extensions</spanx> of the corresponding STH.
+        </t>
+      </section>
       <section title="Signed Tree Head (STH)" anchor="STH">
         <t>
           Periodically the log SHOULD sign the corresponding tree hash and tree information (see the corresponding Signed Tree Head client message in <xref target="fetch_sth"/>).
