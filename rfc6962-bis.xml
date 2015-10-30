@@ -560,7 +560,7 @@ Section 8.2 of <xref target="RFC3447"/>) using a key of at least 2048 bits.
           <spanx style="verb">timestamp</spanx> is the <xref target="RFC5905">NTP Time</xref> at which the certificate or precertificate was accepted by the log, measured in milliseconds since the epoch (January 1, 1970, 00:00), ignoring leap seconds.
         </t>
         <t>
-          <spanx style="verb">issuer_key_hash</spanx> is the HASH of the certificate issuer's public key, calculated over the DER encoding of the key represented as SubjectPublicKeyInfo. This is needed to bind the issuer to the final certificate, making it impossible for the SCT to be valid for any other certificate.
+          <spanx style="verb">issuer_key_hash</spanx> is the HASH of the public key of the CA that issued the certificate or precertificate, calculated over the DER encoding of the key represented as SubjectPublicKeyInfo. This is needed to bind the CA to the certificate or precertificate, making it impossible for the corresponding SCT to be valid for any other certificate or precertificate whose TBSCertificate matches <spanx style="verb">tbs_certificate</spanx>.
         </t>
         <t>
           <spanx style="verb">tbs_certificate</spanx> is the DER encoded TBSCertificate component of the certificate or precertificate. (Note that a precertificate's TBSCertificate can be reconstructed from the issued certificate's TBSCertificate by redacting the domain name labels indicated by the redacted labels extension, and deleting the SCT list extension and redacted labels extension).
