@@ -474,6 +474,18 @@ Section 8.2 of <xref target="RFC3447"/>) using a key of at least 2048 bits.
           <spanx style="verb">precertificate_chain</spanx> is a vector of 1 or more additional certificates required to verify <spanx style="verb">pre_certificate</spanx>. The first certificate MUST certify <spanx style="verb">pre_certificate</spanx>. Each following certificate MUST directly certify the one preceding it. The final certificate MUST be a root certificate accepted by the log.
         </t>
       </section>
+      <section title="Log ID" anchor="log_id">
+        <figure>
+          <preamble>
+            Each log's operator allocates an OID for the purpose of uniquely identifying that log. This OID is specified in the log's metadata. Various data structures include the DER encoding of this OID, excluding the ASN.1 tag and length bytes, in an opaque vector:
+          </preamble>
+          <artwork>
+    opaque LogID&lt;2..127&gt;;</artwork>
+        </figure>
+        <t>
+          Note that the ASN.1 length and the opaque vector length are identical in size (1 byte) and value, so the DER encoding of the OID can be reproduced simply by prepending an OBJECT IDENTIFIER tag (0x06) to the opaque vector length and contents.
+        </t>
+      </section>
       <section title="The TransItem Structure">
         <figure>
           <preamble>
@@ -575,8 +587,6 @@ Section 8.2 of <xref target="RFC3447"/>) using a key of at least 2048 bits.
             An SCT is a <spanx style="verb">TransItem</spanx> structure of type <spanx style="verb">x509_sct</spanx> or <spanx style="verb">precert_sct</spanx>. This version (v2) encapsulates a <spanx style="verb">SignedCertificateTimestampDataV2</spanx> structure:
           </preamble>
           <artwork>
-    opaque LogID&lt;2..127&gt;;
-
     enum {
         reserved(65535)
     } SctExtensionType;
@@ -596,7 +606,7 @@ Section 8.2 of <xref target="RFC3447"/>) using a key of at least 2048 bits.
     } SignedCertificateTimestampDataV2;</artwork>
         </figure>
         <t>
-          <spanx style="verb">log_id</spanx> is the DER encoding of an OID, excluding the ASN.1 tag and length bytes, that the log operator has allocated for the purpose of uniquely identifying this log. Note that the ASN.1 length and the opaque vector length are identical in size (1 byte) and value, so the DER encoding of the OID can be reproduced simply by prepending an OBJECT IDENTIFIER tag (0x06) to the opaque vector length and contents. This OID is specified in the log's metadata.
+          <spanx style="verb">log_id</spanx> is this log's unique ID, encoded in an opaque vector as described in <xref target="log_id"/>.
         </t>
         <t>
           <spanx style="verb">timestamp</spanx> matches the timestamp from the <spanx style="verb">TimestampedCertificateEntryDataV2</spanx> structure encapsulated in the <spanx style="verb">timestamped_entry</spanx>.
