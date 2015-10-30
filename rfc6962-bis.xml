@@ -438,7 +438,7 @@ Section 8.2 of <xref target="RFC3447"/>) using a key of at least 2048 bits.
           The log SHALL allow retrieval of its list of accepted root certificates (see <xref target="get-roots"/>). This list might usefully be the union of root certificates trusted by major browser vendors.
         </t>
       </section>
-      <section title="Log Entries">
+      <section title="Log Entries" anchor="log_entries">
         <t>
           If a submission is accepted and an SCT issued, the accepting log MUST store the entire chain used for verification. This chain MUST include the certificate or precertificate itself, the zero or more intermediate CA certificates provided by the submitter, and the root certificate used to verify the chain (even if it was omitted from the submission). The log MUST present this chain for auditing upon request (see <xref target="get-entries"/>). This chain is required to prevent a CA from avoiding blame by logging a partial or empty chain.
         </t>
@@ -544,7 +544,7 @@ Section 8.2 of <xref target="RFC3447"/>) using a key of at least 2048 bits.
       <section title="Merkle Tree Leaves" anchor="tree">
         <figure>
           <preamble>
-            Each leaf of a log's Merkle Tree is the <xref target="mht">leaf hash</xref> of a <spanx style="verb">TransItem</spanx> structure of type <spanx style="verb">x509_entry</spanx> or <spanx style="verb">precert_entry</spanx>, which in this version (v2) encapsulates a <spanx style="verb">TimestampedCertificateEntryDataV2</spanx> structure. Note that leaf hashes are calculated as HASH(0x00 || TransItem), where the hashing algorithm is specified in the log's metadata.
+            The leaves of a log's Merkle Tree correspond to the log's entries (see <xref target="log_entries"/>). Each leaf is the <xref target="mht">leaf hash</xref> of a <spanx style="verb">TransItem</spanx> structure of type <spanx style="verb">x509_entry</spanx> or <spanx style="verb">precert_entry</spanx>, which in this version (v2) encapsulates a <spanx style="verb">TimestampedCertificateEntryDataV2</spanx> structure. Note that leaf hashes are calculated as HASH(0x00 || TransItem), where the hashing algorithm is specified in the log's metadata.
           </preamble>
           <artwork>
     opaque TBSCertificate&lt;1..2^24-1&gt;;
@@ -563,7 +563,7 @@ Section 8.2 of <xref target="RFC3447"/>) using a key of at least 2048 bits.
           <spanx style="verb">issuer_key_hash</spanx> is the HASH of the public key of the CA that issued the certificate or precertificate, calculated over the DER encoding of the key represented as SubjectPublicKeyInfo. This is needed to bind the CA to the certificate or precertificate, making it impossible for the corresponding SCT to be valid for any other certificate or precertificate whose TBSCertificate matches <spanx style="verb">tbs_certificate</spanx>.
         </t>
         <t>
-          <spanx style="verb">tbs_certificate</spanx> is the DER encoded TBSCertificate component of the certificate or precertificate. (Note that a precertificate's TBSCertificate can be reconstructed from the issued certificate's TBSCertificate by redacting the domain name labels indicated by the redacted labels extension, and deleting the SCT list extension and redacted labels extension).
+          <spanx style="verb">tbs_certificate</spanx> is the DER encoded TBSCertificate from either the <spanx style="verb">leaf_certificate</spanx> (in the case of an <spanx style="verb">X509ChainEntry</spanx>) or the <spanx style="verb">pre_certificate</spanx> (in the case of a <spanx style="verb">PrecertChainEntryV2</spanx>). (Note that a precertificate's TBSCertificate can be reconstructed from the issued certificate's TBSCertificate by redacting the domain name labels indicated by the redacted labels extension, and deleting the SCT list extension and redacted labels extension).
         </t>
         <t>
           <spanx style="verb">sct_extensions</spanx> are the <spanx style="verb">sct_extensions</spanx> of the corresponding SCT.
@@ -614,7 +614,7 @@ Section 8.2 of <xref target="RFC3447"/>) using a key of at least 2048 bits.
           The encoding of the digitally-signed element is defined in <xref target='RFC5246'/>.
         </t>
         <t>
-          <spanx style="verb">timestamped_entry</spanx> is a <spanx style="verb">TransItem</spanx> structure that MUST be of type <spanx style="verb">x509_entry</spanx> or <spanx style="verb">precert_entry</spanx> and that MUST have an empty <spanx style="verb">item_extensions</spanx> vector. This version (v2) encapsulates a <spanx style="verb">TimestampedCertificateEntryDataV2</spanx> structure whose <spanx style="verb">signed_entry</spanx> includes the TBSCertificate from either the <spanx style="verb">leaf_certificate</spanx> (in the case of an X509ChainEntry) or the <spanx style="verb">pre_certificate</spanx> (in the case of a PrecertChainEntryV2).
+          <spanx style="verb">timestamped_entry</spanx> is a <spanx style="verb">TransItem</spanx> structure that MUST be of type <spanx style="verb">x509_entry</spanx> or <spanx style="verb">precert_entry</spanx> (see <xref target="tree"/>) and MUST have an empty <spanx style="verb">item_extensions</spanx> vector.
         </t>
       </section>
       <section title="Signed Tree Head (STH)" anchor="STH">
