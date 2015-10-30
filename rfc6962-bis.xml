@@ -567,7 +567,7 @@ Section 8.2 of <xref target="RFC3447"/>) using a key of at least 2048 bits.
           <spanx style="verb">tbs_certificate</spanx> is the DER encoded TBSCertificate component of the certificate or precertificate. (Note that a precertificate's TBSCertificate can be reconstructed from the issued certificate's TBSCertificate by redacting the domain name labels indicated by the redacted labels extension, and deleting the SCT list extension and redacted labels extension).
         </t>
         <t>
-          <spanx style="verb">timestamp</spanx> is the timestamp of the corresponding SCT issued for this certificate or precertificate.
+          <spanx style="verb">timestamp</spanx> is the <xref target="RFC5905">NTP Time</xref> at which the certificate or precertificate was accepted by the log, measured in milliseconds since the epoch (January 1, 1970, 00:00), ignoring leap seconds.
         </t>
         <t>
           <spanx style="verb">signed_entry</spanx> is the <spanx style="verb">signed_entry</spanx> of the corresponding SCT.
@@ -606,7 +606,7 @@ Section 8.2 of <xref target="RFC3447"/>) using a key of at least 2048 bits.
           <spanx style="verb">log_id</spanx> is the DER encoding of an OID, excluding the ASN.1 tag and length bytes, that the log operator has allocated for the purpose of uniquely identifying this log. Note that the ASN.1 length and the opaque vector length are identical in size (1 byte) and value, so the DER encoding of the OID can be reproduced simply by prepending an OBJECT IDENTIFIER tag (0x06) to the opaque vector length and contents. This OID is specified in the log's metadata.
         </t>
         <t>
-          <spanx style="verb">timestamp</spanx> is the current <xref target="RFC5905">NTP Time</xref>, measured since the epoch (January 1, 1970, 00:00), ignoring leap seconds, in milliseconds.
+          <spanx style="verb">timestamp</spanx> matches the timestamp of the <spanx style="verb">timestamped_entry</spanx>.
         </t>
         <t>
           <spanx style="verb">sct_extension_type</spanx> identifies a single extension from the IANA registry in <xref target="sct_extension_types"/>. Currently, no extensions are specified.
