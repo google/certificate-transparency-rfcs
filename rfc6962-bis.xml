@@ -599,7 +599,7 @@ Section 8.2 of <xref target="RFC3447"/>) using a key of at least 2048 bits.
           <spanx style="verb">log_id</spanx> is the DER encoding of an OID, excluding the ASN.1 tag and length bytes, that the log operator has allocated for the purpose of uniquely identifying this log. Note that the ASN.1 length and the opaque vector length are identical in size (1 byte) and value, so the DER encoding of the OID can be reproduced simply by prepending an OBJECT IDENTIFIER tag (0x06) to the opaque vector length and contents. This OID is specified in the log's metadata.
         </t>
         <t>
-          <spanx style="verb">timestamp</spanx> matches the timestamp of the <spanx style="verb">timestamped_entry</spanx>.
+          <spanx style="verb">timestamp</spanx> matches the timestamp from the <spanx style="verb">TimestampedCertificateEntryDataV2</spanx> structure encapsulated in the <spanx style="verb">timestamped_entry</spanx>.
         </t>
         <t>
           <spanx style="verb">sct_extension_type</spanx> identifies a single extension from the IANA registry in <xref target="sct_extension_types"/>. Currently, no extensions are specified.
