@@ -565,7 +565,7 @@ Section 8.2 of <xref target="RFC3447"/>) using a key of at least 2048 bits.
         uint64 timestamp;
         opaque issuer_key_hash[HASH_SIZE];
         TBSCertificate tbs_certificate;
-        SctExtensions sct_extensions;
+        SctExtension sct_extensions&lt;0..2^16-1&gt;;
     } TimestampedCertificateEntryDataV2;</artwork>
         </figure>
         <t>
@@ -578,7 +578,7 @@ Section 8.2 of <xref target="RFC3447"/>) using a key of at least 2048 bits.
           <spanx style="verb">tbs_certificate</spanx> is the DER encoded TBSCertificate from either the <spanx style="verb">leaf_certificate</spanx> (in the case of an <spanx style="verb">X509ChainEntry</spanx>) or the <spanx style="verb">pre_certificate</spanx> (in the case of a <spanx style="verb">PrecertChainEntryV2</spanx>). (Note that a precertificate's TBSCertificate can be reconstructed from the issued certificate's TBSCertificate by redacting the domain name labels indicated by the redacted labels extension, and deleting the SCT list extension and redacted labels extension).
         </t>
         <t>
-          <spanx style="verb">sct_extensions</spanx> are the <spanx style="verb">sct_extensions</spanx> of the corresponding SCT.
+          <spanx style="verb">sct_extensions</spanx> matches the SCT extensions of the corresponding SCT.
         </t>
       </section>
       <section title="Signed Certificate Timestamp (SCT)" anchor="sct">
@@ -639,7 +639,7 @@ Section 8.2 of <xref target="RFC3447"/>) using a key of at least 2048 bits.
         uint64 timestamp;
         uint64 tree_size;
         NodeHash root_hash;
-        SthExtensions sth_extensions;
+        SthExtension sth_extensions&lt;0..2^16-1&gt;;
     } TreeHeadDataV2;</artwork>
         </figure>
         <t>
@@ -652,7 +652,7 @@ Section 8.2 of <xref target="RFC3447"/>) using a key of at least 2048 bits.
           <spanx style="verb">root_hash</spanx> is the root of the Merkle Hash Tree.
         </t>
         <t>
-          <spanx style="verb">sth_extensions</spanx> are the <spanx style="verb">sth_extensions</spanx> of the corresponding STH.
+          <spanx style="verb">sth_extensions</spanx> matches the STH extensions of the corresponding STH.
         </t>
       </section>
       <section title="Signed Tree Head (STH)" anchor="STH">
