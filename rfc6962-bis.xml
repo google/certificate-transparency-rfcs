@@ -1474,7 +1474,7 @@ but it is expected there will be a variety.
     <section title="IANA Considerations">
       <section title="TLS Extension Type">
         <t>
-          IANA has allocated an RFC 5246 ExtensionType value (18) for the SCT TLS extension. The extension name is "signed_certificate_timestamp". IANA should update this extension type to point at this document.
+          IANA is asked to allocate an RFC 5246 ExtensionType value for the <spanx style="verb">transparency_info</spanx> TLS extension. IANA should update this extension type to point at this document.
         </t>
       </section>
       <section title="Hash Algorithms" anchor="hash_algorithms">
