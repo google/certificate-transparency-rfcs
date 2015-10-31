@@ -1148,7 +1148,7 @@ entry specified by <spanx style="verb">start</spanx>.
 
       <section title="Retrieve Accepted Root Certificates" anchor="get-roots">
         <t>
-          GET https://&lt;log server&gt;/ct/v1/get-roots
+          GET https://&lt;log server&gt;/ct/v2/get-roots
         </t>
         <t>
           No inputs.
