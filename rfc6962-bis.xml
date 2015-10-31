@@ -822,7 +822,7 @@ messages.
             <t hangText="Inputs:">
               <list style="hanging">
                 <t hangText="chain:">
-                  An array of base64 encoded certificates. The first element is the end-entity certificate; the second chains to the first and so on to the last, which is either the root certificate or a certificate that chains to a known root certificate.
+                  An array of base64 encoded certificates. The first element is the certificate for which the submitter desires an SCT; the second chains to the first and so on to the last, which is either the root certificate or a certificate that chains to a known root certificate.
                 </t>
               </list>
             </t>
