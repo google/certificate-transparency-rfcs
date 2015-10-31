@@ -1747,9 +1747,70 @@ value="Montreal"/>
     </references>
 
     <section title="TransItemV1" anchor="TransItemV1">
-      <t>
-        TODO: Write this section. Or should it be in a separate document?
-      </t>
+      <figure>
+        <preamble>
+          TODO: Finish writing this section. Or should it be in a separate document?
+        </preamble>
+        <artwork>
+    struct {
+        TransType type;
+        select (type) {
+            case x509_sct: SignedCertificateTimestampV1;
+            case precert_sct: SignedCertificateTimestampV1;
+            case signed_tree_head: SignedTreeHeadDataV1;
+            case consistency_proof: ConsistencyProofDataV1;
+            case inclusion_proof: InclusionProofDataV1;
+        } data;
+    } TransItemV1;
+
+    opaque SHA256Hash[32];
+
+    struct {
+        Version version = v1;
+        SHA256Hash log_id;
+        uint64 timestamp;
+        SctExtensions extensions;
+        digitally-signed struct {
+            Version version = v1;
+            uint8 signature_type = 0;  /* "certificate_timestamp" */
+            uint64 timestamp;
+            TransType type;  /* x509_entry(0) or precert_entry(1) */
+            select (type) {
+                case x509_entry: ASN.1Cert;
+                case precert_entry: PreCert;
+            } signed_entry;
+            SctExtensions extensions;
+        } signature;
+    } SignedCertificateTimestampV1;
+
+    struct {
+        SHA256Hash log_id;
+        uint64 timestamp;
+        uint64 tree_size;
+        SHA256Hash sha256_root_hash;
+        digitally-signed struct {
+            Version version = v1;
+            uint8 signature_type = 1;  /* "tree_hash" */
+            uint64 timestamp;
+            uint64 tree_size;
+            SHA256Hash sha256_root_hash;
+        } signature;
+    } SignedTreeHeadDataV1;
+
+    struct {
+        SHA256Hash log_id;
+        uint64 tree_size_1;
+        uint64 tree_size_2;
+        SHA256Hash consistency_path&lt;1..2^8-1&gt;;
+    } ConsistencyProofDataV1;
+
+    struct {
+        SHA256Hash log_id;
+        uint64 tree_size;
+        uint64 leaf_index;
+        SHA256Hash audit_path&lt;1..2^8-1&gt;;
+    } InclusionProofDataV1;</artwork>
+      </figure>
     </section>
   </back>
 </rfc>
