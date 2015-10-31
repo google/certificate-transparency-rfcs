@@ -822,7 +822,7 @@ messages.
             <t hangText="Inputs:">
               <list style="hanging">
                 <t hangText="chain:">
-                  An array of base64 encoded certificates. The first element is the certificate for which the submitter desires an SCT; the second chains to the first and so on to the last, which is either the root certificate or a certificate that chains to a known root certificate.
+                  An array of base64 encoded certificates. The first element is the certificate for which the submitter desires an SCT; the second chains to the first and so on to the last, which is either an accepted root certificate or a certificate that chains to an accepted root certificate.
                 </t>
               </list>
             </t>
@@ -871,10 +871,7 @@ messages.
                   The base64 encoded precertificate.
                 </t>
                 <t hangText="chain:">
-                  An array of base64 encoded CA certificates. The first element is
-the signer of the precertificate; the second chains to the first and so on to
-the last, which is either the root certificate or a certificate that chains to
-an accepted root certificate.
+                  An array of base64 encoded CA certificates. The first element is the signer of the precertificate; the second chains to the first and so on to the last, which is either an accepted root certificate or a certificate that chains to an accepted root certificate.
                 </t>
               </list>
             </t>
