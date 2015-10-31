@@ -1211,35 +1211,25 @@ entry specified by <spanx style="verb">start</spanx>.
       </section>
     </section>
     <section title="Certification Authorities">
-      <section title="X.509v3 Extension" anchor="x509v3_extension">
+      <section title="Transparency Information X.509v3 Extension" anchor="x509v3_transinfo_extension">
+        <figure>
+          <preamble>
+            One or more <spanx style="verb">TransItem</spanx> structures can be embedded in the Transparency Information X.509v3 extension, which has OID &lt;TBD&gt; and SHOULD be non-critical. This extension can be included in OCSP responses and certificates. Since RFC5280 requires the <spanx style="verb">extnValue</spanx> field (an OCTET STRING) of each X.509v3 extension to include the DER encoding of an ASN.1 value, we cannot embed a <spanx style="verb">TransItemList</spanx> directly. Instead, we have to wrap it inside an additional OCTET STRING, which we then put into the <spanx style="verb">extnValue</spanx> field:
+          </preamble>
+          <artwork>
+    TransparencyInformationSyntax ::= OCTET STRING</artwork>
+        </figure>
         <t>
-          One or more SCTs can be embedded in an X.509v3 extension that is included in a certificate or an OCSP response. Since RFC5280 requires the <spanx style="verb">extnValue</spanx> field (an OCTET STRING) of each X.509v3 extension to include the DER encoding of an ASN.1 value, we cannot embed a <spanx style="verb">SignedCertificateTimestampList</spanx> directly. Instead, we have to wrap it inside an additional OCTET STRING (see below), which we then put into the <spanx style="verb">extnValue</spanx> field.
+          <spanx style="verb">TransparencyInformationSyntax</spanx> contains a <spanx style="verb">TransItemList</spanx>.
         </t>
         <section title="OCSP Response Extension" anchor="ocsp_transinfo_extension">
-          <figure>
-            <preamble>
-              A certification authority may embed one or more SCTs in OCSP responses pertaining to the end-entity certificate, by including a non-critical <spanx style="verb">singleExtensions</spanx> extension with OID 1.3.6.1.4.1.11129.2.4.5 whose <spanx style="verb">extnValue</spanx> contains:
-            </preamble>
-            <artwork>
-    CertificateSCTList ::= OCTET STRING</artwork>
-          </figure>
           <t>
-            <spanx style="verb">CertificateSCTList</spanx> contains a <spanx style="verb">SignedCertificateTimestampList</spanx> whose SCTs all have the <spanx style="verb">x509_entry</spanx> <spanx style="verb">LogEntryType</spanx>.
+            A certification authority may include a Transparency Information X.509v3 extension in the <spanx style="verb">singleExtensions</spanx> of a <spanx style="verb">SingleResponse</spanx> in an OCSP response. The included SCTs or inclusion proofs MUST be for the certificate identified by the <spanx style="verb">certID</spanx> of that <spanx style="verb">SingleResponse</spanx>, or for a precertificate that corresponds to that certificate, or for a name-constrained intermediate to which that certificate chains.
           </t>
         </section>
         <section title="Certificate Extension" anchor="cert_transinfo_extension">
-          <figure>
-            <preamble>
-              A certification authority that has submitted a precertificate to one or more logs may embed the obtained SCTs in the <spanx style="verb">TBSCertificate</spanx> that will be signed to produce the certificate, by including a non-critical X.509v3 extension with OID 1.3.6.1.4.1.11129.2.4.2 whose <spanx style="verb">extnValue</spanx> contains:
-            </preamble>
-            <artwork>
-    PrecertificateSCTList ::= OCTET STRING</artwork>
-          </figure>
           <t>
-            <spanx style="verb">PrecertificateSCTList</spanx> contains a <spanx style="verb">SignedCertificateTimestampList</spanx> whose SCTs all have the <spanx style="verb">precert_entry_V2</spanx> <spanx style="verb">LogEntryType</spanx>.
-          </t>
-          <t>
-            Upon receiving the certificate, clients can reconstruct the original <spanx style="verb">TBSCertificate</spanx> to verify the SCT signatures.
+            A certification authority may include a Transparency Information X.509v3 extension in a certificate. The included SCTs or inclusion proofs MUST be either for a precertificate that corresponds to this certificate, or for a name-constrained intermediate to which this certificate chains.
           </t>
         </section>
       </section>
