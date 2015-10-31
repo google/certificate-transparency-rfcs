@@ -1293,7 +1293,10 @@ but it is expected there will be a variety.
       </section>
       <section title="TLS Client" anchor="tls_clients">
         <t>
-          TLS clients receive SCTs alongside or in certificates, either for the server certificate itself or for a name-constrained intermediate the server certificate chains to. TLS clients MUST implement all of the three mechanisms by which TLS servers may present SCTs (see <xref target="tls_servers"/>). TLS clients that support the <spanx style="verb">signed_certificate_timestamp</spanx> TLS extension SHOULD include it, with empty <spanx style="verb">extension_data</spanx>, in ClientHello messages.
+          TLS clients receive SCTs alongside or in certificates, either for the server certificate itself or for a name-constrained intermediate the server certificate chains to. TLS clients MUST implement all of the three mechanisms by which TLS servers may present SCTs (see <xref target="tls_servers"/>). TLS clients that support the <spanx style="verb">transparency_info</spanx> TLS extension SHOULD include it in ClientHello messages, with <spanx style="verb">extension_data</spanx> set to &lt;TBD&gt;.
+        </t>
+        <t>
+          TODO: What should the TLS client communicate in the extension_data? Version(s) of CT that it supports? Certain types of TransItem that it can handle? Whether or not it wants to gossip?
         </t>
         <t>
           In addition to normal validation of the certificate and its chain, TLS clients SHOULD validate each SCT by computing the signature input from the SCT data as well as the certificate and verifying the signature, using the corresponding log's public key. TLS clients MUST reject SCTs whose timestamp is in the future.
