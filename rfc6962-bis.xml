@@ -553,7 +553,7 @@ Section 8.2 of <xref target="RFC3447"/>) using a key of at least 2048 bits.
           <spanx style="verb">item_extensions</spanx> is a vector of 0 or more item extensions. This vector MUST NOT include more than one extension with the same <spanx style="verb">item_extension_type</spanx>. The extensions in the vector MUST be ordered by the value of the <spanx style="verb">item_extension_type</spanx> field, smallest value first.
         </t>
       </section>
-      <section title="Merkle Tree Leaves" anchor="tree">
+      <section title="Merkle Tree Leaves" anchor="tree_leaves">
         <figure>
           <preamble>
             The leaves of a log's Merkle Tree correspond to the log's entries (see <xref target="log_entries"/>). Each leaf is the <xref target="mht">leaf hash</xref> of a <spanx style="verb">TransItem</spanx> structure of type <spanx style="verb">x509_entry</spanx> or <spanx style="verb">precert_entry</spanx>, which in this version (v2) encapsulates a <spanx style="verb">TimestampedCertificateEntryDataV2</spanx> structure. Note that leaf hashes are calculated as HASH(0x00 || TransItem), where the hashing algorithm is specified in the log's metadata.
@@ -624,7 +624,7 @@ Section 8.2 of <xref target="RFC3447"/>) using a key of at least 2048 bits.
           The encoding of the digitally-signed element is defined in <xref target='RFC5246'/>.
         </t>
         <t>
-          <spanx style="verb">timestamped_entry</spanx> is a <spanx style="verb">TransItem</spanx> structure that MUST be of type <spanx style="verb">x509_entry</spanx> or <spanx style="verb">precert_entry</spanx> (see <xref target="tree"/>) and MUST have an empty <spanx style="verb">item_extensions</spanx> vector.
+          <spanx style="verb">timestamped_entry</spanx> is a <spanx style="verb">TransItem</spanx> structure that MUST be of type <spanx style="verb">x509_entry</spanx> or <spanx style="verb">precert_entry</spanx> (see <xref target="tree_leaves"/>) and MUST have an empty <spanx style="verb">item_extensions</spanx> vector.
         </t>
       </section>
       <section title="Merkle Tree Head" anchor="tree_head">
@@ -979,7 +979,7 @@ messages.
               </list>
             </t>
             <t>
-              The <spanx style="verb">hash</spanx> must be calculated as defined in <xref target="tree"/>. The <spanx style="verb">tree_size</spanx> must designate an existing v2 STH. Because of skew, the front-end may not know the requested STH. In that case, it will return the latest STH it knows, along with an inclusion proof to that STH. If the front-end knows the requested STH then only <spanx style="verb">inclusion</spanx> is returned.
+              The <spanx style="verb">hash</spanx> must be calculated as defined in <xref target="tree_leaves"/>. The <spanx style="verb">tree_size</spanx> must designate an existing v2 STH. Because of skew, the front-end may not know the requested STH. In that case, it will return the latest STH it knows, along with an inclusion proof to that STH. If the front-end knows the requested STH then only <spanx style="verb">inclusion</spanx> is returned.
             </t>
             <t hangText="Outputs:">
               <list style="hanging">
@@ -1026,7 +1026,7 @@ messages.
               </list>
             </t>
             <t>
-              The <spanx style="verb">hash</spanx> must be calculated as defined in <xref target="tree"/>. The <spanx style="verb">tree_size</spanx> must designate an existing v2 STH.
+              The <spanx style="verb">hash</spanx> must be calculated as defined in <xref target="tree_leaves"/>. The <spanx style="verb">tree_size</spanx> must designate an existing v2 STH.
             </t>
             <t>
               Because of skew, the front-end may not know the requested STH or the requested hash, which leads to a number of cases.
@@ -1095,18 +1095,18 @@ messages.
                   An array of objects, each consisting of
                   <list style="hanging">
                     <t hangText="leaf_input:">
-                      The base64 encoded MerkleTreeLeaf structure.
+                      The base64 encoded <spanx style="verb">TransItem</spanx> structure of type <spanx style="verb">x509_entry</spanx> or <spanx style="verb">precert_entry</spanx> (see <xref target="tree_leaves"/>).
                     </t>
                     <t hangText="extra_data:">
-                      The base64 encoded unsigned data pertaining to the log entry. In the case of an X509ChainEntry, this is the whole <spanx style="verb">X509ChainEntry</spanx>. In the case of a PrecertChainEntryV2, this is the whole <spanx style="verb">PrecertChainEntryV2</spanx>.
+                      The base64 encoded log entry (see <xref target="log_entries"/>). In the case of an <spanx style="verb">x509_entry</spanx> entry, this is the whole <spanx style="verb">X509ChainEntry</spanx>; and in the case of a <spanx style="verb">precert_entry</spanx>, this is the whole <spanx style="verb">PrecertChainEntryV2</spanx>.
                     </t>
                     <t hangText="sct:">
-                      A base64 encoded <spanx style="verb">SignedCertificateTimestamp</spanx> for this entry. Note that more than one SCT may have been returned for the same entry - only one of those is returned in this field. It may not be possible to retrieve others.
+                      A base64 encoded <spanx style="verb">TransItem</spanx> of type <spanx style="verb">x509_sct</spanx> or <spanx style="verb">precert_sct</spanx> corresponding to this log entry. Note that more than one SCT may have been returned for the same entry - only one of those is returned in this field. It may not be possible to retrieve others.
                     </t>
                   </list>
                 </t>
                 <t hangText="sth:">
-                  A base64 encoded SignedTreeHead.
+                  A base64 encoded <spanx style="verb">TransItem</spanx> of type <spanx style="verb">signed_tree_head</spanx>, signed by this log.
                 </t>
               </list>
             </t>
