@@ -709,6 +709,54 @@ Section 8.2 of <xref target="RFC3447"/>) using a key of at least 2048 bits.
           <spanx style="verb">merkle_tree_head</spanx> is a <spanx style="verb">TransItem</spanx> structure that MUST be of type <spanx style="verb">tree_head</spanx> (see <xref target="tree_head"/>) and MUST have an empty <spanx style="verb">item_extensions</spanx> vector.
         </t>
       </section>
+      <section title="Merkle Consistency Proofs">
+        <figure>
+          <preamble>
+            To prepare a Merkle Consistency Proof for distribution to clients, the log produces a <spanx style="verb">TransItem</spanx> structure of type <spanx style="verb">consistency_proof</spanx>, which in this version (v2) encapsulates a <spanx style="verb">ConsistencyProofDataV2</spanx> structure:
+          </preamble>
+          <artwork>
+    struct {
+        LogID log_id;
+        uint64 tree_size_1;
+        uint64 tree_size_2;
+        NodeHash consistency&lt;1..2^8-1&gt;;
+    } ConsistencyProofDataV2;</artwork>
+        </figure>
+        <t>
+          <spanx style="verb">log_id</spanx> is this log's unique ID, encoded in an opaque vector as described in <xref target="log_id"/>.
+        </t>
+        <t>
+          <spanx style="verb">tree_size_1</spanx> is the size of the older tree.
+        </t>
+        <t>
+          <spanx style="verb">tree_size_2</spanx> is the size of the newer tree.
+        </t>
+        <t>
+          <spanx style="verb">consistency</spanx> is a vector of base64 encoded Merkle Tree nodes.
+        </t>
+      </section>
+      <section title="Merkle Inclusion Proofs">
+        <figure>
+          <preamble>
+            To prepare a Merkle Inclusion Proof for distribution to clients, the log produces a <spanx style="verb">TransItem</spanx> structure of type <spanx style="verb">inclusion_proof</spanx>, which in this version (v2) encapsulates an <spanx style="verb">InclusionProofDataV2</spanx> structure:
+          </preamble>
+          <artwork>
+    struct {
+        LogID log_id;
+        uint64 tree_size;
+        NodeHash audit_path&lt;1..2^8-1&gt;;
+    } InclusionProofDataV2;</artwork>
+        </figure>
+        <t>
+          <spanx style="verb">log_id</spanx> is this log's unique ID, encoded in an opaque vector as described in <xref target="log_id"/>.
+        </t>
+        <t>
+          <spanx style="verb">tree_size</spanx> is the size of the tree on which this inclusion proof is based.
+        </t>
+        <t>
+          <spanx style="verb">audit_path</spanx> is a vector of base64 encoded Merkle Tree nodes proving the inclusion of the chosen certificate or precertificate.
+        </t>
+      </section>
     </section>
     <section title="Log Client Messages" anchor="client_messages">
       <t>
