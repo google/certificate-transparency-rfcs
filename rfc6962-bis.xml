@@ -1299,14 +1299,15 @@ but it is expected there will be a variety.
           TODO: What should the TLS client communicate in the extension_data? Version(s) of CT that it supports? Certain types of TransItem that it can handle? Whether or not it wants to gossip?
         </t>
         <t>
-          In addition to normal validation of the certificate and its chain, TLS clients SHOULD validate each SCT by computing the signature input from the SCT data as well as the certificate and verifying the signature, using the corresponding log's public key. TLS clients MUST reject SCTs whose timestamp is in the future.
+          In addition to normal validation of the certificate and its chain, TLS clients SHOULD validate each supplied SCT by computing the signature input from the SCT data as well as the certificate and verifying the signature, using the corresponding log's public key. TLS clients MUST reject SCTs whose timestamp is in the future.
         </t>
         <t>
-          By validating SCTs, TLS clients can thus determine whether certificates are compliant. A certificate not accompanied by a valid SCT MUST NOT be considered compliant by TLS clients. However, specifying the TLS clients' behavior once compliance or non-compliance has been determined (for example, whether a certificate should be rejected due to the lack of valid SCTs) is outside the scope of this document.
+          TLS clients SHOULD also validate each supplied inclusion proof (see <xref target="verify_inclusion"/>). If no inclusion proof was supplied, the TLS client MAY request one directly from the corresponding log (see <xref target="get-proof-by-hash"/>) and then validate it, in order to audit the log.
         </t>
         <t>
-          A TLS client MAY audit the corresponding log by requesting, and
-          verifying, a Merkle audit proof for said certificate.
+          By validating SCTs and inclusion proofs, TLS clients can thus determine whether certificates are compliant. A certificate not accompanied by a valid SCT or inclusion proof MUST NOT be considered compliant by TLS clients. However, specifying the TLS clients' behavior once compliance or non-compliance has been determined (for example, whether a certificate should be rejected due to non-compliance) is outside the scope of this document.
+        </t>
+        <t>
           If the TLS client holds an STH that predates the SCT, it MAY, in the process of auditing, request a new STH from the log (<xref target="get-sth"/>), then verify it by requesting a consistency proof (<xref target="get-sth-consistency"/>).
         </t>
       </section>
