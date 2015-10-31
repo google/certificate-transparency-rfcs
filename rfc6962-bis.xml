@@ -1097,7 +1097,7 @@ messages.
                     <t hangText="leaf_input:">
                       The base64 encoded <spanx style="verb">TransItem</spanx> structure of type <spanx style="verb">x509_entry</spanx> or <spanx style="verb">precert_entry</spanx> (see <xref target="tree_leaves"/>).
                     </t>
-                    <t hangText="extra_data:">
+                    <t hangText="log_entry:">
                       The base64 encoded log entry (see <xref target="log_entries"/>). In the case of an <spanx style="verb">x509_entry</spanx> entry, this is the whole <spanx style="verb">X509ChainEntry</spanx>; and in the case of a <spanx style="verb">precert_entry</spanx>, this is the whole <spanx style="verb">PrecertChainEntryV2</spanx>.
                     </t>
                     <t hangText="sct:">
