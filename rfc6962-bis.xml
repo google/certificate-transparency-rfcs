@@ -1385,7 +1385,7 @@ but it is expected there will be a variety.
         </t>
         <section title="Verifying an inclusion proof" anchor="verify_inclusion">
           <t>
-            When a client has received an <spanx style="verb">audit_path</spanx> and <spanx style="verb">leaf_index</spanx> and wishes to verify inclusion of an input <spanx style="verb">hash</spanx> for an STH with a given <spanx style="verb">tree_size</spanx> and <spanx style="verb">root_hash</spanx>, the following algorithm may be used to prove the <spanx style="verb">hash</spanx> was included in the <spanx style="verb">root_hash</spanx>:
+            When a client has received a <spanx style="verb">TransItem</spanx> of type <spanx style="verb">inclusion_proof</spanx> and wishes to verify inclusion of an input <spanx style="verb">hash</spanx> for an STH with a given <spanx style="verb">tree_size</spanx> and <spanx style="verb">root_hash</spanx>, the following algorithm may be used to prove the <spanx style="verb">hash</spanx> was included in the <spanx style="verb">root_hash</spanx>:
             <list style="numbers">
               <t>Set <spanx style="verb">fn</spanx> to <spanx style="verb">leaf_index</spanx> and <spanx style="verb">sn</spanx> to <spanx style="verb">tree_size - 1</spanx>.</t>
               <t>Set <spanx style="verb">r</spanx> to <spanx style="verb">hash</spanx>.</t>
@@ -1412,7 +1412,7 @@ but it is expected there will be a variety.
         </section>
         <section title="Verifying consistency between two STHs" anchor="verify_consistency">
           <t>
-            When a client has an STH <spanx style="verb">first_hash</spanx> for tree size <spanx style="verb">first</spanx>, an STH <spanx style="verb">second_hash</spanx> for tree size <spanx style="verb">second</spanx> where <spanx style="verb">0 &lt; first &lt; second</spanx>, and has received a <spanx style="verb">consistency_path</spanx> array that they wish to use to verify both hashes, the following algorithm may be used:
+            When a client has an STH <spanx style="verb">first_hash</spanx> for tree size <spanx style="verb">first</spanx>, an STH <spanx style="verb">second_hash</spanx> for tree size <spanx style="verb">second</spanx> where <spanx style="verb">0 &lt; first &lt; second</spanx>, and has received a <spanx style="verb">TransItem</spanx> of type <spanx style="verb">consistency_proof</spanx> that they wish to use to verify both hashes, the following algorithm may be used:
             <list style="numbers">
               <t>If <spanx style="verb">first</spanx> is an exact power of 2, then prepend <spanx style="verb">first_hash</spanx> to the <spanx style="verb">consistency_path</spanx> array.</t>
               <t>Set <spanx style="verb">fn</spanx> to <spanx style="verb">first - 1</spanx> and <spanx style="verb">sn</spanx> to <spanx style="verb">second - 1</spanx>.</t>
