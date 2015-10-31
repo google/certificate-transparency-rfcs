@@ -719,7 +719,7 @@ Section 8.2 of <xref target="RFC3447"/>) using a key of at least 2048 bits.
         LogID log_id;
         uint64 tree_size_1;
         uint64 tree_size_2;
-        NodeHash consistency&lt;1..2^8-1&gt;;
+        NodeHash consistency_path&lt;1..2^8-1&gt;;
     } ConsistencyProofDataV2;</artwork>
         </figure>
         <t>
@@ -732,7 +732,7 @@ Section 8.2 of <xref target="RFC3447"/>) using a key of at least 2048 bits.
           <spanx style="verb">tree_size_2</spanx> is the size of the newer tree.
         </t>
         <t>
-          <spanx style="verb">consistency</spanx> is a vector of base64 encoded Merkle Tree nodes.
+          <spanx style="verb">consistency_path</spanx> is a vector of base64 encoded Merkle Tree nodes proving the consistency of two STHs.
         </t>
       </section>
       <section title="Merkle Inclusion Proofs">
@@ -953,7 +953,9 @@ messages.
             </t>
           </list>
         </t>
-        <t>See <xref target="verify_consistency" /> for an outline of how to use the <spanx style="verb">consistency</spanx> array.</t>
+        <t>
+          See <xref target="verify_consistency"/> for an outline of how to use the <spanx style="verb">consistency</spanx> output.
+        </t>
       </section>
 
       <section title="Retrieve Merkle Inclusion Proof from Log by Leaf Hash" anchor="get-proof-by-hash">
@@ -1409,14 +1411,14 @@ but it is expected there will be a variety.
         </section>
         <section title="Verifying consistency between two STHs" anchor="verify_consistency">
           <t>
-            When a client has an STH <spanx style="verb">first_hash</spanx> for tree size <spanx style="verb">first</spanx>, an STH <spanx style="verb">second_hash</spanx> for tree size <spanx style="verb">second</spanx> where <spanx style="verb">0 &lt; first &lt; second</spanx>, and has received a <spanx style="verb">consistency</spanx> array that they wish to use to verify both hashes, the following algorithm may be used:
+            When a client has an STH <spanx style="verb">first_hash</spanx> for tree size <spanx style="verb">first</spanx>, an STH <spanx style="verb">second_hash</spanx> for tree size <spanx style="verb">second</spanx> where <spanx style="verb">0 &lt; first &lt; second</spanx>, and has received a <spanx style="verb">consistency_path</spanx> array that they wish to use to verify both hashes, the following algorithm may be used:
             <list style="numbers">
-              <t>If <spanx style="verb">first</spanx> is an exact power of 2, then prepend <spanx style="verb">first_hash</spanx> to the <spanx style="verb">consistency</spanx> array.</t>
+              <t>If <spanx style="verb">first</spanx> is an exact power of 2, then prepend <spanx style="verb">first_hash</spanx> to the <spanx style="verb">consistency_path</spanx> array.</t>
               <t>Set <spanx style="verb">fn</spanx> to <spanx style="verb">first - 1</spanx> and <spanx style="verb">sn</spanx> to <spanx style="verb">second - 1</spanx>.</t>
               <t>If <spanx style="verb">LSB(fn)</spanx> is set, then right-shift both <spanx style="verb">fn</spanx> and <spanx style="verb">sn</spanx> equally until <spanx style="verb">LSB(fn)</spanx> is not set.</t>
-              <t>Set both <spanx style="verb">fr</spanx> and <spanx style="verb">sr</spanx> to the first value in the <spanx style="verb">consistency</spanx> array.</t>
+              <t>Set both <spanx style="verb">fr</spanx> and <spanx style="verb">sr</spanx> to the first value in the <spanx style="verb">consistency_path</spanx> array.</t>
               <t>
-                For each subsequent value <spanx style="verb">c</spanx> in the <spanx style="verb">consistency</spanx> array:
+                For each subsequent value <spanx style="verb">c</spanx> in the <spanx style="verb">consistency_path</spanx> array:
                 <vspace blankLines="1" />
                 If <spanx style="verb">LSB(fn)</spanx> is set, or if <spanx style="verb">fn</spanx> is equal to <spanx style="verb">sn</spanx>, then:
                 <list style="numbers">
@@ -1434,7 +1436,7 @@ but it is expected there will be a variety.
                 <vspace blankLines="1" />
                 Finally, right-shift both <spanx style="verb">fn</spanx> and <spanx style="verb">sn</spanx> one time.
               </t>
-              <t>After completing iterating through the <spanx style="verb">consistency</spanx> array as described above, verify that the <spanx style="verb">fr</spanx> calculated is equal to the <spanx style="verb">first_hash</spanx> supplied and that the <spanx style="verb">sr</spanx> calculated is equal to the <spanx style="verb">second_hash</spanx> supplied.</t>
+              <t>After completing iterating through the <spanx style="verb">consistency_path</spanx> array as described above, verify that the <spanx style="verb">fr</spanx> calculated is equal to the <spanx style="verb">first_hash</spanx> supplied and that the <spanx style="verb">sr</spanx> calculated is equal to the <spanx style="verb">second_hash</spanx> supplied.</t>
             </list>
           </t>
         </section>
