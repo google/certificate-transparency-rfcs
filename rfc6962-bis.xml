@@ -829,7 +829,7 @@ messages.
             <t hangText="Outputs:">
               <list style="hanging">
                 <t hangText="sct:">
-                  The base64 encoded <spanx style="verb">SignedCertificateTimestamp</spanx> for the submitted certificate.
+                  A base64 encoded <spanx style="verb">TransItem</spanx> of type <spanx style="verb">x509_sct</spanx>, signed by this log, that corresponds to the submitted certificate.
                 </t>
               </list>
             </t>
@@ -878,10 +878,17 @@ an accepted root certificate.
                 </t>
               </list>
             </t>
+            <t hangText="Outputs:">
+              <list style="hanging">
+                <t hangText="sct:">
+                  A base64 encoded <spanx style="verb">TransItem</spanx> of type <spanx style="verb">precert_sct</spanx>, signed by this log, that corresponds to the submitted precertificate.
+                </t>
+              </list>
+            </t>
           </list>
         </t>
         <t>
-          Outputs and errors are the same as in <xref target="add-chain"/>.
+          Errors are the same as in <xref target="add-chain"/>.
         </t>
       </section>
 
