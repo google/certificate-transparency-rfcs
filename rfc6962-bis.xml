@@ -901,7 +901,7 @@ messages.
             <t hangText="Outputs:">
               <list style="hanging">
                 <t hangText="sth:">
-                  A base64 encoded SignedTreeHead.
+                  A base64 encoded <spanx style="verb">TransItem</spanx> of type <spanx style="verb">signed_tree_head</spanx>, signed by this log, that is no older than the log's MMD.
                 </t>
               </list>
             </t>
@@ -926,20 +926,20 @@ messages.
               </list>
             </t>
             <t>
-              Both tree sizes must be from existing v2 STHs (Signed Tree Heads). However, because of skew, the receiving front-end may not know one or both of the existing STHs. If both are known, then only the <spanx style="verb">consistency</spanx> output is returned. If the first is known but the second is not (or has been omitted), then the latest known STH is returned, along with a consistency proof between the first STH and the latest. If neither are known, then the latest known STH is returned without a consistency proof.
+              Both tree sizes must be from existing v2 STHs. However, because of skew, the receiving front-end may not know one or both of the existing STHs. If both are known, then only the <spanx style="verb">consistency</spanx> output is returned. If the first is known but the second is not (or has been omitted), then the latest known STH is returned, along with a consistency proof between the first STH and the latest. If neither are known, then the latest known STH is returned without a consistency proof.
             </t>
             <t hangText="Outputs:">
               <list style="hanging">
                 <t hangText="consistency:">
-                  An array of base64 encoded Merkle Tree nodes.
+                  A base64 encoded <spanx style="verb">TransItem</spanx> of type <spanx style="verb">consistency_proof</spanx>, whose <spanx style="verb">tree_size_1</spanx> MUST match the <spanx style="verb">first</spanx> input. If the <spanx style="verb">sth</spanx> output is omitted, then <spanx style="verb">tree_size_2</spanx> MUST match the <spanx style="verb">second</spanx> input.
                 </t>
                 <t hangText="sth:">
-                  A base64 encoded SignedTreeHead.
+                  A base64 encoded <spanx style="verb">TransItem</spanx> of type <spanx style="verb">signed_tree_head</spanx>, signed by this log.
                 </t>
               </list>
             </t>
             <t>
-              Note that no signature is required for the <spanx style="verb">consistency</spanx> output as it is used to verify <spanx style="verb">sth</spanx>, which is signed.
+              Note that no signature is required for the <spanx style="verb">consistency</spanx> output as it is used to verify STHs, which are signed.
             </t>
             <t hangText="Error codes:">
               <list style="hanging">
