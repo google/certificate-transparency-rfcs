@@ -773,10 +773,7 @@ messages.
         Note that JSON objects and URL parameters may contain fields not specified here. These extra fields should be ignored.
       </t>
       <t>
-        The &lt;log server&gt; prefix MAY include a path as well as a server name and a port.
-      </t>
-      <t>
-        In general, where needed, the <spanx style="verb">version</spanx> is v1 and the <spanx style="verb">id</spanx> is the log id for the log server queried.
+        The &lt;log server&gt; prefix, which is part of the log's metadata, MAY include a path as well as a server name and a port.
       </t>
       <t>
         In practice, log servers may include multiple front-end machines. Since it is impractical to keep these machines in perfect sync, errors may occur that are caused by skew between the machines. Where such errors are possible, the front-end will return additional information (as specified below) making it possible for clients to make progress, if progress is possible. Front-ends MUST only serve data that is free of gaps (that is, for example, no front-end will respond with an STH unless it is also able to prove consistency from all log entries logged within that STH).
