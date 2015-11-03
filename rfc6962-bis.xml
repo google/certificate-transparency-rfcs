@@ -943,7 +943,7 @@ messages.
               </list>
             </t>
             <t>
-              Note that no signature is required for the <spanx style="verb">consistency</spanx> output as it is used to verify STHs, which are signed.
+              Note that no signature is required for the <spanx style="verb">consistency</spanx> output as it is used to verify the consistency between two STHs, which are signed.
             </t>
             <t hangText="Error codes:">
               <list style="hanging">
