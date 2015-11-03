@@ -612,7 +612,7 @@ Section 8.2 of <xref target="RFC3447"/>) using a key of at least 2048 bits.
           <spanx style="verb">timestamp</spanx> is equal to the timestamp from the <spanx style="verb">TimestampedCertificateEntryDataV2</spanx> structure encapsulated in the <spanx style="verb">timestamped_entry</spanx>.
         </t>
         <t>
-          <spanx style="verb">sct_extension_type</spanx> identifies a single extension from the IANA registry in <xref target="sct_extension_types"/>. Currently, no extensions are specified.
+          <spanx style="verb">sct_extension_type</spanx> identifies a single extension from the IANA registry in <xref target="sct_extension_types"/>. At the time of writing, no extensions are specified.
         </t>
         <t>
           The interpretation of the <spanx style="verb">sct_extension_data</spanx> field is determined solely by the value of the <spanx style="verb">sct_extension_type</spanx> field. Each document that registers a new <spanx style="verb">sct_extension_type</spanx> must describe how to interpret the corresponding <spanx style="verb">sct_extension_data</spanx>.
@@ -697,7 +697,7 @@ Section 8.2 of <xref target="RFC3447"/>) using a key of at least 2048 bits.
           <spanx style="verb">root_hash</spanx> is equal to the root hash from the <spanx style="verb">TreeHeadDataV2</spanx> structure encapsulated in <spanx style="verb">merkle_tree_head</spanx>.
         </t>
         <t>
-          <spanx style="verb">sth_extension_type</spanx> identifies a single extension from the IANA registry in <xref target="sth_extension_types"/>. Currently, no extensions are specified.
+          <spanx style="verb">sth_extension_type</spanx> identifies a single extension from the IANA registry in <xref target="sth_extension_types"/>. At the time of writing, no extensions are specified.
         </t>
         <t>
           The interpretation of the <spanx style="verb">sth_extension_data</spanx> field is determined solely by the value of the <spanx style="verb">sth_extension_type</spanx> field. Each document that registers a new <spanx style="verb">sth_extension_type</spanx> must describe how to interpret the corresponding <spanx style="verb">sth_extension_data</spanx>.
