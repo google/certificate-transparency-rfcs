@@ -609,7 +609,7 @@ Section 8.2 of <xref target="RFC3447"/>) using a key of at least 2048 bits.
           <spanx style="verb">log_id</spanx> is this log's unique ID, encoded in an opaque vector as described in <xref target="log_id"/>.
         </t>
         <t>
-          <spanx style="verb">timestamp</spanx> matches the timestamp from the <spanx style="verb">TimestampedCertificateEntryDataV2</spanx> structure encapsulated in the <spanx style="verb">timestamped_entry</spanx>.
+          <spanx style="verb">timestamp</spanx> is equal to the timestamp from the <spanx style="verb">TimestampedCertificateEntryDataV2</spanx> structure encapsulated in the <spanx style="verb">timestamped_entry</spanx>.
         </t>
         <t>
           <spanx style="verb">sct_extension_type</spanx> identifies a single extension from the IANA registry in <xref target="sct_extension_types"/>. Currently, no extensions are specified.
@@ -688,13 +688,13 @@ Section 8.2 of <xref target="RFC3447"/>) using a key of at least 2048 bits.
           <spanx style="verb">log_id</spanx> is this log's unique ID, encoded in an opaque vector as described in <xref target="log_id"/>.
         </t>
         <t>
-          <spanx style="verb">timestamp</spanx> matches the timestamp from the <spanx style="verb">TreeHeadDataV2</spanx> structure encapsulated in <spanx style="verb">merkle_tree_head</spanx>. This timestamp MUST be at least as recent as the most recent SCT timestamp in the tree. Each subsequent timestamp MUST be more recent than the timestamp of the previous update.
+          <spanx style="verb">timestamp</spanx> is equal to the timestamp from the <spanx style="verb">TreeHeadDataV2</spanx> structure encapsulated in <spanx style="verb">merkle_tree_head</spanx>. This timestamp MUST be at least as recent as the most recent SCT timestamp in the tree. Each subsequent timestamp MUST be more recent than the timestamp of the previous update.
         </t>
         <t>
-          <spanx style="verb">tree_size</spanx> matches the tree size from the <spanx style="verb">TreeHeadDataV2</spanx> structure encapsulated in <spanx style="verb">merkle_tree_head</spanx>.
+          <spanx style="verb">tree_size</spanx> is equal to the tree size from the <spanx style="verb">TreeHeadDataV2</spanx> structure encapsulated in <spanx style="verb">merkle_tree_head</spanx>.
         </t>
         <t>
-          <spanx style="verb">root_hash</spanx> matches the root hash from the <spanx style="verb">TreeHeadDataV2</spanx> structure encapsulated in <spanx style="verb">merkle_tree_head</spanx>.
+          <spanx style="verb">root_hash</spanx> is equal to the root hash from the <spanx style="verb">TreeHeadDataV2</spanx> structure encapsulated in <spanx style="verb">merkle_tree_head</spanx>.
         </t>
         <t>
           <spanx style="verb">sth_extension_type</spanx> identifies a single extension from the IANA registry in <xref target="sth_extension_types"/>. Currently, no extensions are specified.
