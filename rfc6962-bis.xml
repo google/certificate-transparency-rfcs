@@ -1302,13 +1302,13 @@ but it is expected there will be a variety.
           In addition to normal validation of the certificate and its chain, TLS clients SHOULD validate each supplied SCT by computing the signature input from the SCT data as well as the certificate and verifying the signature, using the corresponding log's public key. TLS clients MUST reject SCTs whose timestamp is in the future.
         </t>
         <t>
-          TLS clients SHOULD also validate each supplied inclusion proof (see <xref target="verify_inclusion"/>). If no inclusion proof was supplied, the TLS client MAY request one directly from the corresponding log (see <xref target="get-proof-by-hash"/>) and then validate it, in order to audit the log.
+          TLS clients SHOULD also validate each supplied inclusion proof (see <xref target="verify_inclusion"/>), in order to audit the log. If no inclusion proof was supplied by the TLS server, the TLS client MAY request one directly from the corresponding log using <spanx style="verb">get-proof-by-hash</spanx> (<xref target="get-proof-by-hash"/>) or <spanx style="verb">get-all-by-hash</spanx> (<xref target="get-all-by-hash"/>), and then validate it.
         </t>
         <t>
           By validating SCTs and inclusion proofs, TLS clients can thus determine whether certificates are compliant. A certificate not accompanied by a valid SCT or inclusion proof MUST NOT be considered compliant by TLS clients. However, specifying the TLS clients' behavior once compliance or non-compliance has been determined (for example, whether a certificate should be rejected due to non-compliance) is outside the scope of this document.
         </t>
         <t>
-          If the TLS client holds an STH that predates the SCT, it MAY, in the process of auditing, request a new STH from the log (<xref target="get-sth"/>), then verify it by requesting a consistency proof (<xref target="get-sth-consistency"/>).
+          If the TLS client holds an STH that predates the SCT, it MAY, in the process of auditing, request a new STH from the log (<xref target="get-sth"/>), then verify it by requesting a consistency proof (<xref target="get-sth-consistency"/>). Note that if the TLS client uses <spanx style="verb">get-all-by-hash</spanx>, then it will already have the new STH.
         </t>
       </section>
       <section title="Monitor" anchor="monitor">
