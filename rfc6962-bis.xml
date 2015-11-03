@@ -745,7 +745,7 @@ Section 8.2 of <xref target="RFC3447"/>) using a key of at least 2048 bits.
         LogID log_id;
         uint64 tree_size;
         uint64 leaf_index;
-        NodeHash audit_path&lt;1..2^8-1&gt;;
+        NodeHash inclusion_path&lt;1..2^8-1&gt;;
     } InclusionProofDataV2;</artwork>
         </figure>
         <t>
@@ -758,7 +758,7 @@ Section 8.2 of <xref target="RFC3447"/>) using a key of at least 2048 bits.
           <spanx style="verb">leaf_index</spanx> is the 0-based index of the log entry corresponding to this inclusion proof.
         </t>
         <t>
-          <spanx style="verb">audit_path</spanx> is a vector of base64 encoded Merkle Tree nodes proving the inclusion of the chosen certificate or precertificate.
+          <spanx style="verb">inclusion_path</spanx> is a vector of base64 encoded Merkle Tree nodes proving the inclusion of the chosen certificate or precertificate.
         </t>
       </section>
     </section>
@@ -984,7 +984,7 @@ messages.
             <t hangText="Outputs:">
               <list style="hanging">
                 <t hangText="inclusion:">
-                  A base64 encoded <spanx style="verb">TransItem</spanx> of type <spanx style="verb">inclusion_proof</spanx> whose <spanx style="verb">audit_path</spanx> array of Merkle Tree nodes proves the inclusion of the chosen certificate in the selected STH.
+                  A base64 encoded <spanx style="verb">TransItem</spanx> of type <spanx style="verb">inclusion_proof</spanx> whose <spanx style="verb">inclusion_path</spanx> array of Merkle Tree nodes proves the inclusion of the chosen certificate in the selected STH.
                 </t>
                 <t hangText="sth:">
                   A base64 encoded <spanx style="verb">TransItem</spanx> of type <spanx style="verb">signed_tree_head</spanx>, signed by this log.
@@ -1050,7 +1050,7 @@ messages.
             <t hangText="Outputs:">
               <list style="hanging">
                 <t hangText="inclusion:">
-                  A base64 encoded <spanx style="verb">TransItem</spanx> of type <spanx style="verb">inclusion_proof</spanx> whose <spanx style="verb">audit_path</spanx> array of Merkle Tree nodes proves the inclusion of the chosen certificate in the selected STH.
+                  A base64 encoded <spanx style="verb">TransItem</spanx> of type <spanx style="verb">inclusion_proof</spanx> whose <spanx style="verb">inclusion_path</spanx> array of Merkle Tree nodes proves the inclusion of the chosen certificate in the selected STH.
                 </t>
                 <t hangText="sth:">
                   A base64 encoded <spanx style="verb">TransItem</spanx> of type <spanx style="verb">signed_tree_head</spanx>, signed by this log.
@@ -1386,7 +1386,7 @@ but it is expected there will be a variety.
               <t>Set <spanx style="verb">fn</spanx> to <spanx style="verb">leaf_index</spanx> and <spanx style="verb">sn</spanx> to <spanx style="verb">tree_size - 1</spanx>.</t>
               <t>Set <spanx style="verb">r</spanx> to <spanx style="verb">hash</spanx>.</t>
               <t>
-                For each value <spanx style="verb">p</spanx> in the <spanx style="verb">audit_path</spanx> array:
+                For each value <spanx style="verb">p</spanx> in the <spanx style="verb">inclusion_path</spanx> array:
                 <vspace blankLines="1" />
                 If <spanx style="verb">LSB(fn)</spanx> is set, or if <spanx style="verb">fn</spanx> is equal to <spanx style="verb">sn</spanx>, then:
                 <list style="numbers">
@@ -1808,7 +1808,7 @@ value="Montreal"/>
         SHA256Hash log_id;
         uint64 tree_size;
         uint64 leaf_index;
-        SHA256Hash audit_path&lt;1..2^8-1&gt;;
+        SHA256Hash inclusion_path&lt;1..2^8-1&gt;;
     } InclusionProofDataV1;</artwork>
       </figure>
     </section>
