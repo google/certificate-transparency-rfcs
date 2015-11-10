@@ -1199,7 +1199,7 @@ entry specified by <spanx style="verb">start</spanx>.
     } TransItemList;</artwork>
       </figure>
       <t>
-        Here, <spanx style="verb">SerializedTransItem</spanx> is an opaque byte string that contains the serialized <spanx style="verb">TransItem</spanx> structure. This encoding ensures that TLS clients can decode each <spanx style="verb">TransItem</spanx> individually (so, for example, if there is a version upgrade, out-of-date clients can still parse old SCTs while skipping over new SCTs whose versions they don't understand).
+        Here, <spanx style="verb">SerializedTransItem</spanx> is an opaque byte string that contains the serialized <spanx style="verb">TransItem</spanx> structure. This encoding ensures that TLS clients can decode each <spanx style="verb">TransItem</spanx> individually (so, for example, if there is a version upgrade, out-of-date clients can still parse old <spanx style="verb">TransItem</spanx> structures while skipping over new <spanx style="verb">TransItem</spanx> structures whose versions they don't understand).
       </t>
       <t>
         TODO: We need to define at least one ItemExtensionType for associating SCT and inclusion proof TransItems with the relevant certificate.
