@@ -646,7 +646,7 @@ Section 8.2 of <xref target="RFC3447"/>) using a key of at least 2048 bits.
           <spanx style="verb">timestamp</spanx> is the current <xref target="RFC5905">NTP Time</xref>, measured in milliseconds since the epoch (January 1, 1970, 00:00), ignoring leap seconds.
         </t>
         <t>
-          <spanx style="verb">tree_size</spanx> equals the number of entries currently in the log's Merkle Tree.
+          <spanx style="verb">tree_size</spanx> is the number of entries currently in the log's Merkle Tree.
         </t>
         <t>
           <spanx style="verb">root_hash</spanx> is the root of the Merkle Hash Tree.
