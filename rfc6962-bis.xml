@@ -732,7 +732,7 @@ Section 8.2 of <xref target="RFC3447"/>) using a key of at least 2048 bits.
           <spanx style="verb">tree_size_2</spanx> is the size of the newer tree.
         </t>
         <t>
-          <spanx style="verb">consistency_path</spanx> is a vector of base64 encoded Merkle Tree nodes proving the consistency of two STHs.
+          <spanx style="verb">consistency_path</spanx> is a vector of Merkle Tree nodes proving the consistency of two STHs.
         </t>
       </section>
       <section title="Merkle Inclusion Proofs">
@@ -758,7 +758,7 @@ Section 8.2 of <xref target="RFC3447"/>) using a key of at least 2048 bits.
           <spanx style="verb">leaf_index</spanx> is the 0-based index of the log entry corresponding to this inclusion proof.
         </t>
         <t>
-          <spanx style="verb">inclusion_path</spanx> is a vector of base64 encoded Merkle Tree nodes proving the inclusion of the chosen certificate or precertificate.
+          <spanx style="verb">inclusion_path</spanx> is a vector of Merkle Tree nodes proving the inclusion of the chosen certificate or precertificate.
         </t>
       </section>
     </section>
