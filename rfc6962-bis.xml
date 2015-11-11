@@ -1229,7 +1229,7 @@ entry specified by <spanx style="verb">start</spanx>.
         </section>
         <section title="Certificate Extension" anchor="cert_transinfo_extension">
           <t>
-            A certification authority may include a Transparency Information X.509v3 extension in a certificate. The included SCTs or inclusion proofs MUST be either for a precertificate that corresponds to this certificate, or for a name-constrained intermediate to which this certificate chains.
+            A certification authority may include a Transparency Information X.509v3 extension in a certificate. Any included SCTs or inclusion proofs MUST be either for a precertificate that corresponds to this certificate, or for a name-constrained intermediate to which this certificate chains.
           </t>
         </section>
       </section>
