@@ -79,10 +79,10 @@ submissions and queries that are defined in this document.
     <section title="Introduction">
       <t>
         Certificate transparency aims to mitigate the problem of misissued
-certificates by providing publicly auditable, append-only, untrusted logs of
-all issued certificates. The logs are publicly auditable so that it is possible
-for anyone to verify the correctness of each log and to monitor when new
-certificates are added to it. The logs do not themselves prevent misissue, but
+certificates by providing append-only logs of all issued certificates. The logs
+do not need to be trusted because they are publicly auditable. Anyone may verify
+the correctness of each log and monitor when new certificates are added to it.
+The logs do not themselves prevent misissue, but
 they ensure that interested parties (particularly those named in certificates)
 can detect such misissuance. Note that this is a general mechanism, but in this
 document, we only describe its use for public TLS server certificates issued by
