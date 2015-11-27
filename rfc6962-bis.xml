@@ -1578,6 +1578,19 @@ certificates around the SCT timestamp.
           Violation of the append-only property can be detected by clients comparing their instances of the Signed Tree Heads. As soon as two conflicting Signed Tree Heads for the same log are detected, this is cryptographic proof of that log's misbehavior. There are various ways this could be done, for example via gossip (see http://trac.tools.ietf.org/id/draft-linus-trans-gossip-00.txt) or peer-to-peer communications or by sending STHs to monitors (who could then directly check against their own copy of the relevant log).
         </t>
       </section>
+      <section title="Deterministic Signatures">
+        <t>
+          Logs are required to use deterministic signatures for the following reasons:
+          <list style="symbols">
+            <t>
+              Using non-deterministic ECDSA with a predictable source of randomness means that each signature can potentially expose the secret material of the signing key.
+            </t>
+            <t>
+              Clients that gossip STHs or report back SCTs can be tracked or traced if a log was to produce multiple STHs or SCTs with the same timestamp and data but different signatures.
+            </t>
+          </list>
+        </t>
+      </section>
       <section title="Multiple SCTs">
         <t>
           TLS servers may wish to offer multiple SCTs, each from a different log.
