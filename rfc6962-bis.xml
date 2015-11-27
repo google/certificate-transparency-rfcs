@@ -1600,14 +1600,6 @@ certificates around the SCT timestamp.
         </t>
       </section>
     </section>
-    <section title="Efficiency Considerations">
-      <t>
-        The Merkle Tree design serves the purpose of keeping communication overhead low.
-      </t>
-      <t>
-        Auditing logs for integrity does not require third parties to maintain a copy of each entire log. The Signed Tree Heads can be updated as new entries become available, without recomputing entire trees. Third-party auditors need only fetch the Merkle consistency proofs against a log's existing STH to efficiently verify the append-only property of updates to their Merkle Trees, without auditing the entire tree.
-      </t>
-    </section>
     <section title="Acknowledgements">
       <t>
         The authors would like to thank Erwann Abelea, Robin Alden, Al Cutter,
