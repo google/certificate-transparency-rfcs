@@ -79,7 +79,7 @@ submissions and queries that are defined in this document.
     <section title="Introduction">
       <t>
         Certificate transparency aims to mitigate the problem of misissued
-certificates by providing append-only logs of all issued certificates. The logs
+certificates by providing append-only logs of issued certificates. The logs
 do not need to be trusted because they are publicly auditable. Anyone may verify
 the correctness of each log and monitor when new certificates are added to it.
 The logs do not themselves prevent misissue, but
