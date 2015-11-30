@@ -420,7 +420,7 @@ d0 d1   d2 d3           d0 d1   d2 d3  d4 d5</artwork>
         When it receives a valid submission, the log MUST return an SCT that corresponds to the submitted certificate or precertificate. If the log has previously seen this valid submission, it MAY return the same SCT as it returned before. (Note that if a certificate was previously logged as a precertificate, then the precertificate's SCT of type <spanx style="verb">precert_sct</spanx> would not be appropriate; instead, a fresh SCT of type <spanx style="verb">x509_sct</spanx> should be generated).
       </t>
       <t>
-        An SCT is the log's promise to incorporate the submitted entry in its Merkle Tree no later than a fixed amount of time, known as the Maximum Merge Delay (MMD), after the issuance of the SCT. Periodically, the log MUST append all its new entries to its Merkle Tree and sign the root of the tree. This provides auditable evidence that the log kept all its promises.
+        An SCT is the log's promise to incorporate the submitted entry in its Merkle Tree no later than a fixed amount of time, known as the Maximum Merge Delay (MMD), after the issuance of the SCT. Periodically, the log MUST append all its new entries to its Merkle Tree and sign the root of the tree.
       </t>
       <t>
         Log operators MUST NOT impose any conditions on retrieving or sharing data from the log.
