@@ -119,7 +119,7 @@ def calc_mth_via_rfc_algorithm(entries, tree_size):
   return stack[0]
 
 
-def check_consistency_via_rfc_algorithm(first, second, first_hash, consistency):
+def check_consistency_via_rfc_algorithm(first, second, first_hash, second_hash, consistency):
   #1.  If "first" is an exact power of 2, then prepend "first_hash" to
   #      the "consistency" array.
   if is_pow2(first):
@@ -134,10 +134,14 @@ def check_consistency_via_rfc_algorithm(first, second, first_hash, consistency):
 
   # 4.  Set both "fr" and "sr" to the first value in the "consistency"
   #     array.
+  if len(consistency) == 0:
+    return False
   fr = sr = consistency[0]
 
   # 5.  For each subsequent value "c" in the "consistency" array:
   for c in consistency[1:]:
+    if sn == 0:
+      return False
     #   If "LSB(fn)" is set, or if "fn" is equal to "sn", then:
     if lsb(fn) or (fn == sn):
       # 1.  Set "fr" to "HASH(0x01 || c || fr)"
@@ -159,7 +163,7 @@ def check_consistency_via_rfc_algorithm(first, second, first_hash, consistency):
   #     described above, verify that the "fr" calculated is equal to the
   #     "first_hash" supplied and that the "sr" calculated is equal to
   #     the "second_hash" supplied.
-  return fr, sr
+  return fr == first_hash and sr == second_hash and sn == 0
 
 
 def check_inclusion_via_rfc_algorithm(hash, leaf_index, audit_path, tree_size, root_hash):
@@ -212,7 +216,7 @@ def audit_path_length(index, tree_size):
 # The following are extracted from https://github.com/google/certificate-transparency
 # and are used to cross-check the algorithms in the RFC.
 ##########################################################################################
-def cross_check_consistency_against_opensource_algorithm(first, second, first_hash, consistency):
+def cross_check_consistency_against_opensource_algorithm(first, second, first_hash, second_hash, consistency):
   try:
     node = first - 1
     last_node = second - 1
@@ -242,11 +246,11 @@ def cross_check_consistency_against_opensource_algorithm(first, second, first_ha
       last_node >>= 1
 
     for remaining in p:
-      return None, None  # we shouldn't have any elements left over
+      return False # we shouldn't have any elements left over
 
-    return old_hash, new_hash
+    return old_hash == first_hash and new_hash == second_hash
   except StopIteration:
-    return None, None  # ran out of elements
+    return False # ran out of elements
 
 
 def cross_check_inclusion_via_opensource(hash, leaf_index, audit_path, tree_size, root_hash):
@@ -323,20 +327,25 @@ for tree_size in range(1, size + 1):
   print 'SUCCESS.'
 
 def check_consistency(first, second, first_hash, consistency, second_hash):
-  if is_pow2(first):
-    r1 = check_consistency_via_rfc_algorithm(first, second, first_hash, consistency)[1] == second_hash
-    r2 = cross_check_consistency_against_opensource_algorithm(first, second, first_hash, consistency)[1] == second_hash
-    assert r1 == r2
-    return r1
-  else:
-    r1 = check_consistency_via_rfc_algorithm(first, second, pack('!Q', getrandbits(64)), consistency)[0] == first_hash
-    r2 = check_consistency_via_rfc_algorithm(first, second, pack('!Q', getrandbits(64)), consistency)[1] == second_hash
-    assert r1 == r2
-    r3 = cross_check_consistency_against_opensource_algorithm(first, second, pack('!Q', getrandbits(64)), consistency)[0] == first_hash
-    assert r1 == r3
-    r4 = cross_check_consistency_against_opensource_algorithm(first, second, pack('!Q', getrandbits(64)), consistency)[1] == second_hash
-    assert r1 == r4
-    return r1
+  # Wrong indices.
+  bad_heights = (
+      (first - 1, second), (first + 1, second), (first ^ 2, second),
+      (first, second * 2), (first, second / 2))
+
+  for (bad_first, bad_second) in bad_heights:
+    if bad_first <= 0 or bad_second <= 0:
+      # The RFC proof does not deal with this edge cases (should it?)
+      continue
+    rfc_res = check_consistency_via_rfc_algorithm(bad_first, bad_second, first_hash, second_hash, consistency)
+    cross_check_res = cross_check_consistency_against_opensource_algorithm(bad_first, bad_second, first_hash, second_hash, consistency)
+    assert rfc_res == cross_check_res, "reference algorithm result does not match implementation for %d (old rood=%d)" % (bad_first, first)
+    assert not rfc_res, "Expected failure for %d (old rood=%d)" % (bad_first, first)
+
+  # Good values
+  rfc_res = check_consistency_via_rfc_algorithm(first, second, first_hash, second_hash, consistency)
+  cross_check_res = cross_check_consistency_against_opensource_algorithm(first, second, first_hash, second_hash, consistency)
+  assert rfc_res == cross_check_res
+  return rfc_res
 
 for first in range(1, size - 1):
   first_hash = t.calc_mth(0, first)
@@ -362,7 +371,7 @@ for first in range(1, size - 1):
       assert not check_consistency(first, second, first_hash, consistency,
                                    second_hash)
     else: # pass random value for first hash since we shouldn't need it
-      assert check_consistency_via_rfc_algorithm(first, second, pack('!Q', getrandbits(64)), consistency)[1] != second_hash
-      assert cross_check_consistency_against_opensource_algorithm(first, second, pack('!Q', getrandbits(64)), consistency)[1] != second_hash
+      assert not check_consistency_via_rfc_algorithm(first, second, pack('!Q', getrandbits(64)), second_hash, consistency)
+      assert not cross_check_consistency_against_opensource_algorithm(first, second, pack('!Q', getrandbits(64)), second_hash, consistency)
 
   print 'SUCCESS.'
