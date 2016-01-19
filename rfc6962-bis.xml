@@ -89,14 +89,7 @@ document, we only describe its use for public TLS server certificates issued by
 public certification authorities (CAs).
       </t>
       <t>
-        Each log consists of certificate chains, which can be submitted by
-anyone. It is expected that public CAs will contribute all their newly issued
-certificates to one or more logs, however certificate holders
-can also contribute their own certificate chains, as can third parties. In order to avoid logs being
-rendered useless by submitting large numbers of spurious certificates, it is required that each chain is rooted in a
-CA certificate accepted by the log. When a chain is submitted to a log, a signed timestamp is
-returned, which can later be used to provide evidence to TLS clients that the chain
-has been submitted. TLS clients can thus require that all certificates they accept as valid are accompanied by signed timestamps.
+        Each log consists of certificate chains, which can be submitted by anyone. It is expected that public CAs will contribute all their newly issued certificates to one or more logs, however certificate holders can also contribute their own certificate chains, as can third parties. In order to avoid logs being rendered useless by the submission of large numbers of spurious certificates, it is required that each chain ends with a trust anchor that is accepted by the log. When a chain is accepted by a log, a signed timestamp is returned, which can later be used to provide evidence to TLS clients that the chain has been submitted. TLS clients can thus require that all certificates they accept as valid are accompanied by signed timestamps.
       </t>
       <t>
         Those who are concerned about misissue can monitor the logs, asking
@@ -305,7 +298,7 @@ d0 d1   d2 d3           d0 d1   d2 d3  d4 d5</artwork>
     </section>
     <section title="Submitters">
       <t>
-        Submitters submit certificates or precertificates to logs for public auditing, as described below. In order to enable attribution of each logged certificate or precertificate to its issuer, each submission MUST be accompanied by all additional certificates required to verify the chain up to an accepted root certificate. The root certificate itself MAY be omitted from the submission.
+        Submitters submit certificates or precertificates to logs for public auditing, as described below. In order to enable attribution of each logged certificate or precertificate to its issuer, each submission MUST be accompanied by all additional certificates required to verify the chain up to an accepted trust anchor. The trust anchor (a root or intermediate CA certificate) MAY be omitted from the submission.
       </t>
       <t>
         If a log accepts a submission, it will return a Signed Certificate Timestamp (SCT) (see <xref target="sct"/>). The submitter SHOULD validate the returned SCT as described in <xref target="tls_clients"/> if they understand its format and they intend to use it directly in a TLS handshake or to construct a certificate.
@@ -427,18 +420,18 @@ d0 d1   d2 d3           d0 d1   d2 d3  d4 d5</artwork>
       </t>
       <section title="Accepting Submissions">
         <t>
-          Logs MUST verify that each submitted certificate or precertificate has a valid signature chain to an accepted root certificate, using the chain of intermediate CA certificates provided by the submitter. Logs MUST accept certificates and precertificates that are fully valid according to <xref target="RFC5280">RFC 5280</xref> verification rules and are submitted with such a chain. Logs MAY accept certificates and precertificates that have expired, are not yet valid, have been revoked, or are otherwise not fully valid according to RFC 5280 verification rules in order to accommodate quirks of CA certificate-issuing software. However, logs MUST reject submissions without a valid signature chain to an accepted root certificate. Logs MUST also reject precertificates that do not conform to the requirements in <xref target="Precertificates"/>.
+          Logs MUST verify that each submitted certificate or precertificate has a valid signature chain to an accepted trust anchor, using the chain of intermediate CA certificates provided by the submitter. Logs MUST accept certificates and precertificates that are fully valid according to <xref target="RFC5280">RFC 5280</xref> verification rules and are submitted with such a chain. Logs MAY accept certificates and precertificates that have expired, are not yet valid, have been revoked, or are otherwise not fully valid according to RFC 5280 verification rules in order to accommodate quirks of CA certificate-issuing software. However, logs MUST reject submissions without a valid signature chain to an accepted trust anchor. Logs MUST also reject precertificates that do not conform to the requirements in <xref target="Precertificates"/>.
         </t>
         <t>
           Logs SHOULD limit the length of chain they will accept. The maximum chain length is specified in the log's metadata.
         </t>
         <t>
-          The log SHALL allow retrieval of its list of accepted root certificates (see <xref target="get-roots"/>). This list might usefully be the union of root certificates trusted by major browser vendors.
+          The log SHALL allow retrieval of its list of accepted trust anchors (see <xref target="get-anchors"/>), each of which is a root or intermediate CA certificate. This list might usefully be the union of root certificates trusted by major browser vendors.
         </t>
       </section>
       <section title="Log Entries" anchor="log_entries">
         <t>
-          If a submission is accepted and an SCT issued, the accepting log MUST store the entire chain used for verification. This chain MUST include the certificate or precertificate itself, the zero or more intermediate CA certificates provided by the submitter, and the root certificate used to verify the chain (even if it was omitted from the submission). The log MUST present this chain for auditing upon request (see <xref target="get-entries"/>). This chain is required to prevent a CA from avoiding blame by logging a partial or empty chain.
+          If a submission is accepted and an SCT issued, the accepting log MUST store the entire chain used for verification. This chain MUST include the certificate or precertificate itself, the zero or more intermediate CA certificates provided by the submitter, and the trust anchor used to verify the chain (even if it was omitted from the submission). The log MUST present this chain for auditing upon request (see <xref target="get-entries"/>). This chain is required to prevent a CA from avoiding blame by logging a partial or empty chain.
         </t>
         <figure>
           <preamble>
@@ -463,13 +456,13 @@ d0 d1   d2 d3           d0 d1   d2 d3  d4 d5</artwork>
           <spanx style="verb">leaf_certificate</spanx> is a submitted certificate that has been accepted by the log.
         </t>
         <t>
-          <spanx style="verb">certificate_chain</spanx> is a vector of 0 or more additional certificates required to verify <spanx style="verb">leaf_certificate</spanx>. The first certificate MUST certify <spanx style="verb">leaf_certificate</spanx>. Each following certificate MUST directly certify the one preceding it. The final certificate MUST be a root certificate accepted by the log. If <spanx style="verb">leaf_certificate</spanx> is a root certificate, then this vector is empty.
+          <spanx style="verb">certificate_chain</spanx> is a vector of 0 or more additional certificates required to verify <spanx style="verb">leaf_certificate</spanx>. The first certificate MUST certify <spanx style="verb">leaf_certificate</spanx>. Each following certificate MUST directly certify the one preceding it. The final certificate MUST be a trust anchor accepted by the log. If <spanx style="verb">leaf_certificate</spanx> is an accepted trust anchor, then this vector is empty.
         </t>
         <t>
           <spanx style="verb">pre_certificate</spanx> is a submitted precertificate that has been accepted by the log.
         </t>
         <t>
-          <spanx style="verb">precertificate_chain</spanx> is a vector of 1 or more additional certificates required to verify <spanx style="verb">pre_certificate</spanx>. The first certificate MUST certify <spanx style="verb">pre_certificate</spanx>. Each following certificate MUST directly certify the one preceding it. The final certificate MUST be a root certificate accepted by the log.
+          <spanx style="verb">precertificate_chain</spanx> is a vector of 1 or more additional certificates required to verify <spanx style="verb">pre_certificate</spanx>. The first certificate MUST certify <spanx style="verb">pre_certificate</spanx>. Each following certificate MUST directly certify the one preceding it. The final certificate MUST be a trust anchor accepted by the log.
         </t>
       </section>
       <section title="Log ID" anchor="log_id">
@@ -824,7 +817,7 @@ messages.
             <t hangText="Inputs:">
               <list style="hanging">
                 <t hangText="chain:">
-                  An array of base64 encoded certificates. The first element is the certificate for which the submitter desires an SCT; the second chains to the first and so on to the last, which is either an accepted root certificate or a certificate that chains to an accepted root certificate.
+                  An array of base64 encoded certificates. The first element is the certificate for which the submitter desires an SCT; the second certifies the first and so on to the last, which either is, or is certified by, an accepted trust anchor.
                 </t>
               </list>
             </t>
@@ -837,8 +830,8 @@ messages.
             </t>
             <t hangText="Error codes:">
               <list style="hanging">
-                <t hangText="unknown root">
-                  The root of the chain is not one accepted by the log.
+                <t hangText="unknown anchor">
+                  The last certificate in the chain both is not, and is not certified by, an accepted trust anchor.
                 </t>
                 <t hangText="bad chain">
                   The alleged chain is not actually a chain of certificates.
@@ -873,7 +866,7 @@ messages.
                   The base64 encoded precertificate.
                 </t>
                 <t hangText="chain:">
-                  An array of base64 encoded CA certificates. The first element is the signer of the precertificate; the second chains to the first and so on to the last, which is either an accepted root certificate or a certificate that chains to an accepted root certificate.
+                  An array of base64 encoded CA certificates. The first element is the signer of the precertificate; the second certifies the first and so on to the last, which either is, or is certified by, an accepted trust anchor.
                 </t>
               </list>
             </t>
@@ -1144,9 +1137,9 @@ entry specified by <spanx style="verb">start</spanx>.
         <t>See <xref target="verify_hash" /> for an outline of how to use a complete list of <spanx style="verb">leaf_input</spanx> entries to verify the <spanx style="verb">root_hash</spanx>.</t>
       </section>
 
-      <section title="Retrieve Accepted Root Certificates" anchor="get-roots">
+      <section title="Retrieve Accepted Trust Anchors" anchor="get-anchors">
         <t>
-          GET https://&lt;log server&gt;/ct/v2/get-roots
+          GET https://&lt;log server&gt;/ct/v2/get-anchors
         </t>
         <t>
           No inputs.
@@ -1156,7 +1149,7 @@ entry specified by <spanx style="verb">start</spanx>.
             <t hangText="Outputs:">
               <list style="hanging">
                 <t hangText="certificates:">
-                  An array of base64 encoded root certificates that are acceptable to the log.
+                  An array of base64 encoded trust anchors that are acceptable to the log.
                 </t>
                 <t hangText="max_chain:">
                   If the server has chosen to limit the length of chains it accepts, this is the maximum number of certificates in the chain, in decimal. If there is no limit, this is omitted.
