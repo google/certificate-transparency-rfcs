@@ -1408,6 +1408,8 @@ but it is expected there will be a variety.
               <t>
                 For each subsequent value <spanx style="verb">c</spanx> in the <spanx style="verb">consistency_path</spanx> array:
                 <vspace blankLines="1" />
+                If <spanx style="verb">sn</spanx> is 0, stop the iteration and fail the proof verification.
+                <vspace blankLines="1" />
                 If <spanx style="verb">LSB(fn)</spanx> is set, or if <spanx style="verb">fn</spanx> is equal to <spanx style="verb">sn</spanx>, then:
                 <list style="numbers">
                   <t>
@@ -1424,7 +1426,7 @@ but it is expected there will be a variety.
                 <vspace blankLines="1" />
                 Finally, right-shift both <spanx style="verb">fn</spanx> and <spanx style="verb">sn</spanx> one time.
               </t>
-              <t>After completing iterating through the <spanx style="verb">consistency_path</spanx> array as described above, verify that the <spanx style="verb">fr</spanx> calculated is equal to the <spanx style="verb">first_hash</spanx> supplied and that the <spanx style="verb">sr</spanx> calculated is equal to the <spanx style="verb">second_hash</spanx> supplied.</t>
+              <t>After completing iterating through the <spanx style="verb">consistency_path</spanx> array as described above, verify that the <spanx style="verb">fr</spanx> calculated is equal to the <spanx style="verb">first_hash</spanx> supplied, that the <spanx style="verb">sr</spanx> calculated is equal to the <spanx style="verb">second_hash</spanx> supplied and that <spanx style="verb">sn</spanx> is 0.</t>
             </list>
           </t>
         </section>
