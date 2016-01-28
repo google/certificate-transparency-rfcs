@@ -1573,7 +1573,7 @@ the audit proofs from the log) or request Merkle proofs for a batch of
 certificates around the SCT timestamp.
         </t>
         <t>
-          Violation of the append-only property can be detected by clients comparing their instances of the Signed Tree Heads. As soon as two conflicting Signed Tree Heads for the same log are detected, this is cryptographic proof of that log's misbehavior. There are various ways this could be done, for example via gossip (see http://trac.tools.ietf.org/id/draft-linus-trans-gossip-00.txt) or peer-to-peer communications or by sending STHs to monitors (who could then directly check against their own copy of the relevant log).
+          Violation of the append-only property can be detected by clients comparing their instances of the Signed Tree Heads. As soon as two conflicting Signed Tree Heads for the same log are detected, this is cryptographic proof of that log's misbehavior. There are various ways this could be done, for example via gossip (see <xref target="I-D.ietf-trans-gossip"/>) or peer-to-peer communications or by sending STHs to monitors (who could then directly check against their own copy of the relevant log).
         </t>
       </section>
       <section title="Multiple SCTs">
@@ -1678,6 +1678,8 @@ target="http://csrc.nist.gov/publications/fips/fips180-4/fips-180-4.pdf">
 <references title="Informative References">
 
     <?rfc include="reference.RFC.6962"?>
+
+    <?rfc include="reference.I-D.ietf-trans-gossip.xml"?>
 
       <reference anchor="CrosbyWallach"
 target="http://static.usenix.org/event/sec09/tech/full_papers/crosby.pdf">
