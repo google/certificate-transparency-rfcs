@@ -1197,7 +1197,7 @@ entry specified by <spanx style="verb">start</spanx>.
       </t>
       <section title="TLS Extension" anchor="tls_transinfo_extension">
         <t>
-          If a TLS client includes the <spanx style="verb">transparency_info</spanx> extension type in the ClientHello, the TLS server MAY include the <spanx style="verb">transparency_info</spanx> extension in the ServerHello with <spanx style="verb">extension_data</spanx> set to a <spanx style="verb">TransItemList</spanx>. The TLS server is not expected to process or include this extension when a TLS session is resumed, since session resumption uses the original session information.
+          If a TLS client includes the <spanx style="verb">transparency_info</spanx> extension type in the ClientHello, the TLS server MAY include the <spanx style="verb">transparency_info</spanx> extension in the ServerHello with <spanx style="verb">extension_data</spanx> set to a <spanx style="verb">TransItemList</spanx>. The TLS server MUST NOT process or include this extension when a TLS session is resumed, since session resumption uses the original session information.
         </t>
       </section>
     </section>
