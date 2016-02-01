@@ -1607,6 +1607,12 @@ certificates around the SCT timestamp.
           </list>
         </t>
       </section>
+      <section title="Threat Analysis">
+        <t>
+          <xref target="I-D.ietf-trans-threat-analysis"/> provides a more detailed threat analysis of the
+          Certificate Transparency architecture.
+        </t>
+      </section>
     </section>
     <section title="Acknowledgements">
       <t>
@@ -1753,6 +1759,8 @@ value="Montreal"/>
           <date year="2014"/>
         </front>
       </reference>
+
+      <?rfc include="reference.I-D.ietf-trans-threat-analysis.xml"?>
 
     </references>
 
