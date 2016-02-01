@@ -1240,8 +1240,7 @@ misbehavior.
         Clients should somehow exchange STHs they see, or make them
 available for scrutiny, in order to ensure that they all have a
 consistent view. The exact mechanisms will be in separate documents,
-but it is expected there will be a variety. Some mechanisms are described in
-<xref target="I-D.ietf-trans-threat-analysis"/>.
+but it is expected there will be a variety.
       </t>
       <section title="Metadata" anchor="metadata">
         <t>
@@ -1606,6 +1605,12 @@ certificates around the SCT timestamp.
               TLS clients may have policies related to the above risks requiring servers to present multiple SCTs. For example <xref target="Chromium.Log.Policy">Chromium</xref> currently requires multiple SCTs to be presented with EV certificates in order for the EV indicator to be shown.
             </t>
           </list>
+        </t>
+      </section>
+      <section title="Threat Analysis">
+        <t>
+          <xref target="I-D.ietf-trans-threat-analysis"/> provides a more detailed threat analysis of the
+          Certificate Transparency architecture.
         </t>
       </section>
     </section>
