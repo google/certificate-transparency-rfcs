@@ -1205,7 +1205,7 @@ entry specified by <spanx style="verb">start</spanx>.
       <section title="Transparency Information X.509v3 Extension" anchor="x509v3_transinfo_extension">
         <figure>
           <preamble>
-            One or more <spanx style="verb">TransItem</spanx> structures can be embedded in the Transparency Information X.509v3 extension, which has OID &lt;TBD&gt; and SHOULD be non-critical. This extension can be included in OCSP responses and certificates. Since RFC5280 requires the <spanx style="verb">extnValue</spanx> field (an OCTET STRING) of each X.509v3 extension to include the DER encoding of an ASN.1 value, we cannot embed a <spanx style="verb">TransItemList</spanx> directly. Instead, we have to wrap it inside an additional OCTET STRING, which we then put into the <spanx style="verb">extnValue</spanx> field:
+            The Transparency Information X.509v3 extension, which has OID &lt;TBD&gt; and SHOULD be non-critical, contains one or more <spanx style="verb">TransItem</spanx> structures in a <spanx style="verb">TransItemList</spanx>. This extension MAY be included in OCSP responses (see <xref target="ocsp_transinfo_extension"/>) and certificates (see <xref target="cert_transinfo_extension"/>). Since RFC5280 requires the <spanx style="verb">extnValue</spanx> field (an OCTET STRING) of each X.509v3 extension to include the DER encoding of an ASN.1 value, a <spanx style="verb">TransItemList</spanx> MUST NOT be included directly. Instead, it MUST be wrapped inside an additional OCTET STRING, which is then put into the <spanx style="verb">extnValue</spanx> field:
           </preamble>
           <artwork>
     TransparencyInformationSyntax ::= OCTET STRING</artwork>
@@ -1215,12 +1215,12 @@ entry specified by <spanx style="verb">start</spanx>.
         </t>
         <section title="OCSP Response Extension" anchor="ocsp_transinfo_extension">
           <t>
-            A certification authority may include a Transparency Information X.509v3 extension in the <spanx style="verb">singleExtensions</spanx> of a <spanx style="verb">SingleResponse</spanx> in an OCSP response. The included SCTs or inclusion proofs MUST be for the certificate identified by the <spanx style="verb">certID</spanx> of that <spanx style="verb">SingleResponse</spanx>, or for a precertificate that corresponds to that certificate, or for a name-constrained intermediate to which that certificate chains.
+            A certification authority MAY include a Transparency Information X.509v3 extension in the <spanx style="verb">singleExtensions</spanx> of a <spanx style="verb">SingleResponse</spanx> in an OCSP response. The included SCTs or inclusion proofs MUST be for the certificate identified by the <spanx style="verb">certID</spanx> of that <spanx style="verb">SingleResponse</spanx>, or for a precertificate that corresponds to that certificate, or for a name-constrained intermediate to which that certificate chains.
           </t>
         </section>
         <section title="Certificate Extension" anchor="cert_transinfo_extension">
           <t>
-            A certification authority may include a Transparency Information X.509v3 extension in a certificate. Any included SCTs or inclusion proofs MUST be either for a precertificate that corresponds to this certificate, or for a name-constrained intermediate to which this certificate chains.
+            A certification authority MAY include a Transparency Information X.509v3 extension in a certificate. Any included SCTs or inclusion proofs MUST be either for a precertificate that corresponds to this certificate, or for a name-constrained intermediate to which this certificate chains.
           </t>
         </section>
       </section>
