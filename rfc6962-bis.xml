@@ -188,11 +188,13 @@ root, then the inclusion proof proves that the leaf exists in the tree.
           <vspace blankLines='1' />
           PROOF(m, D[n]) = SUBPROOF(m, D[n], true)
           <vspace blankLines='1' />
-          The subproof for m = n is empty if m is the value for which PROOF was originally requested (meaning that the subtree Merkle Tree Hash MTH(D[0:m]) is known):
+          In SUBPROOF, the boolean value represents whether the subtree created from D[0:m] is a complete subtree of the Merkle Tree created from D[n], and, consequently, whether the subtree Merkle Tree Hash MTH(D[0:m]) is known. The initial call to SUBPROOF sets this to be true, and SUBPROOF is then defined as follows:
+          <vspace blankLines='1' />
+          The subproof for m = n is empty if m is the value for which PROOF was originally requested (meaning that the subtree created from D[0:m] is a complete subtree of the Merkle Tree created from the original D[n] for which PROOF was requested, and the subtree Merkle Tree Hash MTH(D[0:m]) is known):
           <vspace blankLines='1' />
           SUBPROOF(m, D[m], true) = {}
           <vspace blankLines='1' />
-           The subproof for m = n is the Merkle Tree Hash committing inputs D[0:m]; otherwise:
+          Otherwise, the subproof for m = n is the Merkle Tree Hash committing inputs D[0:m]:
           <vspace blankLines='1' />
           SUBPROOF(m, D[m], false) = {MTH(D[m])}
           <vspace blankLines='1' />
