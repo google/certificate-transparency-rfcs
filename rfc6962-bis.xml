@@ -1562,7 +1562,7 @@ certificate whose corresponding precertificate would be overly redacted, perhaps
           A log can misbehave in several ways. Examples include failing to incorporate a
 certificate with an SCT in the Merkle Tree within the MMD or by presenting different, conflicting
 views of the Merkle Tree at different times and/or to different parties.
-Such misbehaviour is detectable and the <xref target="I-D.ietf-trans-threat-analysis"/> provides more details on how
+Such misbehavior is detectable and the <xref target="I-D.ietf-trans-threat-analysis"/> provides more details on how
 this can be done.
         </t>
         <t>
