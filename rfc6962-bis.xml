@@ -1240,7 +1240,8 @@ misbehavior.
         Clients should somehow exchange STHs they see, or make them
 available for scrutiny, in order to ensure that they all have a
 consistent view. The exact mechanisms will be in separate documents,
-but it is expected there will be a variety.
+but it is expected there will be a variety. Some mechanisms are described in
+<xref target="CT.Threat.Analysis"/>.
       </t>
       <section title="Metadata" anchor="metadata">
         <t>
@@ -1752,6 +1753,15 @@ value="Montreal"/>
         </front>
       </reference>
 
+      <reference anchor="CT.Threat.Analysis" target="https://tools.ietf.org/id/draft-ietf-trans-threat-analysis-03.txt">
+        <front>
+          <title>Attack Model and Threat for Certificate Transparency</title>
+          <author>
+            <organization>Kent, S.</organization>
+          </author>
+          <date year="2015"/>
+        </front>
+      </reference>
     </references>
 
     <section title="TransItemV1" anchor="TransItemV1">
