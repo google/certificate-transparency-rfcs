@@ -1359,7 +1359,13 @@ but it is expected there will be a variety.
       </section>
       <section title="Auditing">
         <t>
-          Auditing is taking partial information about a log as input and verifying that this information is consistent with other partial information held. All clients described above may perform auditing as an additional function. The action taken by the client if audit fails is not specified, but note that in general if audit fails, the client is in possession of signed proof of the log's misbehavior.
+          Auditing ensures that the current published state of a log is reachable from previously published states that are known to be good, and that the promises made by the log in the form of SCTs have been kept.  Audits are performed by monitors or TLS clients.
+        </t>
+        <t>
+          A benign, conformant log publishes a series of STHs over time, each derived from the previous STH and the submitted entries incorporated into the log since publication of the previous STH.  This can be proven through auditing of STHs.  SCTs returned to TLS clients can be audited by verifying against the accompanying certificate, and using Merkle Inclusion Proofs, against the log's Merkle tree.
+        </t>
+        <t>
+          The action taken by the auditor if an audit fails is not specified, but note that in general if audit fails, the auditor is in possession of signed proof of the log's misbehavior.
         </t>
         <t>
           A <xref target="monitor">monitor</xref> can audit by verifying the consistency of STHs it receives, ensure that each entry can be fetched and that the STH is indeed the result of making a tree from all fetched entries.
@@ -1574,11 +1580,12 @@ this can be done.
         </t>
         <t>
           Violation of the MMD contract is detected by log clients requesting a
-Merkle audit proof for each observed SCT. These checks can be asynchronous and
+Merkle inclusion proof (<xref target="get-proof-by-hash"/>) for each observed SCT.
+These checks can be asynchronous and
 need only be done once per each certificate. In order to protect the clients'
 privacy, these checks need not reveal the exact certificate to the log. Clients
 can instead request the proof from a trusted auditor (since anyone can compute
-the audit proofs from the log) or request Merkle proofs for a batch of
+the proofs from the log) or request Merkle inclusion proofs for a batch of
 certificates around the SCT timestamp.
         </t>
         <t>
