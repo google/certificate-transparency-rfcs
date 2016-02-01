@@ -1559,11 +1559,11 @@ certificate whose corresponding precertificate would be overly redacted, perhaps
       </section>
       <section title="Misbehaving Logs">
         <t>
-          A log can misbehave in two ways: (1) by failing to incorporate a
-certificate with an SCT in the Merkle Tree within the MMD and (2) by
-violating its append-only property by presenting two different, conflicting
-views of the Merkle Tree at different times and/or to different parties. Both
-forms of violation will be promptly and publicly detectable.
+          A log can misbehave in several ways. Examples include failing to incorporate a
+certificate with an SCT in the Merkle Tree within the MMD or by presenting different, conflicting
+views of the Merkle Tree at different times and/or to different parties.
+Such misbehavior is detectable and the <xref target="I-D.ietf-trans-threat-analysis"/> provides more details on how
+this can be done.
         </t>
         <t>
           Violation of the MMD contract is detected by log clients requesting a
