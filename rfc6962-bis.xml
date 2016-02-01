@@ -345,7 +345,7 @@ d0 d1   d2 d3           d0 d1   d2 d3  d4 d5</artwork>
           A certificate containing a <xref target="RFC6125">DNS-ID</xref> of <spanx style="verb">*.example.com</spanx> could be used to secure the domain <spanx style="verb">topsecret.example.com</spanx>, without revealing the string <spanx style="verb">topsecret</spanx> publicly.
         </t>
         <t>
-          Since TLS clients only match the wildcard character to the complete leftmost label of the DNS domain name (see Section 6.4.3 of <xref target="RFC6125"/>), this approach would not work for a DNS-ID such as <spanx style="verb">top.secret.example.com</spanx>. Also, wildcard certificates are prohibited in some cases, such as <xref target="EVSSLGuidelines">Extended Validation Certificates</xref>.
+          Since TLS clients only match the wildcard character to the complete leftmost label of the DNS domain name (see Section 6.4.3 of <xref target="RFC6125"/>), a different approach is needed when more than one of the leftmost labels in a DNS-ID are considered private (e.g. <spanx style="verb">top.secret.example.com</spanx>). Also, wildcard certificates are prohibited in some cases, such as <xref target="EVSSLGuidelines">Extended Validation Certificates</xref>.
         </t>
       </section>
       <section title="Redacting Domain Name Labels in Precertificates" anchor="redacting_subdomains">
@@ -356,7 +356,7 @@ d0 d1   d2 d3           d0 d1   d2 d3  d4 d5</artwork>
           Wildcard <spanx style="verb">*</spanx> labels MUST NOT be redacted. However, if the complete leftmost label of a DNS-ID is <spanx style="verb">*</spanx>, it is considered redacted for the purposes of determining if the label to the right may be redacted. For example, if a certificate contains a DNS-ID of <spanx style="verb">*.top.secret.example.com</spanx>, then the corresponding precertificate could contain <spanx style="verb">*.?.?.example.com</spanx> instead, but not <spanx style="verb">?.?.?.example.com</spanx> instead.
         </t>
         <t>
-          When a precertificate contains one or more redacted labels, a non-critical extension (OID 1.3.101.77, whose extnValue OCTET STRING contains an ASN.1 SEQUENCE OF INTEGERs) MUST be added to the corresponding certificate: the first INTEGER indicates the total number of redacted labels and wildcard <spanx style="verb">*</spanx> labels in the precertificate's first DNS-ID; the second INTEGER does the same for the precertificate's second DNS-ID; etc. There MUST NOT be more INTEGERs than there are DNS-IDs. If there are fewer INTEGERs than there are DNS-IDs, the shortfall is made up by implicitly repeating the last INTEGER. Each INTEGER MUST have a value of zero or more. The purpose of this extension is to enable TLS clients to accurately reconstruct the TBSCertificate component of the precertificate from the certificate without having to perform any guesswork.
+          When a precertificate contains one or more redacted labels, a non-critical extension (OID 1.3.101.77, whose extnValue OCTET STRING contains an ASN.1 SEQUENCE OF INTEGERs) MUST be added to the corresponding certificate: the first INTEGER indicates the total number of <spanx style="verb">?</spanx> labels in the precertificate's first DNS-ID; the second INTEGER does the same for the precertificate's second DNS-ID; etc. There MUST NOT be more INTEGERs than there are DNS-IDs. If there are fewer INTEGERs than there are DNS-IDs, the shortfall is made up by implicitly repeating the last INTEGER. Each INTEGER MUST have a value of zero or more. The purpose of this extension is to enable TLS clients to reconstruct the TBSCertificate component of the precertificate from the certificate, as described in <xref target="reconstructing_tbscertificate"/>.
         </t>
         <t>
           When a precertificate contains that extension and contains a <xref target="RFC6125">CN-ID</xref>, the CN-ID MUST match the first DNS-ID and have the same labels redacted.  TLS clients will use the first entry in the SEQUENCE OF INTEGERs to reconstruct both the first DNS-ID and the CN-ID.
@@ -549,7 +549,7 @@ d0 d1   d2 d3           d0 d1   d2 d3  d4 d5</artwork>
           <spanx style="verb">issuer_key_hash</spanx> is the HASH of the public key of the CA that issued the certificate or precertificate, calculated over the DER encoding of the key represented as <xref target="RFC5280">SubjectPublicKeyInfo</xref>. This is needed to bind the CA to the certificate or precertificate, making it impossible for the corresponding SCT to be valid for any other certificate or precertificate whose TBSCertificate matches <spanx style="verb">tbs_certificate</spanx>.
         </t>
         <t>
-          <spanx style="verb">tbs_certificate</spanx> is the DER encoded TBSCertificate from either the <spanx style="verb">leaf_certificate</spanx> (in the case of an <spanx style="verb">X509ChainEntry</spanx>) or the <spanx style="verb">pre_certificate</spanx> (in the case of a <spanx style="verb">PrecertChainEntryV2</spanx>). (Note that a precertificate's TBSCertificate can be reconstructed from the issued certificate's TBSCertificate by redacting the domain name labels indicated by the redacted labels extension, and deleting the SCT list extension and redacted labels extension).
+          <spanx style="verb">tbs_certificate</spanx> is the DER encoded TBSCertificate from either the <spanx style="verb">leaf_certificate</spanx> (in the case of an <spanx style="verb">X509ChainEntry</spanx>) or the <spanx style="verb">pre_certificate</spanx> (in the case of a <spanx style="verb">PrecertChainEntryV2</spanx>). (Note that a precertificate's TBSCertificate can be reconstructed from the corresponding certificate as described in <xref target="reconstructing_tbscertificate"/>).
         </t>
         <t>
           <spanx style="verb">sct_extensions</spanx> matches the SCT extensions of the corresponding SCT.
@@ -1306,6 +1306,20 @@ but it is expected there will be a variety.
             TODO: What should the TLS client communicate in the extension_data? Version(s) of CT that it supports? Certain types of TransItem that it can handle? Whether or not it wants to gossip?
           </t>
         </section>
+        <section title="Reconstructing the TBSCertificate" anchor="reconstructing_tbscertificate">
+          <t>
+            To reconstruct the TBSCertificate component of a precertificate from a certificate, TLS clients should:
+            <list style="symbols">
+              <t>
+                Remove the non-critical extension mentioned in <xref target="redacting_subdomains"/>
+              </t>
+              <t>
+                Replace leftmost labels of each DNS-ID with <spanx style="verb">?</spanx>, based on the INTEGER value corresponding to that DNS-ID in the extension.
+              </t>
+            </list>
+            A certificate with redacted labels where one of the redacted labels is <spanx style="verb">*</spanx> MUST NOT be considered compliant.
+          </t>
+        </section>
         <section title="Validating SCTs">
           <t>
             In addition to normal validation of the server certificate and its chain, TLS clients SHOULD validate each received SCT for which they have the corresponding log's metadata. To validate an SCT, a TLS client computes the signature input from the SCT data and the corresponding certificate, and then verifies the signature using the corresponding log's public key. TLS clients MUST reject SCTs whose timestamp is in the future.
@@ -1327,7 +1341,7 @@ but it is expected there will be a variety.
         </section>
         <section title="Evaluating compliance">
           <t>
-            To be considered compliant, a certificate MUST be accompanied by at least one valid SCT or at least one valid inclusion proof. A certificate not accompanied by any valid SCTs or any valid inclusion proofs MUST NOT be considered compliant by TLS clients. However, specifying the TLS clients' behavior once compliance or non-compliance has been determined (for example, whether a certificate should be rejected due to non-compliance) is outside the scope of this document.
+            To be considered compliant, a certificate MUST be accompanied by at least one valid SCT or at least one valid inclusion proof. A certificate not accompanied by any valid SCTs or any valid inclusion proofs MUST NOT be considered compliant by TLS clients.
           </t>
         </section>
         <section title="TLS Feature Extension">
