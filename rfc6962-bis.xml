@@ -1567,11 +1567,12 @@ forms of violation will be promptly and publicly detectable.
         </t>
         <t>
           Violation of the MMD contract is detected by log clients requesting a
-Merkle audit proof for each observed SCT. These checks can be asynchronous and
+Merkle inclusion proof (<xref target="get-proof-by-hash"/>) for each observed SCT.
+These checks can be asynchronous and
 need only be done once per each certificate. In order to protect the clients'
 privacy, these checks need not reveal the exact certificate to the log. Clients
 can instead request the proof from a trusted auditor (since anyone can compute
-the audit proofs from the log) or request Merkle proofs for a batch of
+the proofs from the log) or request Merkle inclusion proofs for a batch of
 certificates around the SCT timestamp.
         </t>
         <t>
