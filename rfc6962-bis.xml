@@ -298,7 +298,7 @@ d0 d1   d2 d3           d0 d1   d2 d3  d4 d5</artwork>
     </section>
     <section title="Submitters">
       <t>
-        Submitters submit certificates or precertificates to logs for public auditing, as described below. In order to enable attribution of each logged certificate or precertificate to its issuer, each submission MUST be accompanied by all additional certificates required to verify the chain up to an accepted trust anchor. The trust anchor (a root or intermediate CA certificate) MAY be omitted from the submission.
+        Submitters submit certificates or preannouncements of certificates prior to issuance (precertificates) to logs for public auditing, as described below. In order to enable attribution of each logged certificate or precertificate to its issuer, each submission MUST be accompanied by all additional certificates required to verify the chain up to an accepted trust anchor. The trust anchor (a root or intermediate CA certificate) MAY be omitted from the submission.
       </t>
       <t>
         If a log accepts a submission, it will return a Signed Certificate Timestamp (SCT) (see <xref target="sct"/>). The submitter SHOULD validate the returned SCT as described in <xref target="tls_clients"/> if they understand its format and they intend to use it directly in a TLS handshake or to construct a certificate.
