@@ -754,6 +754,17 @@ d0 d1   d2 d3           d0 d1   d2 d3  d4 d5</artwork>
           <spanx style="verb">inclusion_path</spanx> is a vector of Merkle Tree nodes proving the inclusion of the chosen certificate or precertificate.
         </t>
       </section>
+      <section title="Shutting down a log">
+        <t>
+          Log operators may decide to shut down a log for various reasons, such as deprecation of the signature algorithm. If there are entries in the log for certificates that have not yet expired, simply making TLS clients stop recognizing that log will have the effect of invalidating SCTs from that log. To avoid that, the following actions are suggested:
+          <list style="symbols">
+            <t>Make it known to clients and monitors that the log will be frozen.</t>
+            <t>Stop accepting new submissions (the error code "shutdown" should be returned for such requests).</t>
+            <t>Once MMD from the last accepted submission has passed and all pending submissions are incorporated, issue a final STH and publish it as a part of the log's metadata. Having an STH with a timestamp that is after the MMD has passed from the last SCT issuance allows clients to audit this log regularly without special handling for the final STH. At this point the log's private key is no longer needed and can be destroyed.</t>
+            <t>Keep the log running until the certificates in all of its entries have expired or exist in other logs (this can be determined by scanning other logs or connecting to domains mentioned in the certificates and inspecting the SCTs served).</t>
+          </list>
+        </t>
+      </section>
     </section>
     <section title="Log Client Messages" anchor="client_messages">
       <t>
@@ -840,6 +851,9 @@ messages.
                 </t>
                 <t hangText="bad certificate">
                   One or more certificates in the chain are not valid (e.g. not properly encoded).
+                </t>
+                <t hangText="shutdown">
+                  The log has ceased operation and is not accepting new submissions.
                 </t>
               </list>
             </t>
