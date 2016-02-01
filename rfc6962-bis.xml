@@ -1203,14 +1203,6 @@ entry specified by <spanx style="verb">start</spanx>.
         </t>
       </section>
     </section>
-    <section title="TLS Feature Extension">
-      <t>
-	A CA MAY include the CT TLS extension number in a <xref target="RFC7633">TLS Feature Extension</xref> in root or intermediate certificates. This indicates that CT compliance is required for all certificates which are directly or indirectly issued by such certificates.
-      </t>
-      <t>
-	Clients MUST treat certificates which fail to comply with this requirement as invalid.
-      </t>
-    </section>
     <section title="Certification Authorities">
       <section title="Transparency Information X.509v3 Extension" anchor="x509v3_transinfo_extension">
         <figure>
@@ -1233,6 +1225,11 @@ entry specified by <spanx style="verb">start</spanx>.
             A certification authority MAY include a Transparency Information X.509v3 extension in a certificate. Any included SCTs or inclusion proofs MUST be either for a precertificate that corresponds to this certificate, or for a name-constrained intermediate to which this certificate chains.
           </t>
         </section>
+      </section>
+      <section title="TLS Feature Extension">
+	<t>
+	  A CA MAY include the <xref target="tls_transinfo_extension">transparency_info</xref> extension number in a <xref target="RFC7633">TLS Feature Extension</xref> in root or intermediate certificates. This indicates that CT compliance is required for all certificates which are directly or indirectly issued by such certificates.
+	</t>
       </section>
     </section>
     <section title="Clients">
@@ -1465,6 +1462,14 @@ but it is expected there will be a variety.
             </list>
           </t>
         </section>
+      </section>
+      <section title="TLS Feature Extension">
+	<t>
+	  If a certificate in a chain includes the <xref target="tls_transinfo_extension">transparency_info</xref> extension number in a <xref target="RFC7633">TLS Feature Extension</xref>, then CT compliance is required for all certificates which are directly or indirectly issued by that certificate.
+	</t>
+	<t>
+	  Clients MUST treat certificates which fail to comply with this requirement as invalid.
+	</t>
       </section>
     </section>
 
