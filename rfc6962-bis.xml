@@ -1123,7 +1123,7 @@ treating unrecognized leaves as opaque input to the tree.
         </t>
         <t>
           Logs MAY restrict the number of entries that can be retrieved per
-<spanx style="verb">get-entries</spanx> request.  If a client requests more
+<spanx style="verb">get-entries</spanx> request (the limit of 1,000 entries is suggested).  If a client requests more
 than the permitted number of entries, the log SHALL return the maximum number
 of entries permissible. These entries SHALL be sequential beginning with the
 entry specified by <spanx style="verb">start</spanx>.
