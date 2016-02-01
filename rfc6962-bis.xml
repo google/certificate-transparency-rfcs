@@ -1203,6 +1203,14 @@ entry specified by <spanx style="verb">start</spanx>.
         </t>
       </section>
     </section>
+    <section title="TLS Feature Extension">
+      <t>
+	A CA MAY include the CT TLS extension number in a <xref target="RFC7633">TLS Feature Extension</xref> in root or intermediate certificates. This indicates that CT compliance is required for all certificates which are directly or indirectly issued by such certificates.
+      </t>
+      <t>
+	Clients MUST treat certificates which fail to comply with this requirement as invalid.
+      </t>
+    </section>
     <section title="Certification Authorities">
       <section title="Transparency Information X.509v3 Extension" anchor="x509v3_transinfo_extension">
         <figure>
@@ -1660,6 +1668,8 @@ Francis Dupont, Adam Eijdenberg, Stephen Farrell, Daniel Kahn Gillmor, Brad Hill
       <?rfc include="reference.RFC.6960"?>
 
       <?rfc include="reference.RFC.6979"?>
+
+      <?rfc include="reference.RFC.7633"?>
 
       <reference anchor="DSS" target="http://csrc.nist.gov/publications/fips/fips186-3/fips_186-3.pdf">
         <front>
