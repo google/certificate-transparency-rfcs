@@ -301,7 +301,7 @@ d0 d1   d2 d3           d0 d1   d2 d3  d4 d5</artwork>
         Submitters submit certificates or preannouncements of certificates prior to issuance (precertificates) to logs for public auditing, as described below. In order to enable attribution of each logged certificate or precertificate to its issuer, each submission MUST be accompanied by all additional certificates required to verify the chain up to an accepted trust anchor. The trust anchor (a root or intermediate CA certificate) MAY be omitted from the submission.
       </t>
       <t>
-        If a log accepts a submission, it will return a Signed Certificate Timestamp (SCT) (see <xref target="sct"/>). The submitter SHOULD validate the returned SCT as described in <xref target="tls_clients"/> if they understand its format and they intend to use it directly in a TLS handshake or to construct a certificate.
+        If a log accepts a submission, it will return a Signed Certificate Timestamp (SCT) (see <xref target="sct"/>). The submitter SHOULD validate the returned SCT as described in <xref target="tls_clients"/> if they understand its format and they intend to use it directly in a TLS handshake or to construct a certificate.  If the submitter does not need the SCT (for example, the certificate is being submitted simply to make it available in the log), it MAY validate the SCT.
       </t>
       <section title="Certificates">
         <t>
@@ -1293,10 +1293,10 @@ but it is expected there will be a variety.
           In addition to normal validation of the certificate and its chain, TLS clients SHOULD validate each supplied SCT by computing the signature input from the SCT data as well as the certificate and verifying the signature, using the corresponding log's public key. TLS clients MUST reject SCTs whose timestamp is in the future.
         </t>
         <t>
-          TLS clients SHOULD also validate each supplied inclusion proof (see <xref target="verify_inclusion"/>), in order to audit the log. If no inclusion proof was supplied by the TLS server, the TLS client MAY request one directly from the corresponding log using <spanx style="verb">get-proof-by-hash</spanx> (<xref target="get-proof-by-hash"/>) or <spanx style="verb">get-all-by-hash</spanx> (<xref target="get-all-by-hash"/>), and then validate it.
+          To be considered compliant, a certificate MUST be accompanied by at least one valid SCT or at least one valid inclusion proof. A certificate not accompanied by any valid SCTs or any valid inclusion proofs MUST NOT be considered compliant by TLS clients. However, specifying the TLS clients' behavior once compliance or non-compliance has been determined (for example, whether a certificate should be rejected due to non-compliance) is outside the scope of this document.
         </t>
         <t>
-          To be considered compliant, a certificate MUST be accompanied by at least one valid SCT or at least one valid inclusion proof. A certificate not accompanied by any valid SCTs or any valid inclusion proofs MUST NOT be considered compliant by TLS clients. However, specifying the TLS clients' behavior once compliance or non-compliance has been determined (for example, whether a certificate should be rejected due to non-compliance) is outside the scope of this document.
+          TLS clients SHOULD also verify each supplied inclusion proof (see <xref target="verify_inclusion"/>), to audit the log and gain confidence that the certificate is logged. If no inclusion proof was supplied, the TLS client MAY request one directly from the corresponding log using <spanx style="verb">get-proof-by-hash</spanx> (<xref target="get-proof-by-hash"/>) or <spanx style="verb">get-all-by-hash</spanx> (<xref target="get-all-by-hash"/>), and then verify it. Note that this will disclose to the log which TLS server the client has been communicating with.
         </t>
         <t>
           If the TLS client holds an STH that predates the SCT, it MAY, in the process of auditing, request a new STH from the log (<xref target="get-sth"/>), then verify it by requesting a consistency proof (<xref target="get-sth-consistency"/>). Note that if the TLS client uses <spanx style="verb">get-all-by-hash</spanx>, then it will already have the new STH.
@@ -1460,7 +1460,14 @@ but it is expected there will be a variety.
 
     <section title="Algorithm Agility">
       <t>
-        It is not possible for a log to change any of its algorithms part way through its lifetime. If it should become necessary to deprecate an algorithm used by a live log, then the log should be frozen as specified in <xref target="metadata"/> and a new log should be started. If necessary, the new log can contain existing entries from the frozen log, which monitors can verify are an exact match.
+        It is not possible for a log to change any of its algorithms part way through its lifetime:
+        <list style="hanging">
+          <t hangText="Signature algorithm:">SCT signatures must remain valid so signature algorithms can only be added, not removed.</t>
+          <t hangText="Hash algorithm:">A log would have to support the old and new hash algorithms to allow backwards-compatibility with clients that are not aware of a hash algorithm change. </t>
+        </list>
+        Allowing multiple signature or hash algorithms for a log would require that all data structures support it and would significantly complicate client implementation, which is why it is not supported by this document.
+      </t>
+      <t>If it should become necessary to deprecate an algorithm used by a live log, then the log should be frozen as specified in <xref target="metadata"/> and a new log should be started. Certificates in the frozen log that have not yet expired and require new SCTs should be submitted to the new log and the SCTs from that log used instead.
       </t>
     </section>
 
@@ -1559,11 +1566,11 @@ certificate whose corresponding precertificate would be overly redacted, perhaps
       </section>
       <section title="Misbehaving Logs">
         <t>
-          A log can misbehave in two ways: (1) by failing to incorporate a
-certificate with an SCT in the Merkle Tree within the MMD and (2) by
-violating its append-only property by presenting two different, conflicting
-views of the Merkle Tree at different times and/or to different parties. Both
-forms of violation will be promptly and publicly detectable.
+          A log can misbehave in several ways. Examples include failing to incorporate a
+certificate with an SCT in the Merkle Tree within the MMD or by presenting different, conflicting
+views of the Merkle Tree at different times and/or to different parties.
+Such misbehavior is detectable and the <xref target="I-D.ietf-trans-threat-analysis"/> provides more details on how
+this can be done.
         </t>
         <t>
           Violation of the MMD contract is detected by log clients requesting a
