@@ -1477,6 +1477,21 @@ but it is expected there will be a variety.
 	  Clients MUST treat certificates which fail this requirement as non-compliant.
 	</t>
       </section>
+      <section title="Handling of Non-compliance">
+	<t>
+	  If the server presents a certificate chain that is non-compliant, there are two possibilites.
+	</t>
+	<t>
+	  <list style="symbols">
+	    <t>
+	      In the case that use of TLS with a valid certificate is mandated by explicit security policy, application protocol specification, or other means, the client MUST refuse the connection.
+	    </t>
+	    <t>
+	      If the use of TLS with a valid certificate is optional, a client MAY accept the connection but MUST NOT treat the certificate as valid.
+	    </t>
+	  </list>
+	</t>
+      </section>
     </section>
 
     <section title="Algorithm Agility">
