@@ -1479,7 +1479,7 @@ but it is expected there will be a variety.
       </section>
       <section title="Handling of Non-compliance">
 	<t>
-	  If the server presents a certificate chain that is non-compliant, there are two possibilites.
+	  If a TLS server presents a certificate chain that is non-compliant, there are two possibilities.
 	</t>
 	<t>
 	  <list style="symbols">
