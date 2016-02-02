@@ -1226,6 +1226,11 @@ entry specified by <spanx style="verb">start</spanx>.
           </t>
         </section>
       </section>
+      <section title="TLS Feature Extension">
+	<t>
+	  A CA MAY include the <xref target="tls_transinfo_extension">transparency_info</xref> extension number in a <xref target="RFC7633">TLS Feature Extension</xref> in root or intermediate certificates. This indicates that CT compliance is required for all certificates which are directly or indirectly issued by such certificates.
+	</t>
+      </section>
     </section>
     <section title="Clients">
       <t>
@@ -1464,6 +1469,14 @@ but it is expected there will be a variety.
           </t>
         </section>
       </section>
+      <section title="TLS Feature Extension">
+	<t>
+	  If a certificate in a chain includes the <xref target="tls_transinfo_extension">transparency_info</xref> extension number in a <xref target="RFC7633">TLS Feature Extension</xref>, then CT compliance is required for all certificates which are directly or indirectly issued by that certificate.
+	</t>
+	<t>
+	  Clients MUST treat certificates which fail this requirement as non-compliant.
+	</t>
+      </section>
     </section>
 
     <section title="Algorithm Agility">
@@ -1666,6 +1679,8 @@ Francis Dupont, Adam Eijdenberg, Stephen Farrell, Daniel Kahn Gillmor, Brad Hill
       <?rfc include="reference.RFC.6960"?>
 
       <?rfc include="reference.RFC.6979"?>
+
+      <?rfc include="reference.RFC.7633"?>
 
       <reference anchor="DSS" target="http://csrc.nist.gov/publications/fips/fips186-3/fips_186-3.pdf">
         <front>
