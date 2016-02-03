@@ -1338,6 +1338,29 @@ but it is expected there will be a variety.
         <t>
           If the TLS client holds an STH that predates the SCT, it MAY, in the process of auditing, request a new STH from the log (<xref target="get-sth"/>), then verify it by requesting a consistency proof (<xref target="get-sth-consistency"/>). Note that if the TLS client uses <spanx style="verb">get-all-by-hash</spanx>, then it will already have the new STH.
         </t>
+        <section title="TLS Feature Extension">
+          <t>
+            If any certificate in a chain includes the <xref target="tls_transinfo_extension">transparency_info</xref> TLS extension identifier in the <xref target="RFC7633">TLS Feature</xref> certificate extension, then CT compliance (using any of the mechanisms from <xref target="tls_servers"/>) is required.
+          </t>
+          <t>
+            TLS clients MUST treat certificates which fail this requirement as non-compliant.
+          </t>
+        </section>
+        <section title="Handling of Non-compliance">
+          <t>
+            If a TLS server presents a certificate chain that is non-compliant, there are two possibilities.
+          </t>
+          <t>
+            <list style="symbols">
+              <t>
+                In the case that use of TLS with a valid certificate is mandated by explicit security policy, application protocol specification, or other means, the TLS client MUST refuse the connection.
+              </t>
+              <t>
+                If the use of TLS with a valid certificate is optional, the TLS client MAY accept the connection but MUST NOT treat the certificate as valid.
+              </t>
+            </list>
+          </t>
+        </section>
       </section>
       <section title="Monitor" anchor="monitor">
         <t>
@@ -1499,29 +1522,6 @@ but it is expected there will be a variety.
             </list>
           </t>
         </section>
-      </section>
-      <section title="TLS Feature Extension">
-        <t>
-          If any certificate in a chain includes the <xref target="tls_transinfo_extension">transparency_info</xref> TLS extension identifier in the <xref target="RFC7633">TLS Feature</xref> certificate extension, then CT compliance (using any of the mechanisms from <xref target="tls_servers"/>) is required.
-        </t>
-        <t>
-          TLS clients MUST treat certificates which fail this requirement as non-compliant.
-        </t>
-      </section>
-      <section title="Handling of Non-compliance">
-	<t>
-	  If a TLS server presents a certificate chain that is non-compliant, there are two possibilities.
-	</t>
-	<t>
-	  <list style="symbols">
-	    <t>
-	      In the case that use of TLS with a valid certificate is mandated by explicit security policy, application protocol specification, or other means, the client MUST refuse the connection.
-	    </t>
-	    <t>
-	      If the use of TLS with a valid certificate is optional, a client MAY accept the connection but MUST NOT treat the certificate as valid.
-	    </t>
-	  </list>
-	</t>
       </section>
     </section>
 
