@@ -1191,6 +1191,9 @@ entry specified by <spanx style="verb">start</spanx>.
           </t>
         </list>
       </t>
+      <t>
+        Additionally, a TLS server which supports presenting SCTs using an OCSP response MAY provide it when the TLS client included the <spanx style="verb">status_request_v2</spanx> extension (<xref target='RFC6961'/>) in the (extended) <spanx style="verb">ClientHello</spanx>, but only in addition to at least one of the three mechanisms listed above.
+      </t>
       <section title="Multiple SCTs" anchor="multiple-scts">
         <t>
           TLS servers SHOULD send SCTs or inclusion proofs from multiple logs in case one or more logs are not acceptable to the TLS client (for example, if a log has been struck off for misbehavior, has had a key compromise, or is not known to the TLS client). For example:
@@ -1318,7 +1321,7 @@ but it is expected there will be a variety.
       </section>
       <section title="TLS Client" anchor="tls_clients">
         <t>
-          TLS clients receive SCTs alongside or in certificates, either for the server certificate itself or for a name-constrained intermediate the server certificate chains to. TLS clients MUST implement all of the three mechanisms by which TLS servers may present SCTs (see <xref target="tls_servers"/>). TLS clients that support the <spanx style="verb">transparency_info</spanx> TLS extension SHOULD include it in ClientHello messages, with <spanx style="verb">extension_data</spanx> set to &lt;TBD&gt;.
+          TLS clients receive SCTs alongside or in certificates, either for the server certificate itself or for a name-constrained intermediate the server certificate chains to. TLS clients MUST implement all of the three mechanisms by which TLS servers may present SCTs (see <xref target="tls_servers"/>). TLS clients MAY also accept SCTs via the <spanx style="verb">status_request_v2</spanx> extension (<xref target='RFC6961'/>). TLS clients that support the <spanx style="verb">transparency_info</spanx> TLS extension SHOULD include it in ClientHello messages, with <spanx style="verb">extension_data</spanx> set to &lt;TBD&gt;.
         </t>
         <t>
           TODO: What should the TLS client communicate in the extension_data? Version(s) of CT that it supports? Certain types of TransItem that it can handle? Whether or not it wants to gossip?
@@ -1707,6 +1710,8 @@ certificates around the SCT timestamp.
       <?rfc include="reference.RFC.6125"?>
 
       <?rfc include="reference.RFC.6960"?>
+
+      <?rfc include="reference.RFC.6961"?>
 
       <?rfc include="reference.RFC.6979"?>
 
