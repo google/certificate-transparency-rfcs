@@ -1505,7 +1505,7 @@ but it is expected there will be a variety.
           If any certificate in a chain includes the <xref target="tls_transinfo_extension">transparency_info</xref> TLS extension identifier in the <xref target="RFC7633">TLS Feature</xref> certificate extension, then CT compliance (using any of the mechanisms from <xref target="tls_servers"/>) is required.
         </t>
         <t>
-          Clients MUST treat certificates which fail this requirement as non-compliant.
+          TLS clients MUST treat certificates which fail this requirement as non-compliant.
         </t>
       </section>
       <section title="Handling of Non-compliance">
