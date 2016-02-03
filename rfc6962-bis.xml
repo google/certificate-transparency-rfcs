@@ -1191,26 +1191,39 @@ entry specified by <spanx style="verb">start</spanx>.
           </t>
         </list>
       </t>
-      <t>
-        TLS servers SHOULD send SCTs or inclusion proofs from multiple logs in case one or more logs are not acceptable to the TLS client (for example, if a log has been struck off for misbehavior, has had a key compromise, or is not known to the TLS client).
-      </t>
-      <figure>
-        <preamble>
-          Multiple SCTs, inclusion proofs, and indeed <spanx style="verb">TransItem</spanx> structures of any type, are combined into a list as follows:
-        </preamble>
-        <artwork>
-    opaque SerializedTransItem&lt;1..2^16-1&gt;;
+      <section title="Multiple SCTs" anchor="multiple-scts">
+        <t>
+          TLS servers SHOULD send SCTs or inclusion proofs from multiple logs in case one or more logs are not acceptable to the TLS client (for example, if a log has been struck off for misbehavior, has had a key compromise, or is not known to the TLS client). For example:
+          <list style="symbols">
+            <t>
+              If a CA and a log collude, it is possible to temporarily hide misissuance from clients. Including SCTs from different logs makes it more difficult to mount this attack.
+            </t>
+            <t>
+              If a log misbehaves, a consequence may be that clients cease to trust it. Since the time an SCT may be in use can be considerable (several years is common in current practice when the SCT is embedded in a certificate), servers may wish to reduce the probability of their certificates being rejected as a result by including SCTs from different logs.
+            </t>
+            <t>
+              TLS clients may have policies related to the above risks requiring servers to present multiple SCTs. For example <xref target="Chromium.Log.Policy">Chromium</xref> currently requires multiple SCTs to be presented with EV certificates in order for the EV indicator to be shown.
+            </t>
+          </list>
+        </t>
+        <figure>
+          <preamble>
+            Multiple SCTs, inclusion proofs, and indeed <spanx style="verb">TransItem</spanx> structures of any type, are combined into a list as follows:
+          </preamble>
+          <artwork>
+      opaque SerializedTransItem&lt;1..2^16-1&gt;;
 
-    struct {
-        SerializedTransItem trans_item_list&lt;1..2^16-1&gt;;
-    } TransItemList;</artwork>
-      </figure>
-      <t>
-        Here, <spanx style="verb">SerializedTransItem</spanx> is an opaque byte string that contains the serialized <spanx style="verb">TransItem</spanx> structure. This encoding ensures that TLS clients can decode each <spanx style="verb">TransItem</spanx> individually (so, for example, if there is a version upgrade, out-of-date clients can still parse old <spanx style="verb">TransItem</spanx> structures while skipping over new <spanx style="verb">TransItem</spanx> structures whose versions they don't understand).
-      </t>
-      <t>
-        TODO: We need to define at least one ItemExtensionType for associating SCT and inclusion proof TransItems with the relevant certificate.
-      </t>
+      struct {
+          SerializedTransItem trans_item_list&lt;1..2^16-1&gt;;
+      } TransItemList;</artwork>
+        </figure>
+        <t>
+          Here, <spanx style="verb">SerializedTransItem</spanx> is an opaque byte string that contains the serialized <spanx style="verb">TransItem</spanx> structure. This encoding ensures that TLS clients can decode each <spanx style="verb">TransItem</spanx> individually (so, for example, if there is a version upgrade, out-of-date clients can still parse old <spanx style="verb">TransItem</spanx> structures while skipping over new <spanx style="verb">TransItem</spanx> structures whose versions they don't understand).
+        </t>
+        <t>
+          TODO: We need to define at least one ItemExtensionType for associating SCT and inclusion proof TransItems with the relevant certificate.
+        </t>
+      </section>
       <section title="TLS Extension" anchor="tls_transinfo_extension">
         <t>
           Provided that a TLS client includes the <spanx style="verb">transparency_info</spanx> extension type in the ClientHello, the TLS server MAY include the <spanx style="verb">transparency_info</spanx> extension in the ServerHello with <spanx style="verb">extension_data</spanx> set to a <spanx style="verb">TransItemList</spanx>. The TLS server MUST NOT process or include this extension when a TLS session is resumed, since session resumption uses the original session information.
@@ -1636,18 +1649,7 @@ certificates around the SCT timestamp.
       </section>
       <section title="Multiple SCTs">
         <t>
-          TLS servers may wish to offer multiple SCTs, each from a different log.
-          <list style="symbols">
-            <t>
-              If a CA and a log collude, it is possible to temporarily hide misissuance from clients. Including SCTs from different logs makes it more difficult to mount this attack.
-            </t>
-            <t>
-              If a log misbehaves, a consequence may be that clients cease to trust it. Since the time an SCT may be in use can be considerable (several years is common in current practice when the SCT is embedded in a certificate), servers may wish to reduce the probability of their certificates being rejected as a result by including SCTs from different logs.
-            </t>
-            <t>
-              TLS clients may have policies related to the above risks requiring servers to present multiple SCTs. For example <xref target="Chromium.Log.Policy">Chromium</xref> currently requires multiple SCTs to be presented with EV certificates in order for the EV indicator to be shown.
-            </t>
-          </list>
+          By offering multiple SCTs, each from a different log, TLS servers reduce the effectiveness of an attack where a CA and a log collude (see <xref target="multiple-scts"/>).
         </t>
       </section>
       <section title="Threat Analysis">
