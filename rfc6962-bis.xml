@@ -754,6 +754,17 @@ d0 d1   d2 d3           d0 d1   d2 d3  d4 d5</artwork>
           <spanx style="verb">inclusion_path</spanx> is a vector of Merkle Tree nodes proving the inclusion of the chosen certificate or precertificate.
         </t>
       </section>
+      <section title="Shutting down a log">
+        <t>
+          Log operators may decide to shut down a log for various reasons, such as deprecation of the signature algorithm. If there are entries in the log for certificates that have not yet expired, simply making TLS clients stop recognizing that log will have the effect of invalidating SCTs from that log. To avoid that, the following actions are suggested:
+          <list style="symbols">
+            <t>Make it known to clients and monitors that the log will be frozen.</t>
+            <t>Stop accepting new submissions (the error code "shutdown" should be returned for such requests).</t>
+            <t>Once MMD from the last accepted submission has passed and all pending submissions are incorporated, issue a final STH and publish it as a part of the log's metadata. Having an STH with a timestamp that is after the MMD has passed from the last SCT issuance allows clients to audit this log regularly without special handling for the final STH. At this point the log's private key is no longer needed and can be destroyed.</t>
+            <t>Keep the log running until the certificates in all of its entries have expired or exist in other logs (this can be determined by scanning other logs or connecting to domains mentioned in the certificates and inspecting the SCTs served).</t>
+          </list>
+        </t>
+      </section>
     </section>
     <section title="Log Client Messages" anchor="client_messages">
       <t>
@@ -840,6 +851,9 @@ messages.
                 </t>
                 <t hangText="bad certificate">
                   One or more certificates in the chain are not valid (e.g. not properly encoded).
+                </t>
+                <t hangText="shutdown">
+                  The log has ceased operation and is not accepting new submissions.
                 </t>
               </list>
             </t>
@@ -1177,26 +1191,39 @@ entry specified by <spanx style="verb">start</spanx>.
           </t>
         </list>
       </t>
-      <t>
-        TLS servers SHOULD send SCTs or inclusion proofs from multiple logs in case one or more logs are not acceptable to the TLS client (for example, if a log has been struck off for misbehavior, has had a key compromise, or is not known to the TLS client).
-      </t>
-      <figure>
-        <preamble>
-          Multiple SCTs, inclusion proofs, and indeed <spanx style="verb">TransItem</spanx> structures of any type, are combined into a list as follows:
-        </preamble>
-        <artwork>
-    opaque SerializedTransItem&lt;1..2^16-1&gt;;
+      <section title="Multiple SCTs" anchor="multiple-scts">
+        <t>
+          TLS servers SHOULD send SCTs or inclusion proofs from multiple logs in case one or more logs are not acceptable to the TLS client (for example, if a log has been struck off for misbehavior, has had a key compromise, or is not known to the TLS client). For example:
+          <list style="symbols">
+            <t>
+              If a CA and a log collude, it is possible to temporarily hide misissuance from clients. Including SCTs from different logs makes it more difficult to mount this attack.
+            </t>
+            <t>
+              If a log misbehaves, a consequence may be that clients cease to trust it. Since the time an SCT may be in use can be considerable (several years is common in current practice when the SCT is embedded in a certificate), servers may wish to reduce the probability of their certificates being rejected as a result by including SCTs from different logs.
+            </t>
+            <t>
+              TLS clients may have policies related to the above risks requiring servers to present multiple SCTs. For example <xref target="Chromium.Log.Policy">Chromium</xref> currently requires multiple SCTs to be presented with EV certificates in order for the EV indicator to be shown.
+            </t>
+          </list>
+        </t>
+        <figure>
+          <preamble>
+            Multiple SCTs, inclusion proofs, and indeed <spanx style="verb">TransItem</spanx> structures of any type, are combined into a list as follows:
+          </preamble>
+          <artwork>
+      opaque SerializedTransItem&lt;1..2^16-1&gt;;
 
-    struct {
-        SerializedTransItem trans_item_list&lt;1..2^16-1&gt;;
-    } TransItemList;</artwork>
-      </figure>
-      <t>
-        Here, <spanx style="verb">SerializedTransItem</spanx> is an opaque byte string that contains the serialized <spanx style="verb">TransItem</spanx> structure. This encoding ensures that TLS clients can decode each <spanx style="verb">TransItem</spanx> individually (so, for example, if there is a version upgrade, out-of-date clients can still parse old <spanx style="verb">TransItem</spanx> structures while skipping over new <spanx style="verb">TransItem</spanx> structures whose versions they don't understand).
-      </t>
-      <t>
-        TODO: We need to define at least one ItemExtensionType for associating SCT and inclusion proof TransItems with the relevant certificate.
-      </t>
+      struct {
+          SerializedTransItem trans_item_list&lt;1..2^16-1&gt;;
+      } TransItemList;</artwork>
+        </figure>
+        <t>
+          Here, <spanx style="verb">SerializedTransItem</spanx> is an opaque byte string that contains the serialized <spanx style="verb">TransItem</spanx> structure. This encoding ensures that TLS clients can decode each <spanx style="verb">TransItem</spanx> individually (so, for example, if there is a version upgrade, out-of-date clients can still parse old <spanx style="verb">TransItem</spanx> structures while skipping over new <spanx style="verb">TransItem</spanx> structures whose versions they don't understand).
+        </t>
+        <t>
+          TODO: We need to define at least one ItemExtensionType for associating SCT and inclusion proof TransItems with the relevant certificate.
+        </t>
+      </section>
       <section title="TLS Extension" anchor="tls_transinfo_extension">
         <t>
           Provided that a TLS client includes the <spanx style="verb">transparency_info</spanx> extension type in the ClientHello, the TLS server MAY include the <spanx style="verb">transparency_info</spanx> extension in the ServerHello with <spanx style="verb">extension_data</spanx> set to a <spanx style="verb">TransItemList</spanx>. The TLS server MUST NOT process or include this extension when a TLS session is resumed, since session resumption uses the original session information.
@@ -1637,18 +1664,7 @@ certificates around the SCT timestamp.
       </section>
       <section title="Multiple SCTs">
         <t>
-          TLS servers may wish to offer multiple SCTs, each from a different log.
-          <list style="symbols">
-            <t>
-              If a CA and a log collude, it is possible to temporarily hide misissuance from clients. Including SCTs from different logs makes it more difficult to mount this attack.
-            </t>
-            <t>
-              If a log misbehaves, a consequence may be that clients cease to trust it. Since the time an SCT may be in use can be considerable (several years is common in current practice when the SCT is embedded in a certificate), servers may wish to reduce the probability of their certificates being rejected as a result by including SCTs from different logs.
-            </t>
-            <t>
-              TLS clients may have policies related to the above risks requiring servers to present multiple SCTs. For example <xref target="Chromium.Log.Policy">Chromium</xref> currently requires multiple SCTs to be presented with EV certificates in order for the EV indicator to be shown.
-            </t>
-          </list>
+          By offering multiple SCTs, each from a different log, TLS servers reduce the effectiveness of an attack where a CA and a log collude (see <xref target="multiple-scts"/>).
         </t>
       </section>
       <section title="Threat Analysis">
@@ -1660,8 +1676,7 @@ certificates around the SCT timestamp.
     </section>
     <section title="Acknowledgements">
       <t>
-        The authors would like to thank Erwann Abelea, Robin Alden, Al Cutter,
-Francis Dupont, Adam Eijdenberg, Stephen Farrell, Daniel Kahn Gillmor, Brad Hill, Jeff Hodges, Paul Hoffman, Jeffrey Hutzelman, Stephen Kent, SM, Alexey Melnikov, Linus Nordberg, Chris Palmer, Trevor Perrin, Pierre Phaneuf, Melinda Shore, Ryan Sleevi, Carl Wallace and Paul Wouters for their valuable contributions.
+        The authors would like to thank Erwann Abelea, Robin Alden, Al Cutter, Francis Dupont, Adam Eijdenberg, Stephen Farrell, Daniel Kahn Gillmor, Paul Hadfield, Brad Hill, Jeff Hodges, Paul Hoffman, Jeffrey Hutzelman, Kat Joyce, Stephen Kent, SM, Alexey Melnikov, Linus Nordberg, Chris Palmer, Trevor Perrin, Pierre Phaneuf, Melinda Shore, Ryan Sleevi, Martin Smith, Carl Wallace and Paul Wouters for their valuable contributions.
       </t>
     </section>
   </middle>
