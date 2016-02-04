@@ -167,13 +167,18 @@ def check_consistency_via_rfc_algorithm(first, second, first_hash, second_hash, 
 
 
 def check_inclusion_via_rfc_algorithm(hash, leaf_index, audit_path, tree_size, root_hash):
-  # 1.  Set "fn" to "leaf_index" and "sn" to "tree_size - 1".
+  # 1.  Compare "leaf_index" against "tree_size".  If "leaf_index" is
+  #     greater than or equal to "tree_size" fail the proof verification.
+  if leaf_index >= tree_size or leaf_index < 0:
+    return False
+
+  # 2.  Set "fn" to "leaf_index" and "sn" to "tree_size - 1".
   fn, sn = leaf_index, tree_size - 1
 
-  # 2.  Set "r" to "hash".
+  # 3.  Set "r" to "hash".
   r = hash
 
-  # 3.  For each value "p" in the "audit_path" array:
+  # 4.  For each value "p" in the "audit_path" array:
   for p in audit_path:
      #  If "LSB(fn)" is set, or if "fn" is equal to "sn", then:
     if lsb(fn) or (fn == sn):
@@ -193,9 +198,11 @@ def check_inclusion_via_rfc_algorithm(hash, leaf_index, audit_path, tree_size, r
     fn >>= 1
     sn >>= 1
 
-  # 4.  Compare "r" against the "root_hash".  If they are equal,
-  #     then the log has proven the inclusion of "hash".
-  return r == root_hash
+  # 5.  Compare "sn" to 0.  Compare "r" against the "root_hash".  If "sn"
+  #     is equal to 0, and "r" and the "root_hash" are equal, then the
+  #     log has proven the inclusion of "hash".  Otherwise, fail the
+  #     proof verification.
+  return sn == 0 and r == root_hash
 
 
 ##########################################################################################
@@ -254,30 +261,40 @@ def cross_check_consistency_against_opensource_algorithm(first, second, first_ha
 
 
 def cross_check_inclusion_via_opensource(hash, leaf_index, audit_path, tree_size, root_hash):
-  audit_path = audit_path[:]
+  path_root_hash = opensource_root_from_path(leaf_index, tree_size, audit_path, hash)
+  if not path_root_hash:
+    return False
+  return path_root_hash == root_hash
+
+def opensource_root_from_path(leaf_index, tree_size, audit_path, hash):
+  if leaf_index >= tree_size or leaf_index < 0:
+    return ""
 
   node_index = leaf_index
-  calculated_hash = hash
   last_node = tree_size - 1
-  while last_node > 0:
-      if not audit_path:
-          return False
 
-      if node_index % 2:
-          audit_hash = audit_path.pop(0)
-          calculated_hash = sha256(chr(1) + audit_hash + calculated_hash).digest()
-      elif node_index < last_node:
-          audit_hash = audit_path.pop(0)
-          calculated_hash = sha256(chr(1) + calculated_hash + audit_hash).digest()
-      # node_index == last_node and node_index is even: A sibling does
-      # not exist. Go further up the tree until node_index is odd so
-      # calculated_hash will be used as the right-hand operand.
-      node_index //= 2
-      last_node //= 2
+  calculated_hash = hash
+  audit_path = audit_path[:]
+
+  while last_node:
+    if not audit_path:
+      return ""
+
+    if node_index % 2:
+      audit_hash = audit_path.pop(0)
+      calculated_hash = sha256(chr(1) + audit_hash + calculated_hash).digest()
+    elif node_index < last_node:
+      audit_hash = audit_path.pop(0)
+      calculated_hash = sha256(chr(1) + calculated_hash + audit_hash).digest()
+    # node_index == last_node and node_index is even: A sibling does
+    # not exist. Go further up the tree until node_index is odd so
+    # calculated_hash will be used as the right-hand operand.
+    node_index //= 2
+    last_node //= 2
   if audit_path:
-      return False
+      return ""
 
-  return calculated_hash == root_hash
+  return calculated_hash
 
 
 ##########################################################################################
@@ -288,12 +305,74 @@ t = MerkleTree(size)
 t2 = MerkleTree(size)
 
 def check_inclusion(hash, leaf_index, audit_path, tree_size, root_hash):
-    r1 = check_inclusion_via_rfc_algorithm(hash, leaf_index, audit_path,
-                                           tree_size, root_hash)
-    r2 = cross_check_inclusion_via_opensource(hash, leaf_index, audit_path,
-                                              tree_size, root_hash)
-    assert r1 == r2
-    return r1
+  r1 = check_inclusion_via_rfc_algorithm(hash, leaf_index, audit_path,
+                                         tree_size, root_hash)
+  r2 = cross_check_inclusion_via_opensource(hash, leaf_index, audit_path,
+                                            tree_size, root_hash)
+  assert r1 == r2
+  return r1
+
+inclusion_tests_fail = [
+  {"leaf_index": 0, "tree_size": 0, "path": [], "root_hash": "", "leaf": ""},
+  {"leaf_index": 0, "tree_size": 1, "path": [], "root_hash": "", "leaf": ""},
+  {"leaf_index": 1, "tree_size": 0, "path": [], "root_hash": "", "leaf": ""},
+  {"leaf_index": 2, "tree_size": 1, "path": [], "root_hash": "", "leaf": ""},
+  {"leaf_index": 0, "tree_size": 0, "path": [], "root_hash": sha256("").digest(), "leaf": ""},
+  {"leaf_index": 1, "tree_size": 1, "path": [], "root_hash": sha256("").digest(), "leaf": ""},
+  {"leaf_index": 2, "tree_size": 1, "path": [], "root_hash": sha256("").digest(), "leaf": ""},
+]
+
+def check_inclusion_tests_fail(tests):
+  for test in tests:
+    print 'Checking inclusion proof for leaf {!s}, tree_size {!s}...'.format(test["leaf_index"], test["tree_size"]),
+    assert not check_inclusion(sha256(test["leaf"]).digest(),
+                               test["leaf_index"], test["path"],
+                               test["tree_size"], test["root_hash"])
+    print 'SUCCESS.'
+
+check_inclusion_tests_fail(inclusion_tests_fail)
+
+def check_inclusion_thorough(hash, leaf_index, audit_path, tree_size, root_hash):
+  assert check_inclusion(hash, leaf_index, audit_path, tree_size, root_hash)
+
+  # Wrong leaf index
+  assert not check_inclusion(hash, leaf_index - 1, audit_path, tree_size, root_hash)
+  assert not check_inclusion(hash, leaf_index + 1, audit_path, tree_size, root_hash)
+
+  # Wrong tree height
+  assert not check_inclusion(hash, leaf_index, audit_path, tree_size * 2, root_hash)
+  assert not check_inclusion(hash, leaf_index, audit_path, tree_size / 2, root_hash)
+
+  # Wrong leaf
+  assert not check_inclusion(sha256("WrongLeaf").digest(), leaf_index, audit_path, tree_size, root_hash)
+
+  # Wrong paths
+  # Modify a single element on the path
+  for i in range(0, len(audit_path)):
+    wrong_path = audit_path[:]
+    wrong_path[i] = sha256("").digest()
+    assert not check_inclusion(hash, leaf_index, wrong_path, tree_size, root_hash)
+
+  # Add garbage at the end of the path
+  wrong_path = audit_path[:]
+  wrong_path.append("")
+  assert not check_inclusion(hash, leaf_index, wrong_path, tree_size, root_hash)
+  wrong_path.pop()
+
+  wrong_path.append(root_hash)
+  assert not check_inclusion(hash, leaf_index, wrong_path, tree_size, root_hash)
+  wrong_path.pop()
+
+  # Remove the node from the end
+  if wrong_path:
+    wrong_path.pop()
+    assert not check_inclusion(hash, leaf_index, wrong_path, tree_size, root_hash)
+
+  # Add garbage to the beginning of the path
+  wrong_path = [""] + audit_path
+  assert not check_inclusion(hash, leaf_index, wrong_path, tree_size, root_hash)
+  wrong_path[0] = root_hash
+  assert not check_inclusion(hash, leaf_index, wrong_path, tree_size, root_hash)
 
 for tree_size in range(1, size + 1):
   root_hash = t.calc_mth(0, tree_size)
@@ -311,7 +390,7 @@ for tree_size in range(1, size + 1):
     assert apl == len(audit_path)
     hash = sha256(chr(0) + t.entries[leaf_index]).digest()
 
-    assert check_inclusion(hash, leaf_index, audit_path, tree_size, root_hash)
+    check_inclusion_thorough(hash, leaf_index, audit_path, tree_size, root_hash)
 
     audit_path = t2.inclusion_proof(leaf_index, tree_size)
     assert audit_path_length(leaf_index, tree_size) == len(audit_path)

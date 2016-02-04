@@ -1417,6 +1417,7 @@ but it is expected there will be a variety.
           <t>
             When a client has received a <spanx style="verb">TransItem</spanx> of type <spanx style="verb">inclusion_proof</spanx> and wishes to verify inclusion of an input <spanx style="verb">hash</spanx> for an STH with a given <spanx style="verb">tree_size</spanx> and <spanx style="verb">root_hash</spanx>, the following algorithm may be used to prove the <spanx style="verb">hash</spanx> was included in the <spanx style="verb">root_hash</spanx>:
             <list style="numbers">
+              <t>Compare <spanx style="verb">leaf_index</spanx> against <spanx style="verb">tree_size</spanx>. If <spanx style="verb">leaf_index</spanx> is greater than or equal to <spanx style="verb">tree_size</spanx> fail the proof verification.</t>
               <t>Set <spanx style="verb">fn</spanx> to <spanx style="verb">leaf_index</spanx> and <spanx style="verb">sn</spanx> to <spanx style="verb">tree_size - 1</spanx>.</t>
               <t>Set <spanx style="verb">r</spanx> to <spanx style="verb">hash</spanx>.</t>
               <t>
@@ -1436,7 +1437,7 @@ but it is expected there will be a variety.
                 <vspace blankLines="1" />
                 Finally, right-shift both <spanx style="verb">fn</spanx> and <spanx style="verb">sn</spanx> one time.
               </t>
-              <t>Compare <spanx style="verb">r</spanx> against the <spanx style="verb">root_hash</spanx>. If they are equal, then the log has proven the inclusion of <spanx style="verb">hash</spanx>.</t>
+              <t>Compare <spanx style="verb">sn</spanx> to 0. Compare <spanx style="verb">r</spanx> against the <spanx style="verb">root_hash</spanx>. If <spanx style="verb">sn</spanx> is equal to 0, and  <spanx style="verb">r</spanx> and the <spanx style="verb">root_hash</spanx> are equal, then the log has proven the inclusion of <spanx style="verb">hash</spanx>. Otherwise, fail the proof verification.</t>
             </list>
           </t>
         </section>
