@@ -562,7 +562,7 @@ d0 d1   d2 d3           d0 d1   d2 d3  d4 d5</artwork>
     } TimestampedCertificateEntryDataV2;</artwork>
         </figure>
         <t>
-          <spanx style="verb">timestamp</spanx> is the <xref target="RFC5905">NTP Time</xref> at which the certificate or precertificate was accepted by the log, measured in milliseconds since the epoch (January 1, 1970, 00:00), ignoring leap seconds.
+          <spanx style="verb">timestamp</spanx> is the <xref target="RFC5905">NTP Time</xref> at which the certificate or precertificate was accepted by the log, measured in milliseconds since the epoch (January 1, 1970, 00:00), ignoring leap seconds. Note that the leaves of a log's Merkle Tree are not required to be in strict chronological order.
         </t>
         <t>
           <spanx style="verb">issuer_key_hash</spanx> is the HASH of the public key of the CA that issued the certificate or precertificate, calculated over the DER encoding of the key represented as <xref target="RFC5280">SubjectPublicKeyInfo</xref>. This is needed to bind the CA to the certificate or precertificate, making it impossible for the corresponding SCT to be valid for any other certificate or precertificate whose TBSCertificate matches <spanx style="verb">tbs_certificate</spanx>.
