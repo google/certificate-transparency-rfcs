@@ -1300,7 +1300,7 @@ but it is expected there will be a variety.
       <section title="TLS Client" anchor="tls_clients">
         <section title="Receiving SCTs or inclusion proofs">
           <t>
-            TLS clients receive SCTs or inclusion proofs alongside or in certificates, either for the server certificate itself or for a name-constrained intermediate the server certificate chains to. TLS clients MUST implement all of the three mechanisms by which TLS servers may present SCTs (see <xref target="tls_servers"/>). TLS clients MAY also accept SCTs via the <spanx style="verb">status_request_v2</spanx> extension (<xref target='RFC6961'/>). TLS clients that support the <spanx style="verb">transparency_info</spanx> TLS extension SHOULD include it in ClientHello messages, with <spanx style="verb">extension_data</spanx> set to &lt;TBD&gt;.
+            TLS clients receive SCTs or inclusion proofs alongside or in certificates. TLS clients MUST implement all of the three mechanisms by which TLS servers may present SCTs (see <xref target="tls_servers"/>). TLS clients MAY also accept SCTs via the <spanx style="verb">status_request_v2</spanx> extension (<xref target='RFC6961'/>). TLS clients that support the <spanx style="verb">transparency_info</spanx> TLS extension SHOULD include it in ClientHello messages, with <spanx style="verb">extension_data</spanx> set to &lt;TBD&gt;.
           </t>
           <t>
             TODO: What should the TLS client communicate in the extension_data? Version(s) of CT that it supports? Certain types of TransItem that it can handle? Whether or not it wants to gossip?
@@ -1308,12 +1308,18 @@ but it is expected there will be a variety.
         </section>
         <section title="Validating SCTs">
           <t>
-            In addition to normal validation of the certificate and its chain, TLS clients SHOULD validate each supplied SCT by computing the signature input from the SCT data as well as the certificate and verifying the signature, using the corresponding log's public key. TLS clients MUST reject SCTs whose timestamp is in the future.
+            In addition to normal validation of the server certificate and its chain, TLS clients SHOULD validate each received SCT by computing the signature input from the SCT data as well as the corresponding certificate and verifying the signature, using the corresponding log's public key. TLS clients MUST reject SCTs whose timestamp is in the future.
+          </t>
+          <t>
+            Since each received SCT may be valid either for the server certificate itself or for a <xref target="name_constrained">suitable name-constrained intermediate</xref>, TLS clients MAY need to use trial and error to determine which certificate in the chain is the certificate to which a received SCT corresponds.
           </t>
         </section>
         <section title="Validating inclusion proofs">
           <t>
-            TLS clients SHOULD also verify each supplied inclusion proof (see <xref target="verify_inclusion"/>), to audit the log and gain confidence that the certificate is logged. If no inclusion proof was supplied, the TLS client MAY request one directly from the corresponding log using <spanx style="verb">get-proof-by-hash</spanx> (<xref target="get-proof-by-hash"/>) or <spanx style="verb">get-all-by-hash</spanx> (<xref target="get-all-by-hash"/>), and then verify it. Note that this will disclose to the log which TLS server the client has been communicating with.
+            TLS clients SHOULD also verify each received inclusion proof (see <xref target="verify_inclusion"/>), to audit the log and gain confidence that the certificate is logged. Since each received inclusion proof may be valid either for the server certificate itself or for a <xref target="name_constrained">suitable name-constrained intermediate</xref>, TLS clients MAY need to use trial and error to determine which certificate in the chain is the certificate to which a received inclusion proof corresponds.
+          </t>
+          <t>
+            If no inclusion proof was received, the TLS client MAY request one directly from the corresponding log using <spanx style="verb">get-proof-by-hash</spanx> (<xref target="get-proof-by-hash"/>) or <spanx style="verb">get-all-by-hash</spanx> (<xref target="get-all-by-hash"/>), and then verify it. Note that this will disclose to the log which TLS server the client has been communicating with.
           </t>
           <t>
             If the TLS client holds an STH that predates the SCT, it MAY, in the process of auditing, request a new STH from the log (<xref target="get-sth"/>), then verify it by requesting a consistency proof (<xref target="get-sth-consistency"/>). Note that if the TLS client uses <spanx style="verb">get-all-by-hash</spanx>, then it will already have the new STH.
