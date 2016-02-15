@@ -321,7 +321,7 @@ d0 d1   d2 d3           d0 d1   d2 d3  d4 d5</artwork>
               It MUST be DER encoded.
             </t>
             <t>
-              <spanx style="verb">SignedData.encapContentInfo.eContentType</spanx> MUST be the OID &lt;TBD&gt;.
+              <spanx style="verb">SignedData.encapContentInfo.eContentType</spanx> MUST be the OID 1.3.101.78.
             </t>
             <t>
               <spanx style="verb">SignedData.encapContentInfo.eContent</spanx> MUST contain a TBSCertificate <xref target="RFC5280"/>, which MAY redact certain domain name labels that will be present in the issued certificate (see <xref target="redacting_subdomains"/>) and MUST NOT contain any SCTs, but which will be otherwise identical to the TBSCertificate in the issued certificate.
@@ -356,7 +356,7 @@ d0 d1   d2 d3           d0 d1   d2 d3  d4 d5</artwork>
           Wildcard <spanx style="verb">*</spanx> labels MUST NOT be redacted. However, if the complete leftmost label of a DNS-ID is <spanx style="verb">*</spanx>, it is considered redacted for the purposes of determining if the label to the right may be redacted. For example, if a certificate contains a DNS-ID of <spanx style="verb">*.top.secret.example.com</spanx>, then the corresponding precertificate could contain <spanx style="verb">*.?.?.example.com</spanx> instead, but not <spanx style="verb">?.?.?.example.com</spanx> instead.
         </t>
         <t>
-          When a precertificate contains one or more redacted labels, a non-critical extension (OID 1.3.6.1.4.1.11129.2.4.6, whose extnValue OCTET STRING contains an ASN.1 SEQUENCE OF INTEGERs) MUST be added to the corresponding certificate: the first INTEGER indicates the total number of redacted labels and wildcard <spanx style="verb">*</spanx> labels in the precertificate's first DNS-ID; the second INTEGER does the same for the precertificate's second DNS-ID; etc. There MUST NOT be more INTEGERs than there are DNS-IDs. If there are fewer INTEGERs than there are DNS-IDs, the shortfall is made up by implicitly repeating the last INTEGER. Each INTEGER MUST have a value of zero or more. The purpose of this extension is to enable TLS clients to accurately reconstruct the TBSCertificate component of the precertificate from the certificate without having to perform any guesswork.
+          When a precertificate contains one or more redacted labels, a non-critical extension (OID 1.3.101.77, whose extnValue OCTET STRING contains an ASN.1 SEQUENCE OF INTEGERs) MUST be added to the corresponding certificate: the first INTEGER indicates the total number of redacted labels and wildcard <spanx style="verb">*</spanx> labels in the precertificate's first DNS-ID; the second INTEGER does the same for the precertificate's second DNS-ID; etc. There MUST NOT be more INTEGERs than there are DNS-IDs. If there are fewer INTEGERs than there are DNS-IDs, the shortfall is made up by implicitly repeating the last INTEGER. Each INTEGER MUST have a value of zero or more. The purpose of this extension is to enable TLS clients to accurately reconstruct the TBSCertificate component of the precertificate from the certificate without having to perform any guesswork.
         </t>
         <t>
           When a precertificate contains that extension and contains a <xref target="RFC6125">CN-ID</xref>, the CN-ID MUST match the first DNS-ID and have the same labels redacted.  TLS clients will use the first entry in the SEQUENCE OF INTEGERs to reconstruct both the first DNS-ID and the CN-ID.
@@ -367,7 +367,7 @@ d0 d1   d2 d3           d0 d1   d2 d3  d4 d5</artwork>
           An intermediate CA certificate or intermediate CA precertificate that contains the critical or non-critical <xref target="RFC5280">Name Constraints</xref> extension MAY be logged in place of end-entity certificates issued by that intermediate CA, as long as all of the following conditions are met:
           <list style="symbols">
             <t>
-              there MUST be a non-critical extension (OID 1.3.6.1.4.1.11129.2.4.7, whose extnValue OCTET STRING contains ASN.1 NULL data (0x05 0x00)). This extension is an explicit indication that it is acceptable to not log certificates issued by this intermediate CA.
+              there MUST be a non-critical extension (OID 1.3.101.76, whose extnValue OCTET STRING contains ASN.1 NULL data (0x05 0x00)). This extension is an explicit indication that it is acceptable to not log certificates issued by this intermediate CA.
             </t>
             <t>
               permittedSubtrees MUST specify one or more dNSNames.
@@ -1215,7 +1215,7 @@ entry specified by <spanx style="verb">start</spanx>.
       <section title="Transparency Information X.509v3 Extension" anchor="x509v3_transinfo_extension">
         <figure>
           <preamble>
-            The Transparency Information X.509v3 extension, which has OID &lt;TBD&gt; and SHOULD be non-critical, contains one or more <spanx style="verb">TransItem</spanx> structures in a <spanx style="verb">TransItemList</spanx>. This extension MAY be included in OCSP responses (see <xref target="ocsp_transinfo_extension"/>) and certificates (see <xref target="cert_transinfo_extension"/>). Since RFC5280 requires the <spanx style="verb">extnValue</spanx> field (an OCTET STRING) of each X.509v3 extension to include the DER encoding of an ASN.1 value, a <spanx style="verb">TransItemList</spanx> MUST NOT be included directly. Instead, it MUST be wrapped inside an additional OCTET STRING, which is then put into the <spanx style="verb">extnValue</spanx> field:
+            The Transparency Information X.509v3 extension, which has OID 1.3.101.75 and SHOULD be non-critical, contains one or more <spanx style="verb">TransItem</spanx> structures in a <spanx style="verb">TransItemList</spanx>. This extension MAY be included in OCSP responses (see <xref target="ocsp_transinfo_extension"/>) and certificates (see <xref target="cert_transinfo_extension"/>). Since RFC5280 requires the <spanx style="verb">extnValue</spanx> field (an OCTET STRING) of each X.509v3 extension to include the DER encoding of an ASN.1 value, a <spanx style="verb">TransItemList</spanx> MUST NOT be included directly. Instead, it MUST be wrapped inside an additional OCTET STRING, which is then put into the <spanx style="verb">extnValue</spanx> field:
           </preamble>
           <artwork>
     TransparencyInformationSyntax ::= OCTET STRING</artwork>
@@ -1661,6 +1661,9 @@ certificates around the SCT timestamp.
     <section title="Acknowledgements">
       <t>
         The authors would like to thank Erwann Abelea, Robin Alden, Al Cutter, Francis Dupont, Adam Eijdenberg, Stephen Farrell, Daniel Kahn Gillmor, Paul Hadfield, Brad Hill, Jeff Hodges, Paul Hoffman, Jeffrey Hutzelman, Kat Joyce, Stephen Kent, SM, Alexey Melnikov, Linus Nordberg, Chris Palmer, Trevor Perrin, Pierre Phaneuf, Melinda Shore, Ryan Sleevi, Martin Smith, Carl Wallace and Paul Wouters for their valuable contributions.
+      </t>
+      <t>
+        A big thank you to Symantec for kindly donating the OIDs used in this document.
       </t>
     </section>
   </middle>
