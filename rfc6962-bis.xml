@@ -495,15 +495,6 @@ d0 d1   d2 d3           d0 d1   d2 d3  d4 d5</artwork>
         inclusion_proof(7), (65535)
     } TransType;
 
-    enum {
-        reserved(65535)
-    } ItemExtensionType;
-
-    struct {
-        ItemExtensionType item_extension_type;
-        opaque item_extension_data&lt;0..2^16-1&gt;;
-    } ItemExtension;
-
     struct {
         TransType type;
         select (type) {
@@ -516,7 +507,6 @@ d0 d1   d2 d3           d0 d1   d2 d3  d4 d5</artwork>
             case consistency_proof: ConsistencyProofDataV2;
             case inclusion_proof: InclusionProofDataV2;
         } data;
-        ItemExtension item_extensions&lt;0..2^16-1&gt;;
     } TransItemV2;
 
     struct {
@@ -535,15 +525,6 @@ d0 d1   d2 d3           d0 d1   d2 d3  d4 d5</artwork>
         </t>
         <t>
           <spanx style="verb">data</spanx> is the encapsulated data structure. The various structures named with the <spanx style="verb">DataV2</spanx> suffix are defined in later sections of this document.
-        </t>
-        <t>
-          <spanx style="verb">item_extension_type</spanx> identifies a single extension from the IANA registry in <xref target="item_extension_types"/>.
-        </t>
-        <t>
-          The interpretation of the <spanx style="verb">item_extension_data</spanx> field is determined solely by the value of the <spanx style="verb">item_extension_type</spanx> field. Each document that registers a new <spanx style="verb">item_extension_type</spanx> must describe how to interpret the corresponding <spanx style="verb">item_extension_data</spanx>.
-        </t>
-        <t>
-          <spanx style="verb">item_extensions</spanx> is a vector of 0 or more item extensions. This vector MUST NOT include more than one extension with the same <spanx style="verb">item_extension_type</spanx>. The extensions in the vector MUST be ordered by the value of the <spanx style="verb">item_extension_type</spanx> field, smallest value first.
         </t>
       </section>
       <section title="Merkle Tree Leaves" anchor="tree_leaves">
@@ -1194,18 +1175,18 @@ entry specified by <spanx style="verb">start</spanx>.
       <t>
         Additionally, a TLS server which supports presenting SCTs using an OCSP response MAY provide it when the TLS client included the <spanx style="verb">status_request_v2</spanx> extension (<xref target='RFC6961'/>) in the (extended) <spanx style="verb">ClientHello</spanx>, but only in addition to at least one of the three mechanisms listed above.
       </t>
-      <section title="Multiple SCTs" anchor="multiple-scts">
+      <section title="Multiple SCTs or inclusion proofs" anchor="multiple-scts-or-inclusion-proofs">
         <t>
           TLS servers SHOULD send SCTs or inclusion proofs from multiple logs in case one or more logs are not acceptable to the TLS client (for example, if a log has been struck off for misbehavior, has had a key compromise, or is not known to the TLS client). For example:
           <list style="symbols">
             <t>
-              If a CA and a log collude, it is possible to temporarily hide misissuance from clients. Including SCTs from different logs makes it more difficult to mount this attack.
+              If a CA and a log collude, it is possible to temporarily hide misissuance from clients. Including SCTs or inclusion proofs from different logs makes it more difficult to mount this attack.
             </t>
             <t>
-              If a log misbehaves, a consequence may be that clients cease to trust it. Since the time an SCT may be in use can be considerable (several years is common in current practice when the SCT is embedded in a certificate), servers may wish to reduce the probability of their certificates being rejected as a result by including SCTs from different logs.
+              If a log misbehaves, a consequence may be that clients cease to trust it. Since the time an SCT or inclusion proof may be in use can be considerable (several years is common in current practice when embedded in a certificate), servers may wish to reduce the probability of their certificates being rejected as a result by including SCTs or inclusion proofs from different logs.
             </t>
             <t>
-              TLS clients may have policies related to the above risks requiring servers to present multiple SCTs. For example <xref target="Chromium.Log.Policy">Chromium</xref> currently requires multiple SCTs to be presented with EV certificates in order for the EV indicator to be shown.
+              TLS clients may have policies related to the above risks requiring servers to present multiple SCTs or inclusion proofs. For example, at the time of writing, <xref target="Chromium.Log.Policy">Chromium</xref> requires multiple SCTs to be presented with EV certificates in order for the EV indicator to be shown.
             </t>
           </list>
         </t>
@@ -1222,9 +1203,6 @@ entry specified by <spanx style="verb">start</spanx>.
         </figure>
         <t>
           Here, <spanx style="verb">SerializedTransItem</spanx> is an opaque byte string that contains the serialized <spanx style="verb">TransItem</spanx> structure. This encoding ensures that TLS clients can decode each <spanx style="verb">TransItem</spanx> individually (so, for example, if there is a version upgrade, out-of-date clients can still parse old <spanx style="verb">TransItem</spanx> structures while skipping over new <spanx style="verb">TransItem</spanx> structures whose versions they don't understand).
-        </t>
-        <t>
-          TODO: We need to define at least one ItemExtensionType for associating SCT and inclusion proof TransItems with the relevant certificate.
         </t>
       </section>
       <section title="TLS Extension" anchor="tls_transinfo_extension">
@@ -1320,24 +1298,38 @@ but it is expected there will be a variety.
         </t>
       </section>
       <section title="TLS Client" anchor="tls_clients">
-        <t>
-          TLS clients receive SCTs alongside or in certificates, either for the server certificate itself or for a name-constrained intermediate the server certificate chains to. TLS clients MUST implement all of the three mechanisms by which TLS servers may present SCTs (see <xref target="tls_servers"/>). TLS clients MAY also accept SCTs via the <spanx style="verb">status_request_v2</spanx> extension (<xref target='RFC6961'/>). TLS clients that support the <spanx style="verb">transparency_info</spanx> TLS extension SHOULD include it in ClientHello messages, with <spanx style="verb">extension_data</spanx> set to &lt;TBD&gt;.
-        </t>
-        <t>
-          TODO: What should the TLS client communicate in the extension_data? Version(s) of CT that it supports? Certain types of TransItem that it can handle? Whether or not it wants to gossip?
-        </t>
-        <t>
-          In addition to normal validation of the certificate and its chain, TLS clients SHOULD validate each supplied SCT by computing the signature input from the SCT data as well as the certificate and verifying the signature, using the corresponding log's public key. TLS clients MUST reject SCTs whose timestamp is in the future.
-        </t>
-        <t>
-          To be considered compliant, a certificate MUST be accompanied by at least one valid SCT or at least one valid inclusion proof. A certificate not accompanied by any valid SCTs or any valid inclusion proofs MUST NOT be considered compliant by TLS clients. However, specifying the TLS clients' behavior once compliance or non-compliance has been determined (for example, whether a certificate should be rejected due to non-compliance) is outside the scope of this document.
-        </t>
-        <t>
-          TLS clients SHOULD also verify each supplied inclusion proof (see <xref target="verify_inclusion"/>), to audit the log and gain confidence that the certificate is logged. If no inclusion proof was supplied, the TLS client MAY request one directly from the corresponding log using <spanx style="verb">get-proof-by-hash</spanx> (<xref target="get-proof-by-hash"/>) or <spanx style="verb">get-all-by-hash</spanx> (<xref target="get-all-by-hash"/>), and then verify it. Note that this will disclose to the log which TLS server the client has been communicating with.
-        </t>
-        <t>
-          If the TLS client holds an STH that predates the SCT, it MAY, in the process of auditing, request a new STH from the log (<xref target="get-sth"/>), then verify it by requesting a consistency proof (<xref target="get-sth-consistency"/>). Note that if the TLS client uses <spanx style="verb">get-all-by-hash</spanx>, then it will already have the new STH.
-        </t>
+        <section title="Receiving SCTs or inclusion proofs">
+          <t>
+            TLS clients receive SCTs or inclusion proofs alongside or in certificates. TLS clients MUST implement all of the three mechanisms by which TLS servers may present SCTs (see <xref target="tls_servers"/>). TLS clients MAY also accept SCTs via the <spanx style="verb">status_request_v2</spanx> extension (<xref target='RFC6961'/>). TLS clients that support the <spanx style="verb">transparency_info</spanx> TLS extension SHOULD include it in ClientHello messages, with <spanx style="verb">extension_data</spanx> set to &lt;TBD&gt;.
+          </t>
+          <t>
+            TODO: What should the TLS client communicate in the extension_data? Version(s) of CT that it supports? Certain types of TransItem that it can handle? Whether or not it wants to gossip?
+          </t>
+        </section>
+        <section title="Validating SCTs">
+          <t>
+            In addition to normal validation of the server certificate and its chain, TLS clients SHOULD validate each received SCT for which they have the corresponding log's metadata. To validate an SCT, a TLS client computes the signature input from the SCT data and the corresponding certificate, and then verifies the signature using the corresponding log's public key. TLS clients MUST reject SCTs whose timestamp is in the future.
+          </t>
+          <t>
+            Since each received SCT may be valid either for the server certificate itself or for a <xref target="name_constrained">suitable name-constrained intermediate</xref>, TLS clients MAY need to use trial and error to determine which certificate in the chain is the certificate to which a received SCT corresponds.
+          </t>
+        </section>
+        <section title="Validating inclusion proofs">
+          <t>
+            TLS clients SHOULD also verify each received inclusion proof (see <xref target="verify_inclusion"/>) for which they have the corresponding log's metadata, to audit the log and gain confidence that the certificate is logged. Since each received inclusion proof may be valid either for the server certificate itself or for a <xref target="name_constrained">suitable name-constrained intermediate</xref>, TLS clients MAY need to use trial and error to determine which certificate in the chain is the certificate to which a received inclusion proof corresponds.
+          </t>
+          <t>
+            After validating a received SCT, a TLS client MAY request a corresponding inclusion proof (if one is not already available) and then verify it. An inclusion proof can be requested directly from a log using <spanx style="verb">get-proof-by-hash</spanx> (<xref target="get-proof-by-hash"/>) or <spanx style="verb">get-all-by-hash</spanx> (<xref target="get-all-by-hash"/>), but note that this will disclose to the log which TLS server the client has been communicating with.
+          </t>
+          <t>
+            If the TLS client holds an STH that predates the SCT, it MAY, in the process of auditing, request a new STH from the log (<xref target="get-sth"/>), then verify it by requesting a consistency proof (<xref target="get-sth-consistency"/>). Note that if the TLS client uses <spanx style="verb">get-all-by-hash</spanx>, then it will already have the new STH.
+          </t>
+        </section>
+        <section title="Evaluating compliance">
+          <t>
+            To be considered compliant, a certificate MUST be accompanied by at least one valid SCT or at least one valid inclusion proof. A certificate not accompanied by any valid SCTs or any valid inclusion proofs MUST NOT be considered compliant by TLS clients. However, specifying the TLS clients' behavior once compliance or non-compliance has been determined (for example, whether a certificate should be rejected due to non-compliance) is outside the scope of this document.
+          </t>
+        </section>
         <section title="TLS Feature Extension">
           <t>
             If any certificate in a chain includes the <xref target="tls_transinfo_extension">transparency_info</xref> TLS extension identifier in the <xref target="RFC7633">TLS Feature</xref> certificate extension, then CT compliance (using any of the mechanisms from <xref target="tls_servers"/>) is required.
@@ -1553,18 +1545,6 @@ but it is expected there will be a variety.
           <c>0</c><c><xref target="FIPS.180-4">SHA-256</xref></c>
         </texttable>
       </section>
-      <section title="TransItem Extensions" anchor="item_extension_types">
-        <t>
-          IANA is asked to establish a registry of TransItem extensions, initially consisting of:
-        </t>
-        <texttable>
-          <ttcol>Type</ttcol><ttcol>Extension</ttcol>
-          <c>65535</c><c>reserved</c>
-        </texttable>
-        <t>
-          TBD: policy for adding to the registry
-        </t>
-      </section>
       <section title="Signature Algorithms" anchor="signature_algorithms">
         <t>
           IANA is asked to establish a registry of signature algorithm values, initially consisting of:
@@ -1666,9 +1646,9 @@ certificates around the SCT timestamp.
           </list>
         </t>
       </section>
-      <section title="Multiple SCTs">
+      <section title="Multiple SCTs or inclusion proofs">
         <t>
-          By offering multiple SCTs, each from a different log, TLS servers reduce the effectiveness of an attack where a CA and a log collude (see <xref target="multiple-scts"/>).
+          By offering multiple SCTs or inclusion proofs, each from a different log, TLS servers reduce the effectiveness of an attack where a CA and a log collude (see <xref target="multiple-scts-or-inclusion-proofs"/>).
         </t>
       </section>
       <section title="Threat Analysis">
