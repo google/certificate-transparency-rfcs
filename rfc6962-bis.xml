@@ -495,15 +495,6 @@ d0 d1   d2 d3           d0 d1   d2 d3  d4 d5</artwork>
         inclusion_proof(7), (65535)
     } TransType;
 
-    enum {
-        reserved(65535)
-    } ItemExtensionType;
-
-    struct {
-        ItemExtensionType item_extension_type;
-        opaque item_extension_data&lt;0..2^16-1&gt;;
-    } ItemExtension;
-
     struct {
         TransType type;
         select (type) {
@@ -516,7 +507,6 @@ d0 d1   d2 d3           d0 d1   d2 d3  d4 d5</artwork>
             case consistency_proof: ConsistencyProofDataV2;
             case inclusion_proof: InclusionProofDataV2;
         } data;
-        ItemExtension item_extensions&lt;0..2^16-1&gt;;
     } TransItemV2;
 
     struct {
@@ -535,15 +525,6 @@ d0 d1   d2 d3           d0 d1   d2 d3  d4 d5</artwork>
         </t>
         <t>
           <spanx style="verb">data</spanx> is the encapsulated data structure. The various structures named with the <spanx style="verb">DataV2</spanx> suffix are defined in later sections of this document.
-        </t>
-        <t>
-          <spanx style="verb">item_extension_type</spanx> identifies a single extension from the IANA registry in <xref target="item_extension_types"/>.
-        </t>
-        <t>
-          The interpretation of the <spanx style="verb">item_extension_data</spanx> field is determined solely by the value of the <spanx style="verb">item_extension_type</spanx> field. Each document that registers a new <spanx style="verb">item_extension_type</spanx> must describe how to interpret the corresponding <spanx style="verb">item_extension_data</spanx>.
-        </t>
-        <t>
-          <spanx style="verb">item_extensions</spanx> is a vector of 0 or more item extensions. This vector MUST NOT include more than one extension with the same <spanx style="verb">item_extension_type</spanx>. The extensions in the vector MUST be ordered by the value of the <spanx style="verb">item_extension_type</spanx> field, smallest value first.
         </t>
       </section>
       <section title="Merkle Tree Leaves" anchor="tree_leaves">
@@ -1223,9 +1204,6 @@ entry specified by <spanx style="verb">start</spanx>.
         <t>
           Here, <spanx style="verb">SerializedTransItem</spanx> is an opaque byte string that contains the serialized <spanx style="verb">TransItem</spanx> structure. This encoding ensures that TLS clients can decode each <spanx style="verb">TransItem</spanx> individually (so, for example, if there is a version upgrade, out-of-date clients can still parse old <spanx style="verb">TransItem</spanx> structures while skipping over new <spanx style="verb">TransItem</spanx> structures whose versions they don't understand).
         </t>
-        <t>
-          TODO: We need to define at least one ItemExtensionType for associating SCT and inclusion proof TransItems with the relevant certificate.
-        </t>
       </section>
       <section title="TLS Extension" anchor="tls_transinfo_extension">
         <t>
@@ -1552,18 +1530,6 @@ but it is expected there will be a variety.
           <ttcol>Index</ttcol><ttcol>Hash</ttcol>
           <c>0</c><c><xref target="FIPS.180-4">SHA-256</xref></c>
         </texttable>
-      </section>
-      <section title="TransItem Extensions" anchor="item_extension_types">
-        <t>
-          IANA is asked to establish a registry of TransItem extensions, initially consisting of:
-        </t>
-        <texttable>
-          <ttcol>Type</ttcol><ttcol>Extension</ttcol>
-          <c>65535</c><c>reserved</c>
-        </texttable>
-        <t>
-          TBD: policy for adding to the registry
-        </t>
       </section>
       <section title="Signature Algorithms" anchor="signature_algorithms">
         <t>
