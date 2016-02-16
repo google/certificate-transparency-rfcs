@@ -1308,7 +1308,7 @@ but it is expected there will be a variety.
         </section>
         <section title="Validating SCTs">
           <t>
-            In addition to normal validation of the server certificate and its chain, TLS clients SHOULD validate each received SCT by computing the signature input from the SCT data as well as the corresponding certificate and verifying the signature, using the corresponding log's public key. TLS clients MUST reject SCTs whose timestamp is in the future.
+            In addition to normal validation of the server certificate and its chain, TLS clients SHOULD validate each received SCT for which they have the corresponding log's metadata. To validate an SCT, a TLS client computes the signature input from the SCT data and the corresponding certificate, and then verifies the signature using the corresponding log's public key. TLS clients MUST reject SCTs whose timestamp is in the future.
           </t>
           <t>
             Since each received SCT may be valid either for the server certificate itself or for a <xref target="name_constrained">suitable name-constrained intermediate</xref>, TLS clients MAY need to use trial and error to determine which certificate in the chain is the certificate to which a received SCT corresponds.
