@@ -1579,6 +1579,25 @@ but it is expected there will be a variety.
           TBD: policy for adding to the registry
         </t>
       </section>
+      <section title="Object Identifiers">
+        <t>
+          This document uses object identifiers (OIDs) to identify Log IDs (see <xref target="log_id"/>), the precertificate CMS <spanx style="verb">eContentType</spanx> (see <xref target="Precertificates"/>), and X.509v3 extensions in certificates (see <xref target="redacting_subdomains"/>, <xref target="name_constrained"/> and <xref target="cert_transinfo_extension"/>) and OCSP responses (see <xref target="ocsp_transinfo_extension"/>). The OIDs are defined in an arc that belongs to Symantec. This arc was selected due to its short encoding.
+        </t>
+        <t>
+          No action from IANA is necessary with regard to any of the OIDs in this document.
+        </t>
+        <section title="Log ID registry">
+          <t>
+            Symantec have delegated the 1.3.101.80 arc to the TRANS Working Group. From this arc, Log IDs will be allocated.
+          </t>
+          <t>
+            Additionally, Symantec have reserved all OIDs in the range from 1.3.101.8192 to 1.3.101.16383 to be used as Log IDs.
+          </t>
+          <t>
+            TBD: policy for adding to the registry. And who's going to run the registry?
+          </t>
+        </section>
+      </section>
     </section>
 
     <section title="Security Considerations">
