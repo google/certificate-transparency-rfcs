@@ -305,11 +305,11 @@ which may return up to `7` elements of the `proof`.  We perform a follow-up quer
 
     7.432.254352.sth-consistency.pilot.ct.googleapis.com
 
-to retreive the next list of `proof` elements and then:
+to retrieve the next list of `proof` elements and then:
 
     14.432.254352.sth-consistency.pilot.ct.googleapis.com
 
-to retreive the final `1`.
+to retrieve the final `1`.
 
 ## Retrieve Merkle Audit Proof from Log by Leaf Hash
 
@@ -337,11 +337,11 @@ which may return up to `7` elements of the `audit_path`.  We perform a follow-up
 
     7.123456.999999.tree.pilot.ct.googleapis.com
 
-to retreive a next `partial_audit_path` offset by `7` and then:
+to retrieve a next `partial_audit_path` offset by `7` and then:
 
     14.123456.999999.tree.pilot.ct.googleapis.com
 
-to retreive the final `6`.
+to retrieve the final `6`.
 
 Now we have a complete `audit_path` array.
 
