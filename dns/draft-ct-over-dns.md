@@ -91,10 +91,11 @@ And receive the following response:
                +---------------------------------------------------+
     Header     | OPCODE=QUERY, RESPONSE, AA                        |
                +---------------------------------------------------+
-    Question   | QNAME=D4<snip>.com., QCLASS=IN, QTYPE=TXT         |
+    Question   | QNAME=sth.pilot.ct.googleapis.com., QCLASS=IN,    |
+               | QTYPE=TXT                                         |
                +---------------------------------------------------+
-    Answer     | QNAME=D4<snip>.com., 604800 IN TXT 123456.1447255 |
-               | 802227.aO4z<snip>U=.BAMAR<snip>Vl                 |
+    Answer     | QNAME=sth.pilot.ct.googleapis.com., 604800 IN TXT |
+               | 123456.1447255802227.aO4z<snip>U=.BAMAR<snip>Vl   |
                +---------------------------------------------------+
     Authority  | <empty>                                           |
                +---------------------------------------------------+
