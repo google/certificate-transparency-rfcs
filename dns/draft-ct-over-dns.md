@@ -74,7 +74,7 @@ To query for this message, set `QNAME` to `'sth.' || <domain_for_log> || '.'` wh
 Given the `encoded_leaf_hash` above we would generate the following request:
 
                +---------------------------------------------------+
-    Header     | OPCODE=SQUERY                                     |
+    Header     | OPCODE=QUERY                                      |
                +---------------------------------------------------+
     Question   | QNAME=sth.pilot.ct.googleapis.com., QCLASS=IN,    |
                | QTYPE=TXT                                         |
@@ -89,7 +89,7 @@ Given the `encoded_leaf_hash` above we would generate the following request:
 And receive the following response:
 
                +---------------------------------------------------+
-    Header     | OPCODE=SQUERY, RESPONSE, AA                       |
+    Header     | OPCODE=QUERY, RESPONSE, AA                        |
                +---------------------------------------------------+
     Question   | QNAME=D4<snip>.com., QCLASS=IN, QTYPE=TXT         |
                +---------------------------------------------------+
@@ -127,7 +127,7 @@ Set `QNAME` to `<start_index> || '.' || <first> || '.' || <second> || '.sth-cons
 For example, given the values above we would generate the following request:
 
                +---------------------------------------------------+
-    Header     | OPCODE=SQUERY                                     |
+    Header     | OPCODE=QUERY                                      |
                +---------------------------------------------------+
     Question   | QNAME=0.123456.999999.sth-consistency.pilot.ct.go |
                | ogleapis.com., QCLASS=IN, QTYPE=TXT               |
@@ -142,7 +142,7 @@ For example, given the values above we would generate the following request:
 And receive the following response:
 
                +---------------------------------------------------+
-    Header     | OPCODE=SQUERY, RESPONSE, AA                       |
+    Header     | OPCODE=QUERY, RESPONSE, AA                        |
                +---------------------------------------------------+
     Question   | QNAME=0.<snip>.com., QCLASS=IN, QTYPE=TXT         |
                +---------------------------------------------------+
@@ -195,7 +195,7 @@ Then the `encoded_leaf_hash` would be:
 Given the `encoded_leaf_hash` above we would generate the following request:
 
                +---------------------------------------------------+
-    Header     | OPCODE=SQUERY                                     |
+    Header     | OPCODE=QUERY                                      |
                +---------------------------------------------------+
     Question   | QNAME=D4S6DSV2J743QJZEQMH4UYHEYK7KRQ5JIQOCPMFUHZVJ|
                | NFGHXACA.hash.pilot.ct.googleapis.com., QCLASS=IN,|
@@ -211,7 +211,7 @@ Given the `encoded_leaf_hash` above we would generate the following request:
 And receive the following response:
 
                +---------------------------------------------------+
-    Header     | OPCODE=SQUERY, RESPONSE, AA                       |
+    Header     | OPCODE=QUERY, RESPONSE, AA                        |
                +---------------------------------------------------+
     Question   | QNAME=D4<snip>.com., QCLASS=IN, QTYPE=TXT         |
                +---------------------------------------------------+
@@ -244,7 +244,7 @@ Set `QNAME` to `<start_index> || '.' || <leaf_index> || '.' || <tree_size> || '.
 For example, given the values above we would generate the following request:
 
                +---------------------------------------------------+
-    Header     | OPCODE=SQUERY                                     |
+    Header     | OPCODE=QUERY                                      |
                +---------------------------------------------------+
     Question   | QNAME=0.123456.999999.tree.pilot.ct.googleapis.com|
                | ., QCLASS=IN, QTYPE=TXT                           |
@@ -259,7 +259,7 @@ For example, given the values above we would generate the following request:
 And receive the following response:
 
                +---------------------------------------------------+
-    Header     | OPCODE=SQUERY, RESPONSE, AA                       |
+    Header     | OPCODE=QUERY, RESPONSE, AA                        |
                +---------------------------------------------------+
     Question   | QNAME=0.<snip>.com., QCLASS=IN, QTYPE=TXT         |
                +---------------------------------------------------+
