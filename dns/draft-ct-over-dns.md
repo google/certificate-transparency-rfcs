@@ -1,6 +1,6 @@
 ---
 title: Certificate Transparency over DNS
-docname: draft-ct-over-dns-01-dev
+docname: draft-ct-over-dns-01
 category: exp
 pi: [toc, sortrefs, symrefs]
 ipr: trust200902
@@ -354,6 +354,6 @@ TBD
 # Contributors
 
 The authors would like to thank the following contributors for
-valuable suggestions: ...
+valuable suggestions: Paul Hoffman.
 
 # ChangeLog
