@@ -470,7 +470,7 @@ d0 d1   d2 d3           d0 d1   d2 d3  d4 d5</artwork>
       <section title="Log ID" anchor="log_id">
         <figure>
           <preamble>
-            Each log is uniquely identified by an OID. A log's operator MUST either allocate the OID themselves (from an arc that belongs to them) or request an OID from the Log ID Registry (see <xref target="log_id_registry"/>). The OID is specified in the log's metadata. Various data structures include the DER encoding of this OID, excluding the ASN.1 tag and length bytes, in an opaque vector:
+            Each log is uniquely identified by an OID. A log's operator MUST either allocate the OID themselves (from an arc that belongs to them) or request an OID from one of the two Log ID Registries (see <xref target="log_id_registry1"/> and <xref target="log_id_registry2"/>). The OID is specified in the log's metadata. Various data structures include the DER encoding of this OID, excluding the ASN.1 tag and length bytes, in an opaque vector:
           </preamble>
           <artwork>
     opaque LogID&lt;2..127&gt;;</artwork>
@@ -1583,18 +1583,26 @@ but it is expected there will be a variety.
         <t>
           This document uses object identifiers (OIDs) to identify Log IDs (see <xref target="log_id"/>), the precertificate CMS <spanx style="verb">eContentType</spanx> (see <xref target="Precertificates"/>), and X.509v3 extensions in certificates (see <xref target="redacting_subdomains"/>, <xref target="name_constrained"/> and <xref target="cert_transinfo_extension"/>) and OCSP responses (see <xref target="ocsp_transinfo_extension"/>). The OIDs are defined in an arc that belongs to Symantec. This arc was selected due to its short encoding.
         </t>
-        <t>
-          No action from IANA is necessary with regard to any of the OIDs in this document.
-        </t>
-        <section title="Log ID Registry" anchor="log_id_registry">
+        <section title="Log ID Registry 1" anchor="log_id_registry1">
           <t>
-            Symantec have delegated the 1.3.101.80 arc to the TRANS Working Group. From this arc, Log IDs will be allocated.
+            Symantec has reserved all OIDs in the range from 1.3.101.8192 to 1.3.101.16383 to be allocatable as Log IDs. This is a limited resource of 8,192 OIDs, each of which has an encoded length of 4 octets.
           </t>
           <t>
-            Additionally, Symantec have reserved all OIDs in the range from 1.3.101.8192 to 1.3.101.16383 to be used as Log IDs.
+            IANA is requested to establish a registry that will allocate Log IDs from this range.
           </t>
           <t>
-            TBD: policy for adding to the registry. And who's going to run the registry?
+            TBD: policy for adding to the registry. Perhaps "Expert Review"?
+          </t>
+        </section>
+        <section title="Log ID Registry 2" anchor="log_id_registry2">
+          <t>
+            Symantec has delegated the 1.3.101.80 arc to be used for allocating Log IDs. This is an unlimited resource, but only the 128 OIDs from 1.3.101.80.0 to 1.3.101.80.127 have an encoded length of only 4 octets.
+          </t>
+          <t>
+            IANA is requested to establish a registry that will allocate Log IDs from this arc.
+          </t>
+          <t>
+            TBD: policy for adding to the registry. Perhaps "Expert Review"?
           </t>
         </section>
       </section>
