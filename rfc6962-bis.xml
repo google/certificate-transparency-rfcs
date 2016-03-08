@@ -470,7 +470,7 @@ d0 d1   d2 d3           d0 d1   d2 d3  d4 d5</artwork>
       <section title="Log ID" anchor="log_id">
         <figure>
           <preamble>
-            Each log is uniquely identified by an OID. A log's operator MUST either allocate the OID themselves (from an arc that belongs to them) or request an OID from one of the two Log ID Registries (see <xref target="log_id_registry1"/> and <xref target="log_id_registry2"/>). The OID is specified in the log's metadata. Various data structures include the DER encoding of this OID, excluding the ASN.1 tag and length bytes, in an opaque vector:
+            Each log is uniquely identified by an OID. A log's operator MUST either allocate the OID themselves or request an OID from one of the two Log ID Registries (see <xref target="log_id_registry1"/> and <xref target="log_id_registry2"/>). The OID is specified in the log's metadata. Various data structures include the DER encoding of this OID, excluding the ASN.1 tag and length bytes, in an opaque vector:
           </preamble>
           <artwork>
     opaque LogID&lt;2..127&gt;;</artwork>
