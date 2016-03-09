@@ -959,7 +959,7 @@ messages.
             <t hangText="Inputs:">
               <list style="hanging">
                 <t hangText="hash:">
-                  A base64 encoded v1 leaf hash.
+                  A base64 encoded v2 leaf hash.
                 </t>
                 <t hangText="tree_size:">
                   The tree_size of the tree on which to base the proof, in decimal.
@@ -1006,7 +1006,7 @@ messages.
             <t hangText="Inputs:">
               <list style="hanging">
                 <t hangText="hash:">
-                  A base64 encoded v1 leaf hash.
+                  A base64 encoded v2 leaf hash.
                 </t>
                 <t hangText="tree_size:">
                   The tree_size of the tree on which to base the proofs, in decimal.
@@ -1101,13 +1101,7 @@ messages.
           </list>
         </t>
         <t>
-          Note that this message is not signed -- the <spanx style="verb">entries</spanx> data can be
-verified by constructing the Merkle Tree Hash corresponding to a retrieved
-STH. All leaves MUST be v1 or v2. However, a compliant v1 client MUST NOT construe an
-unrecognized LogEntryType value as an error. This means it
-may be unable to parse some entries, but note that each client can inspect the
-entries it does recognize as well as verify the integrity of the data by
-treating unrecognized leaves as opaque input to the tree.
+          Note that this message is not signed -- the <spanx style="verb">entries</spanx> data can be verified by constructing the Merkle Tree Hash corresponding to a retrieved STH. All leaves MUST be v2. However, a compliant v2 client MUST NOT construe an unrecognized TransItem type as an error. This means it may be unable to parse some entries, but note that each client can inspect the entries it does recognize as well as verify the integrity of the data by treating unrecognized leaves as opaque input to the tree.
         </t>
         <t>
           The <spanx style="verb">start</spanx> and <spanx style="verb">end</spanx> parameters SHOULD be within the range 0 &lt;= x &lt; <spanx style="verb">tree_size</spanx> as returned by <spanx style="verb">get-sth</spanx> in <xref target="get-sth"/>.
