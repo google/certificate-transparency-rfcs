@@ -412,7 +412,7 @@ d0 d1   d2 d3           d0 d1   d2 d3  d4 d5</artwork>
         A log is a single, append-only Merkle Tree of submitted certificate and precertificate entries.
       </t>
       <t>
-        When it receives a valid submission, the log MUST return an SCT that corresponds to the submitted certificate or precertificate. If the log has previously seen this valid submission, it MAY return the same SCT as it returned before. (Note that if a certificate was previously logged as a precertificate, then the precertificate's SCT of type <spanx style="verb">precert_sct</spanx> would not be appropriate; instead, a fresh SCT of type <spanx style="verb">x509_sct</spanx> should be generated).
+        When it receives a valid submission, the log MUST return an SCT that corresponds to the submitted certificate or precertificate. If the log has previously seen this valid submission, it SHOULD return the same SCT as it returned before (to reduce the ability to track clients as described in <xref target="deterministic_signatures"/>). Note that if a certificate was previously logged as a precertificate, then the precertificate's SCT of type <spanx style="verb">precert_sct</spanx> would not be appropriate; instead, a fresh SCT of type <spanx style="verb">x509_sct</spanx> should be generated.
       </t>
       <t>
         An SCT is the log's promise to incorporate the submitted entry in its Merkle Tree no later than a fixed amount of time, known as the Maximum Merge Delay (MMD), after the issuance of the SCT. Periodically, the log MUST append all its new entries to its Merkle Tree and sign the root of the tree.
@@ -1674,7 +1674,7 @@ certificates around the SCT timestamp.
           Violation of the append-only property can be detected by clients comparing their instances of the Signed Tree Heads. As soon as two conflicting Signed Tree Heads for the same log are detected, this is cryptographic proof of that log's misbehavior. There are various ways this could be done, for example via gossip (see <xref target="I-D.ietf-trans-gossip"/>) or peer-to-peer communications or by sending STHs to monitors (who could then directly check against their own copy of the relevant log).
         </t>
       </section>
-      <section title="Deterministic Signatures">
+      <section title="Deterministic Signatures" anchor="deterministic_signatures">
         <t>
           Logs are required to use deterministic signatures for the following reasons:
           <list style="symbols">
