@@ -1635,10 +1635,12 @@ instead on interested parties, such as domain owners, to monitor them and take
 corrective action when a misissue is detected.
         </t>
       </section>
-      <section title="Redaction of Public Domain Name Labels">
+      <section title="Avoiding Overly Redacting Domain Name Labels">
         <t>
-          Redaction of domain name labels carries the same risks as the use of wildcards (See Section 7.2 of <xref target="RFC6125"/>, for example). CAs should take care not to redact domain name labels in precertificates too broadly, so that the entirety of the domain space below the unredacted part of the domain name may be controlled by multiple entities, such as <xref target="Public.Suffix.List">public suffixes</xref> (e.g. <spanx style="verb">?.com</spanx> and <spanx style="verb">?.co.uk</spanx> would both be problematic). Logs MUST NOT reject any precertificate that is overly redacted but which is otherwise considered compliant. It is expected that monitors will treat overly redacted precertificates as potentially misissued. TLS clients MAY reject a certificate whose corresponding precertificate would be overly redacted, perhaps using the same mechanism for determining whether a wildcard in a domain name of a certificate is too broad.
+          Redaction of domain name labels carries the same risks as the use of wildcards (See Section 7.2 of <xref target="RFC6125"/>, for example). If the entirety of the domain space below the unredacted part of a domain name is not controlled by a single entity (e.g. <spanx style="verb">?.com</spanx>, <spanx style="verb">?.co.uk</spanx> and other <xref target="Public.Suffix.List">public suffixes</xref>), then the domain name may be considered by clients to be overly redacted.
         </t>
+        <t>
+          CAs should take care to avoid overly redacting domain names in precertificates. It is expected that monitors will treat precertificates that contain overly redacted domain names as potentially misissued. TLS clients MAY consider a certificate as non-compliant if the <xref target="reconstructing_tbscertificate">reconstructed TBSCertificate</xref> contains any overly redacted domain names."</t>
       </section>
       <section title="Misbehaving Logs">
         <t>
