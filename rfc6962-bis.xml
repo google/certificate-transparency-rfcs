@@ -1177,6 +1177,7 @@ entry specified by <spanx style="verb">start</spanx>.
               TLS clients may have policies related to the above risks requiring servers to present multiple SCTs or inclusion proofs. For example, at the time of writing, <xref target="Chromium.Log.Policy">Chromium</xref> requires multiple SCTs to be presented with EV certificates in order for the EV indicator to be shown.
             </t>
           </list>
+          To select the logs from which to obtain SCTs, a TLS server can, for example, examine the set of logs popular TLS clients accept and recognize.
         </t>
         <figure>
           <preamble>
