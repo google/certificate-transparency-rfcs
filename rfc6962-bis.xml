@@ -1319,12 +1319,15 @@ but it is expected there will be a variety.
             In addition to normal validation of the server certificate and its chain, TLS clients SHOULD validate each received SCT for which they have the corresponding log's metadata. To validate an SCT, a TLS client computes the signature input from the SCT data and the corresponding certificate, and then verifies the signature using the corresponding log's public key. TLS clients MUST NOT consider valid any SCT whose timestamp is in the future.
           </t>
           <t>
-            Since each received SCT may be valid either for the server certificate itself or for a <xref target="name_constrained">suitable name-constrained intermediate</xref>, TLS clients MAY need to use trial and error to determine which certificate in the chain is the certificate to which a received SCT corresponds.
+            Before considering any SCT to be invalid, the TLS client MUST attempt to validate it against the server certificate and against each of the zero or more <xref target="name_constrained">suitable name-constrained intermediates</xref> in the chain. These certificates may be evaluated in the order they appear in the chain, or, indeed, in any order.
           </t>
         </section>
         <section title="Validating inclusion proofs">
           <t>
-            TLS clients SHOULD also verify each received inclusion proof (see <xref target="verify_inclusion"/>) for which they have the corresponding log's metadata, to audit the log and gain confidence that the certificate is logged. Since each received inclusion proof may be valid either for the server certificate itself or for a <xref target="name_constrained">suitable name-constrained intermediate</xref>, TLS clients MAY need to use trial and error to determine which certificate in the chain is the certificate to which a received inclusion proof corresponds.
+            TLS clients SHOULD also verify each received inclusion proof (see <xref target="verify_inclusion"/>) for which they have the corresponding log's metadata, to audit the log and gain confidence that the certificate is logged.
+          </t>
+          <t>
+            Before considering any inclusion proof to be invalid, the TLS client MUST attempt to validate it against the server certificate and against each of the zero or more <xref target="name_constrained">suitable name-constrained intermediates</xref> in the chain. These certificates may be evaluated in the order they appear in the chain, or, indeed, in any order.
           </t>
           <t>
             After validating a received SCT, a TLS client MAY request a corresponding inclusion proof (if one is not already available) and then verify it. An inclusion proof can be requested directly from a log using <spanx style="verb">get-proof-by-hash</spanx> (<xref target="get-proof-by-hash"/>) or <spanx style="verb">get-all-by-hash</spanx> (<xref target="get-all-by-hash"/>), but note that this will disclose to the log which TLS server the client has been communicating with.
