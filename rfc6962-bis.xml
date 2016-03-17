@@ -1201,7 +1201,7 @@ entry specified by <spanx style="verb">start</spanx>.
       </section>
       <section title="TLS Extension" anchor="tls_transinfo_extension">
         <t>
-          Provided that a TLS client includes the <spanx style="verb">transparency_info</spanx> extension type in the ClientHello, the TLS server MAY include the <spanx style="verb">transparency_info</spanx> extension in the ServerHello with <spanx style="verb">extension_data</spanx> set to a <spanx style="verb">TransItemList</spanx>. The TLS server MUST NOT process or include this extension when a TLS session is resumed, since session resumption uses the original session information.
+          Provided that a TLS client includes the <spanx style="verb">transparency_info</spanx> extension type in the ClientHello, the TLS server MAY include the <spanx style="verb">transparency_info</spanx> extension in the ServerHello with <spanx style="verb">extension_data</spanx> set to a <spanx style="verb">TransItemList</spanx>. The TLS server SHOULD ignore any <spanx style="verb">extension_data</spanx> sent by the TLS client. Additionally, the TLS server MUST NOT process or include this extension when a TLS session is resumed, since session resumption uses the original session information.
         </t>
       </section>
     </section>
@@ -1294,10 +1294,7 @@ but it is expected there will be a variety.
       <section title="TLS Client" anchor="tls_clients">
         <section title="Receiving SCTs or inclusion proofs">
           <t>
-            TLS clients receive SCTs or inclusion proofs alongside or in certificates. TLS clients MUST implement all of the three mechanisms by which TLS servers may present SCTs (see <xref target="tls_servers"/>). TLS clients MAY also accept SCTs via the <spanx style="verb">status_request_v2</spanx> extension (<xref target='RFC6961'/>). TLS clients that support the <spanx style="verb">transparency_info</spanx> TLS extension SHOULD include it in ClientHello messages, with <spanx style="verb">extension_data</spanx> set to &lt;TBD&gt;.
-          </t>
-          <t>
-            TODO: What should the TLS client communicate in the extension_data? Version(s) of CT that it supports? Certain types of TransItem that it can handle? Whether or not it wants to gossip?
+            TLS clients receive SCTs or inclusion proofs alongside or in certificates. TLS clients MUST implement all of the three mechanisms by which TLS servers may present SCTs (see <xref target="tls_servers"/>). TLS clients MAY also accept SCTs via the <spanx style="verb">status_request_v2</spanx> extension (<xref target='RFC6961'/>). TLS clients that support the <spanx style="verb">transparency_info</spanx> TLS extension SHOULD include it in ClientHello messages, with empty <spanx style="verb">extension_data</spanx>.
           </t>
         </section>
         <section title="Reconstructing the TBSCertificate" anchor="reconstructing_tbscertificate">
