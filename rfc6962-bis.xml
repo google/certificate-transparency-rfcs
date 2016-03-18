@@ -1418,6 +1418,23 @@ but it is expected there will be a variety.
           Auditing ensures that the current published state of a log is reachable from previously published states that are known to be good, and that the promises made by the log in the form of SCTs have been kept.  Audits are performed by monitors or TLS clients.
         </t>
         <t>
+          In particular, there are four log behaviour properties that should be checked:
+          <list style="symbols">
+            <t>
+              The Maximum Merge Delay (MMD).
+            </t>
+            <t>
+              The STH Frequency Count.
+            </t>
+            <t>
+              The append-only property.
+            </t>
+            <t>
+              The consistency of the log view presented to all query sources.
+            </t>
+          </list>
+        </t>
+        <t>
           A benign, conformant log publishes a series of STHs over time, each derived from the previous STH and the submitted entries incorporated into the log since publication of the previous STH.  This can be proven through auditing of STHs.  SCTs returned to TLS clients can be audited by verifying against the accompanying certificate, and using Merkle Inclusion Proofs, against the log's Merkle tree.
         </t>
         <t>
@@ -1428,6 +1445,9 @@ but it is expected there will be a variety.
         </t>
         <t>
           A <xref target="tls_clients">TLS client</xref> can audit by verifying an SCT against any STH dated after the SCT timestamp + the Maximum Merge Delay by requesting a Merkle inclusion proof (<xref target="get-proof-by-hash"/>). It can also verify that the SCT corresponds to the certificate it arrived with (i.e. the log entry is that certificate, is a precertificate for that certificate or is an appropriate name-constrained intermediate [see <xref target="name_constrained"/>]).
+        </t>
+        <t>
+          Checking of the consistency of the log view presented to all entities is more difficult to perform because it requires a way to share log responses among a set of CT-aware entities, and is discussed in <xref target="misbehaving_logs"/>.
         </t>
         <t>
           The following algorithm outlines may be useful for clients that wish to perform various audit operations.
@@ -1639,11 +1659,9 @@ corrective action when a misissue is detected.
           CAs should take care to avoid overly redacting domain names in precertificates. It is expected that monitors will treat precertificates that contain overly redacted domain names as potentially misissued. TLS clients MAY consider a certificate to be non-compliant if the <xref target="reconstructing_tbscertificate">reconstructed TBSCertificate</xref> contains any overly redacted domain names.
         </t>
       </section>
-      <section title="Misbehaving Logs">
+      <section title="Misbehaving Logs" anchor="misbehaving_logs">
         <t>
-          A log can misbehave in several ways. Examples include failing to incorporate a
-certificate with an SCT in the Merkle Tree within the MMD or by presenting different, conflicting
-views of the Merkle Tree at different times and/or to different parties.
+          A log can misbehave in several ways. Examples include failing to incorporate a certificate with an SCT in the Merkle Tree within the MMD, presenting different, conflicting views of the Merkle Tree at different times and/or to different parties and issuing STHs too frequently.
 Such misbehavior is detectable and the <xref target="I-D.ietf-trans-threat-analysis"/> provides more details on how
 this can be done.
         </t>
@@ -1652,13 +1670,12 @@ this can be done.
 Merkle inclusion proof (<xref target="get-proof-by-hash"/>) for each observed SCT.
 These checks can be asynchronous and
 need only be done once per each certificate. In order to protect the clients'
-privacy, these checks need not reveal the exact certificate to the log. Clients
-can instead request the proof from a trusted auditor (since anyone can compute
-the proofs from the log) or request Merkle inclusion proofs for a batch of
-certificates around the SCT timestamp.
+privacy, these checks need not reveal the exact certificate to the log. Instead, clients
+can request the proof from a trusted auditor (since anyone can compute
+the proofs from the log) or communicate with the log via proxies.
         </t>
         <t>
-          Violation of the append-only property can be detected by clients comparing their instances of the Signed Tree Heads. As soon as two conflicting Signed Tree Heads for the same log are detected, this is cryptographic proof of that log's misbehavior. There are various ways this could be done, for example via gossip (see <xref target="I-D.ietf-trans-gossip"/>) or peer-to-peer communications or by sending STHs to monitors (who could then directly check against their own copy of the relevant log).
+          Violation of the append-only property or the STH issuance rate limit can be detected by clients comparing their instances of the Signed Tree Heads. There are various ways this could be done, for example via gossip (see <xref target="I-D.ietf-trans-gossip"/>) or peer-to-peer communications or by sending STHs to monitors (who could then directly check against their own copy of the relevant log). A proof of misbehavior in such cases would be a series of STHs that were issued too closely together, proving violation of the STH issuance rate limit, or an STH with a root hash that does not match the one calculated from a copy of the log, proving violation of the append-only property.
         </t>
       </section>
       <section title="Deterministic Signatures" anchor="deterministic_signatures">
