@@ -1592,11 +1592,11 @@ but it is expected there will be a variety.
       </section>
       <section title="Object Identifiers">
         <t>
-          This document uses object identifiers (OIDs) to identify Log IDs (see <xref target="log_id"/>), the precertificate CMS <spanx style="verb">eContentType</spanx> (see <xref target="Precertificates"/>), and X.509v3 extensions in certificates (see <xref target="redacting_subdomains"/>, <xref target="name_constrained"/> and <xref target="cert_transinfo_extension"/>) and OCSP responses (see <xref target="ocsp_transinfo_extension"/>). The OIDs are defined in an arc that belongs to Symantec. This arc was selected due to its short encoding.
+          This document uses object identifiers (OIDs) to identify Log IDs (see <xref target="log_id"/>), the precertificate CMS <spanx style="verb">eContentType</spanx> (see <xref target="Precertificates"/>), and X.509v3 extensions in certificates (see <xref target="redacting_subdomains"/>, <xref target="name_constrained"/> and <xref target="cert_transinfo_extension"/>) and OCSP responses (see <xref target="ocsp_transinfo_extension"/>). The OIDs are defined in an arc that was selected due to its short encoding.
         </t>
         <section title="Log ID Registry 1" anchor="log_id_registry1">
           <t>
-            Symantec has reserved all OIDs in the range from 1.3.101.8192 to 1.3.101.16383 to be allocatable as Log IDs. This is a limited resource of 8,192 OIDs, each of which has an encoded length of 4 octets.
+            All OIDs in the range from 1.3.101.8192 to 1.3.101.16383 have been reserved. This is a limited resource of 8,192 OIDs, each of which has an encoded length of 4 octets.
           </t>
           <t>
             IANA is requested to establish a registry that will allocate Log IDs from this range.
@@ -1607,7 +1607,7 @@ but it is expected there will be a variety.
         </section>
         <section title="Log ID Registry 2" anchor="log_id_registry2">
           <t>
-            Symantec has delegated the 1.3.101.80 arc to be used for allocating Log IDs. This is an unlimited resource, but only the 128 OIDs from 1.3.101.80.0 to 1.3.101.80.127 have an encoded length of only 4 octets.
+            The 1.3.101.80 arc has been delegated. This is an unlimited resource, but only the 128 OIDs from 1.3.101.80.0 to 1.3.101.80.127 have an encoded length of only 4 octets.
           </t>
           <t>
             IANA is requested to establish a registry that will allocate Log IDs from this arc.
@@ -1698,7 +1698,7 @@ certificates around the SCT timestamp.
         The authors would like to thank Erwann Abelea, Robin Alden, Al Cutter, Francis Dupont, Adam Eijdenberg, Stephen Farrell, Daniel Kahn Gillmor, Paul Hadfield, Brad Hill, Jeff Hodges, Paul Hoffman, Jeffrey Hutzelman, Kat Joyce, Stephen Kent, SM, Alexey Melnikov, Linus Nordberg, Chris Palmer, Trevor Perrin, Pierre Phaneuf, Melinda Shore, Ryan Sleevi, Martin Smith, Carl Wallace and Paul Wouters for their valuable contributions.
       </t>
       <t>
-        A big thank you to Symantec for kindly donating the OIDs used in this document.
+        A big thank you to Symantec for kindly donating the OIDs from the 1.3.101 arc that are used in this document.
       </t>
     </section>
   </middle>
