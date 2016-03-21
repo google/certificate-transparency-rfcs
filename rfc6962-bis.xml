@@ -412,7 +412,7 @@ d0 d1   d2 d3           d0 d1   d2 d3  d4 d5</artwork>
         A log is a single, append-only Merkle Tree of submitted certificate and precertificate entries.
       </t>
       <t>
-        When it receives a valid submission, the log MUST return an SCT that corresponds to the submitted certificate or precertificate. If the log has previously seen this valid submission, it SHOULD return the same SCT as it returned before (to reduce the ability to track clients as described in <xref target="deterministic_signatures"/>). Note that if a certificate was previously logged as a precertificate, then the precertificate's SCT of type <spanx style="verb">precert_sct</spanx> would not be appropriate; instead, a fresh SCT of type <spanx style="verb">x509_sct</spanx> should be generated.
+        When it receives a valid submission, the log MUST return an SCT that corresponds to the submitted certificate or precertificate. If the log has previously seen this valid submission, it SHOULD return the same SCT as it returned before (to reduce the ability to track clients as described in <xref target="deterministic_signatures"/>). Note that if a certificate was previously logged as a precertificate, then the precertificate's SCT of type <spanx style="verb">precert_sct_v2</spanx> would not be appropriate; instead, a fresh SCT of type <spanx style="verb">x509_sct_v2</spanx> should be generated.
       </t>
       <t>
         An SCT is the log's promise to incorporate the submitted entry in its Merkle Tree no later than a fixed amount of time, known as the Maximum Merge Delay (MMD), after the issuance of the SCT. Periodically, the log MUST append all its new entries to its Merkle Tree and sign the root of the tree.
@@ -486,45 +486,43 @@ d0 d1   d2 d3           d0 d1   d2 d3  d4 d5</artwork>
           </preamble>
           <artwork>
     enum {
-        v1(0), v2(1), (255)
-    } Version;
-
-    enum {
-        x509_entry(0), precert_entry(1), x509_sct(2), precert_sct(3),
-        tree_head(4), signed_tree_head(5), consistency_proof(6),
-        inclusion_proof(7), (65535)
-    } TransType;
+        x509_entry_v2(1), precert_entry_v2(2), x509_sct_v2(3), precert_sct_v2(4),
+        tree_head_v2(5), signed_tree_head_v2(6), consistency_proof_v2(7),
+        inclusion_proof_v2(8), (65535)
+    } VersionedTransType;
 
     struct {
-        Version version;
-        TransType type;
-        select (type) {
-            case x509_entry: TimestampedCertificateEntryDataV2;
-            case precert_entry: TimestampedCertificateEntryDataV2;
-            case x509_sct: SignedCertificateTimestampDataV2;
-            case precert_sct: SignedCertificateTimestampDataV2;
-            case tree_head: TreeHeadDataV2;
-            case signed_tree_head: SignedTreeHeadDataV2;
-            case consistency_proof: ConsistencyProofDataV2;
-            case inclusion_proof: InclusionProofDataV2;
+        VersionedTransType versioned_type;
+        select (versioned_type) {
+            case x509_entry_v2: TimestampedCertificateEntryDataV2;
+            case precert_entry_v2: TimestampedCertificateEntryDataV2;
+            case x509_sct_v2: SignedCertificateTimestampDataV2;
+            case precert_sct_v2: SignedCertificateTimestampDataV2;
+            case tree_head_v2: TreeHeadDataV2;
+            case signed_tree_head_v2: SignedTreeHeadDataV2;
+            case consistency_proof_v2: ConsistencyProofDataV2;
+            case inclusion_proof_v2: InclusionProofDataV2;
         } data;
     } TransItem;
           </artwork>
         </figure>
         <t>
-          <spanx style="verb">version</spanx> is the earliest version of this protocol to which the encapsulated data structure conforms. This document is v2. Note that <xref target="RFC6962">v1</xref> did not define <spanx style="verb">TransItem</spanx>, but this document provides guidelines (see <xref target="v1_coexistence"/>) on how v2 implementations can co-exist with v1 implementations. Note also that, since each <spanx style="verb">TransItem</spanx> object is individually versioned, the version should be increased only if changes to it are made that are not backwards-compatible. The addition of encapsulated data structures can be done by adding <spanx style="verb">TransType</spanx> values without increasing the version.
-        </t>
-        <t>
-          <spanx style="verb">type</spanx> is the type of the encapsulated data structure. (Note that <spanx style="verb">TransType</spanx> combines the v1 type enumerations <spanx style="verb">LogEntryType</spanx>, <spanx style="verb">SignatureType</spanx> and <spanx style="verb">MerkleLeafType</spanx>). Future revisions of this protocol may add new <spanx style="verb">TransType</spanx> values.
+          <spanx style="verb">versioned_type</spanx> is the type of the encapsulated data structure and the earliest version of this protocol to which it conforms. This document is v2.
         </t>
         <t>
           <spanx style="verb">data</spanx> is the encapsulated data structure. The various structures named with the <spanx style="verb">DataV2</spanx> suffix are defined in later sections of this document.
+        </t>
+        <t>
+          Note that <spanx style="verb">VersionedTransType</spanx> combines the <xref target="RFC6962">v1</xref> type enumerations <spanx style="verb">Version</spanx>, <spanx style="verb">LogEntryType</spanx>, <spanx style="verb">SignatureType</spanx> and <spanx style="verb">MerkleLeafType</spanx>. Note also that v1 did not define <spanx style="verb">TransItem</spanx>, but this document provides guidelines (see <xref target="v1_coexistence"/>) on how v2 implementations can co-exist with v1 implementations.
+        </t>
+        <t>
+          Future versions of this protocol may reuse <spanx style="verb">VersionedTransType</spanx> values defined in this document as long as the corresponding data structures are not modified, and may add new <spanx style="verb">VersionedTransType</spanx> values for new or modified data structures.
         </t>
       </section>
       <section title="Merkle Tree Leaves" anchor="tree_leaves">
         <figure>
           <preamble>
-            The leaves of a log's Merkle Tree correspond to the log's entries (see <xref target="log_entries"/>). Each leaf is the <xref target="mht">leaf hash</xref> of a <spanx style="verb">TransItem</spanx> structure of type <spanx style="verb">x509_entry</spanx> or <spanx style="verb">precert_entry</spanx>, which in this version (v2) encapsulates a <spanx style="verb">TimestampedCertificateEntryDataV2</spanx> structure. Note that leaf hashes are calculated as HASH(0x00 || TransItem), where the hashing algorithm is specified in the log's metadata.
+            The leaves of a log's Merkle Tree correspond to the log's entries (see <xref target="log_entries"/>). Each leaf is the <xref target="mht">leaf hash</xref> of a <spanx style="verb">TransItem</spanx> structure of type <spanx style="verb">x509_entry_v2</spanx> or <spanx style="verb">precert_entry_v2</spanx>, which encapsulates a <spanx style="verb">TimestampedCertificateEntryDataV2</spanx> structure. Note that leaf hashes are calculated as HASH(0x00 || TransItem), where the hashing algorithm is specified in the log's metadata.
           </preamble>
           <artwork>
     opaque TBSCertificate&lt;1..2^24-1&gt;;
@@ -552,7 +550,7 @@ d0 d1   d2 d3           d0 d1   d2 d3  d4 d5</artwork>
       <section title="Signed Certificate Timestamp (SCT)" anchor="sct">
         <figure>
           <preamble>
-            An SCT is a <spanx style="verb">TransItem</spanx> structure of type <spanx style="verb">x509_sct</spanx> or <spanx style="verb">precert_sct</spanx>, which in this version (v2) encapsulates a <spanx style="verb">SignedCertificateTimestampDataV2</spanx> structure:
+            An SCT is a <spanx style="verb">TransItem</spanx> structure of type <spanx style="verb">x509_sct_v2</spanx> or <spanx style="verb">precert_sct_v2</spanx>, which encapsulates a <spanx style="verb">SignedCertificateTimestampDataV2</spanx> structure:
           </preamble>
           <artwork>
     enum {
@@ -592,13 +590,13 @@ d0 d1   d2 d3           d0 d1   d2 d3  d4 d5</artwork>
           The encoding of the digitally-signed element is defined in <xref target='RFC5246'/>.
         </t>
         <t>
-          <spanx style="verb">timestamped_entry</spanx> is a <spanx style="verb">TransItem</spanx> structure that MUST be of type <spanx style="verb">x509_entry</spanx> or <spanx style="verb">precert_entry</spanx> (see <xref target="tree_leaves"/>) and MUST have an empty <spanx style="verb">item_extensions</spanx> vector.
+          <spanx style="verb">timestamped_entry</spanx> is a <spanx style="verb">TransItem</spanx> structure that MUST be of type <spanx style="verb">x509_entry_v2</spanx> or <spanx style="verb">precert_entry_v2</spanx> (see <xref target="tree_leaves"/>) and MUST have an empty <spanx style="verb">item_extensions</spanx> vector.
         </t>
       </section>
       <section title="Merkle Tree Head" anchor="tree_head">
         <figure>
           <preamble>
-            The log stores information about its Merkle Tree in a <spanx style="verb">TransItem</spanx> structure of type <spanx style="verb">tree_head</spanx>, which in this version (v2) encapsulates a <spanx style="verb">TreeHeadDataV2</spanx> structure:
+            The log stores information about its Merkle Tree in a <spanx style="verb">TransItem</spanx> structure of type <spanx style="verb">tree_head_v2</spanx>, which encapsulates a <spanx style="verb">TreeHeadDataV2</spanx> structure:
           </preamble>
           <artwork>
     opaque NodeHash[HASH_SIZE];
@@ -629,7 +627,7 @@ d0 d1   d2 d3           d0 d1   d2 d3  d4 d5</artwork>
         </t>
         <figure>
           <preamble>
-            An STH is a <spanx style="verb">TransItem</spanx> structure of type <spanx style="verb">signed_tree_head</spanx>, which in this version (v2) encapsulates a <spanx style="verb">SignedTreeHeadDataV2</spanx> structure:
+            An STH is a <spanx style="verb">TransItem</spanx> structure of type <spanx style="verb">signed_tree_head_v2</spanx>, which encapsulates a <spanx style="verb">SignedTreeHeadDataV2</spanx> structure:
           </preamble>
           <artwork>
     enum {
@@ -674,13 +672,13 @@ d0 d1   d2 d3           d0 d1   d2 d3  d4 d5</artwork>
           <spanx style="verb">sth_extensions</spanx> is a vector of 0 or more STH extensions. This vector MUST NOT include more than one extension with the same <spanx style="verb">sth_extension_type</spanx>. The extensions in the vector MUST be ordered by the value of the <spanx style="verb">sth_extension_type</spanx> field, smallest value first. If an implementation sees an extension that it does not understand, it SHOULD ignore that extension. Furthermore, an implementation MAY choose to ignore any extension(s) that it does understand.
         </t>
         <t>
-          <spanx style="verb">merkle_tree_head</spanx> is a <spanx style="verb">TransItem</spanx> structure that MUST be of type <spanx style="verb">tree_head</spanx> (see <xref target="tree_head"/>) and MUST have an empty <spanx style="verb">item_extensions</spanx> vector.
+          <spanx style="verb">merkle_tree_head</spanx> is a <spanx style="verb">TransItem</spanx> structure that MUST be of type <spanx style="verb">tree_head_v2</spanx> (see <xref target="tree_head"/>) and MUST have an empty <spanx style="verb">item_extensions</spanx> vector.
         </t>
       </section>
       <section title="Merkle Consistency Proofs">
         <figure>
           <preamble>
-            To prepare a Merkle Consistency Proof for distribution to clients, the log produces a <spanx style="verb">TransItem</spanx> structure of type <spanx style="verb">consistency_proof</spanx>, which in this version (v2) encapsulates a <spanx style="verb">ConsistencyProofDataV2</spanx> structure:
+            To prepare a Merkle Consistency Proof for distribution to clients, the log produces a <spanx style="verb">TransItem</spanx> structure of type <spanx style="verb">consistency_proof_v2</spanx>, which encapsulates a <spanx style="verb">ConsistencyProofDataV2</spanx> structure:
           </preamble>
           <artwork>
     struct {
@@ -706,7 +704,7 @@ d0 d1   d2 d3           d0 d1   d2 d3  d4 d5</artwork>
       <section title="Merkle Inclusion Proofs">
         <figure>
           <preamble>
-            To prepare a Merkle Inclusion Proof for distribution to clients, the log produces a <spanx style="verb">TransItem</spanx> structure of type <spanx style="verb">inclusion_proof</spanx>, which in this version (v2) encapsulates an <spanx style="verb">InclusionProofDataV2</spanx> structure:
+            To prepare a Merkle Inclusion Proof for distribution to clients, the log produces a <spanx style="verb">TransItem</spanx> structure of type <spanx style="verb">inclusion_proof_v2</spanx>, which encapsulates an <spanx style="verb">InclusionProofDataV2</spanx> structure:
           </preamble>
           <artwork>
     struct {
@@ -812,7 +810,7 @@ messages.
             <t hangText="Outputs:">
               <list style="hanging">
                 <t hangText="sct:">
-                  A base64 encoded <spanx style="verb">TransItem</spanx> of type <spanx style="verb">x509_sct</spanx>, signed by this log, that corresponds to the submitted certificate.
+                  A base64 encoded <spanx style="verb">TransItem</spanx> of type <spanx style="verb">x509_sct_v2</spanx>, signed by this log, that corresponds to the submitted certificate.
                 </t>
               </list>
             </t>
@@ -864,7 +862,7 @@ messages.
             <t hangText="Outputs:">
               <list style="hanging">
                 <t hangText="sct:">
-                  A base64 encoded <spanx style="verb">TransItem</spanx> of type <spanx style="verb">precert_sct</spanx>, signed by this log, that corresponds to the submitted precertificate.
+                  A base64 encoded <spanx style="verb">TransItem</spanx> of type <spanx style="verb">precert_sct_v2</spanx>, signed by this log, that corresponds to the submitted precertificate.
                 </t>
               </list>
             </t>
@@ -887,7 +885,7 @@ messages.
             <t hangText="Outputs:">
               <list style="hanging">
                 <t hangText="sth:">
-                  A base64 encoded <spanx style="verb">TransItem</spanx> of type <spanx style="verb">signed_tree_head</spanx>, signed by this log, that is no older than the log's MMD.
+                  A base64 encoded <spanx style="verb">TransItem</spanx> of type <spanx style="verb">signed_tree_head_v2</spanx>, signed by this log, that is no older than the log's MMD.
                 </t>
               </list>
             </t>
@@ -917,10 +915,10 @@ messages.
             <t hangText="Outputs:">
               <list style="hanging">
                 <t hangText="consistency:">
-                  A base64 encoded <spanx style="verb">TransItem</spanx> of type <spanx style="verb">consistency_proof</spanx>, whose <spanx style="verb">tree_size_1</spanx> MUST match the <spanx style="verb">first</spanx> input. If the <spanx style="verb">sth</spanx> output is omitted, then <spanx style="verb">tree_size_2</spanx> MUST match the <spanx style="verb">second</spanx> input.
+                  A base64 encoded <spanx style="verb">TransItem</spanx> of type <spanx style="verb">consistency_proof_v2</spanx>, whose <spanx style="verb">tree_size_1</spanx> MUST match the <spanx style="verb">first</spanx> input. If the <spanx style="verb">sth</spanx> output is omitted, then <spanx style="verb">tree_size_2</spanx> MUST match the <spanx style="verb">second</spanx> input.
                 </t>
                 <t hangText="sth:">
-                  A base64 encoded <spanx style="verb">TransItem</spanx> of type <spanx style="verb">signed_tree_head</spanx>, signed by this log.
+                  A base64 encoded <spanx style="verb">TransItem</spanx> of type <spanx style="verb">signed_tree_head_v2</spanx>, signed by this log.
                 </t>
               </list>
             </t>
@@ -966,10 +964,10 @@ messages.
             <t hangText="Outputs:">
               <list style="hanging">
                 <t hangText="inclusion:">
-                  A base64 encoded <spanx style="verb">TransItem</spanx> of type <spanx style="verb">inclusion_proof</spanx> whose <spanx style="verb">inclusion_path</spanx> array of Merkle Tree nodes proves the inclusion of the chosen certificate in the selected STH.
+                  A base64 encoded <spanx style="verb">TransItem</spanx> of type <spanx style="verb">inclusion_proof_v2</spanx> whose <spanx style="verb">inclusion_path</spanx> array of Merkle Tree nodes proves the inclusion of the chosen certificate in the selected STH.
                 </t>
                 <t hangText="sth:">
-                  A base64 encoded <spanx style="verb">TransItem</spanx> of type <spanx style="verb">signed_tree_head</spanx>, signed by this log.
+                  A base64 encoded <spanx style="verb">TransItem</spanx> of type <spanx style="verb">signed_tree_head_v2</spanx>, signed by this log.
                 </t>
               </list>
             </t>
@@ -1032,13 +1030,13 @@ messages.
             <t hangText="Outputs:">
               <list style="hanging">
                 <t hangText="inclusion:">
-                  A base64 encoded <spanx style="verb">TransItem</spanx> of type <spanx style="verb">inclusion_proof</spanx> whose <spanx style="verb">inclusion_path</spanx> array of Merkle Tree nodes proves the inclusion of the chosen certificate in the selected STH.
+                  A base64 encoded <spanx style="verb">TransItem</spanx> of type <spanx style="verb">inclusion_proof_v2</spanx> whose <spanx style="verb">inclusion_path</spanx> array of Merkle Tree nodes proves the inclusion of the chosen certificate in the selected STH.
                 </t>
                 <t hangText="sth:">
-                  A base64 encoded <spanx style="verb">TransItem</spanx> of type <spanx style="verb">signed_tree_head</spanx>, signed by this log.
+                  A base64 encoded <spanx style="verb">TransItem</spanx> of type <spanx style="verb">signed_tree_head_v2</spanx>, signed by this log.
                 </t>
                 <t hangText="consistency:">
-                  A base64 encoded <spanx style="verb">TransItem</spanx> of type <spanx style="verb">consistency_proof</spanx> that proves the consistency of the requested STH and the returned STH.
+                  A base64 encoded <spanx style="verb">TransItem</spanx> of type <spanx style="verb">consistency_proof_v2</spanx> that proves the consistency of the requested STH and the returned STH.
                 </t>
               </list>
             </t>
@@ -1077,18 +1075,18 @@ messages.
                   An array of objects, each consisting of
                   <list style="hanging">
                     <t hangText="leaf_input:">
-                      The base64 encoded <spanx style="verb">TransItem</spanx> structure of type <spanx style="verb">x509_entry</spanx> or <spanx style="verb">precert_entry</spanx> (see <xref target="tree_leaves"/>).
+                      The base64 encoded <spanx style="verb">TransItem</spanx> structure of type <spanx style="verb">x509_entry_v2</spanx> or <spanx style="verb">precert_entry_v2</spanx> (see <xref target="tree_leaves"/>).
                     </t>
                     <t hangText="log_entry:">
-                      The base64 encoded log entry (see <xref target="log_entries"/>). In the case of an <spanx style="verb">x509_entry</spanx> entry, this is the whole <spanx style="verb">X509ChainEntry</spanx>; and in the case of a <spanx style="verb">precert_entry</spanx>, this is the whole <spanx style="verb">PrecertChainEntryV2</spanx>.
+                      The base64 encoded log entry (see <xref target="log_entries"/>). In the case of an <spanx style="verb">x509_entry_v2</spanx> entry, this is the whole <spanx style="verb">X509ChainEntry</spanx>; and in the case of a <spanx style="verb">precert_entry_v2</spanx>, this is the whole <spanx style="verb">PrecertChainEntryV2</spanx>.
                     </t>
                     <t hangText="sct:">
-                      A base64 encoded <spanx style="verb">TransItem</spanx> of type <spanx style="verb">x509_sct</spanx> or <spanx style="verb">precert_sct</spanx> corresponding to this log entry. Note that more than one SCT may have been returned for the same entry - only one of those is returned in this field. It may not be possible to retrieve others.
+                      A base64 encoded <spanx style="verb">TransItem</spanx> of type <spanx style="verb">x509_sct_v2</spanx> or <spanx style="verb">precert_sct_v2</spanx> corresponding to this log entry. Note that more than one SCT may have been returned for the same entry - only one of those is returned in this field. It may not be possible to retrieve others.
                     </t>
                   </list>
                 </t>
                 <t hangText="sth:">
-                  A base64 encoded <spanx style="verb">TransItem</spanx> of type <spanx style="verb">signed_tree_head</spanx>, signed by this log.
+                  A base64 encoded <spanx style="verb">TransItem</spanx> of type <spanx style="verb">signed_tree_head_v2</spanx>, signed by this log.
                 </t>
               </list>
             </t>
@@ -1306,7 +1304,7 @@ but it is expected there will be a variety.
             A certificate with redacted labels where one of the redacted labels is <spanx style="verb">*</spanx> MUST NOT be considered compliant.
           </t>
           <t>
-            If the SCT checked is for a Precertificate (where the <spanx style="verb">type</spanx> of the <spanx style="verb">TransItem</spanx> is <spanx style="verb">precert_sct</spanx>), then the client SHOULD also remove embedded v1 SCTs, identified by OID 1.3.6.1.4.1.11129.2.4.2 (See Section 3.3. of <xref target="RFC6962"/>), in the process of reconstructing the TBSCertificate. That is to allow embedded v1 and v2 SCTs to co-exist in a certificate (See <xref target="v1_coexistence"/>).
+            If the SCT checked is for a Precertificate (where the <spanx style="verb">type</spanx> of the <spanx style="verb">TransItem</spanx> is <spanx style="verb">precert_sct_v2</spanx>), then the client SHOULD also remove embedded v1 SCTs, identified by OID 1.3.6.1.4.1.11129.2.4.2 (See Section 3.3. of <xref target="RFC6962"/>), in the process of reconstructing the TBSCertificate. That is to allow embedded v1 and v2 SCTs to co-exist in a certificate (See <xref target="v1_coexistence"/>).
           </t>
         </section>
         <section title="Validating SCTs">
@@ -1436,7 +1434,7 @@ but it is expected there will be a variety.
         </t>
         <section title="Verifying an inclusion proof" anchor="verify_inclusion">
           <t>
-            When a client has received a <spanx style="verb">TransItem</spanx> of type <spanx style="verb">inclusion_proof</spanx> and wishes to verify inclusion of an input <spanx style="verb">hash</spanx> for an STH with a given <spanx style="verb">tree_size</spanx> and <spanx style="verb">root_hash</spanx>, the following algorithm may be used to prove the <spanx style="verb">hash</spanx> was included in the <spanx style="verb">root_hash</spanx>:
+            When a client has received a <spanx style="verb">TransItem</spanx> of type <spanx style="verb">inclusion_proof_v2</spanx> and wishes to verify inclusion of an input <spanx style="verb">hash</spanx> for an STH with a given <spanx style="verb">tree_size</spanx> and <spanx style="verb">root_hash</spanx>, the following algorithm may be used to prove the <spanx style="verb">hash</spanx> was included in the <spanx style="verb">root_hash</spanx>:
             <list style="numbers">
               <t>Compare <spanx style="verb">leaf_index</spanx> against <spanx style="verb">tree_size</spanx>. If <spanx style="verb">leaf_index</spanx> is greater than or equal to <spanx style="verb">tree_size</spanx> fail the proof verification.</t>
               <t>Set <spanx style="verb">fn</spanx> to <spanx style="verb">leaf_index</spanx> and <spanx style="verb">sn</spanx> to <spanx style="verb">tree_size - 1</spanx>.</t>
@@ -1464,7 +1462,7 @@ but it is expected there will be a variety.
         </section>
         <section title="Verifying consistency between two STHs" anchor="verify_consistency">
           <t>
-            When a client has an STH <spanx style="verb">first_hash</spanx> for tree size <spanx style="verb">first</spanx>, an STH <spanx style="verb">second_hash</spanx> for tree size <spanx style="verb">second</spanx> where <spanx style="verb">0 &lt; first &lt; second</spanx>, and has received a <spanx style="verb">TransItem</spanx> of type <spanx style="verb">consistency_proof</spanx> that they wish to use to verify both hashes, the following algorithm may be used:
+            When a client has an STH <spanx style="verb">first_hash</spanx> for tree size <spanx style="verb">first</spanx>, an STH <spanx style="verb">second_hash</spanx> for tree size <spanx style="verb">second</spanx> where <spanx style="verb">0 &lt; first &lt; second</spanx>, and has received a <spanx style="verb">TransItem</spanx> of type <spanx style="verb">consistency_proof_v2</spanx> that they wish to use to verify both hashes, the following algorithm may be used:
             <list style="numbers">
               <t>If <spanx style="verb">first</spanx> is an exact power of 2, then prepend <spanx style="verb">first_hash</spanx> to the <spanx style="verb">consistency_path</spanx> array.</t>
               <t>Set <spanx style="verb">fn</spanx> to <spanx style="verb">first - 1</spanx> and <spanx style="verb">sn</spanx> to <spanx style="verb">second - 1</spanx>.</t>
