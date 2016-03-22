@@ -516,7 +516,7 @@ d0 d1   d2 d3           d0 d1   d2 d3  d4 d5</artwork>
           Note that <spanx style="verb">VersionedTransType</spanx> combines the <xref target="RFC6962">v1</xref> type enumerations <spanx style="verb">Version</spanx>, <spanx style="verb">LogEntryType</spanx>, <spanx style="verb">SignatureType</spanx> and <spanx style="verb">MerkleLeafType</spanx>. Note also that v1 did not define <spanx style="verb">TransItem</spanx>, but this document provides guidelines (see <xref target="v1_coexistence"/>) on how v2 implementations can co-exist with v1 implementations.
         </t>
         <t>
-          Future versions of this protocol may add new <spanx style="verb">VersionedTransType</spanx> values for new data structures, but need only do this for existing data structures that are changed in a manner that is backwards-incompatible.
+          Future versions of this protocol may reuse <spanx style="verb">VersionedTransType</spanx> values defined in this document as long as the corresponding data structures are not modified, and may add new <spanx style="verb">VersionedTransType</spanx> values for new or modified data structures.
         </t>
       </section>
       <section title="Merkle Tree Leaves" anchor="tree_leaves">
