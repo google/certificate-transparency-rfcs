@@ -479,16 +479,20 @@ d0 d1   d2 d3           d0 d1   d2 d3  d4 d5</artwork>
           Note that the ASN.1 length and the opaque vector length are identical in size (1 byte) and value, so the DER encoding of the OID can be reproduced simply by prepending an OBJECT IDENTIFIER tag (0x06) to the opaque vector length and contents.
         </t>
       </section>
-      <section title="The TransItem Structure">
+      <section title="TransItem Structure">
         <figure>
           <preamble>
-            Various data structures produced by logs are encapsulated in the <spanx style="verb">TransItem</spanx> structure to ensure that the type and version of each one is identified in a common fashion:
+            Various data structures are encapsulated in the <spanx style="verb">TransItem</spanx> structure to ensure that the type and version of each one is identified in a common fashion:
           </preamble>
           <artwork>
     enum {
-        x509_entry_v2(1), precert_entry_v2(2), x509_sct_v2(3), precert_sct_v2(4),
-        tree_head_v2(5), signed_tree_head_v2(6), consistency_proof_v2(7),
-        inclusion_proof_v2(8), (65535)
+        reserved(0),
+        x509_entry_v2(1), precert_entry_v2(2),
+        x509_sct_v2(3), precert_sct_v2(4),
+        tree_head_v2(5), signed_tree_head_v2(6),
+        consistency_proof_v2(7), inclusion_proof_v2(8),
+        x509_sct_with_proof_v2(9), precert_sct_with_proof_v2(10),
+        (65535)
     } VersionedTransType;
 
     struct {
@@ -502,6 +506,8 @@ d0 d1   d2 d3           d0 d1   d2 d3  d4 d5</artwork>
             case signed_tree_head_v2: SignedTreeHeadDataV2;
             case consistency_proof_v2: ConsistencyProofDataV2;
             case inclusion_proof_v2: InclusionProofDataV2;
+            case x509_sct_with_proof_v2: SCTWithProofDataV2;
+            case precert_sct_with_proof_v2: SCTWithProofDataV2;
         } data;
     } TransItem;
           </artwork>
@@ -1145,13 +1151,13 @@ entry specified by <spanx style="verb">start</spanx>.
     </section>
     <section title="TLS Servers" anchor="tls_servers">
       <t>
-        TLS servers MUST use at least one of the three mechanisms listed below to present one or more SCTs from one or more logs to each TLS client during TLS handshakes, where each SCT corresponds to the server certificate or to a name-constrained intermediate the server certificate chains to. TLS servers SHOULD present corresponding inclusion proofs together with Signed Tree Heads (<spanx style="verb">TransItem</spanx> of types <spanx style="verb">inclusion_proof_v2</spanx> or <spanx style="verb">signed_tree_head_v2</spanx>) in addition to the SCTs. When presented, the inclusion proof MUST be for computing the root in the accompanying Signed Tree Head (presenting inclusion proofs increases client privacy by reducing the inclusion checking to STH consistency checking and reduces load on log servers).
+        TLS servers MUST use at least one of the three mechanisms listed below to present one or more SCTs from one or more logs to each TLS client during TLS handshakes, where each SCT corresponds to the server certificate or to a name-constrained intermediate the server certificate chains to. TLS servers SHOULD also present corresponding inclusion proofs and STHs (see <xref target="sct_with_proof"/>).
       </t>
       <t>
         Three mechanisms are provided because they have different tradeoffs.
         <list style="symbols">
           <t>
-            A TLS extension (Section 7.4.1.4 of <xref target='RFC5246'/>) with type <spanx style="verb">transparency_info</spanx> (see <xref target="tls_transinfo_extension"/>). This mechanism allows TLS servers to participate in CT without the cooperation of CAs, unlike the other two mechanisms. It also allows SCTs to be updated on the fly.
+            A TLS extension (Section 7.4.1.4 of <xref target='RFC5246'/>) with type <spanx style="verb">transparency_info</spanx> (see <xref target="tls_transinfo_extension"/>). This mechanism allows TLS servers to participate in CT without the cooperation of CAs, unlike the other two mechanisms. It also allows SCTs and inclusion proofs to be updated on the fly.
           </t>
           <t>
             An <xref target='RFC6960'>Online Certificate Status Protocol (OCSP)</xref> response extension (see <xref target="ocsp_transinfo_extension"/>), where the OCSP response is provided in the <spanx style="verb">CertificateStatus</spanx> message, provided that the TLS client included the <spanx style="verb">status_request</spanx> extension in the (extended) <spanx style="verb">ClientHello</spanx> (Section 8 of <xref target='RFC6066'/>). This mechanism, popularly known as OCSP stapling, is already widely (but not universally) implemented. It also allows SCTs and inclusion proofs to be updated on the fly.
@@ -1180,6 +1186,8 @@ entry specified by <spanx style="verb">start</spanx>.
           </list>
           To select the logs from which to obtain SCTs, a TLS server can, for example, examine the set of logs popular TLS clients accept and recognize.
         </t>
+      </section>
+      <section title="TransItemList Structure">
         <figure>
           <preamble>
             Multiple SCTs, inclusion proofs, and indeed <spanx style="verb">TransItem</spanx> structures of any type, are combined into a list as follows:
@@ -1195,7 +1203,34 @@ entry specified by <spanx style="verb">start</spanx>.
           Here, <spanx style="verb">SerializedTransItem</spanx> is an opaque byte string that contains the serialized <spanx style="verb">TransItem</spanx> structure. This encoding ensures that TLS clients can decode each <spanx style="verb">TransItem</spanx> individually (so, for example, if there is a version upgrade, out-of-date clients can still parse old <spanx style="verb">TransItem</spanx> structures while skipping over new <spanx style="verb">TransItem</spanx> structures whose versions they don't understand).
         </t>
       </section>
-      <section title="TLS Extension" anchor="tls_transinfo_extension">
+      <section title="Presenting SCTs, inclusion proofs and STHs" anchor="sct_with_proof">
+        <figure>
+          <preamble>
+            When constructing a <spanx style="verb">TransItemList</spanx> structure, a TLS server SHOULD construct and include <spanx style="verb">TransItem</spanx> structures of type <spanx style="verb">x509_sct_with_proof_v2</spanx> (for an SCT of type <spanx style="verb">x509_sct_v2</spanx>) or <spanx style="verb">precert_sct_with_proof_v2</spanx> (for an SCT of type <spanx style="verb">precert_sct_v2</spanx>), both of which encapsulate a <spanx style="verb">SCTWithProofDataV2</spanx> structure:
+          </preamble>
+          <artwork>
+    struct {
+        SignedCertificateTimestampDataV2 sct;
+        SignedTreeHeadDataV2 sth;
+        InclusionProofDataV2 inclusion_proof;
+    } SCTWithProofDataV2;</artwork>
+        </figure>
+        <t>
+          <spanx style="verb">sct</spanx> is the encapsulated data structure from an SCT that corresponds to the server certificate or to a name-constrained intermediate the server certificate chains to.
+        </t>
+        <t>
+          <spanx style="verb">sth</spanx> is the encapsulated data structure from an STH that was signed by the same log as <spanx style="verb">sct</spanx>.
+        </t>
+        <t>
+          <spanx style="verb">inclusion_proof</spanx> is the encapsulated data structure from an inclusion proof that corresponds to <spanx style="verb">sct</spanx> and can be used to compute the root in <spanx style="verb">sth</spanx>.
+        </t>
+      </section>
+      <section title="Presenting SCTs only">
+        <t>
+          Presenting inclusion proofs and STHs in the TLS handshake helps to protect the client's privacy (see <xref target="validating_inclusion_proofs"/>) and reduces load on log servers. However, if a TLS server is unable to obtain an inclusion proof and STH that correspond to an SCT, then it MAY include <spanx style="verb">TransItem</spanx> structures of type <spanx style="verb">x509_sct_v2</spanx> or <spanx style="verb">precert_sct_v2</spanx> in the <spanx style="verb">TransItemList</spanx>.
+        </t>
+      </section>
+      <section title="transparency_info TLS Extension" anchor="tls_transinfo_extension">
         <t>
           Provided that a TLS client includes the <spanx style="verb">transparency_info</spanx> extension type in the ClientHello, the TLS server MAY include the <spanx style="verb">transparency_info</spanx> extension in the ServerHello with <spanx style="verb">extension_data</spanx> set to a <spanx style="verb">TransItemList</spanx>. The TLS server SHOULD ignore any <spanx style="verb">extension_data</spanx> sent by the TLS client. Additionally, the TLS server MUST NOT process or include this extension when a TLS session is resumed, since session resumption uses the original session information.
         </t>
@@ -1318,7 +1353,7 @@ but it is expected there will be a variety.
             Before considering any SCT to be invalid, the TLS client MUST attempt to validate it against the server certificate and against each of the zero or more <xref target="name_constrained">suitable name-constrained intermediates</xref> in the chain. These certificates may be evaluated in the order they appear in the chain, or, indeed, in any order.
           </t>
         </section>
-        <section title="Validating inclusion proofs">
+        <section title="Validating inclusion proofs" anchor="validating_inclusion_proofs">
           <t>
             After validating a received SCT, a TLS client MAY request a corresponding inclusion proof (if one is not already available) and then verify it. An inclusion proof can be requested directly from a log using <spanx style="verb">get-proof-by-hash</spanx> (<xref target="get-proof-by-hash"/>) or <spanx style="verb">get-all-by-hash</spanx> (<xref target="get-all-by-hash"/>), but note that this will disclose to the log which TLS server the client has been communicating with.
           </t>
