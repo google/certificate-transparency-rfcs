@@ -590,7 +590,7 @@ d0 d1   d2 d3           d0 d1   d2 d3  d4 d5</artwork>
           The encoding of the digitally-signed element is defined in <xref target='RFC5246'/>.
         </t>
         <t>
-          <spanx style="verb">timestamped_entry</spanx> is a <spanx style="verb">TransItem</spanx> structure that MUST be of type <spanx style="verb">x509_entry_v2</spanx> or <spanx style="verb">precert_entry_v2</spanx> (see <xref target="tree_leaves"/>) and MUST have an empty <spanx style="verb">item_extensions</spanx> vector.
+          <spanx style="verb">timestamped_entry</spanx> is a <spanx style="verb">TransItem</spanx> structure that MUST be of type <spanx style="verb">x509_entry_v2</spanx> or <spanx style="verb">precert_entry_v2</spanx> (see <xref target="tree_leaves"/>).
         </t>
       </section>
       <section title="Merkle Tree Head" anchor="tree_head">
@@ -672,7 +672,7 @@ d0 d1   d2 d3           d0 d1   d2 d3  d4 d5</artwork>
           <spanx style="verb">sth_extensions</spanx> is a vector of 0 or more STH extensions. This vector MUST NOT include more than one extension with the same <spanx style="verb">sth_extension_type</spanx>. The extensions in the vector MUST be ordered by the value of the <spanx style="verb">sth_extension_type</spanx> field, smallest value first. If an implementation sees an extension that it does not understand, it SHOULD ignore that extension. Furthermore, an implementation MAY choose to ignore any extension(s) that it does understand.
         </t>
         <t>
-          <spanx style="verb">merkle_tree_head</spanx> is a <spanx style="verb">TransItem</spanx> structure that MUST be of type <spanx style="verb">tree_head_v2</spanx> (see <xref target="tree_head"/>) and MUST have an empty <spanx style="verb">item_extensions</spanx> vector.
+          <spanx style="verb">merkle_tree_head</spanx> is a <spanx style="verb">TransItem</spanx> structure that MUST be of type <spanx style="verb">tree_head_v2</spanx> (see <xref target="tree_head"/>).
         </t>
       </section>
       <section title="Merkle Consistency Proofs">
