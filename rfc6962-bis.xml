@@ -1304,6 +1304,8 @@ but it is expected there will be a variety.
                 Replace leftmost labels of each DNS-ID with <spanx style="verb">?</spanx>, based on the INTEGER value corresponding to that DNS-ID in the extension.
               </t>
             </list>
+          </t>
+          <t>
             A certificate with redacted labels where one of the redacted labels is <spanx style="verb">*</spanx> MUST NOT be considered compliant.
           </t>
           <t>
