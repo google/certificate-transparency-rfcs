@@ -1227,12 +1227,12 @@ entry specified by <spanx style="verb">start</spanx>.
       </section>
       <section title="Presenting SCTs only">
         <t>
-          Presenting inclusion proofs and STHs in the TLS handshake helps to protect the client's privacy (see <xref target="validating_inclusion_proofs"/>) and reduces load on log servers. However, if a TLS server is unable to obtain an inclusion proof and STH that correspond to an SCT, then it MAY include <spanx style="verb">TransItem</spanx> structures of type <spanx style="verb">x509_sct_v2</spanx> or <spanx style="verb">precert_sct_v2</spanx> in the <spanx style="verb">TransItemList</spanx>.
+          Presenting inclusion proofs and STHs in the TLS handshake helps to protect the client's privacy (see <xref target="validating_inclusion_proofs"/>) and reduces load on log servers. However, if a TLS server is unable to obtain an inclusion proof and STH that correspond to an SCT, then it MUST include <spanx style="verb">TransItem</spanx> structures of type <spanx style="verb">x509_sct_v2</spanx> or <spanx style="verb">precert_sct_v2</spanx> in the <spanx style="verb">TransItemList</spanx>.
         </t>
       </section>
       <section title="transparency_info TLS Extension" anchor="tls_transinfo_extension">
         <t>
-          Provided that a TLS client includes the <spanx style="verb">transparency_info</spanx> extension type in the ClientHello, the TLS server MAY include the <spanx style="verb">transparency_info</spanx> extension in the ServerHello with <spanx style="verb">extension_data</spanx> set to a <spanx style="verb">TransItemList</spanx>. The TLS server SHOULD ignore any <spanx style="verb">extension_data</spanx> sent by the TLS client. Additionally, the TLS server MUST NOT process or include this extension when a TLS session is resumed, since session resumption uses the original session information.
+          Provided that a TLS client includes the <spanx style="verb">transparency_info</spanx> extension type in the ClientHello, the TLS server SHOULD include the <spanx style="verb">transparency_info</spanx> extension in the ServerHello with <spanx style="verb">extension_data</spanx> set to a <spanx style="verb">TransItemList</spanx>. The TLS server SHOULD ignore any <spanx style="verb">extension_data</spanx> sent by the TLS client. Additionally, the TLS server MUST NOT process or include this extension when a TLS session is resumed, since session resumption uses the original session information.
         </t>
       </section>
     </section>
