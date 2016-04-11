@@ -362,7 +362,7 @@ d0 d1   d2 d3           d0 d1   d2 d3  d4 d5</artwork>
             When a precertificate contains one or more <spanx style="verb">?</spanx> labels, a non-critical extension (OID 1.3.101.77, whose extnValue OCTET STRING contains an ASN.1 SEQUENCE OF INTEGERs) MUST be added to the corresponding certificate. The purpose of this extension is to enable TLS clients to reconstruct the TBSCertificate component of the precertificate from the certificate, as described in <xref target="reconstructing_tbscertificate"/>.
           </t>
           <t>
-            Each INTEGER MUST have a value of zero or more. The first INTEGER indicates the total number of <spanx style="verb">?</spanx> labels in the precertificate's first DNS-ID; the second INTEGER does the same for the precertificate's second DNS-ID; etc. The last INTEGER does the same for the precertificate's zero or more CN-IDs. There MUST NOT be more INTEGERs than there are DNS-IDs plus one; if there are fewer INTEGERs than this, the shortfall is made up by implicitly repeating the last INTEGER.
+            Each INTEGER MUST have a value of zero or more. The first INTEGER indicates the total number of <spanx style="verb">?</spanx> labels in the precertificate's first DNS-ID; the second INTEGER does the same for the precertificate's second DNS-ID; etc. The last INTEGER does the same for the precertificate's zero or more CN-IDs. There MUST NOT be more INTEGERs than there are DNS-IDs (plus one, if any CN-IDs are present); if there are fewer INTEGERs than this, the shortfall is made up by implicitly repeating the last INTEGER.
           </t>
         </section>
       </section>
