@@ -27,11 +27,8 @@ author:
 
 normative:
   RFC6962:
-  RFC1035:
-  RFC4648:
 
 informative:
-  RFC1034:
 
 --- abstract
 
