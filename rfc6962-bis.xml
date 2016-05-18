@@ -12,7 +12,7 @@
 <?rfc subcompact="no"?>
 <?rfc sortrefs="yes" ?>
 
-<rfc ipr="trust200902" category="std" submissionType="IETF" docName="draft-ietf-trans-rfc6962-bis-13">
+<rfc ipr="trust200902" category="std" submissionType="IETF" docName="draft-ietf-trans-rfc6962-bis-15">
 
   <front>
     <title>Certificate Transparency</title>
@@ -92,7 +92,7 @@ public certification authorities (CAs).
         Each log consists of certificate chains, which can be submitted by anyone. It is expected that public CAs will contribute all their newly issued certificates to one or more logs, however certificate holders can also contribute their own certificate chains, as can third parties. In order to avoid logs being rendered useless by the submission of large numbers of spurious certificates, it is required that each chain ends with a trust anchor that is accepted by the log. When a chain is accepted by a log, a signed timestamp is returned, which can later be used to provide evidence to TLS clients that the chain has been submitted. TLS clients can thus require that all certificates they accept as valid are accompanied by signed timestamps.
       </t>
       <t>
-        Those who are concerned about misissue can monitor the logs, asking
+        Those who are concerned about misissuance can monitor the logs, asking
 them regularly for all new entries, and can thus check whether domains they are
 responsible for have had certificates issued that they did not expect. What
 they do with this information, particularly when they find that a misissuance
@@ -293,7 +293,7 @@ d0 d1   d2 d3           d0 d1   d2 d3  d4 d5</artwork>
         </section>
         <section title="Signatures" anchor="signatures">
           <t>
-            Various data structures are signed. A log MUST use one of the signature algorithms defined in the <xref target="signature_algorithms"/> section.
+            Various data structures are signed. A log MUST use one of the signature algorithms defined in the <xref target="signature_algorithms"/>.
           </t>
         </section>
       </section>
@@ -312,7 +312,7 @@ d0 d1   d2 d3           d0 d1   d2 d3  d4 d5</artwork>
       </section>
       <section title="Precertificates" anchor="Precertificates">
         <t>
-          Alternatively, (root as well as intermediate) CAs may preannounce a certificate prior to issuance by <xref target="add-pre-chain">submitting a precertificate</xref> that the log can use to create an entry that will be valid against the issued certificate. The CA MAY incorporate the returned SCT in the issued certificate. Examples of situations where the returned SCT is not incorporated into the issued certificate would be when a CA sends the precertificate to multiple logs, but only incorporates the SCTs that are returned first, or the CA is using domain name redaction and intends to use another mechanism to publish SCTs (such as an <xref target="ocsp_transinfo_extension">OCSP response</xref> or the <xref target="tls_transinfo_extension">TLS extension</xref>).
+          Alternatively, (root as well as intermediate) CAs may preannounce a certificate prior to issuance by <xref target="add-pre-chain">submitting a precertificate</xref> that the log can use to create an entry that will be valid against the issued certificate. The CA MAY incorporate the returned SCT in the issued certificate. Examples of situations where the returned SCT is not incorporated into the issued certificate would be when a CA sends the precertificate to multiple logs, but only incorporates the SCTs that are returned first, or the CA is using <xref target="redacting_labels">domain name redaction</xref> and intends to use another mechanism to publish SCTs (such as an <xref target="ocsp_transinfo_extension">OCSP response</xref> or the <xref target="tls_transinfo_extension">TLS extension</xref>).
         </t>
         <t>
           A precertificate is a CMS <xref target="RFC5652"/> <spanx style="verb">signed-data</spanx> object that conforms to the following requirements:
@@ -321,10 +321,10 @@ d0 d1   d2 d3           d0 d1   d2 d3  d4 d5</artwork>
               It MUST be DER encoded.
             </t>
             <t>
-              <spanx style="verb">SignedData.encapContentInfo.eContentType</spanx> MUST be the OID &lt;TBD&gt;.
+              <spanx style="verb">SignedData.encapContentInfo.eContentType</spanx> MUST be the OID 1.3.101.78.
             </t>
             <t>
-              <spanx style="verb">SignedData.encapContentInfo.eContent</spanx> MUST contain a TBSCertificate <xref target="RFC5280"/>, which MAY redact certain domain name labels that will be present in the issued certificate (see <xref target="redacting_subdomains"/>) and MUST NOT contain any SCTs, but which will be otherwise identical to the TBSCertificate in the issued certificate.
+              <spanx style="verb">SignedData.encapContentInfo.eContent</spanx> MUST contain a TBSCertificate <xref target="RFC5280"/>, which MAY redact certain domain name labels that will be present in the issued certificate (see <xref target="redacting_labels"/>) and MUST NOT contain any SCTs, but which will be otherwise identical to the TBSCertificate in the issued certificate.
             </t>
             <t>
               <spanx style="verb">SignedData.signerInfos</spanx> MUST contain a signature from the same (root or intermediate) CA that will ultimately issue the certificate. This signature indicates the CA's intent to issue the certificate. This intent is considered binding (i.e. misissuance of the precertificate is considered equivalent to misissuance of the certificate). (Note that, because of the structure of CMS, the signature on the CMS object will not be a valid X.509v3 signature and so cannot be used to construct a certificate from the precertificate).
@@ -345,29 +345,33 @@ d0 d1   d2 d3           d0 d1   d2 d3  d4 d5</artwork>
           A certificate containing a <xref target="RFC6125">DNS-ID</xref> of <spanx style="verb">*.example.com</spanx> could be used to secure the domain <spanx style="verb">topsecret.example.com</spanx>, without revealing the string <spanx style="verb">topsecret</spanx> publicly.
         </t>
         <t>
-          Since TLS clients only match the wildcard character to the complete leftmost label of the DNS domain name (see Section 6.4.3 of <xref target="RFC6125"/>), this approach would not work for a DNS-ID such as <spanx style="verb">top.secret.example.com</spanx>. Also, wildcard certificates are prohibited in some cases, such as <xref target="EVSSLGuidelines">Extended Validation Certificates</xref>.
+          Since TLS clients only match the wildcard character to the complete leftmost label of the DNS domain name (see Section 6.4.3 of <xref target="RFC6125"/>), a different approach is needed when more than one of the leftmost labels in a DNS-ID are considered private (e.g. <spanx style="verb">top.secret.example.com</spanx>). Also, wildcard certificates are prohibited in some cases, such as <xref target="EVSSLGuidelines">Extended Validation Certificates</xref>.
         </t>
       </section>
-      <section title="Redacting Domain Name Labels in Precertificates" anchor="redacting_subdomains">
-        <t>
-          When creating a precertificate, the CA MAY substitute one or more labels in each DNS-ID with a corresponding number of <spanx style="verb">?</spanx> labels. Every label to the left of a <spanx style="verb">?</spanx> label MUST also be redacted. For example, if a certificate contains a DNS-ID of <spanx style="verb">top.secret.example.com</spanx>, then the corresponding precertificate could contain <spanx style="verb">?.?.example.com</spanx> instead, but not <spanx style="verb">top.?.example.com</spanx> instead.
-        </t>
-        <t>
-          Wildcard <spanx style="verb">*</spanx> labels MUST NOT be redacted. However, if the complete leftmost label of a DNS-ID is <spanx style="verb">*</spanx>, it is considered redacted for the purposes of determining if the label to the right may be redacted. For example, if a certificate contains a DNS-ID of <spanx style="verb">*.top.secret.example.com</spanx>, then the corresponding precertificate could contain <spanx style="verb">*.?.?.example.com</spanx> instead, but not <spanx style="verb">?.?.?.example.com</spanx> instead.
-        </t>
-        <t>
-          When a precertificate contains one or more redacted labels, a non-critical extension (OID 1.3.6.1.4.1.11129.2.4.6, whose extnValue OCTET STRING contains an ASN.1 SEQUENCE OF INTEGERs) MUST be added to the corresponding certificate: the first INTEGER indicates the total number of redacted labels and wildcard <spanx style="verb">*</spanx> labels in the precertificate's first DNS-ID; the second INTEGER does the same for the precertificate's second DNS-ID; etc. There MUST NOT be more INTEGERs than there are DNS-IDs. If there are fewer INTEGERs than there are DNS-IDs, the shortfall is made up by implicitly repeating the last INTEGER. Each INTEGER MUST have a value of zero or more. The purpose of this extension is to enable TLS clients to accurately reconstruct the TBSCertificate component of the precertificate from the certificate without having to perform any guesswork.
-        </t>
-        <t>
-          When a precertificate contains that extension and contains a <xref target="RFC6125">CN-ID</xref>, the CN-ID MUST match the first DNS-ID and have the same labels redacted.  TLS clients will use the first entry in the SEQUENCE OF INTEGERs to reconstruct both the first DNS-ID and the CN-ID.
-        </t>
+      <section title="Redaction of Domain Name Labels" anchor="redacting_labels">
+        <section title="Redacting Labels in Precertificates">
+          <t>
+            When creating a precertificate, the CA MAY substitute one or more labels in each DNS-ID and <xref target="RFC6125">CN-ID</xref> with a corresponding number of <spanx style="verb">?</spanx> labels. Every label to the left of a <spanx style="verb">?</spanx> label MUST also be redacted. For example, if a certificate contains a DNS-ID of <spanx style="verb">top.secret.example.com</spanx>, then the corresponding DNS-ID in the precertificate could contain <spanx style="verb">?.?.example.com</spanx> instead, but not <spanx style="verb">top.?.example.com</spanx> instead.
+          </t>
+          <t>
+            Wildcard <spanx style="verb">*</spanx> labels MUST NOT be redacted. However, if the complete leftmost label of a DNS-ID or CN-ID is <spanx style="verb">*</spanx>, it is considered redacted for the purposes of determining if the label to the right may be redacted. For example, if a certificate contains a DNS-ID of <spanx style="verb">*.top.secret.example.com</spanx>, then the corresponding DNS-ID in the precertificate could contain <spanx style="verb">*.?.?.example.com</spanx> instead, but not <spanx style="verb">?.?.?.example.com</spanx> instead.
+          </t>
+        </section>
+        <section title="Redacted Labels Certificate Extension" anchor="redaction_extension">
+          <t>
+            When a precertificate contains one or more <spanx style="verb">?</spanx> labels, a non-critical extension (OID 1.3.101.77, whose extnValue OCTET STRING contains an ASN.1 SEQUENCE OF INTEGERs) MUST be added to the corresponding certificate. The purpose of this extension is to enable TLS clients to reconstruct the TBSCertificate component of the precertificate from the certificate, as described in <xref target="reconstructing_tbscertificate"/>.
+          </t>
+          <t>
+            Each INTEGER MUST have a value of zero or more. The first INTEGER indicates the total number of <spanx style="verb">?</spanx> labels in the precertificate's first DNS-ID; the second INTEGER does the same for the precertificate's second DNS-ID; etc. The last INTEGER does the same for the precertificate's zero or more CN-IDs. There MUST NOT be more INTEGERs than there are DNS-IDs (plus one, if any CN-IDs are present); if there are fewer INTEGERs than this, the shortfall is made up by implicitly repeating the last INTEGER.
+          </t>
+        </section>
       </section>
       <section title="Using a Name-Constrained Intermediate CA" anchor="name_constrained">
         <t>
           An intermediate CA certificate or intermediate CA precertificate that contains the critical or non-critical <xref target="RFC5280">Name Constraints</xref> extension MAY be logged in place of end-entity certificates issued by that intermediate CA, as long as all of the following conditions are met:
           <list style="symbols">
             <t>
-              there MUST be a non-critical extension (OID 1.3.6.1.4.1.11129.2.4.7, whose extnValue OCTET STRING contains ASN.1 NULL data (0x05 0x00)). This extension is an explicit indication that it is acceptable to not log certificates issued by this intermediate CA.
+              there MUST be a non-critical extension (OID 1.3.101.76, whose extnValue OCTET STRING contains ASN.1 NULL data (0x05 0x00)). This extension is an explicit indication that it is acceptable to not log certificates issued by this intermediate CA.
             </t>
             <t>
               permittedSubtrees MUST specify one or more dNSNames.
@@ -412,7 +416,7 @@ d0 d1   d2 d3           d0 d1   d2 d3  d4 d5</artwork>
         A log is a single, append-only Merkle Tree of submitted certificate and precertificate entries.
       </t>
       <t>
-        When it receives a valid submission, the log MUST return an SCT that corresponds to the submitted certificate or precertificate. If the log has previously seen this valid submission, it MAY return the same SCT as it returned before. (Note that if a certificate was previously logged as a precertificate, then the precertificate's SCT of type <spanx style="verb">precert_sct</spanx> would not be appropriate; instead, a fresh SCT of type <spanx style="verb">x509_sct</spanx> should be generated).
+        When it receives a valid submission, the log MUST return an SCT that corresponds to the submitted certificate or precertificate. If the log has previously seen this valid submission, it SHOULD return the same SCT as it returned before (to reduce the ability to track clients as described in <xref target="deterministic_signatures"/>). Note that if a certificate was previously logged as a precertificate, then the precertificate's SCT of type <spanx style="verb">precert_sct_v2</spanx> would not be appropriate; instead, a fresh SCT of type <spanx style="verb">x509_sct_v2</spanx> should be generated.
       </t>
       <t>
         An SCT is the log's promise to incorporate the submitted entry in its Merkle Tree no later than a fixed amount of time, known as the Maximum Merge Delay (MMD), after the issuance of the SCT. Periodically, the log MUST append all its new entries to its Merkle Tree and sign the root of the tree.
@@ -470,7 +474,7 @@ d0 d1   d2 d3           d0 d1   d2 d3  d4 d5</artwork>
       <section title="Log ID" anchor="log_id">
         <figure>
           <preamble>
-            Each log's operator allocates an OID for the purpose of uniquely identifying that log. This OID is specified in the log's metadata. Various data structures include the DER encoding of this OID, excluding the ASN.1 tag and length bytes, in an opaque vector:
+            Each log is uniquely identified by an OID. A log's operator MUST either allocate the OID themselves or request an OID from one of the two Log ID Registries (see <xref target="log_id_registry1"/> and <xref target="log_id_registry2"/>). The OID is specified in the log's metadata. Various data structures include the DER encoding of this OID, excluding the ASN.1 tag and length bytes, in an opaque vector:
           </preamble>
           <artwork>
     opaque LogID&lt;2..127&gt;;</artwork>
@@ -479,58 +483,56 @@ d0 d1   d2 d3           d0 d1   d2 d3  d4 d5</artwork>
           Note that the ASN.1 length and the opaque vector length are identical in size (1 byte) and value, so the DER encoding of the OID can be reproduced simply by prepending an OBJECT IDENTIFIER tag (0x06) to the opaque vector length and contents.
         </t>
       </section>
-      <section title="The TransItem Structure">
+      <section title="TransItem Structure">
         <figure>
           <preamble>
-            Various data structures produced by logs are encapsulated in the <spanx style="verb">TransItem</spanx> structure to ensure that the type and version of each one is identified in a common fashion:
+            Various data structures are encapsulated in the <spanx style="verb">TransItem</spanx> structure to ensure that the type and version of each one is identified in a common fashion:
           </preamble>
           <artwork>
     enum {
-        v1(0), v2(1), (255)
-    } Version;
-
-    enum {
-        x509_entry(0), precert_entry(1), x509_sct(2), precert_sct(3),
-        tree_head(4), signed_tree_head(5), consistency_proof(6),
-        inclusion_proof(7), (65535)
-    } TransType;
+        reserved(0),
+        x509_entry_v2(1), precert_entry_v2(2),
+        x509_sct_v2(3), precert_sct_v2(4),
+        tree_head_v2(5), signed_tree_head_v2(6),
+        consistency_proof_v2(7), inclusion_proof_v2(8),
+        x509_sct_with_proof_v2(9), precert_sct_with_proof_v2(10),
+        (65535)
+    } VersionedTransType;
 
     struct {
-        TransType type;
-        select (type) {
-            case x509_entry: TimestampedCertificateEntryDataV2;
-            case precert_entry: TimestampedCertificateEntryDataV2;
-            case x509_sct: SignedCertificateTimestampDataV2;
-            case precert_sct: SignedCertificateTimestampDataV2;
-            case tree_head: TreeHeadDataV2;
-            case signed_tree_head: SignedTreeHeadDataV2;
-            case consistency_proof: ConsistencyProofDataV2;
-            case inclusion_proof: InclusionProofDataV2;
+        VersionedTransType versioned_type;
+        select (versioned_type) {
+            case x509_entry_v2: TimestampedCertificateEntryDataV2;
+            case precert_entry_v2: TimestampedCertificateEntryDataV2;
+            case x509_sct_v2: SignedCertificateTimestampDataV2;
+            case precert_sct_v2: SignedCertificateTimestampDataV2;
+            case tree_head_v2: TreeHeadDataV2;
+            case signed_tree_head_v2: SignedTreeHeadDataV2;
+            case consistency_proof_v2: ConsistencyProofDataV2;
+            case inclusion_proof_v2: InclusionProofDataV2;
+            case x509_sct_with_proof_v2: SCTWithProofDataV2;
+            case precert_sct_with_proof_v2: SCTWithProofDataV2;
         } data;
-    } TransItemV2;
-
-    struct {
-        Version version;
-        select (version) {
-            case v1: TransItemV1;
-            case v2: TransItemV2;
-        }
-    } TransItem;</artwork>
+    } TransItem;
+          </artwork>
         </figure>
         <t>
-          <spanx style="verb">version</spanx> is the earliest version of this protocol to which the encapsulated data structure conforms. This document is v2. Note that <xref target="RFC6962">v1</xref> did not define <spanx style="verb">TransItem</spanx>, but this document specifies a mechanism (see <xref target="TransItemV1"/>) for v2 implementations to encapsulate existing v1 objects in the <spanx style="verb">TransItem</spanx> structure. Note also that, since each <spanx style="verb">TransItem</spanx> object is individually versioned, future revisions to this protocol could conceivably update some encapsulated data structures without having to update all of them.
-        </t>
-        <t>
-          <spanx style="verb">type</spanx> is the type of the encapsulated data structure. (Note that <spanx style="verb">TransType</spanx> combines the v1 type enumerations <spanx style="verb">LogEntryType</spanx>, <spanx style="verb">SignatureType</spanx> and <spanx style="verb">MerkleLeafType</spanx>). Future revisions of this protocol may add new <spanx style="verb">TransType</spanx> values.
+          <spanx style="verb">versioned_type</spanx> is the type of the encapsulated data structure and the earliest version of this protocol to which it conforms. This document is v2.
         </t>
         <t>
           <spanx style="verb">data</spanx> is the encapsulated data structure. The various structures named with the <spanx style="verb">DataV2</spanx> suffix are defined in later sections of this document.
+        </t>
+        <t>
+          Note that <spanx style="verb">VersionedTransType</spanx> combines the <xref target="RFC6962">v1</xref> type enumerations <spanx style="verb">Version</spanx>, <spanx style="verb">LogEntryType</spanx>, <spanx style="verb">SignatureType</spanx> and <spanx style="verb">MerkleLeafType</spanx>. Note also that v1 did not define <spanx style="verb">TransItem</spanx>, but this document provides guidelines (see <xref target="v1_coexistence"/>) on how v2 implementations can co-exist with v1 implementations.
+        </t>
+        <t>
+          Future versions of this protocol may reuse <spanx style="verb">VersionedTransType</spanx> values defined in this document as long as the corresponding data structures are not modified, and may add new <spanx style="verb">VersionedTransType</spanx> values for new or modified data structures.
         </t>
       </section>
       <section title="Merkle Tree Leaves" anchor="tree_leaves">
         <figure>
           <preamble>
-            The leaves of a log's Merkle Tree correspond to the log's entries (see <xref target="log_entries"/>). Each leaf is the <xref target="mht">leaf hash</xref> of a <spanx style="verb">TransItem</spanx> structure of type <spanx style="verb">x509_entry</spanx> or <spanx style="verb">precert_entry</spanx>, which in this version (v2) encapsulates a <spanx style="verb">TimestampedCertificateEntryDataV2</spanx> structure. Note that leaf hashes are calculated as HASH(0x00 || TransItem), where the hashing algorithm is specified in the log's metadata.
+            The leaves of a log's Merkle Tree correspond to the log's entries (see <xref target="log_entries"/>). Each leaf is the <xref target="mht">leaf hash</xref> of a <spanx style="verb">TransItem</spanx> structure of type <spanx style="verb">x509_entry_v2</spanx> or <spanx style="verb">precert_entry_v2</spanx>, which encapsulates a <spanx style="verb">TimestampedCertificateEntryDataV2</spanx> structure. Note that leaf hashes are calculated as HASH(0x00 || TransItem), where the hashing algorithm is specified in the log's metadata.
           </preamble>
           <artwork>
     opaque TBSCertificate&lt;1..2^24-1&gt;;
@@ -549,7 +551,7 @@ d0 d1   d2 d3           d0 d1   d2 d3  d4 d5</artwork>
           <spanx style="verb">issuer_key_hash</spanx> is the HASH of the public key of the CA that issued the certificate or precertificate, calculated over the DER encoding of the key represented as <xref target="RFC5280">SubjectPublicKeyInfo</xref>. This is needed to bind the CA to the certificate or precertificate, making it impossible for the corresponding SCT to be valid for any other certificate or precertificate whose TBSCertificate matches <spanx style="verb">tbs_certificate</spanx>.
         </t>
         <t>
-          <spanx style="verb">tbs_certificate</spanx> is the DER encoded TBSCertificate from either the <spanx style="verb">leaf_certificate</spanx> (in the case of an <spanx style="verb">X509ChainEntry</spanx>) or the <spanx style="verb">pre_certificate</spanx> (in the case of a <spanx style="verb">PrecertChainEntryV2</spanx>). (Note that a precertificate's TBSCertificate can be reconstructed from the issued certificate's TBSCertificate by redacting the domain name labels indicated by the redacted labels extension, and deleting the SCT list extension and redacted labels extension).
+          <spanx style="verb">tbs_certificate</spanx> is the DER encoded TBSCertificate from either the <spanx style="verb">leaf_certificate</spanx> (in the case of an <spanx style="verb">X509ChainEntry</spanx>) or the <spanx style="verb">pre_certificate</spanx> (in the case of a <spanx style="verb">PrecertChainEntryV2</spanx>). (Note that a precertificate's TBSCertificate can be reconstructed from the corresponding certificate as described in <xref target="reconstructing_tbscertificate"/>).
         </t>
         <t>
           <spanx style="verb">sct_extensions</spanx> matches the SCT extensions of the corresponding SCT.
@@ -558,7 +560,7 @@ d0 d1   d2 d3           d0 d1   d2 d3  d4 d5</artwork>
       <section title="Signed Certificate Timestamp (SCT)" anchor="sct">
         <figure>
           <preamble>
-            An SCT is a <spanx style="verb">TransItem</spanx> structure of type <spanx style="verb">x509_sct</spanx> or <spanx style="verb">precert_sct</spanx>, which in this version (v2) encapsulates a <spanx style="verb">SignedCertificateTimestampDataV2</spanx> structure:
+            An SCT is a <spanx style="verb">TransItem</spanx> structure of type <spanx style="verb">x509_sct_v2</spanx> or <spanx style="verb">precert_sct_v2</spanx>, which encapsulates a <spanx style="verb">SignedCertificateTimestampDataV2</spanx> structure:
           </preamble>
           <artwork>
     enum {
@@ -598,13 +600,13 @@ d0 d1   d2 d3           d0 d1   d2 d3  d4 d5</artwork>
           The encoding of the digitally-signed element is defined in <xref target='RFC5246'/>.
         </t>
         <t>
-          <spanx style="verb">timestamped_entry</spanx> is a <spanx style="verb">TransItem</spanx> structure that MUST be of type <spanx style="verb">x509_entry</spanx> or <spanx style="verb">precert_entry</spanx> (see <xref target="tree_leaves"/>) and MUST have an empty <spanx style="verb">item_extensions</spanx> vector.
+          <spanx style="verb">timestamped_entry</spanx> is a <spanx style="verb">TransItem</spanx> structure that MUST be of type <spanx style="verb">x509_entry_v2</spanx> or <spanx style="verb">precert_entry_v2</spanx> (see <xref target="tree_leaves"/>).
         </t>
       </section>
       <section title="Merkle Tree Head" anchor="tree_head">
         <figure>
           <preamble>
-            The log stores information about its Merkle Tree in a <spanx style="verb">TransItem</spanx> structure of type <spanx style="verb">tree_head</spanx>, which in this version (v2) encapsulates a <spanx style="verb">TreeHeadDataV2</spanx> structure:
+            The log stores information about its Merkle Tree in a <spanx style="verb">TransItem</spanx> structure of type <spanx style="verb">tree_head_v2</spanx>, which encapsulates a <spanx style="verb">TreeHeadDataV2</spanx> structure:
           </preamble>
           <artwork>
     opaque NodeHash[HASH_SIZE];
@@ -635,7 +637,7 @@ d0 d1   d2 d3           d0 d1   d2 d3  d4 d5</artwork>
         </t>
         <figure>
           <preamble>
-            An STH is a <spanx style="verb">TransItem</spanx> structure of type <spanx style="verb">signed_tree_head</spanx>, which in this version (v2) encapsulates a <spanx style="verb">SignedTreeHeadDataV2</spanx> structure:
+            An STH is a <spanx style="verb">TransItem</spanx> structure of type <spanx style="verb">signed_tree_head_v2</spanx>, which encapsulates a <spanx style="verb">SignedTreeHeadDataV2</spanx> structure:
           </preamble>
           <artwork>
     enum {
@@ -680,13 +682,13 @@ d0 d1   d2 d3           d0 d1   d2 d3  d4 d5</artwork>
           <spanx style="verb">sth_extensions</spanx> is a vector of 0 or more STH extensions. This vector MUST NOT include more than one extension with the same <spanx style="verb">sth_extension_type</spanx>. The extensions in the vector MUST be ordered by the value of the <spanx style="verb">sth_extension_type</spanx> field, smallest value first. If an implementation sees an extension that it does not understand, it SHOULD ignore that extension. Furthermore, an implementation MAY choose to ignore any extension(s) that it does understand.
         </t>
         <t>
-          <spanx style="verb">merkle_tree_head</spanx> is a <spanx style="verb">TransItem</spanx> structure that MUST be of type <spanx style="verb">tree_head</spanx> (see <xref target="tree_head"/>) and MUST have an empty <spanx style="verb">item_extensions</spanx> vector.
+          <spanx style="verb">merkle_tree_head</spanx> is a <spanx style="verb">TransItem</spanx> structure that MUST be of type <spanx style="verb">tree_head_v2</spanx> (see <xref target="tree_head"/>).
         </t>
       </section>
       <section title="Merkle Consistency Proofs">
         <figure>
           <preamble>
-            To prepare a Merkle Consistency Proof for distribution to clients, the log produces a <spanx style="verb">TransItem</spanx> structure of type <spanx style="verb">consistency_proof</spanx>, which in this version (v2) encapsulates a <spanx style="verb">ConsistencyProofDataV2</spanx> structure:
+            To prepare a Merkle Consistency Proof for distribution to clients, the log produces a <spanx style="verb">TransItem</spanx> structure of type <spanx style="verb">consistency_proof_v2</spanx>, which encapsulates a <spanx style="verb">ConsistencyProofDataV2</spanx> structure:
           </preamble>
           <artwork>
     struct {
@@ -712,7 +714,7 @@ d0 d1   d2 d3           d0 d1   d2 d3  d4 d5</artwork>
       <section title="Merkle Inclusion Proofs">
         <figure>
           <preamble>
-            To prepare a Merkle Inclusion Proof for distribution to clients, the log produces a <spanx style="verb">TransItem</spanx> structure of type <spanx style="verb">inclusion_proof</spanx>, which in this version (v2) encapsulates an <spanx style="verb">InclusionProofDataV2</spanx> structure:
+            To prepare a Merkle Inclusion Proof for distribution to clients, the log produces a <spanx style="verb">TransItem</spanx> structure of type <spanx style="verb">inclusion_proof_v2</spanx>, which encapsulates an <spanx style="verb">InclusionProofDataV2</spanx> structure:
           </preamble>
           <artwork>
     struct {
@@ -818,7 +820,7 @@ messages.
             <t hangText="Outputs:">
               <list style="hanging">
                 <t hangText="sct:">
-                  A base64 encoded <spanx style="verb">TransItem</spanx> of type <spanx style="verb">x509_sct</spanx>, signed by this log, that corresponds to the submitted certificate.
+                  A base64 encoded <spanx style="verb">TransItem</spanx> of type <spanx style="verb">x509_sct_v2</spanx>, signed by this log, that corresponds to the submitted certificate.
                 </t>
               </list>
             </t>
@@ -870,7 +872,7 @@ messages.
             <t hangText="Outputs:">
               <list style="hanging">
                 <t hangText="sct:">
-                  A base64 encoded <spanx style="verb">TransItem</spanx> of type <spanx style="verb">precert_sct</spanx>, signed by this log, that corresponds to the submitted precertificate.
+                  A base64 encoded <spanx style="verb">TransItem</spanx> of type <spanx style="verb">precert_sct_v2</spanx>, signed by this log, that corresponds to the submitted precertificate.
                 </t>
               </list>
             </t>
@@ -893,7 +895,7 @@ messages.
             <t hangText="Outputs:">
               <list style="hanging">
                 <t hangText="sth:">
-                  A base64 encoded <spanx style="verb">TransItem</spanx> of type <spanx style="verb">signed_tree_head</spanx>, signed by this log, that is no older than the log's MMD.
+                  A base64 encoded <spanx style="verb">TransItem</spanx> of type <spanx style="verb">signed_tree_head_v2</spanx>, signed by this log, that is no older than the log's MMD.
                 </t>
               </list>
             </t>
@@ -923,10 +925,10 @@ messages.
             <t hangText="Outputs:">
               <list style="hanging">
                 <t hangText="consistency:">
-                  A base64 encoded <spanx style="verb">TransItem</spanx> of type <spanx style="verb">consistency_proof</spanx>, whose <spanx style="verb">tree_size_1</spanx> MUST match the <spanx style="verb">first</spanx> input. If the <spanx style="verb">sth</spanx> output is omitted, then <spanx style="verb">tree_size_2</spanx> MUST match the <spanx style="verb">second</spanx> input.
+                  A base64 encoded <spanx style="verb">TransItem</spanx> of type <spanx style="verb">consistency_proof_v2</spanx>, whose <spanx style="verb">tree_size_1</spanx> MUST match the <spanx style="verb">first</spanx> input. If the <spanx style="verb">sth</spanx> output is omitted, then <spanx style="verb">tree_size_2</spanx> MUST match the <spanx style="verb">second</spanx> input.
                 </t>
                 <t hangText="sth:">
-                  A base64 encoded <spanx style="verb">TransItem</spanx> of type <spanx style="verb">signed_tree_head</spanx>, signed by this log.
+                  A base64 encoded <spanx style="verb">TransItem</spanx> of type <spanx style="verb">signed_tree_head_v2</spanx>, signed by this log.
                 </t>
               </list>
             </t>
@@ -959,7 +961,7 @@ messages.
             <t hangText="Inputs:">
               <list style="hanging">
                 <t hangText="hash:">
-                  A base64 encoded v1 leaf hash.
+                  A base64 encoded v2 leaf hash.
                 </t>
                 <t hangText="tree_size:">
                   The tree_size of the tree on which to base the proof, in decimal.
@@ -972,10 +974,10 @@ messages.
             <t hangText="Outputs:">
               <list style="hanging">
                 <t hangText="inclusion:">
-                  A base64 encoded <spanx style="verb">TransItem</spanx> of type <spanx style="verb">inclusion_proof</spanx> whose <spanx style="verb">inclusion_path</spanx> array of Merkle Tree nodes proves the inclusion of the chosen certificate in the selected STH.
+                  A base64 encoded <spanx style="verb">TransItem</spanx> of type <spanx style="verb">inclusion_proof_v2</spanx> whose <spanx style="verb">inclusion_path</spanx> array of Merkle Tree nodes proves the inclusion of the chosen certificate in the selected STH.
                 </t>
                 <t hangText="sth:">
-                  A base64 encoded <spanx style="verb">TransItem</spanx> of type <spanx style="verb">signed_tree_head</spanx>, signed by this log.
+                  A base64 encoded <spanx style="verb">TransItem</spanx> of type <spanx style="verb">signed_tree_head_v2</spanx>, signed by this log.
                 </t>
               </list>
             </t>
@@ -1006,7 +1008,7 @@ messages.
             <t hangText="Inputs:">
               <list style="hanging">
                 <t hangText="hash:">
-                  A base64 encoded v1 leaf hash.
+                  A base64 encoded v2 leaf hash.
                 </t>
                 <t hangText="tree_size:">
                   The tree_size of the tree on which to base the proofs, in decimal.
@@ -1038,13 +1040,13 @@ messages.
             <t hangText="Outputs:">
               <list style="hanging">
                 <t hangText="inclusion:">
-                  A base64 encoded <spanx style="verb">TransItem</spanx> of type <spanx style="verb">inclusion_proof</spanx> whose <spanx style="verb">inclusion_path</spanx> array of Merkle Tree nodes proves the inclusion of the chosen certificate in the selected STH.
+                  A base64 encoded <spanx style="verb">TransItem</spanx> of type <spanx style="verb">inclusion_proof_v2</spanx> whose <spanx style="verb">inclusion_path</spanx> array of Merkle Tree nodes proves the inclusion of the chosen certificate in the selected STH.
                 </t>
                 <t hangText="sth:">
-                  A base64 encoded <spanx style="verb">TransItem</spanx> of type <spanx style="verb">signed_tree_head</spanx>, signed by this log.
+                  A base64 encoded <spanx style="verb">TransItem</spanx> of type <spanx style="verb">signed_tree_head_v2</spanx>, signed by this log.
                 </t>
                 <t hangText="consistency:">
-                  A base64 encoded <spanx style="verb">TransItem</spanx> of type <spanx style="verb">consistency_proof</spanx> that proves the consistency of the requested STH and the returned STH.
+                  A base64 encoded <spanx style="verb">TransItem</spanx> of type <spanx style="verb">consistency_proof_v2</spanx> that proves the consistency of the requested STH and the returned STH.
                 </t>
               </list>
             </t>
@@ -1083,31 +1085,25 @@ messages.
                   An array of objects, each consisting of
                   <list style="hanging">
                     <t hangText="leaf_input:">
-                      The base64 encoded <spanx style="verb">TransItem</spanx> structure of type <spanx style="verb">x509_entry</spanx> or <spanx style="verb">precert_entry</spanx> (see <xref target="tree_leaves"/>).
+                      The base64 encoded <spanx style="verb">TransItem</spanx> structure of type <spanx style="verb">x509_entry_v2</spanx> or <spanx style="verb">precert_entry_v2</spanx> (see <xref target="tree_leaves"/>).
                     </t>
                     <t hangText="log_entry:">
-                      The base64 encoded log entry (see <xref target="log_entries"/>). In the case of an <spanx style="verb">x509_entry</spanx> entry, this is the whole <spanx style="verb">X509ChainEntry</spanx>; and in the case of a <spanx style="verb">precert_entry</spanx>, this is the whole <spanx style="verb">PrecertChainEntryV2</spanx>.
+                      The base64 encoded log entry (see <xref target="log_entries"/>). In the case of an <spanx style="verb">x509_entry_v2</spanx> entry, this is the whole <spanx style="verb">X509ChainEntry</spanx>; and in the case of a <spanx style="verb">precert_entry_v2</spanx>, this is the whole <spanx style="verb">PrecertChainEntryV2</spanx>.
                     </t>
                     <t hangText="sct:">
-                      A base64 encoded <spanx style="verb">TransItem</spanx> of type <spanx style="verb">x509_sct</spanx> or <spanx style="verb">precert_sct</spanx> corresponding to this log entry. Note that more than one SCT may have been returned for the same entry - only one of those is returned in this field. It may not be possible to retrieve others.
+                      A base64 encoded <spanx style="verb">TransItem</spanx> of type <spanx style="verb">x509_sct_v2</spanx> or <spanx style="verb">precert_sct_v2</spanx> corresponding to this log entry. Note that more than one SCT may have been returned for the same entry - only one of those is returned in this field. It may not be possible to retrieve others.
                     </t>
                   </list>
                 </t>
                 <t hangText="sth:">
-                  A base64 encoded <spanx style="verb">TransItem</spanx> of type <spanx style="verb">signed_tree_head</spanx>, signed by this log.
+                  A base64 encoded <spanx style="verb">TransItem</spanx> of type <spanx style="verb">signed_tree_head_v2</spanx>, signed by this log.
                 </t>
               </list>
             </t>
           </list>
         </t>
         <t>
-          Note that this message is not signed -- the <spanx style="verb">entries</spanx> data can be
-verified by constructing the Merkle Tree Hash corresponding to a retrieved
-STH. All leaves MUST be v1 or v2. However, a compliant v1 client MUST NOT construe an
-unrecognized LogEntryType value as an error. This means it
-may be unable to parse some entries, but note that each client can inspect the
-entries it does recognize as well as verify the integrity of the data by
-treating unrecognized leaves as opaque input to the tree.
+          Note that this message is not signed -- the <spanx style="verb">entries</spanx> data can be verified by constructing the Merkle Tree Hash corresponding to a retrieved STH. All leaves MUST be v2. However, a compliant v2 client MUST NOT construe an unrecognized TransItem type as an error. This means it may be unable to parse some entries, but note that each client can inspect the entries it does recognize as well as verify the integrity of the data by treating unrecognized leaves as opaque input to the tree.
         </t>
         <t>
           The <spanx style="verb">start</spanx> and <spanx style="verb">end</spanx> parameters SHOULD be within the range 0 &lt;= x &lt; <spanx style="verb">tree_size</spanx> as returned by <spanx style="verb">get-sth</spanx> in <xref target="get-sth"/>.
@@ -1159,7 +1155,10 @@ entry specified by <spanx style="verb">start</spanx>.
     </section>
     <section title="TLS Servers" anchor="tls_servers">
       <t>
-        TLS servers MUST use at least one of the three mechanisms listed below to present one or more SCTs or inclusion proofs from one or more logs to each TLS client during TLS handshakes, where each SCT or inclusion proof corresponds to the server certificate or to a name-constrained intermediate the server certificate chains to. Three mechanisms are provided because they have different tradeoffs.
+        TLS servers MUST use at least one of the three mechanisms listed below to present one or more SCTs from one or more logs to each TLS client during full TLS handshakes, where each SCT corresponds to the server certificate or to a name-constrained intermediate the server certificate chains to. TLS servers SHOULD also present corresponding inclusion proofs and STHs (see <xref target="sct_with_proof"/>).
+      </t>
+      <t>
+        Three mechanisms are provided because they have different tradeoffs.
         <list style="symbols">
           <t>
             A TLS extension (Section 7.4.1.4 of <xref target='RFC5246'/>) with type <spanx style="verb">transparency_info</spanx> (see <xref target="tls_transinfo_extension"/>). This mechanism allows TLS servers to participate in CT without the cooperation of CAs, unlike the other two mechanisms. It also allows SCTs and inclusion proofs to be updated on the fly.
@@ -1175,21 +1174,24 @@ entry specified by <spanx style="verb">start</spanx>.
       <t>
         Additionally, a TLS server which supports presenting SCTs using an OCSP response MAY provide it when the TLS client included the <spanx style="verb">status_request_v2</spanx> extension (<xref target='RFC6961'/>) in the (extended) <spanx style="verb">ClientHello</spanx>, but only in addition to at least one of the three mechanisms listed above.
       </t>
-      <section title="Multiple SCTs or inclusion proofs" anchor="multiple-scts-or-inclusion-proofs">
+      <section title="Multiple SCTs" anchor="multiple-scts">
         <t>
-          TLS servers SHOULD send SCTs or inclusion proofs from multiple logs in case one or more logs are not acceptable to the TLS client (for example, if a log has been struck off for misbehavior, has had a key compromise, or is not known to the TLS client). For example:
+          TLS servers SHOULD send SCTs from multiple logs in case one or more logs are not acceptable to the TLS client (for example, if a log has been struck off for misbehavior, has had a key compromise, or is not known to the TLS client). For example:
           <list style="symbols">
             <t>
-              If a CA and a log collude, it is possible to temporarily hide misissuance from clients. Including SCTs or inclusion proofs from different logs makes it more difficult to mount this attack.
+              If a CA and a log collude, it is possible to temporarily hide misissuance from clients. Including SCTs from different logs makes it more difficult to mount this attack.
             </t>
             <t>
-              If a log misbehaves, a consequence may be that clients cease to trust it. Since the time an SCT or inclusion proof may be in use can be considerable (several years is common in current practice when embedded in a certificate), servers may wish to reduce the probability of their certificates being rejected as a result by including SCTs or inclusion proofs from different logs.
+              If a log misbehaves, a consequence may be that clients cease to trust it. Since the time an SCT may be in use can be considerable (several years is common in current practice when embedded in a certificate), servers may wish to reduce the probability of their certificates being rejected as a result by including SCTs from different logs.
             </t>
             <t>
-              TLS clients may have policies related to the above risks requiring servers to present multiple SCTs or inclusion proofs. For example, at the time of writing, <xref target="Chromium.Log.Policy">Chromium</xref> requires multiple SCTs to be presented with EV certificates in order for the EV indicator to be shown.
+              TLS clients may have policies related to the above risks requiring servers to present multiple SCTs. For example, at the time of writing, <xref target="Chromium.Log.Policy">Chromium</xref> requires multiple SCTs to be presented with EV certificates in order for the EV indicator to be shown.
             </t>
           </list>
+          To select the logs from which to obtain SCTs, a TLS server can, for example, examine the set of logs popular TLS clients accept and recognize.
         </t>
+      </section>
+      <section title="TransItemList Structure">
         <figure>
           <preamble>
             Multiple SCTs, inclusion proofs, and indeed <spanx style="verb">TransItem</spanx> structures of any type, are combined into a list as follows:
@@ -1205,9 +1207,36 @@ entry specified by <spanx style="verb">start</spanx>.
           Here, <spanx style="verb">SerializedTransItem</spanx> is an opaque byte string that contains the serialized <spanx style="verb">TransItem</spanx> structure. This encoding ensures that TLS clients can decode each <spanx style="verb">TransItem</spanx> individually (so, for example, if there is a version upgrade, out-of-date clients can still parse old <spanx style="verb">TransItem</spanx> structures while skipping over new <spanx style="verb">TransItem</spanx> structures whose versions they don't understand).
         </t>
       </section>
-      <section title="TLS Extension" anchor="tls_transinfo_extension">
+      <section title="Presenting SCTs, inclusion proofs and STHs" anchor="sct_with_proof">
+        <figure>
+          <preamble>
+            When constructing a <spanx style="verb">TransItemList</spanx> structure, a TLS server SHOULD construct and include <spanx style="verb">TransItem</spanx> structures of type <spanx style="verb">x509_sct_with_proof_v2</spanx> (for an SCT of type <spanx style="verb">x509_sct_v2</spanx>) or <spanx style="verb">precert_sct_with_proof_v2</spanx> (for an SCT of type <spanx style="verb">precert_sct_v2</spanx>), both of which encapsulate a <spanx style="verb">SCTWithProofDataV2</spanx> structure:
+          </preamble>
+          <artwork>
+    struct {
+        SignedCertificateTimestampDataV2 sct;
+        SignedTreeHeadDataV2 sth;
+        InclusionProofDataV2 inclusion_proof;
+    } SCTWithProofDataV2;</artwork>
+        </figure>
         <t>
-          Provided that a TLS client includes the <spanx style="verb">transparency_info</spanx> extension type in the ClientHello, the TLS server MAY include the <spanx style="verb">transparency_info</spanx> extension in the ServerHello with <spanx style="verb">extension_data</spanx> set to a <spanx style="verb">TransItemList</spanx>. The TLS server MUST NOT process or include this extension when a TLS session is resumed, since session resumption uses the original session information.
+          <spanx style="verb">sct</spanx> is the encapsulated data structure from an SCT that corresponds to the server certificate or to a name-constrained intermediate the server certificate chains to.
+        </t>
+        <t>
+          <spanx style="verb">sth</spanx> is the encapsulated data structure from an STH that was signed by the same log as <spanx style="verb">sct</spanx>.
+        </t>
+        <t>
+          <spanx style="verb">inclusion_proof</spanx> is the encapsulated data structure from an inclusion proof that corresponds to <spanx style="verb">sct</spanx> and can be used to compute the root in <spanx style="verb">sth</spanx>.
+        </t>
+      </section>
+      <section title="Presenting SCTs only">
+        <t>
+          Presenting inclusion proofs and STHs in the TLS handshake helps to protect the client's privacy (see <xref target="validating_inclusion_proofs"/>) and reduces load on log servers. However, if a TLS server is unable to obtain an inclusion proof and STH that correspond to an SCT, then it MUST include <spanx style="verb">TransItem</spanx> structures of type <spanx style="verb">x509_sct_v2</spanx> or <spanx style="verb">precert_sct_v2</spanx> in the <spanx style="verb">TransItemList</spanx>.
+        </t>
+      </section>
+      <section title="transparency_info TLS Extension" anchor="tls_transinfo_extension">
+        <t>
+          Provided that a TLS client includes the <spanx style="verb">transparency_info</spanx> extension type in the ClientHello, the TLS server SHOULD include the <spanx style="verb">transparency_info</spanx> extension in the ServerHello with <spanx style="verb">extension_data</spanx> set to a <spanx style="verb">TransItemList</spanx>. The TLS server SHOULD ignore any <spanx style="verb">extension_data</spanx> sent by the TLS client. Additionally, the TLS server MUST NOT process or include this extension when a TLS session is resumed, since session resumption uses the original session information.
         </t>
       </section>
     </section>
@@ -1215,7 +1244,7 @@ entry specified by <spanx style="verb">start</spanx>.
       <section title="Transparency Information X.509v3 Extension" anchor="x509v3_transinfo_extension">
         <figure>
           <preamble>
-            The Transparency Information X.509v3 extension, which has OID &lt;TBD&gt; and SHOULD be non-critical, contains one or more <spanx style="verb">TransItem</spanx> structures in a <spanx style="verb">TransItemList</spanx>. This extension MAY be included in OCSP responses (see <xref target="ocsp_transinfo_extension"/>) and certificates (see <xref target="cert_transinfo_extension"/>). Since RFC5280 requires the <spanx style="verb">extnValue</spanx> field (an OCTET STRING) of each X.509v3 extension to include the DER encoding of an ASN.1 value, a <spanx style="verb">TransItemList</spanx> MUST NOT be included directly. Instead, it MUST be wrapped inside an additional OCTET STRING, which is then put into the <spanx style="verb">extnValue</spanx> field:
+            The Transparency Information X.509v3 extension, which has OID 1.3.101.75 and SHOULD be non-critical, contains one or more <spanx style="verb">TransItem</spanx> structures in a <spanx style="verb">TransItemList</spanx>. This extension MAY be included in OCSP responses (see <xref target="ocsp_transinfo_extension"/>) and certificates (see <xref target="cert_transinfo_extension"/>). Since RFC5280 requires the <spanx style="verb">extnValue</spanx> field (an OCTET STRING) of each X.509v3 extension to include the DER encoding of an ASN.1 value, a <spanx style="verb">TransItemList</spanx> MUST NOT be included directly. Instead, it MUST be wrapped inside an additional OCTET STRING, which is then put into the <spanx style="verb">extnValue</spanx> field:
           </preamble>
           <artwork>
     TransparencyInformationSyntax ::= OCTET STRING</artwork>
@@ -1298,28 +1327,47 @@ but it is expected there will be a variety.
         </t>
       </section>
       <section title="TLS Client" anchor="tls_clients">
-        <section title="Receiving SCTs or inclusion proofs">
+        <section title="Receiving SCTs">
           <t>
-            TLS clients receive SCTs or inclusion proofs alongside or in certificates. TLS clients MUST implement all of the three mechanisms by which TLS servers may present SCTs (see <xref target="tls_servers"/>). TLS clients MAY also accept SCTs via the <spanx style="verb">status_request_v2</spanx> extension (<xref target='RFC6961'/>). TLS clients that support the <spanx style="verb">transparency_info</spanx> TLS extension SHOULD include it in ClientHello messages, with <spanx style="verb">extension_data</spanx> set to &lt;TBD&gt;.
+            TLS clients receive SCTs alongside or in certificates. TLS clients MUST implement all of the three mechanisms by which TLS servers may present SCTs (see <xref target="tls_servers"/>). TLS clients MAY also accept SCTs via the <spanx style="verb">status_request_v2</spanx> extension (<xref target='RFC6961'/>). TLS clients that support the <spanx style="verb">transparency_info</spanx> TLS extension SHOULD include it in ClientHello messages, with empty <spanx style="verb">extension_data</spanx>. TLS clients may also receive inclusion proofs in addition to SCTs, which should be checked once the SCTs are validated.
+          </t>
+        </section>
+        <section title="Reconstructing the TBSCertificate" anchor="reconstructing_tbscertificate">
+          <t>
+            To reconstruct the TBSCertificate component of a precertificate from a certificate, TLS clients should:
+            <list style="symbols">
+              <t>
+                Remove the Redacted Labels extension described in <xref target="redaction_extension"/>
+              </t>
+              <t>
+                Replace leftmost labels of each DNS-ID with <spanx style="verb">?</spanx>, based on the INTEGER value corresponding to that DNS-ID in the extension.
+              </t>
+            </list>
           </t>
           <t>
-            TODO: What should the TLS client communicate in the extension_data? Version(s) of CT that it supports? Certain types of TransItem that it can handle? Whether or not it wants to gossip?
+            A certificate with redacted labels where one of the redacted labels is <spanx style="verb">*</spanx> MUST NOT be considered compliant.
+          </t>
+          <t>
+            If the SCT checked is for a Precertificate (where the <spanx style="verb">type</spanx> of the <spanx style="verb">TransItem</spanx> is <spanx style="verb">precert_sct_v2</spanx>), then the client SHOULD also remove embedded v1 SCTs, identified by OID 1.3.6.1.4.1.11129.2.4.2 (See Section 3.3. of <xref target="RFC6962"/>), in the process of reconstructing the TBSCertificate. That is to allow embedded v1 and v2 SCTs to co-exist in a certificate (See <xref target="v1_coexistence"/>).
           </t>
         </section>
         <section title="Validating SCTs">
           <t>
-            In addition to normal validation of the server certificate and its chain, TLS clients SHOULD validate each received SCT for which they have the corresponding log's metadata. To validate an SCT, a TLS client computes the signature input from the SCT data and the corresponding certificate, and then verifies the signature using the corresponding log's public key. TLS clients MUST reject SCTs whose timestamp is in the future.
+            In addition to normal validation of the server certificate and its chain, TLS clients SHOULD validate each received SCT for which they have the corresponding log's metadata. To validate an SCT, a TLS client computes the signature input from the SCT data and the corresponding certificate, and then verifies the signature using the corresponding log's public key. TLS clients MUST NOT consider valid any SCT whose timestamp is in the future.
           </t>
           <t>
-            Since each received SCT may be valid either for the server certificate itself or for a <xref target="name_constrained">suitable name-constrained intermediate</xref>, TLS clients MAY need to use trial and error to determine which certificate in the chain is the certificate to which a received SCT corresponds.
+            Before considering any SCT to be invalid, the TLS client MUST attempt to validate it against the server certificate and against each of the zero or more <xref target="name_constrained">suitable name-constrained intermediates</xref> in the chain. These certificates may be evaluated in the order they appear in the chain, or, indeed, in any order.
           </t>
         </section>
-        <section title="Validating inclusion proofs">
-          <t>
-            TLS clients SHOULD also verify each received inclusion proof (see <xref target="verify_inclusion"/>) for which they have the corresponding log's metadata, to audit the log and gain confidence that the certificate is logged. Since each received inclusion proof may be valid either for the server certificate itself or for a <xref target="name_constrained">suitable name-constrained intermediate</xref>, TLS clients MAY need to use trial and error to determine which certificate in the chain is the certificate to which a received inclusion proof corresponds.
-          </t>
+        <section title="Validating inclusion proofs" anchor="validating_inclusion_proofs">
           <t>
             After validating a received SCT, a TLS client MAY request a corresponding inclusion proof (if one is not already available) and then verify it. An inclusion proof can be requested directly from a log using <spanx style="verb">get-proof-by-hash</spanx> (<xref target="get-proof-by-hash"/>) or <spanx style="verb">get-all-by-hash</spanx> (<xref target="get-all-by-hash"/>), but note that this will disclose to the log which TLS server the client has been communicating with.
+          </t>
+          <t>
+            Alternatively, if the TLS client has received an inclusion proof (and an STH) alongside the SCT, it can proceed to verifying the inclusion proof to the provided STH. The client then has to verify consistency between the provided STH and an STH it knows about, which is less sensitive from a privacy perspective.
+          </t>
+          <t>
+            TLS clients SHOULD also verify each received inclusion proof (see <xref target="verify_inclusion"/>) for which they have the corresponding log's metadata, to audit the log and gain confidence that the certificate is logged.
           </t>
           <t>
             If the TLS client holds an STH that predates the SCT, it MAY, in the process of auditing, request a new STH from the log (<xref target="get-sth"/>), then verify it by requesting a consistency proof (<xref target="get-sth-consistency"/>). Note that if the TLS client uses <spanx style="verb">get-all-by-hash</spanx>, then it will already have the new STH.
@@ -1327,7 +1375,7 @@ but it is expected there will be a variety.
         </section>
         <section title="Evaluating compliance">
           <t>
-            To be considered compliant, a certificate MUST be accompanied by at least one valid SCT or at least one valid inclusion proof. A certificate not accompanied by any valid SCTs or any valid inclusion proofs MUST NOT be considered compliant by TLS clients. However, specifying the TLS clients' behavior once compliance or non-compliance has been determined (for example, whether a certificate should be rejected due to non-compliance) is outside the scope of this document.
+            To be considered compliant, a certificate MUST be accompanied by at least one valid SCT. A certificate not accompanied by any valid SCTs MUST NOT be considered compliant by TLS clients.
           </t>
         </section>
         <section title="TLS Feature Extension">
@@ -1356,7 +1404,7 @@ but it is expected there will be a variety.
       </section>
       <section title="Monitor" anchor="monitor">
         <t>
-          Monitors watch logs and check that they behave correctly. Monitors may additionally watch for certificates of interest. For example, a monitor may be configured to report on all certificates that apply to a specific domain name when fetching new entries for consistency validation.
+          Monitors watch logs to check that they behave correctly, for certificates of interest, or both. For example, a monitor may be configured to report on all certificates that apply to a specific domain name when fetching new entries for consistency validation.
         </t>
         <t>
           A monitor needs to, at least, inspect every new entry in each log it watches. It may also want to keep copies of entire logs. In order to do this, it should follow these steps for each log:
@@ -1414,6 +1462,23 @@ but it is expected there will be a variety.
           Auditing ensures that the current published state of a log is reachable from previously published states that are known to be good, and that the promises made by the log in the form of SCTs have been kept.  Audits are performed by monitors or TLS clients.
         </t>
         <t>
+          In particular, there are four log behaviour properties that should be checked:
+          <list style="symbols">
+            <t>
+              The Maximum Merge Delay (MMD).
+            </t>
+            <t>
+              The STH Frequency Count.
+            </t>
+            <t>
+              The append-only property.
+            </t>
+            <t>
+              The consistency of the log view presented to all query sources.
+            </t>
+          </list>
+        </t>
+        <t>
           A benign, conformant log publishes a series of STHs over time, each derived from the previous STH and the submitted entries incorporated into the log since publication of the previous STH.  This can be proven through auditing of STHs.  SCTs returned to TLS clients can be audited by verifying against the accompanying certificate, and using Merkle Inclusion Proofs, against the log's Merkle tree.
         </t>
         <t>
@@ -1426,11 +1491,14 @@ but it is expected there will be a variety.
           A <xref target="tls_clients">TLS client</xref> can audit by verifying an SCT against any STH dated after the SCT timestamp + the Maximum Merge Delay by requesting a Merkle inclusion proof (<xref target="get-proof-by-hash"/>). It can also verify that the SCT corresponds to the certificate it arrived with (i.e. the log entry is that certificate, is a precertificate for that certificate or is an appropriate name-constrained intermediate [see <xref target="name_constrained"/>]).
         </t>
         <t>
+          Checking of the consistency of the log view presented to all entities is more difficult to perform because it requires a way to share log responses among a set of CT-aware entities, and is discussed in <xref target="misbehaving_logs"/>.
+        </t>
+        <t>
           The following algorithm outlines may be useful for clients that wish to perform various audit operations.
         </t>
         <section title="Verifying an inclusion proof" anchor="verify_inclusion">
           <t>
-            When a client has received a <spanx style="verb">TransItem</spanx> of type <spanx style="verb">inclusion_proof</spanx> and wishes to verify inclusion of an input <spanx style="verb">hash</spanx> for an STH with a given <spanx style="verb">tree_size</spanx> and <spanx style="verb">root_hash</spanx>, the following algorithm may be used to prove the <spanx style="verb">hash</spanx> was included in the <spanx style="verb">root_hash</spanx>:
+            When a client has received a <spanx style="verb">TransItem</spanx> of type <spanx style="verb">inclusion_proof_v2</spanx> and wishes to verify inclusion of an input <spanx style="verb">hash</spanx> for an STH with a given <spanx style="verb">tree_size</spanx> and <spanx style="verb">root_hash</spanx>, the following algorithm may be used to prove the <spanx style="verb">hash</spanx> was included in the <spanx style="verb">root_hash</spanx>:
             <list style="numbers">
               <t>Compare <spanx style="verb">leaf_index</spanx> against <spanx style="verb">tree_size</spanx>. If <spanx style="verb">leaf_index</spanx> is greater than or equal to <spanx style="verb">tree_size</spanx> fail the proof verification.</t>
               <t>Set <spanx style="verb">fn</spanx> to <spanx style="verb">leaf_index</spanx> and <spanx style="verb">sn</spanx> to <spanx style="verb">tree_size - 1</spanx>.</t>
@@ -1458,7 +1526,7 @@ but it is expected there will be a variety.
         </section>
         <section title="Verifying consistency between two STHs" anchor="verify_consistency">
           <t>
-            When a client has an STH <spanx style="verb">first_hash</spanx> for tree size <spanx style="verb">first</spanx>, an STH <spanx style="verb">second_hash</spanx> for tree size <spanx style="verb">second</spanx> where <spanx style="verb">0 &lt; first &lt; second</spanx>, and has received a <spanx style="verb">TransItem</spanx> of type <spanx style="verb">consistency_proof</spanx> that they wish to use to verify both hashes, the following algorithm may be used:
+            When a client has an STH <spanx style="verb">first_hash</spanx> for tree size <spanx style="verb">first</spanx>, an STH <spanx style="verb">second_hash</spanx> for tree size <spanx style="verb">second</spanx> where <spanx style="verb">0 &lt; first &lt; second</spanx>, and has received a <spanx style="verb">TransItem</spanx> of type <spanx style="verb">consistency_proof_v2</spanx> that they wish to use to verify both hashes, the following algorithm may be used:
             <list style="numbers">
               <t>If <spanx style="verb">first</spanx> is an exact power of 2, then prepend <spanx style="verb">first_hash</spanx> to the <spanx style="verb">consistency_path</spanx> array.</t>
               <t>Set <spanx style="verb">fn</spanx> to <spanx style="verb">first - 1</spanx> and <spanx style="verb">sn</spanx> to <spanx style="verb">second - 1</spanx>.</t>
@@ -1579,6 +1647,33 @@ but it is expected there will be a variety.
           TBD: policy for adding to the registry
         </t>
       </section>
+      <section title="Object Identifiers">
+        <t>
+          This document uses object identifiers (OIDs) to identify Log IDs (see <xref target="log_id"/>), the precertificate CMS <spanx style="verb">eContentType</spanx> (see <xref target="Precertificates"/>), and X.509v3 extensions in certificates (see <xref target="redaction_extension"/>, <xref target="name_constrained"/> and <xref target="cert_transinfo_extension"/>) and OCSP responses (see <xref target="ocsp_transinfo_extension"/>). The OIDs are defined in an arc that was selected due to its short encoding.
+        </t>
+        <section title="Log ID Registry 1" anchor="log_id_registry1">
+          <t>
+            All OIDs in the range from 1.3.101.8192 to 1.3.101.16383 have been reserved. This is a limited resource of 8,192 OIDs, each of which has an encoded length of 4 octets.
+          </t>
+          <t>
+            IANA is requested to establish a registry that will allocate Log IDs from this range.
+          </t>
+          <t>
+            TBD: policy for adding to the registry. Perhaps "Expert Review"?
+          </t>
+        </section>
+        <section title="Log ID Registry 2" anchor="log_id_registry2">
+          <t>
+            The 1.3.101.80 arc has been delegated. This is an unlimited resource, but only the 128 OIDs from 1.3.101.80.0 to 1.3.101.80.127 have an encoded length of only 4 octets.
+          </t>
+          <t>
+            IANA is requested to establish a registry that will allocate Log IDs from this arc.
+          </t>
+          <t>
+            TBD: policy for adding to the registry. Perhaps "Expert Review"?
+          </t>
+        </section>
+      </section>
     </section>
 
     <section title="Security Considerations">
@@ -1600,22 +1695,17 @@ instead on interested parties, such as domain owners, to monitor them and take
 corrective action when a misissue is detected.
         </t>
       </section>
-      <section title="Redaction of Public Domain Name Labels">
+      <section title="Avoiding Overly Redacting Domain Name Labels">
         <t>
-          CAs SHOULD NOT redact domain name labels in precertificates such that the entirety of the domain space below the unredacted part of the domain name is not owned or controlled by a single entity
-(e.g. <spanx style="verb">?.com</spanx> and
-<spanx style="verb">?.co.uk</spanx> would both be problematic). Logs
-MUST NOT reject any precertificate that is overly redacted but which is
-otherwise considered compliant. It is expected that monitors will treat overly
-redacted precertificates as potentially misissued. TLS clients MAY reject a
-certificate whose corresponding precertificate would be overly redacted, perhaps using the same mechanism for determining whether a wildcard in a domain name of a certificate is too broad.
+          Redaction of domain name labels carries the same risks as the use of wildcards (See Section 7.2 of <xref target="RFC6125"/>, for example). If the entirety of the domain space below the unredacted part of a domain name is not controlled by a single entity (e.g. <spanx style="verb">?.com</spanx>, <spanx style="verb">?.co.uk</spanx> and other <xref target="Public.Suffix.List">public suffixes</xref>), then the domain name may be considered by clients to be overly redacted.
+        </t>
+        <t>
+          CAs should take care to avoid overly redacting domain names in precertificates. It is expected that monitors will treat precertificates that contain overly redacted domain names as potentially misissued. TLS clients MAY consider a certificate to be non-compliant if the <xref target="reconstructing_tbscertificate">reconstructed TBSCertificate</xref> contains any overly redacted domain names.
         </t>
       </section>
-      <section title="Misbehaving Logs">
+      <section title="Misbehaving Logs" anchor="misbehaving_logs">
         <t>
-          A log can misbehave in several ways. Examples include failing to incorporate a
-certificate with an SCT in the Merkle Tree within the MMD or by presenting different, conflicting
-views of the Merkle Tree at different times and/or to different parties.
+          A log can misbehave in several ways. Examples include failing to incorporate a certificate with an SCT in the Merkle Tree within the MMD, presenting different, conflicting views of the Merkle Tree at different times and/or to different parties and issuing STHs too frequently.
 Such misbehavior is detectable and the <xref target="I-D.ietf-trans-threat-analysis"/> provides more details on how
 this can be done.
         </t>
@@ -1624,16 +1714,15 @@ this can be done.
 Merkle inclusion proof (<xref target="get-proof-by-hash"/>) for each observed SCT.
 These checks can be asynchronous and
 need only be done once per each certificate. In order to protect the clients'
-privacy, these checks need not reveal the exact certificate to the log. Clients
-can instead request the proof from a trusted auditor (since anyone can compute
-the proofs from the log) or request Merkle inclusion proofs for a batch of
-certificates around the SCT timestamp.
+privacy, these checks need not reveal the exact certificate to the log. Instead, clients
+can request the proof from a trusted auditor (since anyone can compute
+the proofs from the log) or communicate with the log via proxies.
         </t>
         <t>
-          Violation of the append-only property can be detected by clients comparing their instances of the Signed Tree Heads. As soon as two conflicting Signed Tree Heads for the same log are detected, this is cryptographic proof of that log's misbehavior. There are various ways this could be done, for example via gossip (see <xref target="I-D.ietf-trans-gossip"/>) or peer-to-peer communications or by sending STHs to monitors (who could then directly check against their own copy of the relevant log).
+          Violation of the append-only property or the STH issuance rate limit can be detected by clients comparing their instances of the Signed Tree Heads. There are various ways this could be done, for example via gossip (see <xref target="I-D.ietf-trans-gossip"/>) or peer-to-peer communications or by sending STHs to monitors (who could then directly check against their own copy of the relevant log). A proof of misbehavior in such cases would be a series of STHs that were issued too closely together, proving violation of the STH issuance rate limit, or an STH with a root hash that does not match the one calculated from a copy of the log, proving violation of the append-only property.
         </t>
       </section>
-      <section title="Deterministic Signatures">
+      <section title="Deterministic Signatures" anchor="deterministic_signatures">
         <t>
           Logs are required to use deterministic signatures for the following reasons:
           <list style="symbols">
@@ -1646,9 +1735,9 @@ certificates around the SCT timestamp.
           </list>
         </t>
       </section>
-      <section title="Multiple SCTs or inclusion proofs">
+      <section title="Multiple SCTs">
         <t>
-          By offering multiple SCTs or inclusion proofs, each from a different log, TLS servers reduce the effectiveness of an attack where a CA and a log collude (see <xref target="multiple-scts-or-inclusion-proofs"/>).
+          By offering multiple SCTs, each from a different log, TLS servers reduce the effectiveness of an attack where a CA and a log collude (see <xref target="multiple-scts"/>).
         </t>
       </section>
       <section title="Threat Analysis">
@@ -1661,6 +1750,9 @@ certificates around the SCT timestamp.
     <section title="Acknowledgements">
       <t>
         The authors would like to thank Erwann Abelea, Robin Alden, Al Cutter, Francis Dupont, Adam Eijdenberg, Stephen Farrell, Daniel Kahn Gillmor, Paul Hadfield, Brad Hill, Jeff Hodges, Paul Hoffman, Jeffrey Hutzelman, Kat Joyce, Stephen Kent, SM, Alexey Melnikov, Linus Nordberg, Chris Palmer, Trevor Perrin, Pierre Phaneuf, Melinda Shore, Ryan Sleevi, Martin Smith, Carl Wallace and Paul Wouters for their valuable contributions.
+      </t>
+      <t>
+        A big thank you to Symantec for kindly donating the OIDs from the 1.3.101 arc that are used in this document.
       </t>
     </section>
   </middle>
@@ -1807,75 +1899,49 @@ value="Montreal"/>
         </front>
       </reference>
 
+      <reference anchor="Public.Suffix.List" target="https://publicsuffix.org">
+        <front>
+          <title>Public Suffix List</title>
+          <author>
+            <organization>Mozilla Foundation</organization>
+          </author>
+          <date year="2016"/>
+        </front>
+      </reference>
+
       <?rfc include="reference.I-D.ietf-trans-threat-analysis.xml"?>
 
     </references>
 
-    <section title="TransItemV1" anchor="TransItemV1">
-      <figure>
-        <preamble>
-          TODO: Finish writing this section. Or should it be in a separate document?
-        </preamble>
-        <artwork>
-    struct {
-        TransType type;
-        select (type) {
-            case x509_sct: SignedCertificateTimestampV1;
-            case precert_sct: SignedCertificateTimestampV1;
-            case signed_tree_head: SignedTreeHeadDataV1;
-            case consistency_proof: ConsistencyProofDataV1;
-            case inclusion_proof: InclusionProofDataV1;
-        } data;
-    } TransItemV1;
-
-    opaque SHA256Hash[32];
-
-    struct {
-        Version version = v1;
-        SHA256Hash log_id;
-        uint64 timestamp;
-        SctExtensions extensions;
-        digitally-signed struct {
-            Version version = v1;
-            uint8 signature_type = 0;  /* "certificate_timestamp" */
-            uint64 timestamp;
-            TransType type;  /* x509_entry(0) or precert_entry(1) */
-            select (type) {
-                case x509_entry: ASN.1Cert;
-                case precert_entry: PreCert;
-            } signed_entry;
-            SctExtensions extensions;
-        } signature;
-    } SignedCertificateTimestampV1;
-
-    struct {
-        SHA256Hash log_id;
-        uint64 timestamp;
-        uint64 tree_size;
-        SHA256Hash sha256_root_hash;
-        digitally-signed struct {
-            Version version = v1;
-            uint8 signature_type = 1;  /* "tree_hash" */
-            uint64 timestamp;
-            uint64 tree_size;
-            SHA256Hash sha256_root_hash;
-        } signature;
-    } SignedTreeHeadDataV1;
-
-    struct {
-        SHA256Hash log_id;
-        uint64 tree_size_1;
-        uint64 tree_size_2;
-        SHA256Hash consistency_path&lt;1..2^8-1&gt;;
-    } ConsistencyProofDataV1;
-
-    struct {
-        SHA256Hash log_id;
-        uint64 tree_size;
-        uint64 leaf_index;
-        SHA256Hash inclusion_path&lt;1..2^8-1&gt;;
-    } InclusionProofDataV1;</artwork>
-      </figure>
+    <section title="Supporting v1 and v2 simultaneously" anchor="v1_coexistence">
+      <t>
+        Certificate Transparency logs have to be either v1 (conforming to <xref target="RFC6962"/>) or v2 (conforming to this document), as the data structures are incompatible and so a v2 log could not issue a valid v1 SCT.
+      </t>
+      <t>
+        CT clients, however, can support v1 and v2 SCTs, for the same certificate, simultaneously, as v1 SCTs are delivered in different TLS, X.509 and OCSP extensions than v2 SCTs.
+      </t>
+      <t>
+        v1 and v2 SCTs for X.509 certificates can be validated independently.
+        For precertificates, v2 SCTs should be embedded in the TBSCertificate before submission of the TBSCertificate (inside a v1 precertificate, as described in Section 3.1. of <xref target="RFC6962"/>) to a v1 log so that TLS clients conforming to <xref target="RFC6962"/> but not this document are oblivious to the embedded v2 SCTs.
+        An issuer can follow these steps to produce an X.509 certificate with embedded v1 and v2 SCTs:
+        <list style="symbols">
+          <t>
+            Create a CMS precertificate as described in <xref target="Precertificates"/> and submit it to v2 logs.
+          </t>
+          <t>
+            Embed the obtained v2 SCTs in the TBSCertificate, as described in <xref target="cert_transinfo_extension"/>.
+          </t>
+          <t>
+            Use that TBSCertificate to create a v1 precertificate, as described in Section 3.1. of <xref target="RFC6962"/> and submit it to v1 logs.
+          </t>
+          <t>
+            Embed the v1 SCTs in the TBSCertificate, as described in Section 3.3. of <xref target="RFC6962"/>.
+          </t>
+          <t>
+            Sign that TBSCertificate (which now contains v1 and v2 SCTs) to issue the final X.509 certificate.
+          </t>
+        </list>
+      </t>
     </section>
   </back>
 </rfc>
