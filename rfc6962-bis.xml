@@ -1132,6 +1132,9 @@ entry specified by <spanx style="verb">start</spanx>.
 
       <section title="Get Entry Number for SCT">
 	<t>
+	  Logs MAY implement this message. It is not required for correct operation of logs or their clients, but may be convenient in some circumstances, since an SCT cannot be validated with also knowing which chain it applies to. Note that mirrors can implement this even if the log they are mirroring does not.
+	</t>
+	<t>
 	  GET https://&lt;log server&gt;/ct/v2/get-entry-for-sct
 	</t>
 	<t>
@@ -1164,6 +1167,46 @@ entry specified by <spanx style="verb">start</spanx>.
         </t>
 	<t>
 	  Note that any SCT with a valid signature MUST have a corresponding entry in the log, but it may not be retrievable until the MMD has passed since the SCT was issued.
+	</t>
+      </section>
+
+      <section title="Get Entry Numbers for Certificate">
+	<t>
+	  Logs MAY implement this message. It is not required for correct operation of logs or their clients, but may be convenient in some circumstances, for example if a certificate is not accompanies by an SCT yet a client wants to verify whether it has, in fact, been logged. Note that mirrors can implement this even if the log they are mirroring does not.
+	</t>
+	<t>
+	  GET https://&lt;log server&gt;/ct/v2/get-entry-for-certificate
+	</t>
+	<t>
+          <list style="hanging">
+            <t hangText="Inputs:">
+              <list style="hanging">
+                <t hangText="hash:">
+                  A base64 encoded HASH of a <spanx style="verb">TBSCertificate</spanx>.
+                </t>
+              </list>
+            </t>
+            <t hangText="Outputs:">
+              <list style="hanging">
+                <t hangText="entries:">
+		  An array of 0-based indices of log entries corresponding to the supplied HASH.
+                </t>
+              </list>
+            </t>
+            <t hangText="Error codes:">
+              <list style="hanging">
+                <t hangText="bad hash">
+                  <spanx style="verb">hash</spanx> is not the right size or format.
+		</t>
+                <t hangText="not found">
+                  <spanx style="verb">sct</spanx> does not correspond to an entry that is currently available.
+		</t>
+	      </list>
+	    </t>
+          </list>
+        </t>
+	<t>
+	  Note that it is possible for a certificate to be logged more than once. If that is the case, the log MAY return more than one entry index. If the certificate is present in the log, then the log MUST return at least one entry index.
 	</t>
       </section>
 
