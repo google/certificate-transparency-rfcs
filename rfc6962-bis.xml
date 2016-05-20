@@ -1091,7 +1091,7 @@ messages.
                       The base64 encoded log entry (see <xref target="log_entries"/>). In the case of an <spanx style="verb">x509_entry_v2</spanx> entry, this is the whole <spanx style="verb">X509ChainEntry</spanx>; and in the case of a <spanx style="verb">precert_entry_v2</spanx>, this is the whole <spanx style="verb">PrecertChainEntryV2</spanx>.
                     </t>
                     <t hangText="sct:">
-                      A base64 encoded <spanx style="verb">TransItem</spanx> of type <spanx style="verb">x509_sct_v2</spanx> or <spanx style="verb">precert_sct_v2</spanx> corresponding to this log entry. Note that more than one SCT may have been returned for the same entry - only one of those is returned in this field. It may not be possible to retrieve others.
+                      The base64 encoded <spanx style="verb">TransItem</spanx> of type <spanx style="verb">x509_sct_v2</spanx> or <spanx style="verb">precert_sct_v2</spanx> corresponding to this log entry.
                     </t>
                   </list>
                 </t>
