@@ -846,10 +846,7 @@ messages.
           If the version of <spanx style="verb">sct</spanx> is not v2, then a v2 client may be unable to verify the signature. It MUST NOT construe this as an error. This is to avoid forcing an upgrade of compliant v2 clients that do not use the returned SCTs.
         </t>
         <t>
-          If a log detects bad encoding in a chain that otherwise verifies correctly then the log MAY still log the certificate but SHOULD NOT return an SCT. It should instead return the "bad certificate" error. Logging the certificate is useful, because <xref target="monitor">monitors</xref> can then detect these encoding errors, which may be accepted by some TLS clients.
-        </t>
-        <t>
-          Note that not all certificate handling software is capable of detecting all encoding errors (e.g. some software will accept BER instead of DER encodings in certificates, or incorrect character encodings, even though these are technically incorrect) .
+          If a log detects bad encoding in a chain that otherwise verifies correctly then the log MUST either log the certificate or return the "bad certificate" error. If the certificate is logged, an SCT MUST be issued. Logging the certificate is useful, because <xref target="monitor">monitors</xref> can then detect these encoding errors, which may be accepted by some TLS clients.
         </t>
       </section>
 
