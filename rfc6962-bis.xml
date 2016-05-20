@@ -1132,7 +1132,7 @@ entry specified by <spanx style="verb">start</spanx>.
 
       <section title="Get Entry Number for SCT">
 	<t>
-	  Logs MAY implement this message. It is not required for correct operation of logs or their clients, but may be convenient in some circumstances, since an SCT cannot be validated with also knowing which chain it applies to. Note that mirrors can implement this even if the log they are mirroring does not.
+	  Logs MAY implement this message. It is not required for correct operation of logs or their clients, but may be convenient in some circumstances, since an SCT cannot be validated without also knowing which chain it applies to. Note that mirrors can implement this even if the log they are mirroring does not.
 	</t>
 	<t>
 	  GET https://&lt;log server&gt;/ct/v2/get-entry-for-sct
@@ -1142,7 +1142,7 @@ entry specified by <spanx style="verb">start</spanx>.
             <t hangText="Inputs:">
               <list style="hanging">
                 <t hangText="sct:">
-                  A base64 encoded <spanx style="verb">TransItem</spanx> of type <spanx style="verb">x509_sct_v2</spanx> or <spanx style="verb">precert_sct_v2</spanx> allegedly from this log.
+                  A base64 encoded <spanx style="verb">TransItem</spanx> of type <spanx style="verb">x509_sct_v2</spanx> or <spanx style="verb">precert_sct_v2</spanx> allegedly signed by this log.
                 </t>
               </list>
             </t>
@@ -1166,7 +1166,7 @@ entry specified by <spanx style="verb">start</spanx>.
           </list>
         </t>
 	<t>
-	  Note that any SCT with a valid signature MUST have a corresponding entry in the log, but it may not be retrievable until the MMD has passed since the SCT was issued.
+	  Note that any SCT signed by a log MUST have a corresponding entry in the log, but it may not be retrievable until the MMD has passed since the SCT was issued.
 	</t>
       </section>
 
