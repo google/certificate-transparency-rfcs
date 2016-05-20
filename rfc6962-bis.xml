@@ -416,7 +416,7 @@ d0 d1   d2 d3           d0 d1   d2 d3  d4 d5</artwork>
         A log is a single, append-only Merkle Tree of submitted certificate and precertificate entries.
       </t>
       <t>
-        When it receives a valid submission, the log MUST return an SCT that corresponds to the submitted certificate or precertificate. If the log has previously seen this valid submission, it SHOULD return the same SCT as it returned before (to reduce the ability to track clients as described in <xref target="deterministic_signatures"/>). Note that if a certificate was previously logged as a precertificate, then the precertificate's SCT of type <spanx style="verb">precert_sct_v2</spanx> would not be appropriate; instead, a fresh SCT of type <spanx style="verb">x509_sct_v2</spanx> should be generated.
+        When it receives a valid submission, the log MUST return an SCT that corresponds to the submitted certificate or precertificate. If the log has previously seen this valid submission, it SHOULD return the same SCT as it returned before (to reduce the ability to track clients as described in <xref target="deterministic_signatures"/>). If different SCTs are produced for the same submission, multiple log entries will have to be created, one for each SCT (as the timestamp is a part of the leaf structure). Note that if a certificate was previously logged as a precertificate, then the precertificate's SCT of type <spanx style="verb">precert_sct_v2</spanx> would not be appropriate; instead, a fresh SCT of type <spanx style="verb">x509_sct_v2</spanx> should be generated.
       </t>
       <t>
         An SCT is the log's promise to incorporate the submitted entry in its Merkle Tree no later than a fixed amount of time, known as the Maximum Merge Delay (MMD), after the issuance of the SCT. Periodically, the log MUST append all its new entries to its Merkle Tree and sign the root of the tree.
@@ -1091,7 +1091,7 @@ messages.
                       The base64 encoded log entry (see <xref target="log_entries"/>). In the case of an <spanx style="verb">x509_entry_v2</spanx> entry, this is the whole <spanx style="verb">X509ChainEntry</spanx>; and in the case of a <spanx style="verb">precert_entry_v2</spanx>, this is the whole <spanx style="verb">PrecertChainEntryV2</spanx>.
                     </t>
                     <t hangText="sct:">
-                      A base64 encoded <spanx style="verb">TransItem</spanx> of type <spanx style="verb">x509_sct_v2</spanx> or <spanx style="verb">precert_sct_v2</spanx> corresponding to this log entry. Note that more than one SCT may have been returned for the same entry - only one of those is returned in this field. It may not be possible to retrieve others.
+                      The base64 encoded <spanx style="verb">TransItem</spanx> of type <spanx style="verb">x509_sct_v2</spanx> or <spanx style="verb">precert_sct_v2</spanx> corresponding to this log entry.
                     </t>
                   </list>
                 </t>
