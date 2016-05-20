@@ -84,19 +84,19 @@ do not need to be trusted because they are publicly auditable. Anyone may verify
 the correctness of each log and monitor when new certificates are added to it.
 The logs do not themselves prevent misissue, but
 they ensure that interested parties (particularly those named in certificates)
-can detect such misissuance. Note that this is a general mechanism, but in this
+can detect such misissuance. Note that this is a general mechanism; but in this
 document, we only describe its use for public TLS server certificates issued by
 public certification authorities (CAs).
       </t>
       <t>
-        Each log consists of certificate chains, which can be submitted by anyone. It is expected that public CAs will contribute all their newly issued certificates to one or more logs, however certificate holders can also contribute their own certificate chains, as can third parties. In order to avoid logs being rendered useless by the submission of large numbers of spurious certificates, it is required that each chain ends with a trust anchor that is accepted by the log. When a chain is accepted by a log, a signed timestamp is returned, which can later be used to provide evidence to TLS clients that the chain has been submitted. TLS clients can thus require that all certificates they accept as valid are accompanied by signed timestamps.
+        Each log consists of certificate chains, which can be submitted by anyone. It is expected that public CAs will contribute all their newly issued certificates to one or more logs; however certificate holders can also contribute their own certificate chains, as can third parties. In order to avoid logs being rendered useless by the submission of large numbers of spurious certificates, it is required that each chain ends with a trust anchor that is accepted by the log. When a chain is accepted by a log, a signed timestamp is returned, which can later be used to provide evidence to TLS clients that the chain has been submitted. TLS clients can thus require that all certificates they accept as valid are accompanied by signed timestamps.
       </t>
       <t>
         Those who are concerned about misissuance can monitor the logs, asking
-them regularly for all new entries, and can thus check whether domains they are
-responsible for have had certificates issued that they did not expect. What
+them regularly for all new entries, and can thus check whether domains for which they are
+have had certificates issued that they did not expect. What
 they do with this information, particularly when they find that a misissuance
-has happened, is beyond the scope of this document, but broadly speaking, they
+has happened, is beyond the scope of this document; but broadly speaking, they
 can invoke existing business mechanisms for dealing with misissued
 certificates, such as working with the CA to get the certificate revoked, or with maintainers of trust anchor lists to get the CA removed. Of course, anyone who wants can monitor the logs and, if they
 believe a certificate is incorrectly issued, take action as they see fit.
