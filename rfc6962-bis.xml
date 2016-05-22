@@ -93,8 +93,8 @@ public certification authorities (CAs).
       </t>
       <t>
         Those who are concerned about misissuance can monitor the logs, asking
-them regularly for all new entries, and can thus check whether domains they are
-responsible for have had certificates issued that they did not expect. What
+them regularly for all new entries, and can thus check whether domains for which 
+they are responsible have had certificates issued that they did not expect. What
 they do with this information, particularly when they find that a misissuance
 has happened, is beyond the scope of this document, but broadly speaking, they
 can invoke existing business mechanisms for dealing with misissued
