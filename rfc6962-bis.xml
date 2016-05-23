@@ -1190,6 +1190,84 @@ entry specified by <spanx style="verb">start</spanx>.
         </t>
       </section>
     </section>
+    <section title="Optional Client Messages">
+	<t>
+	  Logs MAY implement these messages. They are not required for correct operation of logs or their clients, but may be convenient in some circumstances. Note that mirrors can implement these even if the log they are mirroring does not.
+	</t>
+      <section title="Get Entry Number for SCT">
+	<t>
+	  GET https://&lt;log server&gt;/ct/v2/get-entry-for-sct
+	</t>
+	<t>
+          <list style="hanging">
+            <t hangText="Inputs:">
+              <list style="hanging">
+                <t hangText="sct:">
+                  A base64 encoded <spanx style="verb">TransItem</spanx> of type <spanx style="verb">x509_sct_v2</spanx> or <spanx style="verb">precert_sct_v2</spanx> allegedly signed by this log.
+                </t>
+              </list>
+            </t>
+            <t hangText="Outputs:">
+              <list style="hanging">
+                <t hangText="entry:">
+		  0-based index of the log entry corresponding to the supplied SCT.
+                </t>
+              </list>
+            </t>
+            <t hangText="Error codes:">
+              <list style="hanging">
+                <t hangText="bad signature">
+                  <spanx style="verb">sct</spanx> is not signed by this log.
+		</t>
+                <t hangText="not found">
+                  <spanx style="verb">sct</spanx> does not correspond to an entry that is currently available.
+		</t>
+	      </list>
+	    </t>
+          </list>
+        </t>
+	<t>
+	  Note that any SCT signed by a log MUST have a corresponding entry in the log, but it may not be retrievable until the MMD has passed since the SCT was issued.
+	</t>
+      </section>
+
+      <section title="Get Entry Numbers for Certificate">
+	<t>
+	  GET https://&lt;log server&gt;/ct/v2/get-entry-for-certificate
+	</t>
+	<t>
+          <list style="hanging">
+            <t hangText="Inputs:">
+              <list style="hanging">
+                <t hangText="hash:">
+                  A base64 encoded HASH of a <spanx style="verb">TBSCertificate</spanx>.
+                </t>
+              </list>
+            </t>
+            <t hangText="Outputs:">
+              <list style="hanging">
+                <t hangText="entries:">
+		  An array of 0-based indices of log entries corresponding to the supplied HASH.
+                </t>
+              </list>
+            </t>
+            <t hangText="Error codes:">
+              <list style="hanging">
+                <t hangText="bad hash">
+                  <spanx style="verb">hash</spanx> is not the right size or format.
+		</t>
+                <t hangText="not found">
+                  <spanx style="verb">sct</spanx> does not correspond to an entry that is currently available.
+		</t>
+	      </list>
+	    </t>
+          </list>
+        </t>
+	<t>
+	  Note that it is possible for a certificate to be logged more than once. If that is the case, the log MAY return more than one entry index. If the certificate is present in the log, then the log MUST return at least one entry index.
+	</t>
+      </section>
+    </section>
     <section title="TLS Servers" anchor="tls_servers">
       <t>
         TLS servers MUST use at least one of the three mechanisms listed below to present one or more SCTs from one or more logs to each TLS client during full TLS handshakes, where each SCT corresponds to the server certificate or to a name-constrained intermediate the server certificate chains to. TLS servers SHOULD also present corresponding inclusion proofs and STHs (see <xref target="sct_with_proof"/>).
