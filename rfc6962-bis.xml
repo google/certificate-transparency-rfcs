@@ -1203,7 +1203,7 @@ entry specified by <spanx style="verb">start</spanx>.
             <t hangText="Inputs:">
               <list style="hanging">
                 <t hangText="sct:">
-                  A base64 encoded <spanx style="verb">TransItem</spanx> of type <spanx style="verb">x509_sct_v2</spanx> or <spanx style="verb">precert_sct_v2</spanx> allegedly signed by this log.
+                  A base64 encoded <spanx style="verb">TransItem</spanx> of type <spanx style="verb">x509_sct_v2</spanx> or <spanx style="verb">precert_sct_v2</spanx> signed by this log.
                 </t>
               </list>
             </t>
@@ -1240,7 +1240,7 @@ entry specified by <spanx style="verb">start</spanx>.
             <t hangText="Inputs:">
               <list style="hanging">
                 <t hangText="hash:">
-                  A base64 encoded HASH of a <spanx style="verb">TBSCertificate</spanx>.
+                  A base64 encoded HASH of a <spanx style="verb">TBSCertificate</spanx>. Note that if the certificate has redacted labels then the <spanx style="verb">TBSCertificate</spanx> must be constructed as described <xref target="redacting_labels">above</xref>.
                 </t>
               </list>
             </t>
