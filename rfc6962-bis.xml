@@ -1127,43 +1127,6 @@ entry specified by <spanx style="verb">start</spanx>.
         <t>See <xref target="verify_hash" /> for an outline of how to use a complete list of <spanx style="verb">leaf_input</spanx> entries to verify the <spanx style="verb">root_hash</spanx>.</t>
       </section>
 
-      <section title="Get Entry Number for SCT">
-	<t>
-	  GET https://&lt;log server&gt;/ct/v2/get-entry-for-sct
-	</t>
-	<t>
-          <list style="hanging">
-            <t hangText="Inputs:">
-              <list style="hanging">
-                <t hangText="sct:">
-                  A base64 encoded <spanx style="verb">TransItem</spanx> of type <spanx style="verb">x509_sct_v2</spanx> or <spanx style="verb">precert_sct_v2</spanx> allegedly from this log.
-                </t>
-              </list>
-            </t>
-            <t hangText="Outputs:">
-              <list style="hanging">
-                <t hangText="entry:">
-		  0-based index of the log entry corresponding to the supplied SCT.
-                </t>
-              </list>
-            </t>
-            <t hangText="Error codes:">
-              <list style="hanging">
-                <t hangText="bad signature">
-                  <spanx style="verb">sct</spanx> is not signed by this log.
-		</t>
-                <t hangText="not found">
-                  <spanx style="verb">sct</spanx> does not correspond to an entry that is currently available.
-		</t>
-	      </list>
-	    </t>
-          </list>
-        </t>
-	<t>
-	  Note that any SCT with a valid signature MUST have a corresponding entry in the log, but it may not be retrievable until the MMD has passed since the SCT was issued.
-	</t>
-      </section>
-
       <section title="Retrieve Accepted Trust Anchors" anchor="get-anchors">
         <t>
           GET https://&lt;log server&gt;/ct/v2/get-anchors
