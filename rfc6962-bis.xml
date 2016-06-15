@@ -1037,7 +1037,7 @@ messages.
             <t hangText="Outputs:">
               <list style="hanging">
                 <t hangText="inclusion:">
-                  A base64 encoded <spanx style="verb">TransItem</spanx> of type <spanx style="verb">inclusion_proof_v2</spanx> whose <spanx style="verb">inclusion_path</spanx> array of Merkle Tree nodes proves the inclusion of the chosen certificate in the selected STH.
+                  A base64 encoded <spanx style="verb">TransItem</spanx> of type <spanx style="verb">inclusion_proof_v2</spanx> whose <spanx style="verb">inclusion_path</spanx> array of Merkle Tree nodes proves the inclusion of the chosen certificate in the returned STH.
                 </t>
                 <t hangText="sth:">
                   A base64 encoded <spanx style="verb">TransItem</spanx> of type <spanx style="verb">signed_tree_head_v2</spanx>, signed by this log.
@@ -1394,7 +1394,7 @@ but it is expected there will be a variety.
             The maximum number of STHs the log may produce in any period equal to the <spanx style="verb">Maximum Merge Delay</spanx> (see <xref target="STH"/>).
           </t>
           <t hangText="Final STH">
-            If a log has been closed down (i.e. no longer accepts new entries), existing entries may still be valid. In this case, the client should know the final valid STH in the log to ensure no new entries can be added without detection.
+            If a log has been closed down (i.e. no longer accepts new entries), existing entries may still be valid. In this case, the client should know the final valid STH in the log to ensure no new entries can be added without detection. The final STH should be provided in the form of a TransItem of type signed_tree_head_v2.
           </t>
         </list></t>
         <t>
@@ -1411,6 +1411,9 @@ but it is expected there will be a variety.
           <t>
             To reconstruct the TBSCertificate component of a precertificate from a certificate, TLS clients should:
             <list style="symbols">
+              <t>
+                Remove the Transparency Information extension described in <xref target="x509v3_transinfo_extension"/>
+              </t>
               <t>
                 Remove the Redacted Labels extension described in <xref target="redaction_extension"/>
               </t>
