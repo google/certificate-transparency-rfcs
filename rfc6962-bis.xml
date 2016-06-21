@@ -338,7 +338,7 @@ d0 d1   d2 d3           d0 d1   d2 d3  d4 d5</artwork>
     </section>
     <section title="Private Domain Name Labels">
       <t>
-        Some regard some DNS domain name labels within their registered domain space as private and security sensitive. Even though these domains are often only accessible within the domain owner's private network, it's common for them to be secured using publicly trusted TLS server certificates. We define a mechanism to allow these private labels to not appear in public logs.
+        Some regard some DNS domain name labels within their registered domain space as private and security sensitive. Even though these domains are often only accessible within the domain owner's private network, it's common for them to be secured using publicly trusted TLS server certificates. We define a mechanism to allow these private labels to not appear in public logs, while still retaining most of the security benefits that accrue from using Certificate Transparency mechanisms.
       </t>
       <section title="Wildcard Certificates">
         <t>
@@ -368,7 +368,7 @@ d0 d1   d2 d3           d0 d1   d2 d3  d4 d5</artwork>
       </section>
       <section title="Using a Name-Constrained Intermediate CA" anchor="name_constrained">
         <t>
-          An intermediate CA certificate or intermediate CA precertificate that contains the critical or non-critical <xref target="RFC5280">Name Constraints</xref> extension MAY be logged in place of end-entity certificates issued by that intermediate CA, as long as all of the following conditions are met:
+          An intermediate CA certificate or intermediate CA precertificate that contains the <xref target="RFC5280">Name Constraints</xref> extension MAY be logged in place of end-entity certificates issued by that intermediate CA, as long as all of the following conditions are met:
           <list style="symbols">
             <t>
               there MUST be a non-critical extension (OID 1.3.101.76, whose extnValue OCTET STRING contains ASN.1 NULL data (0x05 0x00)). This extension is an explicit indication that it is acceptable to not log certificates issued by this intermediate CA.
@@ -474,7 +474,7 @@ d0 d1   d2 d3           d0 d1   d2 d3  d4 d5</artwork>
       <section title="Log ID" anchor="log_id">
         <figure>
           <preamble>
-            Each log is uniquely identified by an OID (specified in the log's metadata). A log's operator MUST either allocate the OID themselves or request an OID from one of the two Log ID Registries (see <xref target="log_id_registry1"/> and <xref target="log_id_registry2"/>). Various data structures include the DER encoding of this OID, excluding the ASN.1 tag and length bytes, in an opaque vector:
+            Each log is identified by an OID, which is specified in the log's metadata and which MUST NOT be used to identify any other log. A log's operator MUST either allocate the OID themselves or request an OID from one of the two Log ID Registries (see <xref target="log_id_registry1"/> and <xref target="log_id_registry2"/>). Various data structures include the DER encoding of this OID, excluding the ASN.1 tag and length bytes, in an opaque vector:
           </preamble>
           <artwork>
     opaque LogID&lt;2..127&gt;;</artwork>
@@ -1466,17 +1466,7 @@ but it is expected there will be a variety.
         </section>
         <section title="Handling of Non-compliance">
           <t>
-            If a TLS server presents a certificate chain that is non-compliant, there are two possibilities.
-          </t>
-          <t>
-            <list style="symbols">
-              <t>
-                In the case that use of TLS with a valid certificate is mandated by explicit security policy, application protocol specification, or other means, the TLS client MUST refuse the connection.
-              </t>
-              <t>
-                If the use of TLS with a valid certificate is optional, the TLS client MAY accept the connection but MUST NOT treat the certificate as valid.
-              </t>
-            </list>
+            If a TLS server presents a certificate chain that is non-compliant, and the use of a compliant certificate is mandated by an explicit security policy, application protocol specification, the TLS Feature extension or any other means, the TLS client MUST refuse the connection.
           </t>
         </section>
       </section>
@@ -1672,7 +1662,7 @@ but it is expected there will be a variety.
         </list>
         Allowing multiple signature or hash algorithms for a log would require that all data structures support it and would significantly complicate client implementation, which is why it is not supported by this document.
       </t>
-      <t>If it should become necessary to deprecate an algorithm used by a live log, then the log should be frozen as specified in <xref target="metadata"/> and a new log should be started. Certificates in the frozen log that have not yet expired and require new SCTs should be submitted to the new log and the SCTs from that log used instead.
+      <t>If it should become necessary to deprecate an algorithm used by a live log, then the log should be frozen as specified in <xref target="metadata"/> and a new log should be started. Certificates in the frozen log that have not yet expired and require new SCTs SHOULD be submitted to the new log and the SCTs from that log used instead.
       </t>
     </section>
 
@@ -1761,16 +1751,18 @@ but it is expected there will be a variety.
       <t>
         In addition, if TLS clients will not accept unlogged certificates, then site owners will have a greater incentive to submit certificates to logs, possibly with the assistance of their CA, increasing the overall transparency of the system.
       </t>
+      <t>
+        <xref target="I-D.ietf-trans-threat-analysis"/> provides a more detailed threat analysis of the
+        Certificate Transparency architecture.
+      </t>
       <section title="Misissued Certificates">
         <t>
-          Misissued certificates that have not been publicly logged, and thus do not have a valid SCT, are not considered compliant (so TLS clients may decide, for example, to reject them). Misissued certificates that do have an SCT from a log will appear in that public log within the Maximum Merge Delay, assuming the log is operating correctly. Thus, the maximum period of time during which a misissued certificate can be used without being available for audit is the MMD.
+          Misissued certificates that have not been publicly logged, and thus do not have a valid SCT, are not considered compliant. Misissued certificates that do have an SCT from a log will appear in that public log within the Maximum Merge Delay, assuming the log is operating correctly. Thus, the maximum period of time during which a misissued certificate can be used without being available for audit is the MMD.
         </t>
       </section>
       <section title="Detection of Misissue">
         <t>
-          The logs do not themselves detect misissued certificates; they rely
-instead on interested parties, such as domain owners, to monitor them and take
-corrective action when a misissue is detected.
+          The logs do not themselves detect misissued certificates; they rely instead on interested parties, such as domain owners, to monitor them and take corrective action when a misissue is detected.
         </t>
       </section>
       <section title="Avoiding Overly Redacting Domain Name Labels">
@@ -1816,12 +1808,6 @@ the proofs from the log) or communicate with the log via proxies.
       <section title="Multiple SCTs">
         <t>
           By offering multiple SCTs, each from a different log, TLS servers reduce the effectiveness of an attack where a CA and a log collude (see <xref target="multiple-scts"/>).
-        </t>
-      </section>
-      <section title="Threat Analysis">
-        <t>
-          <xref target="I-D.ietf-trans-threat-analysis"/> provides a more detailed threat analysis of the
-          Certificate Transparency architecture.
         </t>
       </section>
     </section>
