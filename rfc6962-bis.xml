@@ -307,7 +307,7 @@ d0 d1   d2 d3           d0 d1   d2 d3  d4 d5</artwork>
       </t>
       <section title="Certificates">
         <t>
-          Any entity can <xref target="add-chain">submit a certificate</xref> to a log. It is anticipated that TLS clients will not accept certificates which are not logged, and so it is expected that certificate owners (or their CAs) will submit them.
+          Any entity can <xref target="add-chain">submit a certificate</xref> to a log. Since it is anticipated that TLS clients will reject certificates that are not logged, it is expected that certificate issuers and subjects will be strongly motivated to submit them.
         </t>
       </section>
       <section title="Precertificates" anchor="Precertificates">
