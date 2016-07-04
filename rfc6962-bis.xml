@@ -338,7 +338,7 @@ d0 d1   d2 d3           d0 d1   d2 d3  d4 d5</artwork>
     </section>
     <section title="Private Domain Name Labels">
       <t>
-        Some regard some DNS domain name labels within their registered domain space as private and security sensitive. Even though these domains are often only accessible within the domain owner's private network, it's common for them to be secured using publicly trusted TLS server certificates. We define a mechanism to allow these private labels to not appear in public logs, while still retaining most of the security benefits that accrue from using Certificate Transparency mechanisms.
+        Some regard certain DNS domain name labels within their registered domain space as private and security sensitive. Even though these domains are often only accessible within the domain owner's private network, it's common for them to be secured using publicly trusted TLS server certificates. We define a mechanism to allow these private labels to not appear in public logs, while still retaining most of the security benefits that accrue from using Certificate Transparency mechanisms.
       </t>
       <section title="Wildcard Certificates">
         <t>
