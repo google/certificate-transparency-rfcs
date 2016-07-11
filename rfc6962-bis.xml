@@ -351,7 +351,7 @@ d0 d1   d2 d3           d0 d1   d2 d3  d4 d5</artwork>
       <section title="Redaction of Domain Name Labels" anchor="redacting_labels">
         <section title="Redacting Labels in Precertificates">
           <t>
-            When creating a precertificate, the CA MAY omit the <xref target="RFC5280">subjectAltName</xref> extension. Instead, the CA MUST include a <xref target="redacted_san_extension">Redacted SAN</xref> extension, containing the entries that will be included in the certificate's subjectAltName extension, in a redacted form.
+            When creating a precertificate, the CA MAY omit the <xref target="RFC5280">subjectAltName</xref> extension. Instead, the CA MUST include a <xref target="redacted_san_extension">redactedSubjectAltName</xref> extension, containing the entries that will be included in the certificate's subjectAltName extension, in a redacted form.
           </t>
           <t>
             One or more labels in each <xref target="RFC6125">DNS-ID</xref> can be replaced with <spanx style="verb">REDACTED(label)</spanx> labels.
@@ -366,12 +366,12 @@ d0 d1   d2 d3           d0 d1   d2 d3  d4 d5</artwork>
             Wildcard <spanx style="verb">*</spanx> labels MUST NOT be redacted.
           </t>
         </section>
-        <section title="Redacted SAN Certificate Extension" anchor="redacted_san_extension">
+        <section title="redactedSubjectAltName Certificate Extension" anchor="redacted_san_extension">
           <t>
-            The Redacted SAN extension is a non-critical extension (OID 1.3.101.77) identical in structure to the subjectAltName extension, the difference being that dNSName entries MAY contain redacted labels. The purpose of this extension is to inform TLS clients of the dNSNames that were redacted and the degree of redaction, while minimizing the complexity of TBSCertificate reconstruction, as described in <xref target="reconstructing_tbscertificate"/>.
+            The redactedSubjectAltName extension is a non-critical extension (OID 1.3.101.77) identical in structure to the subjectAltName extension, the difference being that dNSName entries MAY contain redacted labels. The purpose of this extension is to inform TLS clients of the dNSNames that were redacted and the degree of redaction, while minimizing the complexity of TBSCertificate reconstruction, as described in <xref target="reconstructing_tbscertificate"/>.
           </t>
           <t>
-            When used, the Redacted SAN extension MUST be present in both the precertificate and the corresponding certificate.
+            When used, the redactedSubjectAltName extension MUST be present in both the precertificate and the corresponding certificate.
           </t>
           <t>
             Hashing the redacted labels allows the legitimate domain owner to identify if the redacted label correlates to one of the labels they're aware of or a new, potentially unauthorized, subdomain.
@@ -1427,7 +1427,7 @@ but it is expected there will be a variety.
                 Remove the Transparency Information extension described in <xref target="x509v3_transinfo_extension"/>.
               </t>
               <t>
-                If the Redacted SAN extension (<xref target="redacted_san_extension"/>) is present:
+                If the redactedSubjectAltName extension (<xref target="redacted_san_extension"/>) is present:
                 <list style="symbols">
                   <t>TLS clients MUST verify it against the subjectAltName extension according to <xref target="verifying_redacted_san"/>.</t>
                   <t>Once verified, remove the subjectAltName extension from the TBSCertificate.</t>
@@ -1439,15 +1439,15 @@ but it is expected there will be a variety.
             If the SCT checked is for a Precertificate (where the <spanx style="verb">type</spanx> of the <spanx style="verb">TransItem</spanx> is <spanx style="verb">precert_sct_v2</spanx>), then the client SHOULD also remove embedded v1 SCTs, identified by OID 1.3.6.1.4.1.11129.2.4.2 (See Section 3.3. of <xref target="RFC6962"/>), in the process of reconstructing the TBSCertificate. That is to allow embedded v1 and v2 SCTs to co-exist in a certificate (See <xref target="v1_coexistence"/>).
           </t>
         </section>
-        <section title="Verifying the Redacted SAN extension" anchor="verifying_redacted_san">
+        <section title="Verifying the redactedSubjectAltName extension" anchor="verifying_redacted_san">
           <t>
-            If the Redacted SAN extension is present, TLS clients MUST check that the SAN extension is present, that the SAN extension contains the same number of identities as the Redacted SAN extension, and that each identity in the SAN extension has a matching identity at the same position in the Redacted SAN extension. Two identities are matching if either:
+            If the redactedSubjectAltName extension is present, TLS clients MUST check that the subjectAltName extension is present, that the subjectAltName extension contains the same number of identities as the redactedSubjectAltName extension, and that each identity in the subjectAltName extension has a matching identity at the same position in the redactedSubjectAltName extension. Two identities are matching if either:
             <list style="symbols">
               <t>The two identities are identical; or,</t>
-              <t>Both identities are DNS names, have the same number of labels, and each label in the SAN identity has a matching label at the same position in the Redacted SAN identity. Two DNS labels are matching if either:
+              <t>Both identities are DNS names, have the same number of labels, and each label in the subjectAltName identity has a matching label at the same position in the redactedSubjectAltName identity. Two DNS labels are matching if either:
                 <list style="symbols">
                   <t>The two labels are identical; or,</t>
-                  <t>The label from the the Redacted SAN identity is equal to REDACTED(label from SAN identity) (<xref target="redacting_labels"/>)</t>
+                  <t>The label from the redactedSubjectAltName identity is equal to REDACTED(label from subjectAltName identity) (<xref target="redacting_labels"/>)</t>
                 </list>
               </t>
             </list>
