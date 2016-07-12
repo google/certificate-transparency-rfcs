@@ -366,7 +366,7 @@ d0 d1   d2 d3           d0 d1   d2 d3  d4 d5</artwork>
               Wildcard <spanx style="verb">*</spanx> labels MUST NOT be redacted, but one or more non-wildcard labels in each <xref target="RFC6125">DNS-ID</xref> can each be replaced with a redacted label as follows:
             </preamble>
             <artwork>
-REDACT(label) = prefix || BASE32(index || LABELHASH(ski || label))</artwork>
+REDACT(label) = prefix || BASE32(index || LABELHASH(keyid || label))</artwork>
           </figure>
           <t>
             <spanx style="verb">label</spanx> is the case-sensitive label to be redacted.
@@ -387,7 +387,7 @@ REDACT(label) = prefix || BASE32(index || LABELHASH(ski || label))</artwork>
             <spanx style="verb">LABELHASH</spanx> is the hash function identified by <spanx style="verb">index</spanx>.
           </t>
           <t>
-            <spanx style="verb">ski</spanx> is the content bytes of the Subject Key Identifier extension (section 4.2.1.2. of <xref target="RFC5280"/>).
+            <spanx style="verb">keyid</spanx> is the keyIdentifier from the Subject Key Identifier extension (section 4.2.1.2 of <xref target="RFC5280"/>), excluding the ASN.1 OCTET STRING tag and length bytes.
           </t>
         </section>
         <section title="redactedSubjectAltName Certificate Extension" anchor="redacted_san_extension">
