@@ -361,11 +361,29 @@ d0 d1   d2 d3           d0 d1   d2 d3  d4 d5</artwork>
           <t>
             When creating a precertificate, the CA MAY omit the subjectAltName extension. Instead, the CA MUST include a <xref target="redacted_san_extension">redactedSubjectAltName</xref> extension, containing the entries that will be included in the certificate's subjectAltName extension, in a redacted form.
           </t>
+          <figure>
+            <preamble>
+              One or more labels in each <xref target="RFC6125">DNS-ID</xref> can each be replaced with a <spanx style="verb">REDACTED(label)</spanx> label:
+            </preamble>
+            <artwork>
+    label_hash = HASH(subject_key_identifier || label)
+
+    REDACTED(label) = ? || BASE32(HASH_INDEX || label_hash)</artwork>
+          </figure>
           <t>
-            One or more labels in each <xref target="RFC6125">DNS-ID</xref> can each be replaced with a <spanx style="verb">REDACTED(label)</spanx> label:
-            <vspace blankLines='1' />
-            REDACTED(label) = ? || BASE32(HASH_INDEX || HASH(subject_key_identifier || label))
-            Where || denotes concatenation, HASH_INDEX is the index of a hash function in <xref target="hash_algorithms"/>, HASH is the hash function identified by HASH_INDEX, subject_key_identifier is the content bytes of the Subject Key Identifier extension (section 4.2.1.2. of <xref target="RFC5280"/>) and BASE32 is base32 encoding of the value according to <xref target="RFC4648"/>, section 6, excluding the padding.
+            <spanx style="verb">||</spanx> denotes concatenation.
+          </t>
+          <t>
+            <spanx style="verb">HASH_INDEX</spanx> is the index of a hash function in <xref target="hash_algorithms"/>.
+          </t>
+          <t>
+            <spanx style="verb">HASH</spanx> is the hash function identified by <spanx style="verb">HASH_INDEX</spanx>.
+          </t>
+          <t>
+            <spanx style="verb">subject_key_identifier</spanx> is the content bytes of the Subject Key Identifier extension (section 4.2.1.2. of <xref target="RFC5280"/>).
+          </t>
+          <t>
+            <spanx style="verb">BASE32</spanx> is base32 encoding of the value according to <xref target="RFC4648"/>, section 6, excluding the padding.
           </t>
           <t>
             Wildcard <spanx style="verb">*</spanx> labels MUST NOT be redacted.
