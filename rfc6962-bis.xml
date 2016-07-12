@@ -374,6 +374,9 @@ d0 d1   d2 d3           d0 d1   d2 d3  d4 d5</artwork>
             <spanx style="verb">||</spanx> denotes concatenation.
           </t>
           <t>
+            <spanx style="verb">label</spanx> is the case-sensitive label to be redacted.
+          </t>
+          <t>
             <spanx style="verb">LABELHASH_INDEX</spanx> is the index of a hash function in <xref target="hash_algorithms"/>.
           </t>
           <t>
