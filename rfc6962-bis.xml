@@ -367,11 +367,11 @@ d0 d1   d2 d3           d0 d1   d2 d3  d4 d5</artwork>
             </preamble>
             <artwork>
          label_hash = LABELHASH(subject_key_identifier || label)
-        base32_data = BASE32(LABELHASH_INDEX || label_hash)
-    REDACTED(label) = REDACTION_PREFIX || base32_data</artwork>
+        base32_data = BASE32(labelhash_index || label_hash)
+    REDACTED(label) = redaction_prefix || base32_data</artwork>
           </figure>
           <t>
-            <spanx style="verb">REDACTION_PREFIX</spanx> is the "?" character (ASCII value 63).
+            <spanx style="verb">redaction_prefix</spanx> is the "?" character (ASCII value 63).
           </t>
           <t>
             <spanx style="verb">||</spanx> denotes concatenation.
@@ -380,10 +380,10 @@ d0 d1   d2 d3           d0 d1   d2 d3  d4 d5</artwork>
             <spanx style="verb">label</spanx> is the case-sensitive label to be redacted.
           </t>
           <t>
-            <spanx style="verb">LABELHASH_INDEX</spanx> is the 1 byte index of a hash function in <xref target="hash_algorithms"/>.
+            <spanx style="verb">labelhash_index</spanx> is the 1 byte index of a hash function in <xref target="hash_algorithms"/>.
           </t>
           <t>
-            <spanx style="verb">LABELHASH</spanx> is the hash function identified by <spanx style="verb">LABELHASH_INDEX</spanx>.
+            <spanx style="verb">LABELHASH</spanx> is the hash function identified by <spanx style="verb">labelhash_index</spanx>.
           </t>
           <t>
             <spanx style="verb">subject_key_identifier</spanx> is the content bytes of the Subject Key Identifier extension (section 4.2.1.2. of <xref target="RFC5280"/>).
