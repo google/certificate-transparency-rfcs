@@ -330,7 +330,7 @@ d0 d1   d2 d3           d0 d1   d2 d3  d4 d5</artwork>
                   the <xref target="x509v3_transinfo_extension">Transparency Information</xref> extension MUST be omitted.
                 </t>
                 <t>
-                  the <xref target="RFC5280">subjectAltName</xref> extension MAY be omitted (see <xref target="redacting_labels"/>).
+                  the <xref target="RFC5280">subjectAltName</xref> extension MAY be omitted when the CA is using <xref target="redacting_labels">domain name redaction</xref>.
                 </t>
               </list>
             </t>
