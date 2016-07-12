@@ -366,18 +366,18 @@ d0 d1   d2 d3           d0 d1   d2 d3  d4 d5</artwork>
               One or more labels in each <xref target="RFC6125">DNS-ID</xref> can each be replaced with a <spanx style="verb">REDACTED(label)</spanx> label:
             </preamble>
             <artwork>
-    label_hash = HASH(subject_key_identifier || label)
+    label_hash = LABELHASH(subject_key_identifier || label)
 
-    REDACTED(label) = ? || BASE32(HASH_INDEX || label_hash)</artwork>
+    REDACTED(label) = ? || BASE32(LABELHASH_INDEX || label_hash)</artwork>
           </figure>
           <t>
             <spanx style="verb">||</spanx> denotes concatenation.
           </t>
           <t>
-            <spanx style="verb">HASH_INDEX</spanx> is the index of a hash function in <xref target="hash_algorithms"/>.
+            <spanx style="verb">LABELHASH_INDEX</spanx> is the index of a hash function in <xref target="hash_algorithms"/>.
           </t>
           <t>
-            <spanx style="verb">HASH</spanx> is the hash function identified by <spanx style="verb">HASH_INDEX</spanx>.
+            <spanx style="verb">LABELHASH</spanx> is the hash function identified by <spanx style="verb">LABELHASH_INDEX</spanx>.
           </t>
           <t>
             <spanx style="verb">subject_key_identifier</spanx> is the content bytes of the Subject Key Identifier extension (section 4.2.1.2. of <xref target="RFC5280"/>).
