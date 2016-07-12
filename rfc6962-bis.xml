@@ -1862,6 +1862,24 @@ the proofs from the log) or communicate with the log via proxies.
         </t>
       </section>
     </section>
+    <section title="Privacy Considerations">
+      <section title="Ensuring Effective Redaction">
+        <t>
+          Although the domain name redaction mechanism (<xref target="domain_name_redaction"/>) removes the need for private labels to appear in logs, it does not guarantee that this will never happen. Anyone who encounters a certificate could choose to submit it to one or more logs, thereby rendering the redaction futile. Therefore, domain owners are advised to take the following steps to minimize the likelihood that their private labels will become known outside their closed communities:
+          <list style="symbols">
+            <t>
+              Avoid registering private labels in public DNS.
+            </t>
+            <t>
+              Avoid using private labels that are predictable (e.g. <spanx style="verb">www</spanx>).
+            </t>
+          </list>
+        </t>
+        <t>
+          CAs are advised to carefully consider each request to redact a label. When a CA believes that redacting a particular label would be futile, we advise rejecting the redaction request. TLS clients may have policies that forbid redaction, so redaction should only be used when it's absolutely necessary and likely to be effective.
+        </t>
+      </section>
+    </section>
     <section title="Acknowledgements">
       <t>
         The authors would like to thank Erwann Abelea, Robin Alden, Andrew Ayer, Al Cutter, Francis Dupont, Adam Eijdenberg, Stephen Farrell, Daniel Kahn Gillmor, Paul Hadfield, Brad Hill, Jeff Hodges, Paul Hoffman, Jeffrey Hutzelman, Kat Joyce, Stephen Kent, SM, Alexey Melnikov, Linus Nordberg, Chris Palmer, Trevor Perrin, Pierre Phaneuf, Melinda Shore, Ryan Sleevi, Martin Smith, Carl Wallace and Paul Wouters for their valuable contributions.
