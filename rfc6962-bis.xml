@@ -359,7 +359,7 @@ d0 d1   d2 d3           d0 d1   d2 d3  d4 d5</artwork>
       <section title="Redaction of Domain Name Labels" anchor="redacting_labels">
         <section title="Redacting Labels in Precertificates">
           <t>
-            When creating a precertificate, the CA MAY omit the subjectAltName extension. Instead, the CA MUST include a <xref target="redacted_san_extension">redactedSubjectAltName</xref> extension, containing the entries that will be included in the certificate's subjectAltName extension, in a redacted form.
+            When creating a precertificate, the CA MAY omit the subjectAltName extension. Instead, the CA MUST include a <xref target="redacted_san_extension">redactedSubjectAltName</xref> extension that contains, in a redacted form, the same identities that will be included in the certificate's subjectAltName extension.
           </t>
           <figure>
             <preamble>
