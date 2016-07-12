@@ -366,10 +366,13 @@ d0 d1   d2 d3           d0 d1   d2 d3  d4 d5</artwork>
               Wildcard <spanx style="verb">*</spanx> labels MUST NOT be redacted, but one or more non-wildcard labels in each <xref target="RFC6125">DNS-ID</xref> can each be replaced with a <spanx style="verb">REDACTED(label)</spanx> label:
             </preamble>
             <artwork>
-    label_hash = LABELHASH(subject_key_identifier || label)
-
-    REDACTED(label) = ? || BASE32(LABELHASH_INDEX || label_hash)</artwork>
+         label_hash = LABELHASH(subject_key_identifier || label)
+        base32_data = BASE32(LABELHASH_INDEX || label_hash)
+    REDACTED(label) = REDACTION_PREFIX || base32_data</artwork>
           </figure>
+          <t>
+            <spanx style="verb">REDACTION_PREFIX</spanx> is the "?" character (ASCII value 63).
+          </t>
           <t>
             <spanx style="verb">||</spanx> denotes concatenation.
           </t>
