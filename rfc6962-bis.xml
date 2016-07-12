@@ -353,7 +353,7 @@ d0 d1   d2 d3           d0 d1   d2 d3  d4 d5</artwork>
           A certificate containing a <xref target="RFC6125">DNS-ID</xref> of <spanx style="verb">*.example.com</spanx> could be used to secure the domain <spanx style="verb">topsecret.example.com</spanx>, without revealing the string <spanx style="verb">topsecret</spanx> publicly.
         </t>
         <t>
-          Since TLS clients only match the wildcard character to the complete leftmost label of the DNS domain name (see Section 6.4.3 of <xref target="RFC6125"/>), a different approach is needed when more than one of the leftmost labels in a DNS-ID are considered private (e.g. <spanx style="verb">top.secret.example.com</spanx>). Also, wildcard certificates are prohibited in some cases, such as <xref target="EVSSLGuidelines">Extended Validation Certificates</xref>.
+          Since TLS clients only match the wildcard character to the complete leftmost label of the DNS domain name (see Section 6.4.3 of <xref target="RFC6125"/>), a different approach is needed when any label other than the leftmost label in a DNS-ID is considered private (e.g. <spanx style="verb">top.secret.example.com</spanx>). Also, wildcard certificates are prohibited in some cases, such as <xref target="EVSSLGuidelines">Extended Validation Certificates</xref>.
         </t>
       </section>
       <section title="Redaction of Domain Name Labels" anchor="redacting_labels">
