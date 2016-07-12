@@ -383,7 +383,7 @@ d0 d1   d2 d3           d0 d1   d2 d3  d4 d5</artwork>
             <spanx style="verb">subject_key_identifier</spanx> is the content bytes of the Subject Key Identifier extension (section 4.2.1.2. of <xref target="RFC5280"/>).
           </t>
           <t>
-            <spanx style="verb">BASE32</spanx> is base32 encoding of the value according to <xref target="RFC4648"/>, section 6, excluding the padding.
+            <spanx style="verb">BASE32</spanx> is the Base 32 Encoding function (section 6 of <xref target="RFC4648"/>). Pad characters MUST NOT be appended to the encoded data.
           </t>
           <t>
             Wildcard <spanx style="verb">*</spanx> labels MUST NOT be redacted.
