@@ -363,33 +363,31 @@ d0 d1   d2 d3           d0 d1   d2 d3  d4 d5</artwork>
           </t>
           <figure>
             <preamble>
-              Wildcard <spanx style="verb">*</spanx> labels MUST NOT be redacted, but one or more non-wildcard labels in each <xref target="RFC6125">DNS-ID</xref> can each be replaced with a <spanx style="verb">REDACTED(label)</spanx> label:
+              Wildcard <spanx style="verb">*</spanx> labels MUST NOT be redacted, but one or more non-wildcard labels in each <xref target="RFC6125">DNS-ID</xref> can each be replaced with a redacted label as follows:
             </preamble>
             <artwork>
-         label_hash = LABELHASH(subject_key_identifier || label)
-        base32_data = BASE32(labelhash_index || label_hash)
-    REDACTED(label) = redaction_prefix || base32_data</artwork>
+REDACT(label) = prefix || BASE32(index || LABELHASH(ski || label))</artwork>
           </figure>
           <t>
-            <spanx style="verb">redaction_prefix</spanx> is the "?" character (ASCII value 63).
+            <spanx style="verb">label</spanx> is the case-sensitive label to be redacted.
+          </t>
+          <t>
+            <spanx style="verb">prefix</spanx> is the "?" character (ASCII value 63).
           </t>
           <t>
             <spanx style="verb">||</spanx> denotes concatenation.
           </t>
           <t>
-            <spanx style="verb">label</spanx> is the case-sensitive label to be redacted.
-          </t>
-          <t>
-            <spanx style="verb">labelhash_index</spanx> is the 1 byte index of a hash function in <xref target="hash_algorithms"/>.
-          </t>
-          <t>
-            <spanx style="verb">LABELHASH</spanx> is the hash function identified by <spanx style="verb">labelhash_index</spanx>.
-          </t>
-          <t>
-            <spanx style="verb">subject_key_identifier</spanx> is the content bytes of the Subject Key Identifier extension (section 4.2.1.2. of <xref target="RFC5280"/>).
-          </t>
-          <t>
             <spanx style="verb">BASE32</spanx> is the Base 32 Encoding function (section 6 of <xref target="RFC4648"/>). Pad characters MUST NOT be appended to the encoded data.
+          </t>
+          <t>
+            <spanx style="verb">index</spanx> is the 1 byte index of a hash function in <xref target="hash_algorithms"/>.
+          </t>
+          <t>
+            <spanx style="verb">LABELHASH</spanx> is the hash function identified by <spanx style="verb">index</spanx>.
+          </t>
+          <t>
+            <spanx style="verb">ski</spanx> is the content bytes of the Subject Key Identifier extension (section 4.2.1.2. of <xref target="RFC5280"/>).
           </t>
         </section>
         <section title="redactedSubjectAltName Certificate Extension" anchor="redacted_san_extension">
