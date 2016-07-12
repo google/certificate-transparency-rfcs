@@ -363,7 +363,7 @@ d0 d1   d2 d3           d0 d1   d2 d3  d4 d5</artwork>
           </t>
           <figure>
             <preamble>
-              One or more labels in each <xref target="RFC6125">DNS-ID</xref> can each be replaced with a <spanx style="verb">REDACTED(label)</spanx> label:
+              Wildcard <spanx style="verb">*</spanx> labels MUST NOT be redacted, but one or more non-wildcard labels in each <xref target="RFC6125">DNS-ID</xref> can each be replaced with a <spanx style="verb">REDACTED(label)</spanx> label:
             </preamble>
             <artwork>
     label_hash = LABELHASH(subject_key_identifier || label)
@@ -387,9 +387,6 @@ d0 d1   d2 d3           d0 d1   d2 d3  d4 d5</artwork>
           </t>
           <t>
             <spanx style="verb">BASE32</spanx> is the Base 32 Encoding function (section 6 of <xref target="RFC4648"/>). Pad characters MUST NOT be appended to the encoded data.
-          </t>
-          <t>
-            Wildcard <spanx style="verb">*</spanx> labels MUST NOT be redacted.
           </t>
         </section>
         <section title="redactedSubjectAltName Certificate Extension" anchor="redacted_san_extension">
