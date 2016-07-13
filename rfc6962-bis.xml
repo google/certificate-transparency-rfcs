@@ -1865,7 +1865,7 @@ the proofs from the log) or communicate with the log via proxies.
     <section title="Privacy Considerations">
       <section title="Ensuring Effective Redaction">
         <t>
-          Although this redaction mechanism removes the need for private labels to appear in logs, it does not guarantee that this will never happen. Anyone who encounters a certificate could choose to submit it to one or more logs, thereby rendering the redaction futile. Therefore, domain owners are advised to take the following steps to minimize the likelihood that their private labels will become known outside their closed communities:
+          Although the domain name redaction mechanism (<xref target="domain_name_redaction"/>) removes the need for private labels to appear in logs, it does not guarantee that this will never happen. Anyone who encounters a certificate could choose to submit it to one or more logs, thereby rendering the redaction futile. Therefore, domain owners are advised to take the following steps to minimize the likelihood that their private labels will become known outside their closed communities:
           <list style="symbols">
             <t>
               Avoid registering private labels in public DNS.
