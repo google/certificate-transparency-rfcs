@@ -403,7 +403,7 @@ REDACT(label) = prefix || BASE32(index || LABELHASH(keyid || label))</artwork>
         </section>
         <section title="Ensuring Effective Redaction">
           <t>
-            Although this redaction mechanism removes the need for private labels to appear in logs, it does not guarantee that this will never happen. Anyone who encounters a certificate could choose to submit it to one or more logs, thereby rendering the redaction futile. Therefore, it is RECOMMENDED that domain owners take the following steps to minimize the likelihood that their private labels will become known outside their closed communities:
+            Although this redaction mechanism removes the need for private labels to appear in logs, it does not guarantee that this will never happen. Anyone who encounters a certificate could choose to submit it to one or more logs, thereby rendering the redaction futile. Therefore, domain owners are advised to take the following steps to minimize the likelihood that their private labels will become known outside their closed communities:
             <list style="symbols">
               <t>
                 Avoid registering private labels in public DNS.
@@ -414,7 +414,7 @@ REDACT(label) = prefix || BASE32(index || LABELHASH(keyid || label))</artwork>
             </list>
           </t>
           <t>
-            CAs SHOULD carefully consider each request to redact a label. When a CA believes that redacting a particular label would be futile, the CA SHOULD NOT redact it. TLS clients may have policies that forbid redaction, so redaction should only be used when it's absolutely necessary and likely to be effective.
+            CAs are advised to carefully consider each request to redact a label. When a CA believes that redacting a particular label would be futile, we advise rejecting the redaction request. TLS clients may have policies that forbid redaction, so redaction should only be used when it's absolutely necessary and likely to be effective.
           </t>
         </section>
       </section>
