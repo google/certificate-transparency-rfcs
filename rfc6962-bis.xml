@@ -401,22 +401,6 @@ REDACT(label) = prefix || BASE32(index || LABELHASH(keyid || label))</artwork>
             This extension informs TLS clients of the dNSNames that were redacted and the degree of redaction, while minimizing the complexity of TBSCertificate reconstruction (as described in <xref target="reconstructing_tbscertificate"/>). Hashing the redacted labels allows the legitimate domain owner to identify whether or not each redacted label correlates to a label they know of.
           </t>
         </section>
-        <section title="Ensuring Effective Redaction">
-          <t>
-            Although this redaction mechanism removes the need for private labels to appear in logs, it does not guarantee that this will never happen. Anyone who encounters a certificate could choose to submit it to one or more logs, thereby rendering the redaction futile. Therefore, domain owners are advised to take the following steps to minimize the likelihood that their private labels will become known outside their closed communities:
-            <list style="symbols">
-              <t>
-                Avoid registering private labels in public DNS.
-              </t>
-              <t>
-                Avoid using private labels that are predictable (e.g. <spanx style="verb">www</spanx>).
-              </t>
-            </list>
-          </t>
-          <t>
-            CAs are advised to carefully consider each request to redact a label. When a CA believes that redacting a particular label would be futile, we advise rejecting the redaction request. TLS clients may have policies that forbid redaction, so redaction should only be used when it's absolutely necessary and likely to be effective.
-          </t>
-        </section>
       </section>
       <section title="Using a Name-Constrained Intermediate CA" anchor="name_constrained">
         <t>
@@ -1875,6 +1859,24 @@ the proofs from the log) or communicate with the log via proxies.
       <section title="Multiple SCTs">
         <t>
           By offering multiple SCTs, each from a different log, TLS servers reduce the effectiveness of an attack where a CA and a log collude (see <xref target="multiple-scts"/>).
+        </t>
+      </section>
+    </section>
+    <section title="Privacy Considerations">
+      <section title="Ensuring Effective Redaction">
+        <t>
+          Although this redaction mechanism removes the need for private labels to appear in logs, it does not guarantee that this will never happen. Anyone who encounters a certificate could choose to submit it to one or more logs, thereby rendering the redaction futile. Therefore, domain owners are advised to take the following steps to minimize the likelihood that their private labels will become known outside their closed communities:
+          <list style="symbols">
+            <t>
+              Avoid registering private labels in public DNS.
+            </t>
+            <t>
+              Avoid using private labels that are predictable (e.g. <spanx style="verb">www</spanx>).
+            </t>
+          </list>
+        </t>
+        <t>
+          CAs are advised to carefully consider each request to redact a label. When a CA believes that redacting a particular label would be futile, we advise rejecting the redaction request. TLS clients may have policies that forbid redaction, so redaction should only be used when it's absolutely necessary and likely to be effective.
         </t>
       </section>
     </section>
