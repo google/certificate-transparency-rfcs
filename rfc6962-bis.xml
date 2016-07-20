@@ -381,7 +381,7 @@ REDACT(label) = prefix || BASE32(index || LABELHASH(keyid || label))</artwork>
             <spanx style="verb">BASE32</spanx> is the Base 32 Encoding function (section 6 of <xref target="RFC4648"/>). Pad characters MUST NOT be appended to the encoded data.
           </t>
           <t>
-            <spanx style="verb">index</spanx> is the 1 byte index of a hash function in <xref target="hash_algorithms"/>.
+            <spanx style="verb">index</spanx> is the 1 byte index of a hash function in <xref target="hash_algorithms"/>. The value 255 is reserved.
           </t>
           <t>
             <spanx style="verb">LABELHASH</spanx> is the hash function identified by <spanx style="verb">index</spanx>.
