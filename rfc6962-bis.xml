@@ -1815,7 +1815,7 @@ but it is expected there will be a variety.
       </section>
       <section title="Avoiding Overly Redacting Domain Name Labels">
         <t>
-          Redaction of domain name labels carries the same risks as the use of wildcards (See Section 7.2 of <xref target="RFC6125"/>, for example). If the entirety of the domain space below the unredacted part of a domain name is not controlled by a single entity (e.g. <spanx style="verb">REDACT(label).com</spanx>, <spanx style="verb">REDACT(label).co.uk</spanx> and other <xref target="Public.Suffix.List">public suffixes</xref>), then the domain name may be considered by clients to be overly redacted.
+          Redaction of domain name labels carries the same risks as the use of wildcards (See Section 7.2 of <xref target="RFC6125"/>, for example). If the entirety of the domain space below the unredacted part of a domain name is not registered by a single domain owner (e.g. <spanx style="verb">REDACT(label).com</spanx>, <spanx style="verb">REDACT(label).co.uk</spanx> and other <xref target="Public.Suffix.List">public suffixes</xref>), then the domain name may be considered by clients to be overly redacted.
         </t>
         <t>
           CAs should take care to avoid overly redacting domain names in precertificates. It is expected that monitors will treat precertificates that contain overly redacted domain names as potentially misissued. TLS clients MAY consider a certificate to be non-compliant if the <xref target="reconstructing_tbscertificate">reconstructed TBSCertificate</xref> contains any overly redacted domain names.
