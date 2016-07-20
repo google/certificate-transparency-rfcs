@@ -330,7 +330,7 @@ d0 d1   d2 d3           d0 d1   d2 d3  d4 d5</artwork>
                   the <xref target="x509v3_transinfo_extension">Transparency Information</xref> extension MUST be omitted.
                 </t>
                 <t>
-                  the <xref target="RFC5280">subjectAltName</xref> extension MAY be omitted when the CA is using <xref target="domain_name_redaction">domain name redaction</xref>.
+                  the <xref target="RFC5280">subjectAltName</xref> extension MUST be omitted when the CA is using <xref target="domain_name_redaction">domain name redaction</xref>.
                 </t>
               </list>
             </t>
@@ -375,13 +375,13 @@ REDACT(label) = prefix || BASE32(index || LABELHASH(keyid || label))</artwork>
             <spanx style="verb">prefix</spanx> is the "?" character (ASCII value 63).
           </t>
           <t>
-            <spanx style="verb">||</spanx> denotes concatenation.
+            <spanx style="verb">||</spanx> denotes length-encoded concatenation. Each concatenated value is preceded by a single byte that contains the length (in bytes) of that value.
           </t>
           <t>
             <spanx style="verb">BASE32</spanx> is the Base 32 Encoding function (section 6 of <xref target="RFC4648"/>). Pad characters MUST NOT be appended to the encoded data.
           </t>
           <t>
-            <spanx style="verb">index</spanx> is the 1 byte index of a hash function in <xref target="hash_algorithms"/>.
+            <spanx style="verb">index</spanx> is the 1 byte index of a hash function in <xref target="hash_algorithms"/>. The value 255 is reserved.
           </t>
           <t>
             <spanx style="verb">LABELHASH</spanx> is the hash function identified by <spanx style="verb">index</spanx>.
@@ -1471,16 +1471,13 @@ but it is expected there will be a variety.
               <t>Both identities are DNS names, have the same number of labels, and each label in the subjectAltName identity has a matching label at the same position in the redactedSubjectAltName identity. Two DNS labels are matching if either:
                 <list style="symbols">
                   <t>The two labels are identical; or,</t>
-                  <t>The label from the redactedSubjectAltName identity is equal to REDACT(label from subjectAltName identity) (<xref target="redacting_labels"/>)</t>
+                  <t>Neither label is <spanx style="verb">*</spanx> and the label from the redactedSubjectAltName identity is equal to REDACT(label from subjectAltName identity) (<xref target="redacting_labels"/>).</t>
                 </list>
               </t>
             </list>
           </t>
           <t>
             If any of these checks fail, the certificate MUST NOT be considered compliant.
-          </t>
-          <t>
-            A certificate with redacted labels where one of the redacted labels is <spanx style="verb">*</spanx> MUST NOT be considered compliant.
           </t>
         </section>
         <section title="Validating SCTs">
@@ -1818,7 +1815,7 @@ but it is expected there will be a variety.
       </section>
       <section title="Avoiding Overly Redacting Domain Name Labels">
         <t>
-          Redaction of domain name labels carries the same risks as the use of wildcards (See Section 7.2 of <xref target="RFC6125"/>, for example). If the entirety of the domain space below the unredacted part of a domain name is not controlled by a single entity (e.g. <spanx style="verb">REDACT(label).com</spanx>, <spanx style="verb">REDACT(label).co.uk</spanx> and other <xref target="Public.Suffix.List">public suffixes</xref>), then the domain name may be considered by clients to be overly redacted.
+          Redaction of domain name labels carries the same risks as the use of wildcards (See Section 7.2 of <xref target="RFC6125"/>, for example). If the entirety of the domain space below the unredacted part of a domain name is not registered by a single domain owner (e.g. <spanx style="verb">REDACT(label).com</spanx>, <spanx style="verb">REDACT(label).co.uk</spanx> and other <xref target="Public.Suffix.List">public suffixes</xref>), then the domain name may be considered by clients to be overly redacted.
         </t>
         <t>
           CAs should take care to avoid overly redacting domain names in precertificates. It is expected that monitors will treat precertificates that contain overly redacted domain names as potentially misissued. TLS clients MAY consider a certificate to be non-compliant if the <xref target="reconstructing_tbscertificate">reconstructed TBSCertificate</xref> contains any overly redacted domain names.
