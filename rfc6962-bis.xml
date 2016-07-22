@@ -330,7 +330,7 @@ d0 d1   d2 d3           d0 d1   d2 d3  d4 d5</artwork>
                   the <xref target="x509v3_transinfo_extension">Transparency Information</xref> extension MUST be omitted.
                 </t>
                 <t>
-                  the <xref target="RFC5280">subjectAltName</xref> extension MUST be omitted when the CA is using <xref target="domain_name_redaction">domain name redaction</xref>.
+                  the <xref target="RFC5280">subjectAltName</xref> extension MUST be omitted when the <xref target="redacted_san_extension">redactedSubjectAltName</xref> extension is present.
                 </t>
               </list>
             </t>
@@ -359,7 +359,7 @@ d0 d1   d2 d3           d0 d1   d2 d3  d4 d5</artwork>
       <section title="Redaction of Domain Name Labels" anchor="domain_name_redaction">
         <section title="Redacting Labels in Precertificates" anchor="redacting_labels">
           <t>
-            When creating a precertificate, the CA MAY omit the subjectAltName extension. Instead, the CA MUST include a <xref target="redacted_san_extension">redactedSubjectAltName</xref> extension that contains, in a redacted form, the same identities that will be included in the certificate's subjectAltName extension.
+            When creating a precertificate, the CA MAY omit the subjectAltName extension, even if it intends to include the extension in the final certificate. If omitting the subjectAltName extension, the CA MUST include a <xref target="redacted_san_extension">redactedSubjectAltName</xref> extension that contains, in a redacted form, the same identities that will be included in the certificate's subjectAltName extension.
           </t>
           <figure>
             <preamble>
