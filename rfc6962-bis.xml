@@ -366,7 +366,8 @@ d0 d1   d2 d3           d0 d1   d2 d3  d4 d5</artwork>
               Wildcard <spanx style="verb">*</spanx> labels MUST NOT be redacted, but one or more non-wildcard labels in each <xref target="RFC6125">DNS-ID</xref> can each be replaced with a redacted label as follows:
             </preamble>
             <artwork>
-REDACT(label) = prefix || BASE32(index || LABELHASH(keyid || label))</artwork>
+  REDACT(label) = prefix || BASE32(index || _label_hash)
+    _label_hash = LABELHASH(keyid_len || keyid || label_len || label)</artwork>
           </figure>
           <t>
             <spanx style="verb">label</spanx> is the case-sensitive label to be redacted.
@@ -375,19 +376,25 @@ REDACT(label) = prefix || BASE32(index || LABELHASH(keyid || label))</artwork>
             <spanx style="verb">prefix</spanx> is the "?" character (ASCII value 63).
           </t>
           <t>
-            <spanx style="verb">||</spanx> denotes length-encoded concatenation. Each concatenated value is preceded by a single byte that contains the length (in bytes) of that value.
+            <spanx style="verb">index</spanx> is the 1 byte index of a hash function in <xref target="hash_algorithms"/>. The value 255 is reserved.
+          </t>
+          <t>
+            <spanx style="verb">keyid_len</spanx> is the 1 byte length of the <spanx style="verb">keyid</spanx>.
+          </t>
+          <t>
+            <spanx style="verb">keyid</spanx> is the keyIdentifier from the Subject Key Identifier extension (section 4.2.1.2 of <xref target="RFC5280"/>), excluding the ASN.1 OCTET STRING tag and length bytes.
+          </t>
+          <t>
+            <spanx style="verb">label_len</spanx> is the 1 byte length of the <spanx style="verb">label</spanx>.
+          </t>
+          <t>
+            <spanx style="verb">||</spanx> denotes concatenation.
           </t>
           <t>
             <spanx style="verb">BASE32</spanx> is the Base 32 Encoding function (section 6 of <xref target="RFC4648"/>). Pad characters MUST NOT be appended to the encoded data.
           </t>
           <t>
-            <spanx style="verb">index</spanx> is the 1 byte index of a hash function in <xref target="hash_algorithms"/>. The value 255 is reserved.
-          </t>
-          <t>
             <spanx style="verb">LABELHASH</spanx> is the hash function identified by <spanx style="verb">index</spanx>.
-          </t>
-          <t>
-            <spanx style="verb">keyid</spanx> is the keyIdentifier from the Subject Key Identifier extension (section 4.2.1.2 of <xref target="RFC5280"/>), excluding the ASN.1 OCTET STRING tag and length bytes.
           </t>
         </section>
         <section title="redactedSubjectAltName Certificate Extension" anchor="redacted_san_extension">
