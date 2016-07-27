@@ -405,10 +405,10 @@ d0 d1   d2 d3           d0 d1   d2 d3  d4 d5</artwork>
             When used, the redactedSubjectAltName extension MUST be present in both the precertificate and the corresponding certificate.
           </t>
           <t>
-            This extension informs TLS clients of the DNS-IDs that were redacted and the degree of redaction, while minimizing the complexity of TBSCertificate reconstruction (as described in <xref target="reconstructing_tbscertificate"/>). Hashing the redacted labels allows the legitimate domain owner to identify whether or not each redacted label correlates to a label they know of.
+            This extension informs TLS clients of the DNS-ID labels that were redacted and the degree of redaction, while minimizing the complexity of TBSCertificate reconstruction (as described in <xref target="reconstructing_tbscertificate"/>). Hashing the redacted labels allows the legitimate domain owner to identify whether or not each redacted label correlates to a label they know of.
           </t>
           <t>
-            Only DNS-IDs can be redacted using this mechanism. However, CAs can use Name Constraints (<xref target="name_constrained"/>) to allow DNS domain name labels in other types of subjectAltName entries to not appear in logs.
+            Only DNS-ID labels can be redacted using this mechanism. However, CAs can use Name Constraints (<xref target="name_constrained"/>) to allow DNS domain name labels in other subjectAltName entries to not appear in logs.
           </t>
         </section>
       </section>
