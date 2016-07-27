@@ -399,13 +399,16 @@ d0 d1   d2 d3           d0 d1   d2 d3  d4 d5</artwork>
         </section>
         <section title="redactedSubjectAltName Certificate Extension" anchor="redacted_san_extension">
           <t>
-            The redactedSubjectAltName extension is a non-critical extension (OID 1.3.101.77) that is identical in structure to the subjectAltName extension, except that dNSName identities (and only dNSName identities) MAY contain redacted labels (see <xref target="redacting_labels"/>).
+            The redactedSubjectAltName extension is a non-critical extension (OID 1.3.101.77) that is identical in structure to the subjectAltName extension, except that dNSName identities MAY contain redacted labels (see <xref target="redacting_labels"/>).
           </t>
           <t>
             When used, the redactedSubjectAltName extension MUST be present in both the precertificate and the corresponding certificate.
           </t>
           <t>
             This extension informs TLS clients of the dNSNames that were redacted and the degree of redaction, while minimizing the complexity of TBSCertificate reconstruction (as described in <xref target="reconstructing_tbscertificate"/>). Hashing the redacted labels allows the legitimate domain owner to identify whether or not each redacted label correlates to a label they know of.
+          </t>
+          <t>
+            Only DNS-IDs can be redacted using this mechanism. However, CAs can use Name Constraints (<xref target="name_constrained"/>) to allow DNS domain name labels in other types of subjectAltName entries to not appear in logs.
           </t>
         </section>
       </section>
@@ -423,9 +426,6 @@ d0 d1   d2 d3           d0 d1   d2 d3  d4 d5</artwork>
               excludedSubtrees MUST specify the entire IPv4 and IPv6 address ranges.
             </t>
           </list>
-        </t>
-        <t>
-          Note that this mechanism allows redaction of any type of field in the subjectAltName extension.
         </t>
         <figure>
           <preamble>
