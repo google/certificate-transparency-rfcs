@@ -358,7 +358,7 @@ d0 d1   d2 d3           d0 d1   d2 d3  d4 d5</artwork>
       </section>
       <section title="Redaction of Domain Name Labels" anchor="domain_name_redaction">
         <t>
-          The following mechanism allows private labels to not appear in public logs, while still retaining most of the security benefits that accrue from using Certificate Transparency mechanisms. Note that TLS clients may have policies that specify additional requirements relating to the use of this redaction mechanism.
+          The following mechanism allows private labels to not appear in public logs, while still retaining most of the security benefits that accrue from using Certificate Transparency mechanisms. Note that TLS clients may apply additional requirements relating to the use of this redaction mechanism for a certificate to be considered compliant.
         </t>
         <section title="Redacting Labels in Precertificates" anchor="redacting_labels">
           <t>
