@@ -346,7 +346,7 @@ d0 d1   d2 d3           d0 d1   d2 d3  d4 d5</artwork>
     </section>
     <section title="Private Domain Name Labels">
       <t>
-        Some regard certain DNS domain name labels within their registered domain space as private and security sensitive. Even though these domains are often only accessible within the domain owner's private network, it's common for them to be secured using publicly trusted TLS server certificates. We define a mechanism (see <xref target="domain_name_redaction"/>) to allow these private labels to not appear in public logs, while still retaining most of the security benefits that accrue from using Certificate Transparency mechanisms.
+        Some regard certain DNS domain name labels within their registered domain space as private and security sensitive. Even though these domains are often only accessible within the domain owner's private network, it's common for them to be secured using publicly trusted TLS server certificates.
       </t>
       <section title="Wildcard Certificates">
         <t>
@@ -357,6 +357,9 @@ d0 d1   d2 d3           d0 d1   d2 d3  d4 d5</artwork>
         </t>
       </section>
       <section title="Redaction of Domain Name Labels" anchor="domain_name_redaction">
+        <t>
+          The following mechanism allows private labels to not appear in public logs, while still retaining most of the security benefits that accrue from using Certificate Transparency mechanisms. Note that TLS clients may have policies that specify additional requirements relating to the use of this redaction mechanism.
+        </t>
         <section title="Redacting Labels in Precertificates" anchor="redacting_labels">
           <t>
             When creating a precertificate, the CA MAY omit the subjectAltName extension, even if it intends to include the extension in the final certificate. If omitting the subjectAltName extension, the CA MUST include a <xref target="redacted_san_extension">redactedSubjectAltName</xref> extension that contains, in a redacted form, the same entries that will be included in the certificate's subjectAltName extension.
