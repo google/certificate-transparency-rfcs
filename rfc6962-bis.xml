@@ -358,7 +358,7 @@ d0 d1   d2 d3           d0 d1   d2 d3  d4 d5</artwork>
       </section>
       <section title="Redaction of Domain Name Labels" anchor="domain_name_redaction">
         <t>
-          The following mechanism allows private labels to not appear in public logs, while still retaining most of the security benefits that accrue from using Certificate Transparency mechanisms. Note that TLS clients may apply additional requirements relating to the use of this redaction mechanism for a certificate to be considered compliant.
+          The following mechanism allows private labels to not appear in public logs, while still retaining most of the security benefits that accrue from using Certificate Transparency mechanisms. CAs and domain owners should note that there are <xref target="effective_redaction">privacy considerations</xref> and that TLS clients may apply additional requirements (relating to the use of this redaction mechanism) for a certificate to be considered compliant.
         </t>
         <section title="Redacting Labels in Precertificates" anchor="redacting_labels">
           <t>
@@ -1873,15 +1873,18 @@ the proofs from the log) or communicate with the log via proxies.
       </section>
     </section>
     <section title="Privacy Considerations">
-      <section title="Ensuring Effective Redaction">
+      <section title="Ensuring Effective Redaction" anchor="effective_redaction">
         <t>
-          Although the domain name redaction mechanism (<xref target="domain_name_redaction"/>) removes the need for private labels to appear in logs, it does not guarantee that this will never happen. Anyone who encounters a certificate could choose to submit it to one or more logs, thereby rendering the redaction futile. Therefore, domain owners are advised to take the following steps to minimize the likelihood that their private labels will become known outside their closed communities:
+          Although the domain name redaction mechanism (<xref target="domain_name_redaction"/>) removes the need for private labels to appear in logs, it does not guarantee that this will never happen. Anyone who encounters a certificate could choose to submit it to one or more logs, thereby rendering the redaction futile.
+        </t>
+        <t>
+          Domain owners are advised to take the following steps to minimize the likelihood that their private labels will become known outside their closed communities:
           <list style="symbols">
             <t>
               Avoid registering private labels in public DNS.
             </t>
             <t>
-              Avoid using private labels that are predictable (e.g. <spanx style="verb">www</spanx>).
+              Avoid using private labels that are predictable (e.g. <spanx style="verb">www</spanx>, labels consisting only of numerical digits, etc). If a label has insufficient entropy then redaction will only provide a thin layer of obfuscation, because it will be feasible to recover the label via a brute-force attack.
             </t>
           </list>
         </t>
