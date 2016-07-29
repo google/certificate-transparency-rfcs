@@ -1296,6 +1296,25 @@ entry specified by <spanx style="verb">start</spanx>.
           Provided that a TLS client includes the <spanx style="verb">transparency_info</spanx> extension type in the ClientHello, the TLS server SHOULD include the <spanx style="verb">transparency_info</spanx> extension in the ServerHello with <spanx style="verb">extension_data</spanx> set to a <spanx style="verb">TransItemList</spanx>. The TLS server SHOULD ignore any <spanx style="verb">extension_data</spanx> sent by the TLS client. Additionally, the TLS server MUST NOT process or include this extension when a TLS session is resumed, since session resumption uses the original session information.
         </t>
       </section>
+      <section title="cached_info TLS Extension">
+        <t>
+          When a TLS server includes the <spanx style="verb">transparency_info</spanx> extension in the ServerHello, it SHOULD NOT include any <spanx style="verb">TransItem</spanx> structures of type <spanx style="verb">x509_sct_with_proof_v2</spanx>, <spanx style="verb">x509_sct_v2</spanx>, <spanx style="verb">precert_sct_with_proof_v2</spanx> or <spanx style="verb">precert_sct_v2</spanx> in the <spanx style="verb">TransItemList</spanx> if all of the following conditions are met:
+          <list style="symbols">
+            <t>
+              The TLS client includes the <spanx style="verb">transparency_info</spanx> extension type in the ClientHello.
+            </t>
+            <t>
+              The TLS client includes the <spanx style="verb">cached_info</spanx> (<xref target="RFC7924"/>) extension type in the ClientHello, with a <spanx style="verb">CachedObject</spanx> of type <spanx style="verb">ct_compliant</spanx> (see <xref target="tls_cachedinfo_extension"/>) and at least one <spanx style="verb">CachedObject</spanx> of type <spanx style="verb">cert</spanx>.
+            </t>
+            <t>
+              The TLS server sends a modified Certificate message (as described in section 4.1 of <xref target="RFC7924"/>).
+            </t>
+          </list>
+        </t>
+        <t>
+          TLS servers SHOULD ignore the <spanx style="verb">hash_value</spanx> fields of each <spanx style="verb">CachedObject</spanx> of type <spanx style="verb">ct_compliant</spanx> sent by TLS clients.
+        </t>
+      </section>
     </section>
     <section title="Certification Authorities">
       <section title="Transparency Information X.509v3 Extension" anchor="x509v3_transinfo_extension">
@@ -1427,6 +1446,11 @@ but it is expected there will be a variety.
         <section title="TLS Feature Extension">
           <t>
             If any certificate in a chain includes the <xref target="tls_transinfo_extension">transparency_info</xref> TLS extension identifier in the <xref target="RFC7633">TLS Feature</xref> certificate extension, then CT compliance (using any of the mechanisms from <xref target="tls_servers"/>) is required.
+          </t>
+        </section>
+        <section title="cached_info TLS Extension" anchor="tls_cachedinfo_extension">
+          <t>
+            If a TLS client uses the <spanx style="verb">cached_info</spanx> TLS extension (<xref target="RFC7924"/>) to indicate 1 or more cached certificates, all of which it already considers to be CT compliant, the TLS client MAY also include a <spanx style="verb">CachedObject</spanx> of type <spanx style="verb">ct_compliant</spanx> in the <spanx style="verb">cached_info</spanx> extension. The <spanx style="verb">hash_value</spanx> field MUST be 1 byte long with the value 0.
           </t>
         </section>
         <section title="Handling of Non-compliance">
@@ -1637,6 +1661,11 @@ but it is expected there will be a variety.
           IANA is asked to allocate an RFC 5246 ExtensionType value for the <spanx style="verb">transparency_info</spanx> TLS extension. IANA should update this extension type to point at this document.
         </t>
       </section>
+      <section title="New Entry to the TLS CachedInformationType registry">
+        <t>
+          IANA is asked to add an entry for <spanx style="verb">ct_compliant(TBD)</spanx> to the "TLS CachedInformationType Values" registry that was defined in <xref target="RFC7924"/>.
+        </t>
+      </section>
       <section title="Hash Algorithms" anchor="hash_algorithms">
         <t>
           IANA is asked to establish a registry of hash values, initially consisting of:
@@ -1810,6 +1839,8 @@ the proofs from the log) or communicate with the log via proxies.
       <?rfc include="reference.RFC.6979"?>
 
       <?rfc include="reference.RFC.7633"?>
+
+      <?rfc include="reference.RFC.7924"?>
 
       <reference anchor="DSS" target="http://csrc.nist.gov/publications/fips/fips186-3/fips_186-3.pdf">
         <front>
