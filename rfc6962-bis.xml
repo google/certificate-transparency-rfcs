@@ -677,7 +677,7 @@ d0 d1   d2 d3           d0 d1   d2 d3  d4 d5</artwork>
         LogID log_id;
         uint64 tree_size_1;
         uint64 tree_size_2;
-        NodeHash consistency_path&lt;1..2^8-1&gt;;
+        NodeHash consistency_path&lt;1..2^16-1&gt;;
     } ConsistencyProofDataV2;</artwork>
         </figure>
         <t>
@@ -703,7 +703,7 @@ d0 d1   d2 d3           d0 d1   d2 d3  d4 d5</artwork>
         LogID log_id;
         uint64 tree_size;
         uint64 leaf_index;
-        NodeHash inclusion_path&lt;1..2^8-1&gt;;
+        NodeHash inclusion_path&lt;1..2^16-1&gt;;
     } InclusionProofDataV2;</artwork>
         </figure>
         <t>
