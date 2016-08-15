@@ -312,7 +312,7 @@ d0 d1   d2 d3           d0 d1   d2 d3  d4 d5</artwork>
       </section>
       <section title="Precertificates" anchor="Precertificates">
         <t>
-          CAs may preannounce a certificate prior to issuance by <xref target="add-pre-chain">submitting a precertificate</xref> that the log can use to create an entry that will be valid against the issued certificate. The CA MAY incorporate the returned SCT in the issued certificate. Examples of situations where the returned SCT is not incorporated into the issued certificate would be when a CA sends the precertificate to multiple logs, but only incorporates the SCTs that are returned first, or the CA is using <xref target="domain_name_redaction">domain name redaction</xref> and intends to use another mechanism to publish SCTs (such as an <xref target="ocsp_transinfo_extension">OCSP response</xref> or the <xref target="tls_transinfo_extension">TLS extension</xref>).
+          CAs may preannounce a certificate prior to issuance by <xref target="add-pre-chain">submitting a precertificate</xref> that the log can use to create an entry that will be valid against the issued certificate. The CA MAY incorporate the returned SCT in the issued certificate. One example of where the returned SCT is not incorporated in the issued certificate is when a CA sends the precertificate to multiple logs, but only incorporates the SCTs that are returned first.
         </t>
         <t>
           A precertificate is a CMS <xref target="RFC5652"/> <spanx style="verb">signed-data</spanx> object that conforms to the following requirements:
@@ -324,15 +324,7 @@ d0 d1   d2 d3           d0 d1   d2 d3  d4 d5</artwork>
               <spanx style="verb">SignedData.encapContentInfo.eContentType</spanx> MUST be the OID 1.3.101.78.
             </t>
             <t>
-              <spanx style="verb">SignedData.encapContentInfo.eContent</spanx> MUST contain a TBSCertificate <xref target="RFC5280"/> that will be identical to the TBSCertificate in the issued certificate, except that:
-              <list style="symbols">
-                <t>
-                  the <xref target="x509v3_transinfo_extension">Transparency Information</xref> extension MUST be omitted.
-                </t>
-                <t>
-                  the <xref target="RFC5280">subjectAltName</xref> extension MUST be omitted when the <xref target="redacted_san_extension">redactedSubjectAltName</xref> extension is present.
-                </t>
-              </list>
+              <spanx style="verb">SignedData.encapContentInfo.eContent</spanx> MUST contain a TBSCertificate <xref target="RFC5280"/> that will be identical to the TBSCertificate in the issued certificate, except that the <xref target="x509v3_transinfo_extension">Transparency Information</xref> extension MUST be omitted.
             </t>
             <t>
               <spanx style="verb">SignedData.signerInfos</spanx> MUST contain a signature from the same (root or intermediate) CA that will ultimately issue the certificate. This signature indicates the CA's intent to issue the certificate. This intent is considered binding (i.e. misissuance of the precertificate is considered equivalent to misissuance of the certificate). (Note that, because of the structure of CMS, the signature on the CMS object will not be a valid X.509v3 signature and so cannot be used to construct a certificate from the precertificate).
@@ -355,65 +347,6 @@ d0 d1   d2 d3           d0 d1   d2 d3  d4 d5</artwork>
         <t>
           Since TLS clients only match the wildcard character to the complete leftmost label of the DNS domain name (see Section 6.4.3 of <xref target="RFC6125"/>), a different approach is needed when any label other than the leftmost label in a DNS-ID is considered private (e.g. <spanx style="verb">top.secret.example.com</spanx>). Also, wildcard certificates are prohibited in some cases, such as <xref target="EVSSLGuidelines">Extended Validation Certificates</xref>.
         </t>
-      </section>
-      <section title="Redaction of Domain Name Labels" anchor="domain_name_redaction">
-        <t>
-          The following mechanism allows private labels to not appear in public logs, while still retaining most of the security benefits that accrue from using Certificate Transparency mechanisms. CAs and domain owners should note that there are <xref target="effective_redaction">privacy considerations</xref> and that TLS clients may apply additional requirements (relating to the use of this redaction mechanism) for a certificate to be considered compliant.
-        </t>
-        <section title="Redacting Labels in Precertificates" anchor="redacting_labels">
-          <t>
-            When creating a precertificate, the CA MAY omit the subjectAltName extension, even if it intends to include the extension in the final certificate. If omitting the subjectAltName extension, the CA MUST include a <xref target="redacted_san_extension">redactedSubjectAltName</xref> extension that contains, in a redacted form, the same entries that will be included in the certificate's subjectAltName extension.
-          </t>
-          <figure>
-            <preamble>
-              Wildcard <spanx style="verb">*</spanx> labels MUST NOT be redacted, but one or more non-wildcard labels in each <xref target="RFC6125">DNS-ID</xref> can each be replaced with a redacted label as follows:
-            </preamble>
-            <artwork>
-  REDACT(label) = prefix || BASE32(index || _label_hash)
-    _label_hash = LABELHASH(keyid_len || keyid || label_len || label)</artwork>
-          </figure>
-          <t>
-            <spanx style="verb">label</spanx> is the case-sensitive label to be redacted.
-          </t>
-          <t>
-            <spanx style="verb">prefix</spanx> is the "?" character (ASCII value 63).
-          </t>
-          <t>
-            <spanx style="verb">index</spanx> is the 1 byte index of a hash function in <xref target="hash_algorithms"/>. The value 255 is reserved.
-          </t>
-          <t>
-            <spanx style="verb">keyid_len</spanx> is the 1 byte length of the <spanx style="verb">keyid</spanx>.
-          </t>
-          <t>
-            <spanx style="verb">keyid</spanx> is the keyIdentifier from the Subject Key Identifier extension (section 4.2.1.2 of <xref target="RFC5280"/>), excluding the ASN.1 OCTET STRING tag and length bytes.
-          </t>
-          <t>
-            <spanx style="verb">label_len</spanx> is the 1 byte length of the <spanx style="verb">label</spanx>.
-          </t>
-          <t>
-            <spanx style="verb">||</spanx> denotes concatenation.
-          </t>
-          <t>
-            <spanx style="verb">BASE32</spanx> is the Base 32 Encoding function (section 6 of <xref target="RFC4648"/>). Pad characters MUST NOT be appended to the encoded data.
-          </t>
-          <t>
-            <spanx style="verb">LABELHASH</spanx> is the hash function identified by <spanx style="verb">index</spanx>.
-          </t>
-        </section>
-        <section title="redactedSubjectAltName Certificate Extension" anchor="redacted_san_extension">
-          <t>
-            The redactedSubjectAltName extension is a non-critical extension (OID 1.3.101.77) that is identical in structure to the subjectAltName extension, except that DNS-IDs MAY contain redacted labels (see <xref target="redacting_labels"/>).
-          </t>
-          <t>
-            When used, the redactedSubjectAltName extension MUST be present in both the precertificate and the corresponding certificate.
-          </t>
-          <t>
-            This extension informs TLS clients of the DNS-ID labels that were redacted and the degree of redaction, while minimizing the complexity of TBSCertificate reconstruction (as described in <xref target="reconstructing_tbscertificate"/>). Hashing the redacted labels allows the legitimate domain owner to identify whether or not each redacted label correlates to a label they know of.
-          </t>
-          <t>
-            Only DNS-ID labels can be redacted using this mechanism. However, CAs can use Name Constraints (<xref target="name_constrained"/>) to allow DNS domain name labels in other subjectAltName entries to not appear in logs.
-          </t>
-        </section>
       </section>
       <section title="Using a Name-Constrained Intermediate CA" anchor="name_constrained">
         <t>
@@ -1249,7 +1182,7 @@ entry specified by <spanx style="verb">start</spanx>.
             <t hangText="Inputs:">
               <list style="hanging">
                 <t hangText="hash:">
-                  A base64 encoded HASH of a <spanx style="verb">TBSCertificate</spanx>. Note that if the certificate has redacted labels then the <spanx style="verb">TBSCertificate</spanx> must be constructed as described <xref target="domain_name_redaction">above</xref>.
+                  A base64 encoded HASH of a <spanx style="verb">TBSCertificate</spanx>.
                 </t>
               </list>
             </t>
@@ -1458,39 +1391,10 @@ but it is expected there will be a variety.
         </section>
         <section title="Reconstructing the TBSCertificate" anchor="reconstructing_tbscertificate">
           <t>
-            To reconstruct the TBSCertificate component of a precertificate from a certificate, TLS clients should:
-            <list style="symbols">
-              <t>
-                Remove the Transparency Information extension described in <xref target="x509v3_transinfo_extension"/>.
-              </t>
-              <t>
-                If the redactedSubjectAltName extension (<xref target="redacted_san_extension"/>) is present:
-                <list style="symbols">
-                  <t>TLS clients MUST verify it against the subjectAltName extension according to <xref target="verifying_redacted_san"/>.</t>
-                  <t>Once verified, remove the subjectAltName extension from the TBSCertificate.</t>
-                </list>
-              </t>
-            </list>
+            To reconstruct the TBSCertificate component of a precertificate from a certificate, TLS clients should remove the Transparency Information extension described in <xref target="x509v3_transinfo_extension"/>.
           </t>
           <t>
             If the SCT checked is for a Precertificate (where the <spanx style="verb">type</spanx> of the <spanx style="verb">TransItem</spanx> is <spanx style="verb">precert_sct_v2</spanx>), then the client SHOULD also remove embedded v1 SCTs, identified by OID 1.3.6.1.4.1.11129.2.4.2 (See Section 3.3. of <xref target="RFC6962"/>), in the process of reconstructing the TBSCertificate. That is to allow embedded v1 and v2 SCTs to co-exist in a certificate (See <xref target="v1_coexistence"/>).
-          </t>
-        </section>
-        <section title="Verifying the redactedSubjectAltName extension" anchor="verifying_redacted_san">
-          <t>
-            If the redactedSubjectAltName extension is present, TLS clients MUST check that the subjectAltName extension is present, that the subjectAltName extension contains the same number of entries as the redactedSubjectAltName extension, and that each entry in the subjectAltName extension has a matching entry at the same position in the redactedSubjectAltName extension. Two entries are matching if either:
-            <list style="symbols">
-              <t>The two entries are identical; or,</t>
-              <t>Both entries are DNS-IDs, have the same number of labels, and each label in the subjectAltName entry has a matching label at the same position in the redactedSubjectAltName entry. Two labels are matching if either:
-                <list style="symbols">
-                  <t>The two labels are identical; or,</t>
-                  <t>Neither label is <spanx style="verb">*</spanx> and the label from the redactedSubjectAltName entry is equal to REDACT(label from subjectAltName entry) (<xref target="redacting_labels"/>).</t>
-                </list>
-              </t>
-            </list>
-          </t>
-          <t>
-            If any of these checks fail, the certificate MUST NOT be considered compliant.
           </t>
         </section>
         <section title="Validating SCTs">
@@ -1778,7 +1682,7 @@ but it is expected there will be a variety.
       </section>
       <section title="Object Identifiers">
         <t>
-          This document uses object identifiers (OIDs) to identify Log IDs (see <xref target="log_id"/>), the precertificate CMS <spanx style="verb">eContentType</spanx> (see <xref target="Precertificates"/>), and X.509v3 extensions in certificates (see <xref target="redacted_san_extension"/>, <xref target="name_constrained"/> and <xref target="cert_transinfo_extension"/>) and OCSP responses (see <xref target="ocsp_transinfo_extension"/>). The OIDs are defined in an arc that was selected due to its short encoding.
+          This document uses object identifiers (OIDs) to identify Log IDs (see <xref target="log_id"/>), the precertificate CMS <spanx style="verb">eContentType</spanx> (see <xref target="Precertificates"/>), and X.509v3 extensions in certificates (see <xref target="name_constrained"/> and <xref target="cert_transinfo_extension"/>) and OCSP responses (see <xref target="ocsp_transinfo_extension"/>). The OIDs are defined in an arc that was selected due to its short encoding.
         </t>
         <section title="Log ID Registry 1" anchor="log_id_registry1">
           <t>
@@ -1826,14 +1730,6 @@ but it is expected there will be a variety.
           The logs do not themselves detect misissued certificates; they rely instead on interested parties, such as domain owners, to monitor them and take corrective action when a misissue is detected.
         </t>
       </section>
-      <section title="Avoiding Overly Redacting Domain Name Labels">
-        <t>
-          Redaction of domain name labels carries the same risks as the use of wildcards (See Section 7.2 of <xref target="RFC6125"/>, for example). If the entirety of the domain space below the unredacted part of a domain name is not registered by a single domain owner (e.g. <spanx style="verb">REDACT(label).com</spanx>, <spanx style="verb">REDACT(label).co.uk</spanx> and other <xref target="Public.Suffix.List">public suffixes</xref>), then the domain name may be considered by clients to be overly redacted.
-        </t>
-        <t>
-          CAs should take care to avoid overly redacting domain names in precertificates. It is expected that monitors will treat precertificates that contain overly redacted domain names as potentially misissued. TLS clients MAY consider a certificate to be non-compliant if the <xref target="reconstructing_tbscertificate">reconstructed TBSCertificate</xref> contains any overly redacted domain names.
-        </t>
-      </section>
       <section title="Misbehaving Logs" anchor="misbehaving_logs">
         <t>
           A log can misbehave in several ways. Examples include failing to incorporate a certificate with an SCT in the Merkle Tree within the MMD, presenting different, conflicting views of the Merkle Tree at different times and/or to different parties and issuing STHs too frequently.
@@ -1869,27 +1765,6 @@ the proofs from the log) or communicate with the log via proxies.
       <section title="Multiple SCTs">
         <t>
           By offering multiple SCTs, each from a different log, TLS servers reduce the effectiveness of an attack where a CA and a log collude (see <xref target="multiple-scts"/>).
-        </t>
-      </section>
-    </section>
-    <section title="Privacy Considerations">
-      <section title="Ensuring Effective Redaction" anchor="effective_redaction">
-        <t>
-          Although the domain name redaction mechanism (<xref target="domain_name_redaction"/>) removes the need for private labels to appear in logs, it does not guarantee that this will never happen. Anyone who encounters a certificate could choose to submit it to one or more logs, thereby rendering the redaction futile.
-        </t>
-        <t>
-          Domain owners are advised to take the following steps to minimize the likelihood that their private labels will become known outside their closed communities:
-          <list style="symbols">
-            <t>
-              Avoid registering private labels in public DNS.
-            </t>
-            <t>
-              Avoid using private labels that are predictable (e.g. <spanx style="verb">www</spanx>, labels consisting only of numerical digits, etc). If a label has insufficient entropy then redaction will only provide a thin layer of obfuscation, because it will be feasible to recover the label via a brute-force attack.
-            </t>
-          </list>
-        </t>
-        <t>
-          CAs are advised to carefully consider each request to redact a label. When a CA believes that redacting a particular label would be futile, we advise rejecting the redaction request. TLS clients may have policies that forbid redaction, so redaction should only be used when it's absolutely necessary and likely to be effective.
         </t>
       </section>
     </section>
@@ -2042,16 +1917,6 @@ value="Montreal"/>
             <organization>The Chromium Projects</organization>
           </author>
           <date year="2014"/>
-        </front>
-      </reference>
-
-      <reference anchor="Public.Suffix.List" target="https://publicsuffix.org">
-        <front>
-          <title>Public Suffix List</title>
-          <author>
-            <organization>Mozilla Foundation</organization>
-          </author>
-          <date year="2016"/>
         </front>
       </reference>
 
