@@ -1365,10 +1365,21 @@ entry specified by <spanx style="verb">start</spanx>.
       </section>
       <section title="cached_info TLS Extension">
         <t>
-          Provided that a TLS client includes the <spanx style="verb">transparency_info</spanx> extension type in the ClientHello and includes the <spanx style="verb">cached_info</spanx> (<xref target="RFC7924"/>) extension type in the ClientHello with a <spanx style="verb">CachedObject</spanx> of type <spanx style="verb">ct_compliant</spanx> (see <xref target="tls_cachedinfo_extension"/>) and at least one <spanx style="verb">CachedObject</spanx> of type <spanx style="verb">cert</spanx>, and provided that the TLS server then sends a modified Certificate message (as described in section 4.1 of <xref target="RFC7924"/>) and includes the <spanx style="verb">transparency_info</spanx> extension in the ServerHello, the TLS server SHOULD NOT include any <spanx style="verb">TransItem</spanx> structures of type <spanx style="verb">x509_sct_with_proof_v2</spanx>, <spanx style="verb">x509_sct_v2</spanx>, <spanx style="verb">precert_sct_with_proof_v2</spanx> or <spanx style="verb">precert_sct_v2</spanx> in the <spanx style="verb">TransItemList</spanx> that it includes in the <spanx style="verb">transparency_info</spanx> extension.
+          When a TLS server includes the <spanx style="verb">transparency_info</spanx> extension in the ServerHello, it SHOULD NOT include any <spanx style="verb">TransItem</spanx> structures of type <spanx style="verb">x509_sct_with_proof_v2</spanx>, <spanx style="verb">x509_sct_v2</spanx>, <spanx style="verb">precert_sct_with_proof_v2</spanx> or <spanx style="verb">precert_sct_v2</spanx> in the <spanx style="verb">TransItemList</spanx> if all of the following conditions are met:
+          <list style="symbols">
+            <t>
+              The TLS client includes the <spanx style="verb">transparency_info</spanx> extension type in the ClientHello.
+            </t>
+            <t>
+              The TLS client includes the <spanx style="verb">cached_info</spanx> (<xref target="RFC7924"/>) extension type in the ClientHello, with a <spanx style="verb">CachedObject</spanx> of type <spanx style="verb">ct_compliant</spanx> (see <xref target="tls_cachedinfo_extension"/>) and at least one <spanx style="verb">CachedObject</spanx> of type <spanx style="verb">cert</spanx>.
+            </t>
+            <t>
+              The TLS server sends a modified Certificate message (as described in section 4.1 of <xref target="RFC7924"/>).
+            </t>
+          </list>
         </t>
         <t>
-          The TLS server SHOULD ignore the <spanx style="verb">hash_value</spanx> field of the <spanx style="verb">CachedObject</spanx> of type <spanx style="verb">ct_compliant</spanx> sent by the TLS client.
+          TLS servers SHOULD ignore the <spanx style="verb">hash_value</spanx> fields of each <spanx style="verb">CachedObject</spanx> of type <spanx style="verb">ct_compliant</spanx> sent by TLS clients.
         </t>
       </section>
     </section>
