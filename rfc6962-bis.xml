@@ -521,7 +521,7 @@ d0 d1   d2 d3           d0 d1   d2 d3  d4 d5</artwork>
 
     struct {
         uint64 timestamp;
-        opaque issuer_key_hash[HASH_SIZE];
+        opaque issuer_key_hash&lt;32..2^8-1&gt;;
         TBSCertificate tbs_certificate;
         SctExtension sct_extensions&lt;0..2^16-1&gt;;
     } TimestampedCertificateEntryDataV2;</artwork>
@@ -530,7 +530,7 @@ d0 d1   d2 d3           d0 d1   d2 d3  d4 d5</artwork>
           <spanx style="verb">timestamp</spanx> is the <xref target="RFC5905">NTP Time</xref> at which the certificate or precertificate was accepted by the log, measured in milliseconds since the epoch (January 1, 1970, 00:00), ignoring leap seconds. Note that the leaves of a log's Merkle Tree are not required to be in strict chronological order.
         </t>
         <t>
-          <spanx style="verb">issuer_key_hash</spanx> is the HASH of the public key of the CA that issued the certificate or precertificate, calculated over the DER encoding of the key represented as <xref target="RFC5280">SubjectPublicKeyInfo</xref>. This is needed to bind the CA to the certificate or precertificate, making it impossible for the corresponding SCT to be valid for any other certificate or precertificate whose TBSCertificate matches <spanx style="verb">tbs_certificate</spanx>.
+          <spanx style="verb">issuer_key_hash</spanx> is the HASH of the public key of the CA that issued the certificate or precertificate, calculated over the DER encoding of the key represented as <xref target="RFC5280">SubjectPublicKeyInfo</xref>. This is needed to bind the CA to the certificate or precertificate, making it impossible for the corresponding SCT to be valid for any other certificate or precertificate whose TBSCertificate matches <spanx style="verb">tbs_certificate</spanx>. The length of the <spanx style="verb">issuer_key_hash</spanx> MUST match HASH_SIZE.
         </t>
         <t>
           <spanx style="verb">tbs_certificate</spanx> is the DER encoded TBSCertificate from either the <spanx style="verb">leaf_certificate</spanx> (in the case of an <spanx style="verb">X509ChainEntry</spanx>) or the <spanx style="verb">pre_certificate</spanx> (in the case of a <spanx style="verb">PrecertChainEntryV2</spanx>). (Note that a precertificate's TBSCertificate can be reconstructed from the corresponding certificate as described in <xref target="reconstructing_tbscertificate"/>).
@@ -591,7 +591,7 @@ d0 d1   d2 d3           d0 d1   d2 d3  d4 d5</artwork>
             The log stores information about its Merkle Tree in a <spanx style="verb">TransItem</spanx> structure of type <spanx style="verb">tree_head_v2</spanx>, which encapsulates a <spanx style="verb">TreeHeadDataV2</spanx> structure:
           </preamble>
           <artwork>
-    opaque NodeHash[HASH_SIZE];
+    opaque NodeHash&lt;32..2^8-1&gt;;
 
     struct {
         uint64 timestamp;
@@ -611,6 +611,9 @@ d0 d1   d2 d3           d0 d1   d2 d3  d4 d5</artwork>
         </t>
         <t>
           <spanx style="verb">sth_extensions</spanx> matches the STH extensions of the corresponding STH.
+        </t>
+        <t>
+          The length of NodeHash MUST match HASH_SIZE of the log.
         </t>
       </section>
       <section title="Signed Tree Head (STH)" anchor="STH">
@@ -677,7 +680,7 @@ d0 d1   d2 d3           d0 d1   d2 d3  d4 d5</artwork>
         LogID log_id;
         uint64 tree_size_1;
         uint64 tree_size_2;
-        NodeHash consistency_path&lt;1..2^8-1&gt;;
+        NodeHash consistency_path&lt;1..2^16-1&gt;;
     } ConsistencyProofDataV2;</artwork>
         </figure>
         <t>
@@ -703,7 +706,7 @@ d0 d1   d2 d3           d0 d1   d2 d3  d4 d5</artwork>
         LogID log_id;
         uint64 tree_size;
         uint64 leaf_index;
-        NodeHash inclusion_path&lt;1..2^8-1&gt;;
+        NodeHash inclusion_path&lt;1..2^16-1&gt;;
     } InclusionProofDataV2;</artwork>
         </figure>
         <t>
