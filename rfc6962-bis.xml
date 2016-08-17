@@ -327,7 +327,7 @@ d0 d1   d2 d3           d0 d1   d2 d3  d4 d5</artwork>
               <spanx style="verb">SignedData.encapContentInfo.eContent</spanx> MUST contain a TBSCertificate <xref target="RFC5280"/> that will be identical to the TBSCertificate in the issued certificate, except that the <xref target="x509v3_transinfo_extension">Transparency Information</xref> extension MUST be omitted.
             </t>
             <t>
-              <spanx style="verb">SignedData.signerInfos</spanx> MUST contain a signature from the same (root or intermediate) CA that will ultimately issue the certificate. This signature indicates the CA's intent to issue the certificate. This intent is considered binding (i.e. misissuance of the precertificate is considered equivalent to misissuance of the certificate). (Note that, because of the structure of CMS, the signature on the CMS object will not be a valid X.509v3 signature and so cannot be used to construct a certificate from the precertificate).
+              <spanx style="verb">SignedData.signerInfos</spanx> MUST contain a signature from the same (root or intermediate) CA that will ultimately issue the certificate. This signature indicates the CA's intent to issue the certificate. This intent is considered binding (i.e., misissuance of the precertificate is considered equivalent to misissuance of the certificate). (Note that, because of the structure of CMS, the signature on the CMS object will not be a valid X.509v3 signature and so cannot be used to construct a certificate from the precertificate).
             </t>
             <t>
               <spanx style="verb">SignedData.certificates</spanx> SHOULD be omitted.
@@ -345,7 +345,7 @@ d0 d1   d2 d3           d0 d1   d2 d3  d4 d5</artwork>
           A certificate containing a <xref target="RFC6125">DNS-ID</xref> of <spanx style="verb">*.example.com</spanx> could be used to secure the domain <spanx style="verb">topsecret.example.com</spanx>, without revealing the string <spanx style="verb">topsecret</spanx> publicly.
         </t>
         <t>
-          Since TLS clients only match the wildcard character to the complete leftmost label of the DNS domain name (see Section 6.4.3 of <xref target="RFC6125"/>), a different approach is needed when any label other than the leftmost label in a DNS-ID is considered private (e.g. <spanx style="verb">top.secret.example.com</spanx>). Also, wildcard certificates are prohibited in some cases, such as <xref target="EVSSLGuidelines">Extended Validation Certificates</xref>.
+          Since TLS clients only match the wildcard character to the complete leftmost label of the DNS domain name (see Section 6.4.3 of <xref target="RFC6125"/>), a different approach is needed when any label other than the leftmost label in a DNS-ID is considered private (e.g., <spanx style="verb">top.secret.example.com</spanx>). Also, wildcard certificates are prohibited in some cases, such as <xref target="EVSSLGuidelines">Extended Validation Certificates</xref>.
         </t>
       </section>
       <section title="Using a Name-Constrained Intermediate CA" anchor="name_constrained">
@@ -778,7 +778,7 @@ messages.
       </t>
       <figure>
         <preamble>
-          e.g. In response to a request of <spanx style="verb">/ct/v2/get-entries?start=100&amp;end=99</spanx>, the log would return a <spanx style="verb">400 Bad Request</spanx> response code with a body similar to the following:
+          e.g., In response to a request of <spanx style="verb">/ct/v2/get-entries?start=100&amp;end=99</spanx>, the log would return a <spanx style="verb">400 Bad Request</spanx> response code with a body similar to the following:
         </preamble>
         <artwork>
     {
@@ -818,7 +818,7 @@ messages.
                   The alleged chain is not actually a chain of certificates.
                 </t>
                 <t hangText="bad certificate">
-                  One or more certificates in the chain are not valid (e.g. not properly encoded).
+                  One or more certificates in the chain are not valid (e.g., not properly encoded).
                 </t>
                 <t hangText="shutdown">
                   The log has ceased operation and is not accepting new submissions.
@@ -1398,7 +1398,7 @@ but it is expected there will be a variety.
             The maximum number of STHs the log may produce in any period equal to the <spanx style="verb">Maximum Merge Delay</spanx> (see <xref target="STH"/>).
           </t>
           <t hangText="Final STH">
-            If a log has been closed down (i.e. no longer accepts new entries), existing entries may still be valid. In this case, the client should know the final valid STH in the log to ensure no new entries can be added without detection. The final STH should be provided in the form of a TransItem of type signed_tree_head_v2.
+            If a log has been closed down (i.e., no longer accepts new entries), existing entries may still be valid. In this case, the client should know the final valid STH in the log to ensure no new entries can be added without detection. The final STH should be provided in the form of a TransItem of type signed_tree_head_v2.
           </t>
         </list></t>
         <t>
@@ -1548,7 +1548,7 @@ but it is expected there will be a variety.
           A <xref target="monitor">monitor</xref> can audit by verifying the consistency of STHs it receives, ensure that each entry can be fetched and that the STH is indeed the result of making a tree from all fetched entries.
         </t>
         <t>
-          A <xref target="tls_clients">TLS client</xref> can audit by verifying an SCT against any STH dated after the SCT timestamp + the Maximum Merge Delay by requesting a Merkle inclusion proof (<xref target="get-proof-by-hash"/>). It can also verify that the SCT corresponds to the certificate it arrived with (i.e. the log entry is that certificate, is a precertificate for that certificate or is an appropriate name-constrained intermediate [see <xref target="name_constrained"/>]).
+          A <xref target="tls_clients">TLS client</xref> can audit by verifying an SCT against any STH dated after the SCT timestamp + the Maximum Merge Delay by requesting a Merkle inclusion proof (<xref target="get-proof-by-hash"/>). It can also verify that the SCT corresponds to the certificate it arrived with (i.e., the log entry is that certificate, is a precertificate for that certificate or is an appropriate name-constrained intermediate [see <xref target="name_constrained"/>]).
         </t>
         <t>
           Checking of the consistency of the log view presented to all entities is more difficult to perform because it requires a way to share log responses among a set of CT-aware entities, and is discussed in <xref target="misbehaving_logs"/>.
