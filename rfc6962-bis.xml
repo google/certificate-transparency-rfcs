@@ -84,9 +84,11 @@ do not need to be trusted because they are publicly auditable. Anyone may verify
 the correctness of each log and monitor when new certificates are added to it.
 The logs do not themselves prevent misissue, but
 they ensure that interested parties (particularly those named in certificates)
-can detect such misissuance. Note that this is a general mechanism; but in this
-document, we only describe its use for public TLS server certificates issued by
-public certification authorities (CAs).
+can detect such misissuance. Note that this is a general mechanism that could
+be used for transparently logging any form of binary data, subject to some kind
+of inclusion criteria. In this document, we only describe its use for public
+TLS server certificates (i.e., where the inclusion criteria is a valid
+certificate issued by a public certification authority (CA)).
       </t>
       <t>
         Each log contains certificate chains, which can be submitted by anyone. It is expected that public CAs will contribute all their newly issued certificates to one or more logs; however certificate holders can also contribute their own certificate chains, as can third parties. In order to avoid logs being rendered useless by the submission of large numbers of spurious certificates, it is required that each chain ends with a trust anchor that is accepted by the log. When a chain is accepted by a log, a signed timestamp is returned, which can later be used to provide evidence to TLS clients that the chain has been submitted. TLS clients can thus require that all certificates they accept as valid are accompanied by signed timestamps.
@@ -96,7 +98,7 @@ public certification authorities (CAs).
 them regularly for all new entries, and can thus check whether domains for which 
 they are responsible have had certificates issued that they did not expect. What
 they do with this information, particularly when they find that a misissuance
-has happened, is beyond the scope of this document; but, broadly speaking, they
+has happened, is beyond the scope of this document. However, broadly speaking, they
 can invoke existing business mechanisms for dealing with misissued
 certificates, such as working with the CA to get the certificate revoked, or with maintainers of trust anchor lists to get the CA removed. Of course, anyone who wants can monitor the logs and, if they
 believe a certificate is incorrectly issued, take action as they see fit.
@@ -293,7 +295,7 @@ d0 d1   d2 d3           d0 d1   d2 d3  d4 d5</artwork>
         </section>
         <section title="Signatures" anchor="signatures">
           <t>
-            Various data structures are signed. A log MUST use one of the signature algorithms defined in the <xref target="signature_algorithms"/>.
+            Various data structures are signed. A log MUST use one of the signature algorithms defined in <xref target="signature_algorithms"/>.
           </t>
         </section>
       </section>
@@ -356,10 +358,15 @@ d0 d1   d2 d3           d0 d1   d2 d3  d4 d5</artwork>
               there MUST be a non-critical extension (OID 1.3.101.76, whose extnValue OCTET STRING contains ASN.1 NULL data (0x05 0x00)). This extension is an explicit indication that it is acceptable to not log certificates issued by this intermediate CA.
             </t>
             <t>
-              permittedSubtrees MUST specify one or more dNSNames.
-            </t>
-            <t>
-              excludedSubtrees MUST specify the entire IPv4 and IPv6 address ranges.
+              there MUST be a Name Constraints extension, in which:
+            <list style="symbols">
+              <t>
+                permittedSubtrees MUST specify one or more dNSNames.
+              </t>
+              <t>
+                excludedSubtrees MUST specify the entire IPv4 and IPv6 address ranges.
+              </t>
+            </list>
             </t>
           </list>
         </t>
@@ -464,6 +471,9 @@ d0 d1   d2 d3           d0 d1   d2 d3  d4 d5</artwork>
         <t>
           Note that the ASN.1 length and the opaque vector length are identical in size (1 byte) and value, so the DER encoding of the OID can be reproduced simply by prepending an OBJECT IDENTIFIER tag (0x06) to the opaque vector length and contents.
         </t>
+        <t>
+          OIDs used to identify logs are limited such that the DER encoding of their value is less than or equal to 127 octets.
+        </t>
       </section>
       <section title="TransItem Structure">
         <figure>
@@ -527,7 +537,7 @@ d0 d1   d2 d3           d0 d1   d2 d3  d4 d5</artwork>
     } TimestampedCertificateEntryDataV2;</artwork>
         </figure>
         <t>
-          <spanx style="verb">timestamp</spanx> is the <xref target="RFC5905">NTP Time</xref> at which the certificate or precertificate was accepted by the log, measured in milliseconds since the epoch (January 1, 1970, 00:00), ignoring leap seconds. Note that the leaves of a log's Merkle Tree are not required to be in strict chronological order.
+          <spanx style="verb">timestamp</spanx> is the <xref target="RFC5905">NTP Time</xref> at which the certificate or precertificate was accepted by the log, measured in milliseconds since the epoch (January 1, 1970, 00:00 UTC), ignoring leap seconds. Note that the leaves of a log's Merkle Tree are not required to be in strict chronological order.
         </t>
         <t>
           <spanx style="verb">issuer_key_hash</spanx> is the HASH of the public key of the CA that issued the certificate or precertificate, calculated over the DER encoding of the key represented as <xref target="RFC5280">SubjectPublicKeyInfo</xref>. This is needed to bind the CA to the certificate or precertificate, making it impossible for the corresponding SCT to be valid for any other certificate or precertificate whose TBSCertificate matches <spanx style="verb">tbs_certificate</spanx>. The length of the <spanx style="verb">issuer_key_hash</spanx> MUST match HASH_SIZE.
@@ -601,7 +611,7 @@ d0 d1   d2 d3           d0 d1   d2 d3  d4 d5</artwork>
     } TreeHeadDataV2;</artwork>
         </figure>
         <t>
-          <spanx style="verb">timestamp</spanx> is the current <xref target="RFC5905">NTP Time</xref>, measured in milliseconds since the epoch (January 1, 1970, 00:00), ignoring leap seconds.
+          <spanx style="verb">timestamp</spanx> is the current <xref target="RFC5905">NTP Time</xref>, measured in milliseconds since the epoch (January 1, 1970, 00:00 UTC), ignoring leap seconds.
         </t>
         <t>
           <spanx style="verb">tree_size</spanx> is the number of entries currently in the log's Merkle Tree.
@@ -768,14 +778,13 @@ messages.
           </t>
           <t hangText="error_code:">
             An error code readable by the client. Some codes are generic and are detailed here. Others are detailed in the individual requests. Error codes are fixed text strings.
-            <list style="hanging">
-              <t hangText="not compliant">
-                The request is not compliant with this RFC.
-              </t>
-            </list>
           </t>
         </list>
       </t>
+      <texttable>
+        <ttcol>Error Code</ttcol><ttcol>Meaning</ttcol>
+        <c>not compliant</c><c>The request is not compliant with this RFC.</c>
+      </texttable>
       <figure>
         <preamble>
           e.g., In response to a request of <spanx style="verb">/ct/v2/get-entries?start=100&amp;end=99</spanx>, the log would return a <spanx style="verb">400 Bad Request</spanx> response code with a body similar to the following:
@@ -809,24 +818,16 @@ messages.
                 </t>
               </list>
             </t>
-            <t hangText="Error codes:">
-              <list style="hanging">
-                <t hangText="unknown anchor">
-                  The last certificate in the chain both is not, and is not certified by, an accepted trust anchor.
-                </t>
-                <t hangText="bad chain">
-                  The alleged chain is not actually a chain of certificates.
-                </t>
-                <t hangText="bad certificate">
-                  One or more certificates in the chain are not valid (e.g., not properly encoded).
-                </t>
-                <t hangText="shutdown">
-                  The log has ceased operation and is not accepting new submissions.
-                </t>
-              </list>
-            </t>
+            <t hangText="Error codes:"/>
           </list>
         </t>
+      <texttable>
+        <ttcol>Error Code</ttcol><ttcol>Meaning</ttcol>
+        <c>unknown anchor</c><c>The last certificate in the chain both is not, and is not certified by, an accepted trust anchor.</c>
+        <c>bad chain</c><c>The alleged chain is not actually a chain of certificates.</c>
+        <c>bad certificate</c><c>One or more certificates in the chain are not valid (e.g., not properly encoded).</c>
+        <c>shutdown</c><c>The log has ceased operation and is not accepting new submissions.</c>
+      </texttable>
         <t>
           If the version of <spanx style="verb">sct</spanx> is not v2, then a v2 client may be unable to verify the signature. It MUST NOT construe this as an error. This is to avoid forcing an upgrade of compliant v2 clients that do not use the returned SCTs.
         </t>
@@ -917,18 +918,14 @@ messages.
             <t>
               Note that no signature is required for the <spanx style="verb">consistency</spanx> output as it is used to verify the consistency between two STHs, which are signed.
             </t>
-            <t hangText="Error codes:">
-              <list style="hanging">
-                <t hangText="first unknown">
-                  <spanx style="verb">first</spanx> is before the latest known STH but is not from an existing STH.
-                </t>
-                <t hangText="second unknown">
-                  <spanx style="verb">second</spanx> is before the latest known STH but is not from an existing STH.
-                </t>
-              </list>
-            </t>
+            <t hangText="Error codes:"/>
           </list>
         </t>
+        <texttable>
+          <ttcol>Error Code</ttcol><ttcol>Meaning</ttcol>
+          <c>first unknown</c><c><spanx style="verb">first</spanx> is before the latest known STH but is not from an existing STH.</c>
+          <c>second unknown</c><c><spanx style="verb">second</spanx> is before the latest known STH but is not from an existing STH.</c>
+        </texttable>
         <t>
           See <xref target="verify_consistency"/> for an outline of how to use the <spanx style="verb">consistency</spanx> output.
         </t>
@@ -966,18 +963,14 @@ messages.
             <t>
               Note that no signature is required for the <spanx style="verb">inclusion</spanx> output as it is used to verify inclusion in the selected STH, which is signed.
             </t>
-            <t hangText="Error codes:">
-              <list style="hanging">
-                <t hangText="hash unknown">
-                  <spanx style="verb">hash</spanx> is not the hash of a known leaf (may be caused by skew or by a known certificate not yet merged).
-                </t>
-                <t hangText="tree_size unknown">
-                  <spanx style="verb">hash</spanx> is before the latest known STH but is not from an existing STH.
-                </t>
-              </list>
-            </t>
+            <t hangText="Error codes:"/>
           </list>
         </t>
+        <texttable>
+          <ttcol>Error Code</ttcol><ttcol>Meaning</ttcol>
+          <c>hash unknown</c><c><spanx style="verb">hash</spanx> is not the hash of a known leaf (may be caused by skew or by a known certificate not yet merged).</c>
+          <c>tree_size unknown</c><c><spanx style="verb">hash</spanx> is before the latest known STH but is not from an existing STH.</c>
+        </texttable>
         <t>See <xref target="verify_inclusion"/> for an outline of how to use the <spanx style="verb">inclusion</spanx> output.</t>
       </section>
 
@@ -1137,7 +1130,7 @@ entry specified by <spanx style="verb">start</spanx>.
     </section>
     <section title="Optional Client Messages">
 	<t>
-	  Logs MAY implement these messages. They are not required for correct operation of logs or their clients, but may be convenient in some circumstances. Note that mirrors can implement these even if the log they are mirroring does not.
+	  Logs MAY implement these messages. They are not required for correct operation of logs or their clients, but may be convenient in some circumstances.
 	</t>
       <section title="Get Entry Number for SCT">
 	<t>
@@ -1159,18 +1152,14 @@ entry specified by <spanx style="verb">start</spanx>.
                 </t>
               </list>
             </t>
-            <t hangText="Error codes:">
-              <list style="hanging">
-                <t hangText="bad signature">
-                  <spanx style="verb">sct</spanx> is not signed by this log.
-		</t>
-                <t hangText="not found">
-                  <spanx style="verb">sct</spanx> does not correspond to an entry that is currently available.
-		</t>
-	      </list>
-	    </t>
+            <t hangText="Error codes:"/>
           </list>
         </t>
+        <texttable>
+          <ttcol>Error Code</ttcol><ttcol>Meaning</ttcol>
+          <c>bad signature</c><c><spanx style="verb">sct</spanx> is not signed by this log.</c>
+          <c>not found</c><c><spanx style="verb">sct</spanx> does not correspond to an entry that is currently available.</c>
+        </texttable>
 	<t>
 	  Note that any SCT signed by a log MUST have a corresponding entry in the log, but it may not be retrievable until the MMD has passed since the SCT was issued.
 	</t>
@@ -1196,18 +1185,14 @@ entry specified by <spanx style="verb">start</spanx>.
                 </t>
               </list>
             </t>
-            <t hangText="Error codes:">
-              <list style="hanging">
-                <t hangText="bad hash">
-                  <spanx style="verb">hash</spanx> is not the right size or format.
-		</t>
-                <t hangText="not found">
-                  <spanx style="verb">sct</spanx> does not correspond to an entry that is currently available.
-		</t>
-	      </list>
-	    </t>
+            <t hangText="Error codes:"/>
           </list>
         </t>
+        <texttable>
+          <ttcol>Error Code</ttcol><ttcol>Meaning</ttcol>
+          <c>bad hash</c><c><spanx style="verb">hash</spanx> is not the right size or format.</c>
+          <c>not found</c><c><spanx style="verb">sct</spanx> does not correspond to an entry that is currently available.</c>
+        </texttable>
 	<t>
 	  Note that it is possible for a certificate to be logged more than once. If that is the case, the log MAY return more than one entry index. If the certificate is present in the log, then the log MUST return at least one entry index.
 	</t>
@@ -1227,7 +1212,7 @@ entry specified by <spanx style="verb">start</spanx>.
             An <xref target='RFC6960'>Online Certificate Status Protocol (OCSP)</xref> response extension (see <xref target="ocsp_transinfo_extension"/>), where the OCSP response is provided in the <spanx style="verb">CertificateStatus</spanx> message, provided that the TLS client included the <spanx style="verb">status_request</spanx> extension in the (extended) <spanx style="verb">ClientHello</spanx> (Section 8 of <xref target='RFC6066'/>). This mechanism, popularly known as OCSP stapling, is already widely (but not universally) implemented. It also allows SCTs and inclusion proofs to be updated on the fly.
           </t>
           <t>
-            An X509v3 certificate extension (see <xref target="cert_transinfo_extension"/>). This mechanism allows the use of unmodified TLS servers, but the SCTs and inclusion proofs cannot be updated on the fly. Since the logs from where the SCTs and inclusion proofs originated won't necessarily be accepted by TLS clients for the full lifetime of the certificate, there is a risk that TLS clients will subsequently consider the certificate to be non-compliant and in need of re-issuance.
+            An X509v3 certificate extension (see <xref target="cert_transinfo_extension"/>). This mechanism allows the use of unmodified TLS servers, but the SCTs and inclusion proofs cannot be updated on the fly. Since the logs from which the SCTs and inclusion proofs originated won't necessarily be accepted by TLS clients for the full lifetime of the certificate, there is a risk that TLS clients will subsequently consider the certificate to be non-compliant and in need of re-issuance.
           </t>
         </list>
       </t>
@@ -1373,31 +1358,31 @@ but it is expected there will be a variety.
           <t hangText="Base URL:">
             The URL to substitute for &lt;log server&gt; in <xref target="client_messages"/>.
           </t>
-          <t hangText="Hash Algorithm">
+          <t hangText="Hash Algorithm:">
             The hash algorithm used for the Merkle Tree (see <xref target="hash_algorithms"/>).
           </t>
-          <t hangText="Signing Algorithm">
+          <t hangText="Signing Algorithm:">
             The signing algorithm used (see <xref target="signatures"/>).
           </t>
-          <t hangText="Public Key">
+          <t hangText="Public Key:">
             The public key used to verify signatures generated by the log. A log MUST NOT use the same keypair as any other log.
           </t>
-          <t hangText="Log ID">
+          <t hangText="Log ID:">
             The OID that uniquely identifies the log.
           </t>
-          <t hangText="Maximum Merge Delay">
+          <t hangText="Maximum Merge Delay:">
             The MMD the log has committed to.
           </t>
-          <t hangText="Version">
+          <t hangText="Version:">
             The version of the protocol supported by the log (currently 1 or 2).
           </t>
-          <t hangText="Maximum Chain Length">
+          <t hangText="Maximum Chain Length:">
             The longest chain submission the log is willing to accept, if the log chose to limit it.
           </t>
-          <t hangText="STH Frequency Count">
+          <t hangText="STH Frequency Count:">
             The maximum number of STHs the log may produce in any period equal to the <spanx style="verb">Maximum Merge Delay</spanx> (see <xref target="STH"/>).
           </t>
-          <t hangText="Final STH">
+          <t hangText="Final STH:">
             If a log has been closed down (i.e., no longer accepts new entries), existing entries may still be valid. In this case, the client should know the final valid STH in the log to ensure no new entries can be added without detection. The final STH should be provided in the form of a TransItem of type signed_tree_head_v2.
           </t>
         </list></t>
@@ -1674,11 +1659,12 @@ but it is expected there will be a variety.
       </section>
       <section title="Hash Algorithms" anchor="hash_algorithms">
         <t>
-          IANA is asked to establish a registry of hash values, initially consisting of:
+          IANA is asked to establish a registry of hash algorithm values, initially consisting of:
         </t>
         <texttable>
           <ttcol>Index</ttcol><ttcol>Hash</ttcol>
           <c>0</c><c><xref target="FIPS.180-4">SHA-256</xref></c>
+          <c>255</c><c>reserved</c>
         </texttable>
       </section>
       <section title="Signature Algorithms" anchor="signature_algorithms">
@@ -1805,7 +1791,7 @@ the proofs from the log) or communicate with the log via proxies.
     </section>
     <section title="Acknowledgements">
       <t>
-        The authors would like to thank Erwann Abelea, Robin Alden, Andrew Ayer, Al Cutter, Francis Dupont, Adam Eijdenberg, Stephen Farrell, Daniel Kahn Gillmor, Paul Hadfield, Brad Hill, Jeff Hodges, Paul Hoffman, Jeffrey Hutzelman, Kat Joyce, Stephen Kent, SM, Alexey Melnikov, Linus Nordberg, Chris Palmer, Trevor Perrin, Pierre Phaneuf, Melinda Shore, Ryan Sleevi, Martin Smith, Carl Wallace and Paul Wouters for their valuable contributions.
+        The authors would like to thank Erwann Abelea, Robin Alden, Andrew Ayer, Al Cutter, David Drysdale, Francis Dupont, Adam Eijdenberg, Stephen Farrell, Daniel Kahn Gillmor, Paul Hadfield, Brad Hill, Jeff Hodges, Paul Hoffman, Jeffrey Hutzelman, Kat Joyce, Stephen Kent, SM, Alexey Melnikov, Linus Nordberg, Chris Palmer, Trevor Perrin, Pierre Phaneuf, Melinda Shore, Ryan Sleevi, Martin Smith, Carl Wallace and Paul Wouters for their valuable contributions.
       </t>
       <t>
         A big thank you to Symantec for kindly donating the OIDs from the 1.3.101 arc that are used in this document.
