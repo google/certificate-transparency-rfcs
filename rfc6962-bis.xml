@@ -1176,16 +1176,16 @@ entry specified by <spanx style="verb">start</spanx>.
 	</t>
       </section>
 
-      <section title="Get Entry Numbers for Certificate">
+      <section title="Get Entry Numbers for TBSCertificate">
 	<t>
-	  GET https://&lt;log server&gt;/ct/v2/get-entry-for-certificate
+	  GET https://&lt;log server&gt;/ct/v2/get-entry-for-tbscertificate
 	</t>
 	<t>
           <list style="hanging">
             <t hangText="Inputs:">
               <list style="hanging">
                 <t hangText="hash:">
-                  A base64 encoded HASH of a <spanx style="verb">TBSCertificate</spanx>.
+                  A base64 encoded HASH of a <spanx style="verb">TBSCertificate</spanx> for which the log has previously issued an SCT. (Note that a precertificate's TBSCertificate is reconstructed from the corresponding certificate as described in <xref target="reconstructing_tbscertificate"/>).
                 </t>
               </list>
             </t>
