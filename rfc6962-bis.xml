@@ -1445,6 +1445,9 @@ but it is expected there will be a variety.
           <t>
             To be considered compliant, a certificate MUST be accompanied by at least one valid SCT. A certificate not accompanied by any valid SCTs MUST NOT be considered compliant by TLS clients.
           </t>
+          <t>
+            A TLS client MUST NOT evaluate compliance if it did not send both the <spanx style="verb">transparency_info</spanx> and <spanx style="verb">status_request</spanx> TLS extensions in the ClientHello.
+          </t>
         </section>
         <section title="TLS Feature Extension">
           <t>
