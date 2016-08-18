@@ -216,6 +216,7 @@ that their private labels will become known outside their closed communities:
   consisting only of numerical digits, etc). If a label has insufficient entropy
   then redaction will only provide a thin layer of obfuscation, because it will
   be feasible to recover the label via a brute-force attack.
+* Avoid using publicly trusted certificates to secure private domain space.
 
 CAs are advised to carefully consider each request to redact a label. When a CA
 believes that redacting a particular label would be futile, we advise rejecting
