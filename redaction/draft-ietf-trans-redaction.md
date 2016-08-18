@@ -92,7 +92,7 @@ When creating a precertificate, the CA MAY include a redactedSubjectAltName
 the same entries that will be included in the certificate's subjectAltName
 extension. When the redactedSubjectAltName extension is present in a
 precertificate, the subjectAltName extension MUST be omitted (even though it
-will be present in the corresponding certificate).
+MUST be present in the corresponding certificate).
 
 Wildcard `*` labels MUST NOT be redacted, but one or more non-wildcard labels in
 each DNS-ID [RFC6125] can each be replaced with a redacted label as follows:
