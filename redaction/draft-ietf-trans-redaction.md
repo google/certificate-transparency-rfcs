@@ -70,6 +70,9 @@ Section TBD of [I-D.ietf-trans-rfc6962-bis] proposes two mechanisms for dealing
 with this conundrum: wildcard certificates and name-constrained intermediate
 CAs. However, these mechanisms are insufficient to cover all use cases.
 
+TODO(eranm): Expand on when each of the other mechanisms is suitable and when
+this mechanism may be suitable.
+
 We define a domain label redaction mechanism that covers all use cases, at the
 cost of increased implementation complexity. CAs and domain owners should note
 that there are privacy considerations ({{privacy_considerations}}) and that
