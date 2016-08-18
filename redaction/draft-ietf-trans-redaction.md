@@ -66,6 +66,9 @@ unnecessary privacy leak, because it's the registered domain names in each
 certificate that are of primary interest when using CT to look for suspect
 certificates.
 
+TODO: Highlight better the differences between registered domains and
+subdomains, referencing the relevant DNS RFCs.
+
 Section TBD of [I-D.ietf-trans-rfc6962-bis] proposes two mechanisms for dealing
 with this conundrum: wildcard certificates and name-constrained intermediate
 CAs. However, these mechanisms are insufficient to cover all use cases.
