@@ -1185,7 +1185,7 @@ entry specified by <spanx style="verb">start</spanx>.
             <t hangText="Inputs:">
               <list style="hanging">
                 <t hangText="hash:">
-                  A base64 encoded HASH of a <spanx style="verb">TBSCertificate</spanx> for which the log has previously issued an SCT. (Note that a precertificate's TBSCertificate can be reconstructed from the corresponding certificate as described in <xref target="reconstructing_tbscertificate"/>).
+                  A base64 encoded HASH of a <spanx style="verb">TBSCertificate</spanx> for which the log has previously issued an SCT. (Note that a precertificate's TBSCertificate is reconstructed from the corresponding certificate as described in <xref target="reconstructing_tbscertificate"/>).
                 </t>
               </list>
             </t>
