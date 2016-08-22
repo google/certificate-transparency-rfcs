@@ -485,9 +485,9 @@ d0 d1   d2 d3           d0 d1   d2 d3  d4 d5</artwork>
         reserved(0),
         x509_entry_v2(1), precert_entry_v2(2),
         x509_sct_v2(3), precert_sct_v2(4),
-        tree_head_v2(5), signed_tree_head_v2(6),
-        consistency_proof_v2(7), inclusion_proof_v2(8),
-        x509_sct_with_proof_v2(9), precert_sct_with_proof_v2(10),
+        signed_tree_head_v2(5), consistency_proof_v2(6),
+        inclusion_proof_v2(7), x509_sct_with_proof_v2(8),
+        precert_sct_with_proof_v2(9),
         (65535)
     } VersionedTransType;
 
@@ -498,7 +498,6 @@ d0 d1   d2 d3           d0 d1   d2 d3  d4 d5</artwork>
             case precert_entry_v2: TimestampedCertificateEntryDataV2;
             case x509_sct_v2: SignedCertificateTimestampDataV2;
             case precert_sct_v2: SignedCertificateTimestampDataV2;
-            case tree_head_v2: TreeHeadDataV2;
             case signed_tree_head_v2: SignedTreeHeadDataV2;
             case consistency_proof_v2: ConsistencyProofDataV2;
             case inclusion_proof_v2: InclusionProofDataV2;
@@ -598,10 +597,19 @@ d0 d1   d2 d3           d0 d1   d2 d3  d4 d5</artwork>
       <section title="Merkle Tree Head" anchor="tree_head">
         <figure>
           <preamble>
-            The log stores information about its Merkle Tree in a <spanx style="verb">TransItem</spanx> structure of type <spanx style="verb">tree_head_v2</spanx>, which encapsulates a <spanx style="verb">TreeHeadDataV2</spanx> structure:
+            The log stores information about its Merkle Tree in a <spanx style="verb">TreeHeadDataV2</spanx>:
           </preamble>
           <artwork>
     opaque NodeHash&lt;32..2^8-1&gt;;
+
+    enum {
+        reserved(65535)
+    } SthExtensionType;
+
+    struct {
+        SthExtensionType sth_extension_type;
+        opaque sth_extension_data&lt;0..2^16-1&gt;;
+    } SthExtension;
 
     struct {
         uint64 timestamp;
@@ -610,6 +618,15 @@ d0 d1   d2 d3           d0 d1   d2 d3  d4 d5</artwork>
         SthExtension sth_extensions&lt;0..2^16-1&gt;;
     } TreeHeadDataV2;</artwork>
         </figure>
+        <t>
+          The length of NodeHash MUST match HASH_SIZE of the log.
+        </t>
+        <t>
+          <spanx style="verb">sth_extension_type</spanx> identifies a single extension from the IANA registry in <xref target="sth_extension_types"/>. At the time of writing, no extensions are specified.
+        </t>
+        <t>
+          The interpretation of the <spanx style="verb">sth_extension_data</spanx> field is determined solely by the value of the <spanx style="verb">sth_extension_type</spanx> field. Each document that registers a new <spanx style="verb">sth_extension_type</spanx> must describe how to interpret the corresponding <spanx style="verb">sth_extension_data</spanx>.
+        </t>
         <t>
           <spanx style="verb">timestamp</spanx> is the current <xref target="RFC5905">NTP Time</xref>, measured in milliseconds since the epoch (January 1, 1970, 00:00 UTC), ignoring leap seconds.
         </t>
@@ -620,10 +637,7 @@ d0 d1   d2 d3           d0 d1   d2 d3  d4 d5</artwork>
           <spanx style="verb">root_hash</spanx> is the root of the Merkle Hash Tree.
         </t>
         <t>
-          <spanx style="verb">sth_extensions</spanx> matches the STH extensions of the corresponding STH.
-        </t>
-        <t>
-          The length of NodeHash MUST match HASH_SIZE of the log.
+          <spanx style="verb">sth_extensions</spanx> is a vector of 0 or more STH extensions. This vector MUST NOT include more than one extension with the same <spanx style="verb">sth_extension_type</spanx>. The extensions in the vector MUST be ordered by the value of the <spanx style="verb">sth_extension_type</spanx> field, smallest value first. If an implementation sees an extension that it does not understand, it SHOULD ignore that extension. Furthermore, an implementation MAY choose to ignore any extension(s) that it does understand.
         </t>
       </section>
       <section title="Signed Tree Head (STH)" anchor="STH">
@@ -635,23 +649,11 @@ d0 d1   d2 d3           d0 d1   d2 d3  d4 d5</artwork>
             An STH is a <spanx style="verb">TransItem</spanx> structure of type <spanx style="verb">signed_tree_head_v2</spanx>, which encapsulates a <spanx style="verb">SignedTreeHeadDataV2</spanx> structure:
           </preamble>
           <artwork>
-    enum {
-        reserved(65535)
-    } SthExtensionType;
-
-    struct {
-        SthExtensionType sth_extension_type;
-        opaque sth_extension_data&lt;0..2^16-1&gt;;
-    } SthExtension;
-
     struct {
         LogID log_id;
-        uint64 timestamp;
-        uint64 tree_size;
-        NodeHash root_hash;
-        SthExtension sth_extensions&lt;0..2^16-1&gt;;
+        TreeHeadDataV2 tree_head;
         digitally-signed struct {
-            TransItem merkle_tree_head;
+            TreeHeadDataV2 tree_head;
         } signature;
     } SignedTreeHeadDataV2;</artwork>
         </figure>
@@ -659,25 +661,13 @@ d0 d1   d2 d3           d0 d1   d2 d3  d4 d5</artwork>
           <spanx style="verb">log_id</spanx> is this log's unique ID, encoded in an opaque vector as described in <xref target="log_id"/>.
         </t>
         <t>
-          <spanx style="verb">timestamp</spanx> is equal to the timestamp from the <spanx style="verb">TreeHeadDataV2</spanx> structure encapsulated in <spanx style="verb">merkle_tree_head</spanx>. This timestamp MUST be at least as recent as the most recent SCT timestamp in the tree. Each subsequent timestamp MUST be more recent than the timestamp of the previous update.
+          The <spanx style="verb">timestamp</spanx> in <spanx style="verb">tree_head</spanx> MUST be at least as recent as the most recent SCT timestamp in the tree. Each subsequent timestamp MUST be more recent than the timestamp of the previous update.
         </t>
         <t>
-          <spanx style="verb">tree_size</spanx> is equal to the tree size from the <spanx style="verb">TreeHeadDataV2</spanx> structure encapsulated in <spanx style="verb">merkle_tree_head</spanx>.
+          <spanx style="verb">tree_head</spanx> contains the latest tree head information (see <xref target="tree_head"/>).
         </t>
         <t>
-          <spanx style="verb">root_hash</spanx> is equal to the root hash from the <spanx style="verb">TreeHeadDataV2</spanx> structure encapsulated in <spanx style="verb">merkle_tree_head</spanx>.
-        </t>
-        <t>
-          <spanx style="verb">sth_extension_type</spanx> identifies a single extension from the IANA registry in <xref target="sth_extension_types"/>. At the time of writing, no extensions are specified.
-        </t>
-        <t>
-          The interpretation of the <spanx style="verb">sth_extension_data</spanx> field is determined solely by the value of the <spanx style="verb">sth_extension_type</spanx> field. Each document that registers a new <spanx style="verb">sth_extension_type</spanx> must describe how to interpret the corresponding <spanx style="verb">sth_extension_data</spanx>.
-        </t>
-        <t>
-          <spanx style="verb">sth_extensions</spanx> is a vector of 0 or more STH extensions. This vector MUST NOT include more than one extension with the same <spanx style="verb">sth_extension_type</spanx>. The extensions in the vector MUST be ordered by the value of the <spanx style="verb">sth_extension_type</spanx> field, smallest value first. If an implementation sees an extension that it does not understand, it SHOULD ignore that extension. Furthermore, an implementation MAY choose to ignore any extension(s) that it does understand.
-        </t>
-        <t>
-          <spanx style="verb">merkle_tree_head</spanx> is a <spanx style="verb">TransItem</spanx> structure that MUST be of type <spanx style="verb">tree_head_v2</spanx> (see <xref target="tree_head"/>).
+          <spanx style="verb">signature</spanx> is a signature over the encoded <spanx style="verb">tree_head</spanx> field.
         </t>
       </section>
       <section title="Merkle Consistency Proofs">
