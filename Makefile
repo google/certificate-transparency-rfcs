@@ -1,19 +1,22 @@
-VERSION=19
-PREV=18
-XML=rfc6962-bis.xml
-NAME=draft-ietf-trans-rfc6962-bis
-BASE=$(NAME)-$(VERSION)
-DIFF=$(NAME)-$(PREV)-$(VERSION)-diff.html
+DOC = draft-ietf-trans-rfc6962-bis
 
-all: $(BASE).html $(BASE).txt $(DIFF)
+# Not much user servicable parts below this line.
 
-.DELETE_ON_ERROR:
+VER=$(shell grep ^docname: $(DOC).md | awk -F- '{print $$NF}')
+TEXT=$(DOC)-$(VER).txt
+HTML=$(DOC)-$(VER).html
+XML=$(DOC).xml
 
-$(BASE).html: $(XML)
-	xml2rfc --html -o $(BASE).html $(XML)
+all: $(TEXT) $(HTML) 
 
-$(BASE).txt: $(XML)
-	xml2rfc --text -o $(BASE).txt $(XML)
+$(XML): $(DOC).md
+	kramdown-rfc2629 $< > $@
 
-$(DIFF): $(NAME)-$(PREV).txt $(BASE).txt
-	rfcdiff --stdout $(NAME)-$(PREV).txt $(BASE).txt > $(DIFF)
+$(TEXT): $(XML)
+	xml2rfc $<
+
+$(HTML): $(DOC).xml
+	xml2rfc $< --html
+
+clean:
+	rm -f $(DOC).html $(DOC).txt $(DOC).xml
