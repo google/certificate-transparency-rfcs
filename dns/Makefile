@@ -10,7 +10,7 @@ XML=$(DOC).xml
 all: $(TEXT) $(HTML) 
 
 $(XML): $(DOC).md
-	kramdown-rfc2629 $< > $@
+	XML_RESOURCE_ORG_PREFIX="https://xml2rfc.tools.ietf.org/public/rfc" kramdown-rfc2629 $< > $@
 
 $(TEXT): $(XML)
 	xml2rfc $<
