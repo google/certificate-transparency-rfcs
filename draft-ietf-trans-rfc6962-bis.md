@@ -138,7 +138,7 @@ This document describes a protocol for publicly logging the existence of
 Transport Layer Security (TLS) server certificates as they are issued or
 observed, in a manner that allows anyone to audit certification authority (CA)
 activity and notice the issuance of suspect certificates as well as to audit the
-certificate logs themselves.  The intent is that eventually clients would refuse
+certificate logs themselves. The intent is that eventually clients would refuse
 to honor certificates that do not appear in a log, effectively forcing CAs to
 add all issued certificates to the logs.
 
@@ -150,49 +150,49 @@ and queries that are defined in this document.
 # Introduction
 
 Certificate transparency aims to mitigate the problem of misissued certificates
-by providing append-only logs of issued certificates.  The logs do not need to
-be trusted because they are publicly auditable.  Anyone may verify the
-correctness of each log and monitor when new certificates are added to it.  The
-logs do not themselves prevent misissue, but they ensure that interested parties
-(particularly those named in certificates) can detect such misissuance.  Note
+by providing append-only logs of issued certificates. The logs do not need to be
+trusted because they are publicly auditable. Anyone may verify the correctness
+of each log and monitor when new certificates are added to it. The logs do not
+themselves prevent misissue, but they ensure that interested parties
+(particularly those named in certificates) can detect such misissuance. Note
 that this is a general mechanism that could be used for transparently logging
-any form of binary data, subject to some kind of inclusion criteria.  In this
+any form of binary data, subject to some kind of inclusion criteria. In this
 document, we only describe its use for public TLS server certificates (i.e.,
 where the inclusion criteria is a valid certificate issued by a public
 certification authority (CA)).
 
-Each log contains certificate chains, which can be submitted by anyone.  It is
+Each log contains certificate chains, which can be submitted by anyone. It is
 expected that public CAs will contribute all their newly issued certificates to
 one or more logs; however certificate holders can also contribute their own
-certificate chains, as can third parties.  In order to avoid logs being rendered
+certificate chains, as can third parties. In order to avoid logs being rendered
 useless by the submission of large numbers of spurious certificates, it is
 required that each chain ends with a trust anchor that is accepted by the log.
 When a chain is accepted by a log, a signed timestamp is returned, which can
 later be used to provide evidence to TLS clients that the chain has been
-submitted.  TLS clients can thus require that all certificates they accept as
+submitted. TLS clients can thus require that all certificates they accept as
 valid are accompanied by signed timestamps.
 
 Those who are concerned about misissuance can monitor the logs, asking them
 regularly for all new entries, and can thus check whether domains for which they
-are responsible have had certificates issued that they did not expect.  What
+are responsible have had certificates issued that they did not expect. What
 they do with this information, particularly when they find that a misissuance
-has happened, is beyond the scope of this document.  However, broadly speaking,
+has happened, is beyond the scope of this document. However, broadly speaking,
 they can invoke existing business mechanisms for dealing with misissued
 certificates, such as working with the CA to get the certificate revoked, or
-with maintainers of trust anchor lists to get the CA removed.  Of course, anyone
+with maintainers of trust anchor lists to get the CA removed. Of course, anyone
 who wants can monitor the logs and, if they believe a certificate is incorrectly
 issued, take action as they see fit.
 
 Similarly, those who have seen signed timestamps from a particular log can later
-demand a proof of inclusion from that log.  If the log is unable to provide this
+demand a proof of inclusion from that log. If the log is unable to provide this
 (or, indeed, if the corresponding certificate is absent from monitors' copies of
-that log), that is evidence of the incorrect operation of the log.  The checking
+that log), that is evidence of the incorrect operation of the log. The checking
 operation is asynchronous to allow clients to proceed without delay, despite
 possible issues such as network connectivity and the vagaries of firewalls.
 
 The append-only property of each log is achieved using Merkle Trees, which can
 be used to show that any particular instance of the log is a superset of any
-particular previous instance.  Likewise, Merkle Trees avoid the need to blindly
+particular previous instance. Likewise, Merkle Trees avoid the need to blindly
 trust logs: if a log attempts to show different things to different people, this
 can be efficiently detected by comparing tree roots and consistency proofs.
 Similarly, other misbehaviors of any log (e.g., issuing signed timestamps for
@@ -214,16 +214,16 @@ of [RFC5246].
 
 ## Merkle Hash Trees    {#mht}
 
-Logs use a binary Merkle Hash Tree for efficient auditing.  The hashing
-algorithm used by each log is expected to be specified as part of the metadata
-relating to that log (see {{metadata}}).  We have established a registry of
-acceptable algorithms, see {{hash_algorithms}}. The hashing algorithm in use is
-referred to as HASH throughout this document and the size of its output in bytes
-as HASH_SIZE.  The input to the Merkle Tree Hash is a list of data entries;
-these entries will be hashed to form the leaves of the Merkle Hash Tree.  The
-output is a single HASH_SIZE Merkle Tree Hash.  Given an ordered list of n
-inputs, D\[n] = {d(0), d(1), ..., d(n-1)}, the Merkle Tree Hash (MTH) is thus
-defined as follows:
+Logs use a binary Merkle Hash Tree for efficient auditing. The hashing algorithm
+used by each log is expected to be specified as part of the metadata relating to
+that log (see {{metadata}}). We have established a registry of acceptable
+algorithms, see {{hash_algorithms}}. The hashing algorithm in use is referred to
+as HASH throughout this document and the size of its output in bytes as
+HASH_SIZE. The input to the Merkle Tree Hash is a list of data entries; these
+entries will be hashed to form the leaves of the Merkle Hash Tree. The output is
+a single HASH_SIZE Merkle Tree Hash. Given an ordered list of n inputs, D\[n] =
+{d(0), d(1), ..., d(n-1)}, the Merkle Tree Hash (MTH) is thus defined as
+follows:
 
 The hash of an empty list is the hash of an empty string:
 
@@ -245,14 +245,14 @@ The Merkle Tree Hash of an n-element list D\[n] is then defined recursively as
 MTH(D[n]) = HASH(0x01 || MTH(D[0:k]) || MTH(D[k:n])),
 ~~~~~~~~~~~
 
-where || is concatenation and D\[k1:k2] denotes the list {d(k1), d(k1+1),...,
-d(k2-1)} of length (k2 - k1).  (Note that the hash calculations for leaves and
-nodes differ.  This domain separation is required to give second preimage
+where || is concatenation and D\[k1:k2] denotes the list {d(k1), d(k1+1), ...,
+d(k2-1)} of length (k2 - k1). (Note that the hash calculations for leaves and
+nodes differ. This domain separation is required to give second preimage
 resistance.)
 
 Note that we do not require the length of the input list to be a power of two.
 The resulting Merkle Tree may thus not be balanced; however, its shape is
-uniquely determined by the number of leaves.  (Note: This Merkle Tree is
+uniquely determined by the number of leaves. (Note: This Merkle Tree is
 essentially the same as the history tree [CrosbyWallach] proposal, except our
 definition handles non-full trees differently.)
 
@@ -260,13 +260,13 @@ definition handles non-full trees differently.)
 
 A Merkle inclusion proof for a leaf in a Merkle Hash Tree is the shortest list
 of additional nodes in the Merkle Tree required to compute the Merkle Tree Hash
-for that tree.  Each node in the tree is either a leaf node or is computed from
-the two nodes immediately below it (i.e., towards the leaves).  At each step up
+for that tree. Each node in the tree is either a leaf node or is computed from
+the two nodes immediately below it (i.e., towards the leaves). At each step up
 the tree (towards the root), a node from the inclusion proof is combined with
-the node computed so far.  In other words, the inclusion proof consists of the
+the node computed so far. In other words, the inclusion proof consists of the
 list of missing nodes required to compute the nodes leading from a leaf to the
-root of the tree.  If the root computed from the inclusion proof matches the
-true root, then the inclusion proof proves that the leaf exists in the tree.
+root of the tree. If the root computed from the inclusion proof matches the true
+root, then the inclusion proof proves that the leaf exists in the tree.
 
 Given an ordered list of n inputs to the tree, D\[n] = {d(0), ..., d(n-1)}, the
 Merkle inclusion proof PATH(m, D\[n]) for the (m+1)th input d(m), 0 \<= m \< n,
@@ -279,7 +279,7 @@ The proof for the single leaf in a tree with a one-element input list D\[1] =
 PATH(0, {d(0)}) = {}
 ~~~~~~~~~~~
 
-For n > 1, let k be the largest power of two smaller than n.  The proof for the
+For n > 1, let k be the largest power of two smaller than n. The proof for the
 (m+1)th element d(m) in a list of n > m elements is then defined recursively as
 
 ~~~~~~~~~~~
@@ -293,14 +293,14 @@ list {d(k1), d(k1+1),..., d(k2-1)} as before.
 
 ### Merkle Consistency Proofs    {#consistency}
 
-Merkle consistency proofs prove the append-only property of the tree.  A Merkle
+Merkle consistency proofs prove the append-only property of the tree. A Merkle
 consistency proof for a Merkle Tree Hash MTH(D\[n]) and a previously advertised
 hash MTH(D\[0:m]) of the first m leaves, m \<= n, is the list of nodes in the
 Merkle Tree required to verify that the first m inputs D\[0:m] are equal in both
-trees.  Thus, a consistency proof must contain a set of intermediate nodes
-(i.e., commitments to inputs) sufficient to verify MTH(D\[n]), such that (a
-subset of) the same nodes can be used to verify MTH(D\[0:m]).  We define an
-algorithm that outputs the (unique) minimal consistency proof.
+trees. Thus, a consistency proof must contain a set of intermediate nodes (i.e.,
+commitments to inputs) sufficient to verify MTH(D\[n]), such that (a subset of)
+the same nodes can be used to verify MTH(D\[0:m]). We define an algorithm that
+outputs the (unique) minimal consistency proof.
 
 Given an ordered list of n inputs to the tree, D\[n] = {d(0), ..., d(n-1)}, the
 Merkle consistency proof PROOF(m, D\[n]) for a previous Merkle Tree Hash
@@ -312,7 +312,7 @@ PROOF(m, D[n]) = SUBPROOF(m, D[n], true)
 
 In SUBPROOF, the boolean value represents whether the subtree created from
 D\[0:m] is a complete subtree of the Merkle Tree created from D\[n], and,
-consequently, whether the subtree Merkle Tree Hash MTH(D\[0:m]) is known.  The
+consequently, whether the subtree Merkle Tree Hash MTH(D\[0:m]) is known. The
 initial call to SUBPROOF sets this to be true, and SUBPROOF is then defined as
 follows:
 
@@ -332,7 +332,7 @@ D\[0:m]:
 SUBPROOF(m, D[m], false) = {MTH(D[m])}
 ~~~~~~~~~~~
 
-For m \< n, let k be the largest power of two smaller than n.  The subproof is
+For m \< n, let k be the largest power of two smaller than n. The subproof is
 then defined recursively.
 
 If m \<= k, the right subtree entries D\[k:n] only exist in the current tree.
@@ -343,9 +343,9 @@ commitment to D\[k:n]:
 SUBPROOF(m, D[n], b) = SUBPROOF(m, D[0:k], b) : MTH(D[k:n])
 ~~~~~~~~~~~
 
-If m > k, the left subtree entries D\[0:k] are identical in both trees.  We
-prove that the right subtree entries D\[k:n] are consistent and add a commitment
-to D\[0:k].
+If m > k, the left subtree entries D\[0:k] are identical in both trees. We prove
+that the right subtree entries D\[k:n] are consistent and add a commitment to
+D\[0:k].
 
 ~~~~~~~~~~~
 SUBPROOF(m, D[n], b) = SUBPROOF(m - k, D[k:n], false) : MTH(D[0:k])
@@ -430,28 +430,28 @@ consistent with hash2.
 
 ### Signatures    {#signatures}
 
-Various data structures are signed.  A log MUST use one of the signature
+Various data structures are signed. A log MUST use one of the signature
 algorithms defined in {{signature_algorithms}}.
 
 # Submitters
 
 Submitters submit certificates or preannouncements of certificates prior to
-issuance (precertificates) to logs for public auditing, as described below.  In
+issuance (precertificates) to logs for public auditing, as described below. In
 order to enable attribution of each logged certificate or precertificate to its
 issuer, each submission MUST be accompanied by all additional certificates
-required to verify the chain up to an accepted trust anchor.  The trust anchor
-(a root or intermediate CA certificate) MAY be omitted from the submission.
+required to verify the chain up to an accepted trust anchor. The trust anchor (a
+root or intermediate CA certificate) MAY be omitted from the submission.
 
 If a log accepts a submission, it will return a Signed Certificate Timestamp
-(SCT) (see {{sct}}).  The submitter SHOULD validate the returned SCT as
-described in {{tls_clients}} if they understand its format and they intend to
-use it directly in a TLS handshake or to construct a certificate.  If the
-submitter does not need the SCT (for example, the certificate is being submitted
-simply to make it available in the log), it MAY validate the SCT.
+(SCT) (see {{sct}}). The submitter SHOULD validate the returned SCT as described
+in {{tls_clients}} if they understand its format and they intend to use it
+directly in a TLS handshake or to construct a certificate. If the submitter does
+not need the SCT (for example, the certificate is being submitted simply to make
+it available in the log), it MAY validate the SCT.
 
 ## Certificates
 
-Any entity can submit a certificate ({{add-chain}}) to a log.  Since it is
+Any entity can submit a certificate ({{add-chain}}) to a log. Since it is
 anticipated that TLS clients will reject certificates that are not logged, it is
 expected that certificate issuers and subjects will be strongly motivated to
 submit them.
@@ -460,11 +460,10 @@ submit them.
 
 CAs may preannounce a certificate prior to issuance by submitting a
 precertificate ({{add-pre-chain}}) that the log can use to create an entry that
-will be valid against the issued certificate.  The CA MAY incorporate the
-returned SCT in the issued certificate.  One example of where the returned SCT
-is not incorporated in the issued certificate is when a CA sends the
-precertificate to multiple logs, but only incorporates the SCTs that are
-returned first.
+will be valid against the issued certificate. The CA MAY incorporate the
+returned SCT in the issued certificate. One example of where the returned SCT is
+not incorporated in the issued certificate is when a CA sends the precertificate
+to multiple logs, but only incorporates the SCTs that are returned first.
 
 A precertificate is a CMS [RFC5652] `signed-data` object that conforms to the
 following requirements:
@@ -479,10 +478,10 @@ following requirements:
   MUST be omitted.
 
 * `SignedData.signerInfos` MUST contain a signature from the same (root or
-  intermediate) CA that will ultimately issue the certificate.  This signature
-  indicates the CA's intent to issue the certificate.  This intent is considered
+  intermediate) CA that will ultimately issue the certificate. This signature
+  indicates the CA's intent to issue the certificate. This intent is considered
   binding (i.e., misissuance of the precertificate is considered equivalent to
-  misissuance of the certificate).  (Note that, because of the structure of CMS,
+  misissuance of the certificate). (Note that, because of the structure of CMS,
   the signature on the CMS object will not be a valid X.509v3 signature and so
   cannot be used to construct a certificate from the precertificate).
 
@@ -491,7 +490,7 @@ following requirements:
 # Private Domain Name Labels
 
 Some regard certain DNS domain name labels within their registered domain space
-as private and security sensitive.  Even though these domains are often only
+as private and security sensitive. Even though these domains are often only
 accessible within the domain owner's private network, it's common for them to be
 secured using publicly trusted TLS server certificates.
 
@@ -504,9 +503,9 @@ secure the domain `topsecret.example.com`, without revealing the string
 Since TLS clients only match the wildcard character to the complete leftmost
 label of the DNS domain name (see Section 6.4.3 of [RFC6125]), a different
 approach is needed when any label other than the leftmost label in a DNS-ID is
-considered private (e.g., `top.secret.example.com`).  Also, wildcard
-certificates are prohibited in some cases, such as Extended Validation
-Certificates [EVSSLGuidelines].
+considered private (e.g., `top.secret.example.com`). Also, wildcard certificates
+are prohibited in some cases, such as Extended Validation Certificates
+[EVSSLGuidelines].
 
 ## Using a Name-Constrained Intermediate CA    {#name_constrained}
 
@@ -516,7 +515,7 @@ certificates issued by that intermediate CA, as long as all of the following
 conditions are met:
 
 * there MUST be a non-critical extension (OID 1.3.101.76, whose extnValue OCTET
-  STRING contains ASN.1 NULL data (0x05 0x00)).  This extension is an explicit
+  STRING contains ASN.1 NULL data (0x05 0x00)). This extension is an explicit
   indication that it is acceptable to not log certificates issued by this
   intermediate CA.
 
@@ -559,19 +558,19 @@ A log is a single, append-only Merkle Tree of submitted certificate and
 precertificate entries.
 
 When it receives a valid submission, the log MUST return an SCT that corresponds
-to the submitted certificate or precertificate.  If the log has previously seen
+to the submitted certificate or precertificate. If the log has previously seen
 this valid submission, it SHOULD return the same SCT as it returned before (to
 reduce the ability to track clients as described in
-{{deterministic_signatures}}).  If different SCTs are produced for the same
+{{deterministic_signatures}}). If different SCTs are produced for the same
 submission, multiple log entries will have to be created, one for each SCT (as
-the timestamp is a part of the leaf structure).  Note that if a certificate was
+the timestamp is a part of the leaf structure). Note that if a certificate was
 previously logged as a precertificate, then the precertificate's SCT of type
 `precert_sct_v2` would not be appropriate; instead, a fresh SCT of type
 `x509_sct_v2` should be generated.
 
 An SCT is the log's promise to incorporate the submitted entry in its Merkle
 Tree no later than a fixed amount of time, known as the Maximum Merge Delay
-(MMD), after the issuance of the SCT.  Periodically, the log MUST append all its
+(MMD), after the issuance of the SCT. Periodically, the log MUST append all its
 new entries to its Merkle Tree and sign the root of the tree.
 
 Log operators MUST NOT impose any conditions on retrieving or sharing data from
@@ -581,32 +580,32 @@ the log.
 
 Logs MUST verify that each submitted certificate or precertificate has a valid
 signature chain to an accepted trust anchor, using the chain of intermediate CA
-certificates provided by the submitter.  Logs MUST accept certificates and
+certificates provided by the submitter. Logs MUST accept certificates and
 precertificates that are fully valid according to RFC 5280 [RFC5280]
-verification rules and are submitted with such a chain.  Logs MAY accept
+verification rules and are submitted with such a chain. Logs MAY accept
 certificates and precertificates that have expired, are not yet valid, have been
 revoked, or are otherwise not fully valid according to RFC 5280 verification
 rules in order to accommodate quirks of CA certificate-issuing software.
 However, logs MUST reject submissions without a valid signature chain to an
-accepted trust anchor.  Logs MUST also reject precertificates that do not
-conform to the requirements in {{precertificates}}.
+accepted trust anchor. Logs MUST also reject precertificates that do not conform
+to the requirements in {{precertificates}}.
 
-Logs SHOULD limit the length of chain they will accept.  The maximum chain
-length is specified in the log's metadata.
+Logs SHOULD limit the length of chain they will accept. The maximum chain length
+is specified in the log's metadata.
 
 The log SHALL allow retrieval of its list of accepted trust anchors (see
-{{get-anchors}}), each of which is a root or intermediate CA certificate.  This
+{{get-anchors}}), each of which is a root or intermediate CA certificate. This
 list might usefully be the union of root certificates trusted by major browser
 vendors.
 
 ## Log Entries    {#log_entries}
 
 If a submission is accepted and an SCT issued, the accepting log MUST store the
-entire chain used for verification.  This chain MUST include the certificate or
+entire chain used for verification. This chain MUST include the certificate or
 precertificate itself, the zero or more intermediate CA certificates provided by
 the submitter, and the trust anchor used to verify the chain (even if it was
-omitted from the submission).  The log MUST present this chain for auditing upon
-request (see {{get-entries}}).  This chain is required to prevent a CA from
+omitted from the submission). The log MUST present this chain for auditing upon
+request (see {{get-entries}}). This chain is required to prevent a CA from
 avoiding blame by logging a partial or empty chain.
 
 Each certificate entry in a log MUST include a `X509ChainEntry` structure, and
@@ -633,7 +632,7 @@ each precertificate entry MUST include a `PrecertChainEntryV2` structure:
 `certificate_chain` is a vector of 0 or more additional certificates required to
 verify `leaf_certificate`. The first certificate MUST certify
 `leaf_certificate`. Each following certificate MUST directly certify the one
-preceding it.  The final certificate MUST be a trust anchor accepted by the log.
+preceding it. The final certificate MUST be a trust anchor accepted by the log.
 If `leaf_certificate` is an accepted trust anchor, then this vector is empty.
 
 `pre_certificate` is a submitted precertificate that has been accepted by the
@@ -642,14 +641,14 @@ log.
 `precertificate_chain` is a vector of 1 or more additional certificates required
 to verify `pre_certificate`. The first certificate MUST certify
 `pre_certificate`. Each following certificate MUST directly certify the one
-preceding it.  The final certificate MUST be a trust anchor accepted by the log.
+preceding it. The final certificate MUST be a trust anchor accepted by the log.
 
 ## Log ID    {#log_id}
 
 Each log is identified by an OID, which is specified in the log's metadata and
-which MUST NOT be used to identify any other log.  A log's operator MUST either
+which MUST NOT be used to identify any other log. A log's operator MUST either
 allocate the OID themselves or request an OID from one of the two Log ID
-Registries (see {{log_id_registry1}} and {{log_id_registry2}}).  Various data
+Registries (see {{log_id_registry1}} and {{log_id_registry2}}). Various data
 structures include the DER encoding of this OID, excluding the ASN.1 tag and
 length bytes, in an opaque vector:
 
@@ -698,10 +697,10 @@ that the type and version of each one is identified in a common fashion:
 ~~~~~~~~~~~
 
 `versioned_type` is the type of the encapsulated data structure and the earliest
-version of this protocol to which it conforms.  This document is v2.
+version of this protocol to which it conforms. This document is v2.
 
-`data` is the encapsulated data structure.  The various structures named with
-the `DataV2` suffix are defined in later sections of this document.
+`data` is the encapsulated data structure. The various structures named with the
+`DataV2` suffix are defined in later sections of this document.
 
 Note that `VersionedTransType` combines the v1 [RFC6962] type enumerations
 `Version`, `LogEntryType`, `SignatureType` and `MerkleLeafType`. Note also that
@@ -716,9 +715,9 @@ and may add new `VersionedTransType` values for new or modified data structures.
 ## Merkle Tree Leaves    {#tree_leaves}
 
 The leaves of a log's Merkle Tree correspond to the log's entries (see
-{{log_entries}}).  Each leaf is the leaf hash ({{mht}}) of a `TransItem`
+{{log_entries}}). Each leaf is the leaf hash ({{mht}}) of a `TransItem`
 structure of type `x509_entry_v2` or `precert_entry_v2`, which encapsulates a
-`TimestampedCertificateEntryDataV2` structure.  Note that leaf hashes are
+`TimestampedCertificateEntryDataV2` structure. Note that leaf hashes are
 calculated as HASH(0x00 || TransItem), where the hashing algorithm is specified
 in the log's metadata.
 
@@ -735,12 +734,12 @@ in the log's metadata.
 
 `timestamp` is the NTP Time [RFC5905] at which the certificate or precertificate
 was accepted by the log, measured in milliseconds since the epoch (January 1,
-1970, 00:00 UTC), ignoring leap seconds.  Note that the leaves of a log's Merkle
+1970, 00:00 UTC), ignoring leap seconds. Note that the leaves of a log's Merkle
 Tree are not required to be in strict chronological order.
 
 `issuer_key_hash` is the HASH of the public key of the CA that issued the
 certificate or precertificate, calculated over the DER encoding of the key
-represented as SubjectPublicKeyInfo [RFC5280].  This is needed to bind the CA to
+represented as SubjectPublicKeyInfo [RFC5280]. This is needed to bind the CA to
 the certificate or precertificate, making it impossible for the corresponding
 SCT to be valid for any other certificate or precertificate whose TBSCertificate
 matches `tbs_certificate`. The length of the `issuer_key_hash` MUST match
@@ -748,7 +747,7 @@ HASH_SIZE.
 
 `tbs_certificate` is the DER encoded TBSCertificate from either the
 `leaf_certificate` (in the case of an `X509ChainEntry`) or the `pre_certificate`
-(in the case of a `PrecertChainEntryV2`).  (Note that a precertificate's
+(in the case of a `PrecertChainEntryV2`). (Note that a precertificate's
 TBSCertificate can be reconstructed from the corresponding certificate as
 described in {{reconstructing_tbscertificate}}).
 
@@ -790,14 +789,14 @@ which encapsulates a `SignedCertificateTimestampDataV2` structure:
 {{sct_extension_types}}. At the time of writing, no extensions are specified.
 
 The interpretation of the `sct_extension_data` field is determined solely by the
-value of the `sct_extension_type` field.  Each document that registers a new
+value of the `sct_extension_type` field. Each document that registers a new
 `sct_extension_type` must describe how to interpret the corresponding
 `sct_extension_data`.
 
-`sct_extensions` is a vector of 0 or more SCT extensions.  This vector MUST NOT
+`sct_extensions` is a vector of 0 or more SCT extensions. This vector MUST NOT
 include more than one extension with the same `sct_extension_type`. The
 extensions in the vector MUST be ordered by the value of the
-`sct_extension_type` field, smallest value first.  If an implementation sees an
+`sct_extension_type` field, smallest value first. If an implementation sees an
 extension that it does not understand, it SHOULD ignore that extension.
 Furthermore, an implementation MAY choose to ignore any extension(s) that it
 does understand.
@@ -837,7 +836,7 @@ The length of NodeHash MUST match HASH_SIZE of the log.
 {{sth_extension_types}}. At the time of writing, no extensions are specified.
 
 The interpretation of the `sth_extension_data` field is determined solely by the
-value of the `sth_extension_type` field.  Each document that registers a new
+value of the `sth_extension_type` field. Each document that registers a new
 `sth_extension_type` must describe how to interpret the corresponding
 `sth_extension_data`.
 
@@ -848,10 +847,10 @@ the epoch (January 1, 1970, 00:00 UTC), ignoring leap seconds.
 
 `root_hash` is the root of the Merkle Hash Tree.
 
-`sth_extensions` is a vector of 0 or more STH extensions.  This vector MUST NOT
+`sth_extensions` is a vector of 0 or more STH extensions. This vector MUST NOT
 include more than one extension with the same `sth_extension_type`. The
 extensions in the vector MUST be ordered by the value of the
-`sth_extension_type` field, smallest value first.  If an implementation sees an
+`sth_extension_type` field, smallest value first. If an implementation sees an
 extension that it does not understand, it SHOULD ignore that extension.
 Furthermore, an implementation MAY choose to ignore any extension(s) that it
 does understand.
@@ -859,12 +858,12 @@ does understand.
 ## Signed Tree Head (STH)    {#STH}
 
 Periodically each log SHOULD sign its current tree head information (see
-{{tree_head}}) to produce an STH.  When a client requests a log's latest STH
-(see {{get-sth}}), the log MUST return an STH that is no older than the log's
-MMD.  However, STHs could be used to mark individual clients (by producing a new
-one for each query), so logs MUST NOT produce them more frequently than is
-declared in their metadata.  In general, there is no need to produce a new STH
-unless there are new entries in the log; however, in the unlikely event that it
+{{tree_head}}) to produce an STH. When a client requests a log's latest STH (see
+{{get-sth}}), the log MUST return an STH that is no older than the log's MMD.
+However, STHs could be used to mark individual clients (by producing a new one
+for each query), so logs MUST NOT produce them more frequently than is declared
+in their metadata. In general, there is no need to produce a new STH unless
+there are new entries in the log; however, in the unlikely event that it
 receives no new submissions during an MMD period, the log SHALL sign the same
 Merkle Tree Hash with a fresh timestamp.
 
@@ -885,7 +884,7 @@ encapsulates a `SignedTreeHeadDataV2` structure:
 {{log_id}}.
 
 The `timestamp` in `tree_head` MUST be at least as recent as the most recent SCT
-timestamp in the tree.  Each subsequent timestamp MUST be more recent than the
+timestamp in the tree. Each subsequent timestamp MUST be more recent than the
 timestamp of the previous update.
 
 `tree_head` contains the latest tree head information (see {{tree_head}}).
@@ -946,7 +945,7 @@ chosen certificate or precertificate.
 ## Shutting down a log
 
 Log operators may decide to shut down a log for various reasons, such as
-deprecation of the signature algorithm.  If there are entries in the log for
+deprecation of the signature algorithm. If there are entries in the log for
 certificates that have not yet expired, simply making TLS clients stop
 recognizing that log will have the effect of invalidating SCTs from that log.
 To avoid that, the following actions are suggested:
@@ -958,9 +957,9 @@ To avoid that, the following actions are suggested:
 
 * Once MMD from the last accepted submission has passed and all pending
   submissions are incorporated, issue a final STH and publish it as a part of
-  the log's metadata.  Having an STH with a timestamp that is after the MMD has
+  the log's metadata. Having an STH with a timestamp that is after the MMD has
   passed from the last SCT issuance allows clients to audit this log regularly
-  without special handling for the final STH.  At this point the log's private
+  without special handling for the final STH. At this point the log's private
   key is no longer needed and can be destroyed.
 
 * Keep the log running until the certificates in all of its entries have expired
@@ -970,11 +969,11 @@ To avoid that, the following actions are suggested:
 
 # Log Client Messages    {#client_messages}
 
-Messages are sent as HTTPS GET or POST requests.  Parameters for POSTs and all
+Messages are sent as HTTPS GET or POST requests. Parameters for POSTs and all
 responses are encoded as JavaScript Object Notation (JSON) objects [RFC4627].
 Parameters for GETs are encoded as order-independent key/value URL parameters,
 using the "application/x-www-form-urlencoded" format described in the "HTML 4.01
-Specification" [HTML401].  Binary data is base64 encoded [RFC4648] as specified
+Specification" [HTML401]. Binary data is base64 encoded [RFC4648] as specified
 in the individual messages.
 
 Note that JSON objects and URL parameters may contain fields not specified here.
@@ -983,22 +982,22 @@ These extra fields should be ignored.
 The \<log server> prefix, which is part of the log's metadata, MAY include a
 path as well as a server name and a port.
 
-In practice, log servers may include multiple front-end machines.  Since it is
+In practice, log servers may include multiple front-end machines. Since it is
 impractical to keep these machines in perfect sync, errors may occur that are
-caused by skew between the machines.  Where such errors are possible, the
+caused by skew between the machines. Where such errors are possible, the
 front-end will return additional information (as specified below) making it
-possible for clients to make progress, if progress is possible.  Front-ends MUST
+possible for clients to make progress, if progress is possible. Front-ends MUST
 only serve data that is free of gaps (that is, for example, no front-end will
 respond with an STH unless it is also able to prove consistency from all log
 entries logged within that STH).
 
 For example, when a consistency proof between two STHs is requested, the
-front-end reached may not yet be aware of one or both STHs.  In the case where
-it is unaware of both, it will return the latest STH it is aware of.  Where it
-is aware of the first but not the second, it will return the latest STH it is
-aware of and a consistency proof from the first STH to the returned STH.  The
-case where it knows the second but not the first should not arise (see the "no
-gaps" requirement above).
+front-end reached may not yet be aware of one or both STHs. In the case where it
+is unaware of both, it will return the latest STH it is aware of. Where it is
+aware of the first but not the second, it will return the latest STH it is aware
+of and a consistency proof from the first STH to the returned STH. The case
+where it knows the second but not the first should not arise (see the "no gaps"
+requirement above).
 
 If the log is unable to process a client's request, it MUST return an HTTP
 response code of 4xx/5xx (see [RFC2616]), and, in place of the responses
@@ -1013,8 +1012,8 @@ error_message:
   detail for the error to be rectified.
 
 error_code:
-: An error code readable by the client.  Some codes are generic and are detailed
-  here.  Others are detailed in the individual requests.  Error codes are fixed
+: An error code readable by the client. Some codes are generic and are detailed
+  here. Others are detailed in the individual requests. Error codes are fixed
   text strings.
 
 |---------------+---------------------------------------------|
@@ -1036,7 +1035,7 @@ following:
 
 Clients SHOULD treat `500 Internal Server Error` and `503 Service Unavailable`
 responses as transient failures and MAY retry the same request without
-modification at a later date.  Note that as per [RFC2616], in the case of a 503
+modification at a later date. Note that as per [RFC2616], in the case of a 503
 response the log MAY include a `Retry-After:` header in order to request a
 minimum time for the client to wait before retrying the request.
 
@@ -1047,7 +1046,7 @@ POST https://\<log server>/ct/v2/add-chain
 Inputs:
 
 : chain:
-  : An array of base64 encoded certificates.  The first element is the
+  : An array of base64 encoded certificates. The first element is the
     certificate for which the submitter desires an SCT; the second certifies the
     first and so on to the last, which either is, or is certified by, an
     accepted trust anchor.
@@ -1070,12 +1069,12 @@ Error codes:
 |-----------------+---------------------------------------------------------------------------------------------------|
 
 If the version of `sct` is not v2, then a v2 client may be unable to verify the
-signature.  It MUST NOT construe this as an error.  This is to avoid forcing an
+signature. It MUST NOT construe this as an error. This is to avoid forcing an
 upgrade of compliant v2 clients that do not use the returned SCTs.
 
 If a log detects bad encoding in a chain that otherwise verifies correctly then
 the log MUST either log the certificate or return the "bad certificate" error.
-If the certificate is logged, an SCT MUST be issued.  Logging the certificate is
+If the certificate is logged, an SCT MUST be issued. Logging the certificate is
 useful, because monitors ({{monitor}}) can then detect these encoding errors,
 which may be accepted by some TLS clients.
 
@@ -1089,7 +1088,7 @@ Inputs:
   : The base64 encoded precertificate.
 
   chain:
-  : An array of base64 encoded CA certificates.  The first element is the signer
+  : An array of base64 encoded CA certificates. The first element is the signer
     of the precertificate; the second certifies the first and so on to the last,
     which either is, or is certified by, an accepted trust anchor.
 
@@ -1125,19 +1124,19 @@ Inputs:
   second:
   : The tree_size of the newer tree, in decimal (optional).
 
-> Both tree sizes must be from existing v2 STHs.  However, because of skew, the
-> receiving front-end may not know one or both of the existing STHs.  If both
-> are known, then only the `consistency` output is returned.  If the first is
-> known but the second is not (or has been omitted), then the latest known STH
-> is returned, along with a consistency proof between the first STH and the
-> latest.  If neither are known, then the latest known STH is returned without
-> a consistency proof.
+> Both tree sizes must be from existing v2 STHs. However, because of skew, the
+> receiving front-end may not know one or both of the existing STHs. If both are
+> known, then only the `consistency` output is returned. If the first is known
+> but the second is not (or has been omitted), then the latest known STH is
+> returned, along with a consistency proof between the first STH and the latest.
+> If neither are known, then the latest known STH is returned without a
+> consistency proof.
 
 Outputs:
 
 : consistency:
   : A base64 encoded `TransItem` of type `consistency_proof_v2`, whose
-    `tree_size_1` MUST match the `first` input.  If the `sth` output is omitted,
+    `tree_size_1` MUST match the `first` input. If the `sth` output is omitted,
     then `tree_size_2` MUST match the `second` input.
 
   sth:
@@ -1172,10 +1171,10 @@ Inputs:
   : The tree_size of the tree on which to base the proof, in decimal.
 
 > The `hash` must be calculated as defined in {{tree_leaves}}. The `tree_size`
-> must designate an existing v2 STH.  Because of skew, the front-end may not
-> know the requested STH.  In that case, it will return the latest STH it knows,
-> along with an inclusion proof to that STH.  If the front-end knows the
-> requested STH then only `inclusion` is returned.
+> must designate an existing v2 STH. Because of skew, the front-end may not know
+> the requested STH. In that case, it will return the latest STH it knows, along
+> with an inclusion proof to that STH. If the front-end knows the requested STH
+> then only `inclusion` is returned.
 
 Outputs:
 
@@ -1231,7 +1230,7 @@ Inputs:
 > : Return `inclusion`.
 
 > Note that more than one case can be true, in which case the returned data is
-> their concatenation.  It is also possible for none to be true, in which case
+> their concatenation. It is also possible for none to be true, in which case
 > the front-end MUST return an empty response.
 
 Outputs:
@@ -1281,7 +1280,7 @@ Outputs:
       `precert_entry_v2` (see {{tree_leaves}}).
 
     log_entry:
-    : The base64 encoded log entry (see {{log_entries}}).  In the case of an
+    : The base64 encoded log entry (see {{log_entries}}). In the case of an
       `x509_entry_v2` entry, this is the whole `X509ChainEntry`; and in the case
       of a `precert_entry_v2`, this is the whole `PrecertChainEntryV2`.
 
@@ -1294,9 +1293,9 @@ Outputs:
     log.
 
 Note that this message is not signed \-- the `entries` data can be verified by
-constructing the Merkle Tree Hash corresponding to a retrieved STH.  All leaves
-MUST be v2.  However, a compliant v2 client MUST NOT construe an unrecognized
-TransItem type as an error.  This means it may be unable to parse some entries,
+constructing the Merkle Tree Hash corresponding to a retrieved STH. All leaves
+MUST be v2. However, a compliant v2 client MUST NOT construe an unrecognized
+TransItem type as an error. This means it may be unable to parse some entries,
 but note that each client can inspect the entries it does recognize as well as
 verify the integrity of the data by treating unrecognized leaves as opaque input
 to the tree.
@@ -1308,13 +1307,13 @@ The `start` parameter MUST be less than or equal to the `end` parameter.
 
 Log servers MUST honor requests where 0 <= `start` < `tree_size` and `end` >=
 `tree_size` by returning a partial response covering only the valid entries in
-the specified range. `end` >= `tree_size` could be caused by skew.  Note that
-the following restriction may also apply:
+the specified range. `end` >= `tree_size` could be caused by skew. Note that the
+following restriction may also apply:
 
 Logs MAY restrict the number of entries that can be retrieved per `get-entries`
-request.  If a client requests more than the permitted number of entries, the
-log SHALL return the maximum number of entries permissible.  These entries SHALL
-be sequential beginning with the entry specified by `start`.
+request. If a client requests more than the permitted number of entries, the log
+SHALL return the maximum number of entries permissible. These entries SHALL be
+sequential beginning with the entry specified by `start`.
 
 Because of skew, it is possible the log server will not have any entries between
 `start` and `end`. In this case it MUST return an empty `entries` array.
@@ -1337,12 +1336,12 @@ Outputs:
 
   max_chain:
   : If the server has chosen to limit the length of chains it accepts, this is
-    the maximum number of certificates in the chain, in decimal.  If there is no
+    the maximum number of certificates in the chain, in decimal. If there is no
     limit, this is omitted.
 
 # Optional Client Messages
 
-Logs MAY implement these messages.  They are not required for correct operation
+Logs MAY implement these messages. They are not required for correct operation
 of logs or their clients, but may be convenient in some circumstances.
 
 ## Get Entry Number for SCT
@@ -1380,8 +1379,8 @@ Inputs:
 
 : hash:
   : A base64 encoded HASH of a `TBSCertificate` for which the log has previously
-    issued an SCT.  (Note that a precertificate's TBSCertificate is
-    reconstructed from the corresponding certificate as described in
+    issued an SCT. (Note that a precertificate's TBSCertificate is reconstructed
+    from the corresponding certificate as described in
     {{reconstructing_tbscertificate}}).
 
 Outputs:
@@ -1399,38 +1398,37 @@ Error codes:
 | not found  | `sct` does not correspond to an entry that is currently available. |
 |------------+--------------------------------------------------------------------|
 
-Note that it is possible for a certificate to be logged more than once.  If that
-is the case, the log MAY return more than one entry index.  If the certificate
-is present in the log, then the log MUST return at least one entry index.
+Note that it is possible for a certificate to be logged more than once. If that
+is the case, the log MAY return more than one entry index. If the certificate is
+present in the log, then the log MUST return at least one entry index.
 
 # TLS Servers    {#tls_servers}
 
 TLS servers MUST use at least one of the three mechanisms listed below to
 present one or more SCTs from one or more logs to each TLS client during full
 TLS handshakes, where each SCT corresponds to the server certificate or to a
-name-constrained intermediate the server certificate chains to.  TLS servers
+name-constrained intermediate the server certificate chains to. TLS servers
 SHOULD also present corresponding inclusion proofs and STHs (see
 {{sct_with_proof}}).
 
 Three mechanisms are provided because they have different tradeoffs.
 
 * A TLS extension (Section 7.4.1.4 of [RFC5246]) with type `transparency_info`
-  (see {{tls_transinfo_extension}}).  This mechanism allows TLS servers to
+  (see {{tls_transinfo_extension}}). This mechanism allows TLS servers to
   participate in CT without the cooperation of CAs, unlike the other two
-  mechanisms.  It also allows SCTs and inclusion proofs to be updated on the
-  fly.
+  mechanisms. It also allows SCTs and inclusion proofs to be updated on the fly.
 
 * An Online Certificate Status Protocol (OCSP) [RFC6960] response extension (see
   {{ocsp_transinfo_extension}}), where the OCSP response is provided in the
   `CertificateStatus` message, provided that the TLS client included the
   `status_request` extension in the (extended) `ClientHello` (Section 8 of
-  [RFC6066]).  This mechanism, popularly known as OCSP stapling, is already
-  widely (but not universally) implemented.  It also allows SCTs and inclusion
+  [RFC6066]). This mechanism, popularly known as OCSP stapling, is already
+  widely (but not universally) implemented. It also allows SCTs and inclusion
   proofs to be updated on the fly.
 
-* An X509v3 certificate extension (see {{cert_transinfo_extension}}).  This
+* An X509v3 certificate extension (see {{cert_transinfo_extension}}). This
   mechanism allows the use of unmodified TLS servers, but the SCTs and inclusion
-  proofs cannot be updated on the fly.  Since the logs from which the SCTs and
+  proofs cannot be updated on the fly. Since the logs from which the SCTs and
   inclusion proofs originated won't necessarily be accepted by TLS clients for
   the full lifetime of the certificate, there is a risk that TLS clients will
   subsequently consider the certificate to be non-compliant and in need of
@@ -1445,11 +1443,11 @@ one of the three mechanisms listed above.
 
 TLS servers SHOULD send SCTs from multiple logs in case one or more logs are not
 acceptable to the TLS client (for example, if a log has been struck off for
-misbehavior, has had a key compromise, or is not known to the TLS client).  For
+misbehavior, has had a key compromise, or is not known to the TLS client). For
 example:
 
 * If a CA and a log collude, it is possible to temporarily hide misissuance from
-  clients.  Including SCTs from different logs makes it more difficult to mount
+  clients. Including SCTs from different logs makes it more difficult to mount
   this attack.
 
 * If a log misbehaves, a consequence may be that clients cease to trust it.
@@ -1459,7 +1457,7 @@ example:
   including SCTs from different logs.
 
 * TLS clients may have policies related to the above risks requiring servers to
-  present multiple SCTs.  For example, at the time of writing, Chromium
+  present multiple SCTs. For example, at the time of writing, Chromium
   [Chromium.Log.Policy] requires multiple SCTs to be presented with EV
   certificates in order for the EV indicator to be shown.
 
@@ -1480,7 +1478,7 @@ are combined into a list as follows:
 ~~~~~~~~~~~
 
 Here, `SerializedTransItem` is an opaque byte string that contains the
-serialized `TransItem` structure.  This encoding ensures that TLS clients can
+serialized `TransItem` structure. This encoding ensures that TLS clients can
 decode each `TransItem` individually (so, for example, if there is a version
 upgrade, out-of-date clients can still parse old `TransItem` structures while
 skipping over new `TransItem` structures whose versions they don't understand).
@@ -1514,16 +1512,16 @@ that corresponds to `sct` and can be used to compute the root in `sth`.
 
 Presenting inclusion proofs and STHs in the TLS handshake helps to protect the
 client's privacy (see {{validating_inclusion_proofs}}) and reduces load on log
-servers.  However, if a TLS server is unable to obtain an inclusion proof and
-STH that correspond to an SCT, then it MUST include `TransItem` structures of
-type `x509_sct_v2` or `precert_sct_v2` in the `TransItemList`.
+servers. However, if a TLS server is unable to obtain an inclusion proof and STH
+that correspond to an SCT, then it MUST include `TransItem` structures of type
+`x509_sct_v2` or `precert_sct_v2` in the `TransItemList`.
 
 ## transparency_info TLS Extension    {#tls_transinfo_extension}
 
 Provided that a TLS client includes the `transparency_info` extension type in
 the ClientHello, the TLS server SHOULD include the `transparency_info` extension
 in the ServerHello with `extension_data` set to a `TransItemList`. The TLS
-server SHOULD ignore any `extension_data` sent by the TLS client.  Additionally,
+server SHOULD ignore any `extension_data` sent by the TLS client. Additionally,
 the TLS server MUST NOT process or include this extension when a TLS session is
 resumed, since session resumption uses the original session information.
 
@@ -1556,9 +1554,9 @@ The Transparency Information X.509v3 extension, which has OID 1.3.101.75 and
 SHOULD be non-critical, contains one or more `TransItem` structures in a
 `TransItemList`. This extension MAY be included in OCSP responses (see
 {{ocsp_transinfo_extension}}) and certificates (see
-{{cert_transinfo_extension}}).  Since RFC5280 requires the `extnValue` field (an
+{{cert_transinfo_extension}}). Since RFC5280 requires the `extnValue` field (an
 OCTET STRING) of each X.509v3 extension to include the DER encoding of an ASN.1
-value, a `TransItemList` MUST NOT be included directly.  Instead, it MUST be
+value, a `TransItemList` MUST NOT be included directly. Instead, it MUST be
 wrapped inside an additional OCTET STRING, which is then put into the
 `extnValue` field:
 
@@ -1580,8 +1578,8 @@ certificate chains.
 ### Certificate Extension    {#cert_transinfo_extension}
 
 A certification authority MAY include a Transparency Information X.509v3
-extension in a certificate.  Any included SCTs or inclusion proofs MUST be
-either for a precertificate that corresponds to this certificate, or for a
+extension in a certificate. Any included SCTs or inclusion proofs MUST be either
+for a precertificate that corresponds to this certificate, or for a
 name-constrained intermediate to which this certificate chains.
 
 ## TLS Feature Extension    {#tls_feature_extension}
@@ -1589,24 +1587,23 @@ name-constrained intermediate to which this certificate chains.
 A certification authority MAY include the transparency_info
 ({{tls_transinfo_extension}}) TLS extension identifier in the TLS Feature
 [RFC7633] certificate extension in root, intermediate and end-entity
-certificates.  When a certificate chain includes such a certificate, this
+certificates. When a certificate chain includes such a certificate, this
 indicates that CT compliance is required.
 
 # Clients
 
-There are various different functions clients of logs might perform.  We
-describe here some typical clients and how they should function.  Any
-inconsistency may be used as evidence that a log has not behaved correctly, and
-the signatures on the data structures prevent the log from denying that
-misbehavior.
+There are various different functions clients of logs might perform. We describe
+here some typical clients and how they should function. Any inconsistency may be
+used as evidence that a log has not behaved correctly, and the signatures on the
+data structures prevent the log from denying that misbehavior.
 
 All clients need various metadata in order to communicate with logs and verify
-their responses.  This metadata is described below, but note that this document
+their responses. This metadata is described below, but note that this document
 does not describe how the metadata is obtained, which is implementation
 dependent (see, for example, [Chromium.Policy]).
 
 Clients should somehow exchange STHs they see, or make them available for
-scrutiny, in order to ensure that they all have a consistent view.  The exact
+scrutiny, in order to ensure that they all have a consistent view. The exact
 mechanisms will be in separate documents, but it is expected there will be a
 variety.
 
@@ -1625,7 +1622,7 @@ Signing Algorithm:
 : The signing algorithm used (see {{signatures}}).
 
 Public Key:
-: The public key used to verify signatures generated by the log.  A log MUST NOT
+: The public key used to verify signatures generated by the log. A log MUST NOT
   use the same keypair as any other log.
 
 Log ID:
@@ -1647,7 +1644,7 @@ STH Frequency Count:
 
 Final STH:
 : If a log has been closed down (i.e., no longer accepts new entries), existing
-  entries may still be valid.  In this case, the client should know the final
+  entries may still be valid. In this case, the client should know the final
   valid STH in the log to ensure no new entries can be added without detection.
   The final STH should be provided in the form of a TransItem of type
   `signed_tree_head_v2`.
@@ -1659,10 +1656,10 @@ elements.
 
 ### Receiving SCTs
 
-TLS clients receive SCTs alongside or in certificates.  TLS clients MUST
+TLS clients receive SCTs alongside or in certificates. TLS clients MUST
 implement all of the three mechanisms by which TLS servers may present SCTs (see
-{{tls_servers}}).  TLS clients MAY also accept SCTs via the `status_request_v2`
-extension ([RFC6961]).  TLS clients that support the `transparency_info` TLS
+{{tls_servers}}). TLS clients MAY also accept SCTs via the `status_request_v2`
+extension ([RFC6961]). TLS clients that support the `transparency_info` TLS
 extension SHOULD include it in ClientHello messages, with empty
 `extension_data`. TLS clients may also receive inclusion proofs in addition to
 SCTs, which should be checked once the SCTs are validated.
@@ -1676,16 +1673,16 @@ described in {{x509v3_transinfo_extension}}.
 If the SCT checked is for a Precertificate (where the `type` of the `TransItem`
 is `precert_sct_v2`), then the client SHOULD also remove embedded v1 SCTs,
 identified by OID 1.3.6.1.4.1.11129.2.4.2 (See Section 3.3. of [RFC6962]), in
-the process of reconstructing the TBSCertificate.  That is to allow embedded v1
+the process of reconstructing the TBSCertificate. That is to allow embedded v1
 and v2 SCTs to co-exist in a certificate (See {{v1_coexistence}}).
 
 ### Validating SCTs
 
 In addition to normal validation of the server certificate and its chain, TLS
 clients SHOULD validate each received SCT for which they have the corresponding
-log's metadata.  To validate an SCT, a TLS client computes the signature input
+log's metadata. To validate an SCT, a TLS client computes the signature input
 from the SCT data and the corresponding certificate, and then verifies the
-signature using the corresponding log's public key.  TLS clients MUST NOT
+signature using the corresponding log's public key. TLS clients MUST NOT
 consider valid any SCT whose timestamp is in the future.
 
 Before considering any SCT to be invalid, the TLS client MUST attempt to
@@ -1697,7 +1694,7 @@ indeed, in any order.
 ### Validating inclusion proofs    {#validating_inclusion_proofs}
 
 After validating a received SCT, a TLS client MAY request a corresponding
-inclusion proof (if one is not already available) and then verify it.  An
+inclusion proof (if one is not already available) and then verify it. An
 inclusion proof can be requested directly from a log using `get-proof-by-hash`
 ({{get-proof-by-hash}}) or `get-all-by-hash` ({{get-all-by-hash}}), but note
 that this will disclose to the log which TLS server the client has been
@@ -1705,9 +1702,8 @@ communicating with.
 
 Alternatively, if the TLS client has received an inclusion proof (and an STH)
 alongside the SCT, it can proceed to verifying the inclusion proof to the
-provided STH.  The client then has to verify consistency between the provided
-STH and an STH it knows about, which is less sensitive from a privacy
-perspective.
+provided STH. The client then has to verify consistency between the provided STH
+and an STH it knows about, which is less sensitive from a privacy perspective.
 
 TLS clients SHOULD also verify each received inclusion proof (see
 {{verify_inclusion}}) for which they have the corresponding log's metadata, to
@@ -1715,13 +1711,13 @@ audit the log and gain confidence that the certificate is logged.
 
 If the TLS client holds an STH that predates the SCT, it MAY, in the process of
 auditing, request a new STH from the log ({{get-sth}}), then verify it by
-requesting a consistency proof ({{get-sth-consistency}}).  Note that if the TLS
+requesting a consistency proof ({{get-sth-consistency}}). Note that if the TLS
 client uses `get-all-by-hash`, then it will already have the new STH.
 
 ### Evaluating compliance
 
 To be considered compliant, a certificate MUST be accompanied by at least one
-valid SCT.  A certificate not accompanied by any valid SCTs MUST NOT be
+valid SCT. A certificate not accompanied by any valid SCTs MUST NOT be
 considered compliant by TLS clients.
 
 A TLS client MUST NOT evaluate compliance if it did not send both the
@@ -1739,7 +1735,7 @@ from {{tls_servers}}) is required.
 If a TLS client uses the `cached_info` TLS extension ([RFC7924]) to indicate 1
 or more cached certificates, all of which it already considers to be CT
 compliant, the TLS client MAY also include a `CachedObject` of type
-`ct_compliant` in the `cached_info` extension.  The `hash_value` field MUST be 1
+`ct_compliant` in the `cached_info` extension. The `hash_value` field MUST be 1
 byte long with the value 0.
 
 ### Handling of Non-compliance
@@ -1752,54 +1748,54 @@ means, the TLS client MUST refuse the connection.
 ## Monitor    {#monitor}
 
 Monitors watch logs to check that they behave correctly, for certificates of
-interest, or both.  For example, a monitor may be configured to report on all
+interest, or both. For example, a monitor may be configured to report on all
 certificates that apply to a specific domain name when fetching new entries for
 consistency validation.
 
 A monitor needs to, at least, inspect every new entry in each log it watches.
-It may also want to keep copies of entire logs.  In order to do this, it should
+It may also want to keep copies of entire logs. In order to do this, it should
 follow these steps for each log:
 
-1.  Fetch the current STH ({{get-sth}}).
+1. Fetch the current STH ({{get-sth}}).
 
-2.  Verify the STH signature.
+2. Verify the STH signature.
 
-3.  Fetch all the entries in the tree corresponding to the STH
-    ({{get-entries}}).
+3. Fetch all the entries in the tree corresponding to the STH
+   ({{get-entries}}).
 
-4.  Confirm that the tree made from the fetched entries produces the same hash
-    as that in the STH.
+4. Confirm that the tree made from the fetched entries produces the same hash as
+   that in the STH.
 
-5.  Fetch the current STH ({{get-sth}}).  Repeat until the STH changes.
+5. Fetch the current STH ({{get-sth}}). Repeat until the STH changes.
 
-6.  Verify the STH signature.
+6. Verify the STH signature.
 
-7.  Fetch all the new entries in the tree corresponding to the STH
-    ({{get-entries}}).  If they remain unavailable for an extended period, then
-    this should be viewed as misbehavior on the part of the log.
+7. Fetch all the new entries in the tree corresponding to the STH
+   ({{get-entries}}). If they remain unavailable for an extended period, then
+   this should be viewed as misbehavior on the part of the log.
 
-8.  Either:
+8. Either:
 
-    1.  Verify that the updated list of all entries generates a tree with the
-        same hash as the new STH.
+    1. Verify that the updated list of all entries generates a tree with the
+       same hash as the new STH.
 
     Or, if it is not keeping all log entries:
 
-    1.  Fetch a consistency proof for the new STH with the previous STH
-        ({{get-sth-consistency}}).
+    1. Fetch a consistency proof for the new STH with the previous STH
+       ({{get-sth-consistency}}).
 
-    2.  Verify the consistency proof.
+    2. Verify the consistency proof.
 
-    3.  Verify that the new entries generate the corresponding elements in the
-        consistency proof.
+    3. Verify that the new entries generate the corresponding elements in the
+       consistency proof.
 
-9.  Go to Step 5.
+9. Go to Step 5.
 
 ## Auditing
 
 Auditing ensures that the current published state of a log is reachable from
 previously published states that are known to be good, and that the promises
-made by the log in the form of SCTs have been kept.  Audits are performed by
+made by the log in the form of SCTs have been kept. Audits are performed by
 monitors or TLS clients.
 
 In particular, there are four log behaviour properties that should be checked:
@@ -1814,7 +1810,7 @@ In particular, there are four log behaviour properties that should be checked:
 
 A benign, conformant log publishes a series of STHs over time, each derived from
 the previous STH and the submitted entries incorporated into the log since
-publication of the previous STH.  This can be proven through auditing of STHs.
+publication of the previous STH. This can be proven through auditing of STHs.
 SCTs returned to TLS clients can be audited by verifying against the
 accompanying certificate, and using Merkle Inclusion Proofs, against the log's
 Merkle tree.
@@ -1829,7 +1825,7 @@ result of making a tree from all fetched entries.
 
 A TLS client ({{tls_clients}}) can audit by verifying an SCT against any STH
 dated after the SCT timestamp + the Maximum Merge Delay by requesting a Merkle
-inclusion proof ({{get-proof-by-hash}}).  It can also verify that the SCT
+inclusion proof ({{get-proof-by-hash}}). It can also verify that the SCT
 corresponds to the certificate it arrived with (i.e., the log entry is that
 certificate, is a precertificate for that certificate or is an appropriate
 name-constrained intermediate ({{name_constrained}}).
@@ -1848,31 +1844,31 @@ to verify inclusion of an input `hash` for an STH with a given `tree_size` and
 `root_hash`, the following algorithm may be used to prove the `hash` was
 included in the `root_hash`:
 
-1.  Compare `leaf_index` against `tree_size`. If `leaf_index` is greater than or
-    equal to `tree_size` fail the proof verification.
+1. Compare `leaf_index` against `tree_size`. If `leaf_index` is greater than or
+   equal to `tree_size` fail the proof verification.
 
-2.  Set `fn` to `leaf_index` and `sn` to `tree_size - 1`.
+2. Set `fn` to `leaf_index` and `sn` to `tree_size - 1`.
 
-3.  Set `r` to `hash`.
+3. Set `r` to `hash`.
 
-4.  For each value `p` in the `inclusion_path` array:
+4. For each value `p` in the `inclusion_path` array:
 
     If `LSB(fn)` is set, or if `fn` is equal to `sn`, then:
 
-    1.  Set `r` to `HASH(0x01 || p || r)`
+    1. Set `r` to `HASH(0x01 || p || r)`
 
-    2.  If `LSB(fn)` is not set, then right-shift both `fn` and `sn` equally
-        until either `LSB(fn)` is set or `fn` is `0`.
+    2. If `LSB(fn)` is not set, then right-shift both `fn` and `sn` equally
+       until either `LSB(fn)` is set or `fn` is `0`.
 
     Otherwise:
 
-    1.  Set `r` to `HASH(0x01 || r || p)`
+    1. Set `r` to `HASH(0x01 || r || p)`
 
     Finally, right-shift both `fn` and `sn` one time.
 
-5.  Compare `sn` to 0.  Compare `r` against the `root_hash`. If `sn` is equal to
-    0, and `r` and the `root_hash` are equal, then the log has proven the
-    inclusion of `hash`. Otherwise, fail the proof verification.
+5. Compare `sn` to 0. Compare `r` against the `root_hash`. If `sn` is equal to
+   0, and `r` and the `root_hash` are equal, then the log has proven the
+   inclusion of `hash`. Otherwise, fail the proof verification.
 
 ### Verifying consistency between two STHs    {#verify_consistency}
 
@@ -1881,38 +1877,38 @@ When a client has an STH `first_hash` for tree size `first`, an STH
 received a `TransItem` of type `consistency_proof_v2` that they wish to use to
 verify both hashes, the following algorithm may be used:
 
-1.  If `first` is an exact power of 2, then prepend `first_hash` to the
-    `consistency_path` array.
+1. If `first` is an exact power of 2, then prepend `first_hash` to the
+   `consistency_path` array.
 
-2.  Set `fn` to `first - 1` and `sn` to `second - 1`.
+2. Set `fn` to `first - 1` and `sn` to `second - 1`.
 
-3.  If `LSB(fn)` is set, then right-shift both `fn` and `sn` equally until
-    `LSB(fn)` is not set.
+3. If `LSB(fn)` is set, then right-shift both `fn` and `sn` equally until
+   `LSB(fn)` is not set.
 
-4.  Set both `fr` and `sr` to the first value in the `consistency_path` array.
+4. Set both `fr` and `sr` to the first value in the `consistency_path` array.
 
-5.  For each subsequent value `c` in the `consistency_path` array:
+5. For each subsequent value `c` in the `consistency_path` array:
 
     If `sn` is 0, stop the iteration and fail the proof verification.
 
     If `LSB(fn)` is set, or if `fn` is equal to `sn`, then:
 
-    1.  Set `fr` to `HASH(0x01 || c || fr)`\\
-        Set `sr` to `HASH(0x01 || c || sr)`
+    1. Set `fr` to `HASH(0x01 || c || fr)`\\
+       Set `sr` to `HASH(0x01 || c || sr)`
 
-    2.  If `LSB(fn)` is not set, then right-shift both `fn` and `sn` equally
-        until either `LSB(fn)` is set or `fn` is `0`.
+    2. If `LSB(fn)` is not set, then right-shift both `fn` and `sn` equally
+       until either `LSB(fn)` is set or `fn` is `0`.
 
     Otherwise:
 
-    1.  Set `sr` to `HASH(0x01 || sr || c)`
+    1. Set `sr` to `HASH(0x01 || sr || c)`
 
     Finally, right-shift both `fn` and `sn` one time.
 
-6.  After completing iterating through the `consistency_path` array as described
-    above, verify that the `fr` calculated is equal to the `first_hash`
-    supplied, that the `sr` calculated is equal to the `second_hash` supplied
-    and that `sn` is 0.
+6. After completing iterating through the `consistency_path` array as described
+   above, verify that the `fr` calculated is equal to the `first_hash` supplied,
+   that the `sr` calculated is equal to the `second_hash` supplied and that `sn`
+   is 0.
 
 ### Verifying root hash given entries    {#verify_hash}
 
@@ -1921,31 +1917,30 @@ When a client has a complete list of leaf input `entries` from `0` up to
 returned by the log for the same `tree_size`, the following algorithm may be
 used:
 
-1.  Set `stack` to an empty stack.
+1. Set `stack` to an empty stack.
 
-2.  For each `i` from `0` up to `tree_size - 1`:
+2. For each `i` from `0` up to `tree_size - 1`:
 
-    1.  Push `HASH(0x00 || entries[i])` to `stack`.
+    1. Push `HASH(0x00 || entries[i])` to `stack`.
 
-    2.  Set `merge_count` to the lowest value (`0` included) such that `LSB(i >>
-        merge_count)` is not set.  In other words, set `merge_count` to the
-        number of consecutive `1`s found starting at the least significant bit
-        of `i`.
+    2. Set `merge_count` to the lowest value (`0` included) such that `LSB(i >>
+       merge_count)` is not set. In other words, set `merge_count` to the number
+       of consecutive `1`s found starting at the least significant bit of `i`.
 
-    3.  Repeat `merge_count` times:
+    3. Repeat `merge_count` times:
 
-        1.  Pop `right` from `stack`.
+        1. Pop `right` from `stack`.
 
-        2.  Pop `left` from `stack`.
+        2. Pop `left` from `stack`.
 
-        3.  Push `HASH(0x01 || left || right)` to `stack`.
+        3. Push `HASH(0x01 || left || right)` to `stack`.
 
-3.  If there is more than one element in the `stack`, repeat the same merge
-    procedure (Step 2.3 above) until only a single element remains.
+3. If there is more than one element in the `stack`, repeat the same merge
+   procedure (Step 2.3 above) until only a single element remains.
 
-4.  The remaining element in `stack` is the Merkle Tree hash for the given
-    `tree_size` and should be compared by equality against the supplied
-    `root_hash`.
+4. The remaining element in `stack` is the Merkle Tree hash for the given
+   `tree_size` and should be compared by equality against the supplied
+   `root_hash`.
 
 # Algorithm Agility
 
@@ -1967,7 +1962,7 @@ implementation, which is why it is not supported by this document.
 
 If it should become necessary to deprecate an algorithm used by a live log, then
 the log should be frozen as specified in {{metadata}} and a new log should be
-started.  Certificates in the frozen log that have not yet expired and require
+started. Certificates in the frozen log that have not yet expired and require
 new SCTs SHOULD be submitted to the new log and the SCTs from that log used
 instead.
 
@@ -1976,7 +1971,7 @@ instead.
 ## TLS Extension Type
 
 IANA is asked to allocate an RFC 5246 ExtensionType value for the
-`transparency_info` TLS extension.  IANA should update this extension type to
+`transparency_info` TLS extension. IANA should update this extension type to
 point at this document.
 
 ## New Entry to the TLS CachedInformationType registry
@@ -2040,7 +2035,7 @@ This document uses object identifiers (OIDs) to identify Log IDs (see
 {{log_id}}), the precertificate CMS `eContentType` (see {{precertificates}}),
 and X.509v3 extensions in certificates (see {{name_constrained}} and
 {{cert_transinfo_extension}}) and OCSP responses (see
-{{ocsp_transinfo_extension}}).  The OIDs are defined in an arc that was selected
+{{ocsp_transinfo_extension}}). The OIDs are defined in an arc that was selected
 due to its short encoding.
 
 ### Log ID Registry 1    {#log_id_registry1}
@@ -2052,32 +2047,32 @@ This is a limited resource of 8,192 OIDs, each of which has an encoded length of
 IANA is requested to establish a registry that will allocate Log IDs from this
 range.
 
-TBD: policy for adding to the registry.  Perhaps "Expert Review"?
+TBD: policy for adding to the registry. Perhaps "Expert Review"?
 
 ### Log ID Registry 2    {#log_id_registry2}
 
-The 1.3.101.80 arc has been delegated.  This is an unlimited resource, but only
+The 1.3.101.80 arc has been delegated. This is an unlimited resource, but only
 the 128 OIDs from 1.3.101.80.0 to 1.3.101.80.127 have an encoded length of only
 4 octets.
 
 IANA is requested to establish a registry that will allocate Log IDs from this
 arc.
 
-TBD: policy for adding to the registry.  Perhaps "Expert Review"?
+TBD: policy for adding to the registry. Perhaps "Expert Review"?
 
 # Security Considerations
 
 With CAs, logs, and servers performing the actions described here, TLS clients
 can use logs and signed timestamps to reduce the likelihood that they will
-accept misissued certificates.  If a server presents a valid signed timestamp
-for a certificate, then the client knows that a log has committed to publishing
-the certificate.  From this, the client knows that monitors acting for the
-subject of the certificate have had some time to notice the misissue and take
-some action, such as asking a CA to revoke a misissued certificate, or that the
-log has misbehaved, which will be discovered when the SCT is audited.  A signed
-timestamp is not a guarantee that the certificate is not misissued, since
-appropriate monitors might not have checked the logs or the CA might have
-refused to revoke the certificate.
+accept misissued certificates. If a server presents a valid signed timestamp for
+a certificate, then the client knows that a log has committed to publishing the
+certificate. From this, the client knows that monitors acting for the subject of
+the certificate have had some time to notice the misissue and take some action,
+such as asking a CA to revoke a misissued certificate, or that the log has
+misbehaved, which will be discovered when the SCT is audited. A signed timestamp
+is not a guarantee that the certificate is not misissued, since appropriate
+monitors might not have checked the logs or the CA might have refused to revoke
+the certificate.
 
 In addition, if TLS clients will not accept unlogged certificates, then site
 owners will have a greater incentive to submit certificates to logs, possibly
@@ -2090,11 +2085,11 @@ Certificate Transparency architecture.
 ## Misissued Certificates
 
 Misissued certificates that have not been publicly logged, and thus do not have
-a valid SCT, are not considered compliant.  Misissued certificates that do have
+a valid SCT, are not considered compliant. Misissued certificates that do have
 an SCT from a log will appear in that public log within the Maximum Merge Delay,
-assuming the log is operating correctly.  Thus, the maximum period of time
-during which a misissued certificate can be used without being available for
-audit is the MMD.
+assuming the log is operating correctly. Thus, the maximum period of time during
+which a misissued certificate can be used without being available for audit is
+the MMD.
 
 ## Detection of Misissue
 
@@ -2104,26 +2099,26 @@ action when a misissue is detected.
 
 ## Misbehaving Logs    {#misbehaving_logs}
 
-A log can misbehave in several ways.  Examples include failing to incorporate a
+A log can misbehave in several ways. Examples include failing to incorporate a
 certificate with an SCT in the Merkle Tree within the MMD, presenting different,
 conflicting views of the Merkle Tree at different times and/or to different
-parties and issuing STHs too frequently.  Such misbehavior is detectable and the
+parties and issuing STHs too frequently. Such misbehavior is detectable and the
 [I-D.ietf-trans-threat-analysis] provides more details on how this can be done.
 
 Violation of the MMD contract is detected by log clients requesting a Merkle
-inclusion proof ({{get-proof-by-hash}}) for each observed SCT.  These checks can
-be asynchronous and need only be done once per each certificate.  In order to
+inclusion proof ({{get-proof-by-hash}}) for each observed SCT. These checks can
+be asynchronous and need only be done once per each certificate. In order to
 protect the clients' privacy, these checks need not reveal the exact certificate
-to the log.  Instead, clients can request the proof from a trusted auditor
-(since anyone can compute the proofs from the log) or communicate with the log
-via proxies.
+to the log. Instead, clients can request the proof from a trusted auditor (since
+anyone can compute the proofs from the log) or communicate with the log via
+proxies.
 
 Violation of the append-only property or the STH issuance rate limit can be
-detected by clients comparing their instances of the Signed Tree Heads.  There
+detected by clients comparing their instances of the Signed Tree Heads. There
 are various ways this could be done, for example via gossip (see
 [I-D.ietf-trans-gossip]) or peer-to-peer communications or by sending STHs to
 monitors (who could then directly check against their own copy of the relevant
-log).  A proof of misbehavior in such cases would be a series of STHs that were
+log). A proof of misbehavior in such cases would be a series of STHs that were
 issued too closely together, proving violation of the STH issuance rate limit,
 or an STH with a root hash that does not match the one calculated from a copy of
 the log, proving violation of the append-only property.
@@ -2169,13 +2164,13 @@ CT clients, however, can support v1 and v2 SCTs, for the same certificate,
 simultaneously, as v1 SCTs are delivered in different TLS, X.509 and OCSP
 extensions than v2 SCTs.
 
-v1 and v2 SCTs for X.509 certificates can be validated independently.  For
+v1 and v2 SCTs for X.509 certificates can be validated independently. For
 precertificates, v2 SCTs should be embedded in the TBSCertificate before
 submission of the TBSCertificate (inside a v1 precertificate, as described in
 Section 3.1. of [RFC6962]) to a v1 log so that TLS clients conforming to
-[RFC6962] but not this document are oblivious to the embedded v2 SCTs.  An
-issuer can follow these steps to produce an X.509 certificate with embedded v1
-and v2 SCTs:
+[RFC6962] but not this document are oblivious to the embedded v2 SCTs. An issuer
+can follow these steps to produce an X.509 certificate with embedded v1 and v2
+SCTs:
 
 * Create a CMS precertificate as described in {{precertificates}} and submit it
   to v2 logs.
