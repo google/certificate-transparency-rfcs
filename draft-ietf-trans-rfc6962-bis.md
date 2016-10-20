@@ -1853,6 +1853,8 @@ included in the `root_hash`:
 
 4. For each value `p` in the `inclusion_path` array:
 
+    If `sn` is 0, stop the iteration and fail the proof verification.
+
     If `LSB(fn)` is set, or if `fn` is equal to `sn`, then:
 
     1. Set `r` to `HASH(0x01 || p || r)`
