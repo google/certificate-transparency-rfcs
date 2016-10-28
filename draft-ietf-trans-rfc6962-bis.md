@@ -1402,6 +1402,45 @@ Note that it is possible for a certificate to be logged more than once. If that
 is the case, the log MAY return more than one entry index. If the certificate is
 present in the log, then the log MUST return at least one entry index.
 
+## Retrieve Signed Tree Heads between Two Times
+
+GET https://\<log server>/ct/v2/get-sths
+
+Inputs:
+
+: start:
+  : an earlier NTP Time [RFC5905], measured in milliseconds since the epoch
+    (January 1, 1970, 00:00 UTC), ignoring leap seconds.
+
+  end:
+  : a later NTP Time [RFC5905], measured in milliseconds since the epoch
+    (January 1, 1970, 00:00 UTC), ignoring leap seconds.
+
+Outputs:
+
+: sths:
+  : an array of base64 encoded `TransItem` structures of type
+    `signed_tree_head_v2`, signed by this log.
+
+The `start` and `end` parameters SHOULD be within the range 0 <= x < `timestamp`
+as returned by `get-sth` in {{get-sth}}.
+
+The `start` parameter MUST be less than or equal to the `end` parameter.
+
+Log servers MUST honor requests where 0 <= `start` < `timestamp` and `end` >=
+`timestamp` by returning a partial response covering only the STHs in
+the specified range. `end` >= `timestamp` could be caused by skew. Note that the
+following restriction may also apply:
+
+Logs MAY restrict the number of STHs that can be retrieved per `get-sths`
+request. If there are more than the permitted number of STHs in the specified
+range, the log SHALL return the maximum number of STHs permissible. These STHs
+SHALL be ordered chronologically by timestamp, oldest first, beginning with the
+earliest STH in the specified range.
+
+It is possible the log server will not have any STHs between `start` and `end`.
+In this case it MUST return an empty `sths` array.
+
 # TLS Servers    {#tls_servers}
 
 TLS servers MUST use at least one of the three mechanisms listed below to
