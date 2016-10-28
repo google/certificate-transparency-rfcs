@@ -1,6 +1,6 @@
 ---
 title: "Certificate Transparency"
-docname: draft-ietf-trans-rfc6962-bis-19
+docname: draft-ietf-trans-rfc6962-bis-20
 category: "std"
 
 ipr: "trust200902"
