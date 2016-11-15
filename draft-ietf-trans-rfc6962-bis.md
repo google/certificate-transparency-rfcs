@@ -580,12 +580,16 @@ the log.
 
 Logs MUST verify that each submitted certificate or precertificate has a valid
 signature chain to an accepted trust anchor, using the chain of intermediate CA
-certificates provided by the submitter. Logs MUST accept certificates and
+certificates provided by the submitter. Logs SHOULD accept certificates and
 precertificates that are fully valid according to RFC 5280 [RFC5280]
-verification rules and are submitted with such a chain. Logs MAY accept
-certificates and precertificates that have expired, are not yet valid, have been
-revoked, or are otherwise not fully valid according to RFC 5280 verification
-rules in order to accommodate quirks of CA certificate-issuing software.
+verification rules and are submitted with such a chain (A log may decide, for
+example, to temporarily reject valid submissions to protect itself against
+denial-of-service attacks).
+
+Logs MAY accept certificates and precertificates that have expired, are not yet
+valid, have been revoked, or are otherwise not fully valid according to RFC
+5280 verification rules in order to accommodate quirks of CA
+certificate-issuing software.
 However, logs MUST reject submissions without a valid signature chain to an
 accepted trust anchor. Logs MUST also reject precertificates that do not conform
 to the requirements in {{precertificates}}.
