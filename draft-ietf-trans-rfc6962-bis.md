@@ -1343,69 +1343,6 @@ Outputs:
     the maximum number of certificates in the chain, in decimal. If there is no
     limit, this is omitted.
 
-# Optional Client Messages
-
-Logs MAY implement these messages. They are not required for correct operation
-of logs or their clients, but may be convenient in some circumstances.
-
-## Get Entry Number for SCT
-
-GET https://\<log server>/ct/v2/get-entry-for-sct
-
-Inputs:
-
-: sct:
-  : A base64 encoded `TransItem` of type `x509_sct_v2` or `precert_sct_v2`
-    signed by this log.
-
-Outputs:
-
-: entry:
-  : 0-based index of the log entry corresponding to the supplied SCT.
-
-Error codes:
-
-|---------------+--------------------------------------------------------------------|
-| Error Code    | Meaning                                                            |
-|---------------+--------------------------------------------------------------------|
-| bad signature | `sct` is not signed by this log.                                   |
-| not found     | `sct` does not correspond to an entry that is currently available. |
-|---------------+--------------------------------------------------------------------|
-
-Note that any SCT signed by a log MUST have a corresponding entry in the log,
-but it may not be retrievable until the MMD has passed since the SCT was issued.
-
-## Get Entry Numbers for TBSCertificate
-
-GET https://\<log server>/ct/v2/get-entry-for-tbscertificate
-
-Inputs:
-
-: hash:
-  : A base64 encoded HASH of a `TBSCertificate` for which the log has previously
-    issued an SCT. (Note that a precertificate's TBSCertificate is reconstructed
-    from the corresponding certificate as described in
-    {{reconstructing_tbscertificate}}).
-
-Outputs:
-
-: entries:
-  : An array of 0-based indices of log entries corresponding to the supplied
-    HASH.
-
-Error codes:
-
-|------------+--------------------------------------------------------------------|
-| Error Code | Meaning                                                            |
-|------------+--------------------------------------------------------------------|
-| bad hash   | `hash` is not the right size or format.                            |
-| not found  | `sct` does not correspond to an entry that is currently available. |
-|------------+--------------------------------------------------------------------|
-
-Note that it is possible for a certificate to be logged more than once. If that
-is the case, the log MAY return more than one entry index. If the certificate is
-present in the log, then the log MUST return at least one entry index.
-
 # TLS Servers    {#tls_servers}
 
 TLS servers MUST use at least one of the three mechanisms listed below to
