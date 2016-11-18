@@ -44,26 +44,13 @@ informative:
 
 --- abstract
 
-This document describes a protocol for publicly logging the existence of
-Transport Layer Security (TLS) server certificates as they are issued or
-observed, in a manner that allows anyone to audit certification authority (CA)
-activity and notice the issuance of suspect certificates as well as to audit the
-certificate logs themselves. The intent is that eventually clients would refuse
-to honor certificates that do not appear in a log, effectively forcing CAs to
-add all issued certificates to the logs.
-
-Logs are network services that implement the protocol operations for submissions
-and queries that are defined in this document.
+TODO: Proper abstract.
 
 --- middle
 
 # Introduction
 
-An important component of the Certificate Transparency ecosystem is that of the "monitor", a service which examines the entries made in Certificate Transparency logs and reports on anomalies. They provide an important link between the bulk data contained within logs, and end users who need to know about what the logs contain.
-
-In order to benefit fully from the functionality provided by logs, it is useful that monitors can be accessed programmatically. Further, it is a benefit to end users if they can interact with multiple independent monitors using the same client code, without having to write customised programs for each monitor they wish to interact with.
-
-The purpose of this specification is to provide standard semantics of a variety of operations which can be performed against a monitor, using a RESTful HTTP(S) API.
+TODO: Adopt introduction from Matt & Rob's draft or write a new one.
 
 ## Requirements Language
 
