@@ -1,29 +1,27 @@
 1. make.
 
-2. Go to https://datatracker.ietf.org/submit/.
+2. Copy draft-ietf-trans-rfc6962-bis.txt to draft-ietf-trans-rfc6962-bis-NN.txt
 
-3. Upload draft-ietf-trans-rfc6962-bis-NN.txt and rfc6962-bis.xml
+3. Go to https://datatracker.ietf.org/submit/.
+
+4. Upload draft-ietf-trans-rfc6962-bis-NN.txt and rfc6962-bis.xml
    (choose both, then upload).
 
-4. If there are errors, correct them and try again.
+5. If there are errors, correct them and try again.
 
-5. Check sanity on the upload page. If insane, correct and go around.
+6. Check sanity on the upload page. If insane, correct and go around.
 
-6. Click the button with your name on to submit and "post submission".
+7. Click the button with your name on to submit and "post submission".
 
-7. Find verification email and follow instructions.
+8. Find verification email and follow instructions.
 
-8. git add draft-ietf-trans-rfc6962-bis-NN.txt.
-
-9. git commit.
+9. git add -f draft-ietf-trans-rfc6962-bis-NN.txt and commit.
 
 10. git push (I claim no review needed, since this is just recording
     history).
 
-11. Bump versions in Makefile (VERSION and PREV).
+11. Bump version in draft-ietf-trans-rfc6962-bis.md:
 
-12. Bump version in rfc6962-bis.xml:
+docname: draft-ietf-trans-rfc6962-bis-NN
 
-<rfc ipr="trust200902" category="std" submissionType="IETF" docName="draft-ietf-trans-rfc6962-bis-NN">
-
-13. Commit and push (again, no review needed).
+12. Commit and push (again, no review needed).
