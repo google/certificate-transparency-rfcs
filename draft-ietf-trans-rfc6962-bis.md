@@ -40,9 +40,6 @@ author:
 
 normative:
   RFC2119:
-  RFC2616:
-  RFC3447:
-  RFC4627:
   RFC4648:
   RFC5246:
   RFC5280:
@@ -52,9 +49,11 @@ normative:
   RFC6125:
   RFC6960:
   RFC6961:
-  RFC6979:
+  RFC7159:
+  RFC7231:
   RFC7633:
   RFC7924:
+  RFC8017:
   DSS:
     target: http://csrc.nist.gov/publications/fips/fips186-3/fips_186-3.pdf
     title: Digital Signature Standard (DSS)
@@ -92,6 +91,7 @@ normative:
 
 informative:
   RFC6962:
+  RFC6979:
   I-D.ietf-trans-gossip:
   CrosbyWallach:
     target: http://static.usenix.org/event/sec09/tech/full_papers/crosby.pdf
@@ -974,7 +974,7 @@ To avoid that, the following actions are suggested:
 # Log Client Messages    {#client_messages}
 
 Messages are sent as HTTPS GET or POST requests. Parameters for POSTs and all
-responses are encoded as JavaScript Object Notation (JSON) objects [RFC4627].
+responses are encoded as JavaScript Object Notation (JSON) objects [RFC7159].
 Parameters for GETs are encoded as order-independent key/value URL parameters,
 using the "application/x-www-form-urlencoded" format described in the "HTML 4.01
 Specification" [HTML401]. Binary data is base64 encoded [RFC4648] as specified
@@ -1004,7 +1004,7 @@ where it knows the second but not the first should not arise (see the "no gaps"
 requirement above).
 
 If the log is unable to process a client's request, it MUST return an HTTP
-response code of 4xx/5xx (see [RFC2616]), and, in place of the responses
+response code of 4xx/5xx (see [RFC7231]), and, in place of the responses
 outlined in the subsections below, the body SHOULD be a JSON structure
 containing at least the following field:
 
@@ -1039,7 +1039,7 @@ following:
 
 Clients SHOULD treat `500 Internal Server Error` and `503 Service Unavailable`
 responses as transient failures and MAY retry the same request without
-modification at a later date. Note that as per [RFC2616], in the case of a 503
+modification at a later date. Note that as per [RFC7231], in the case of a 503
 response the log MAY include a `Retry-After:` header in order to request a
 minimum time for the client to wait before retrying the request.
 
@@ -1943,7 +1943,7 @@ consisting of:
 | Index | Signature Algorithm                                                                                                                 |
 |-------+-------------------------------------------------------------------------------------------------------------------------------------|
 | 0     | deterministic ECDSA [RFC6979] using the NIST P-256 curve (Section D.1.2.3 of the Digital Signature Standard [DSS]) and HMAC-SHA256. |
-| 1     | RSA signatures (RSASSA-PKCS1-v1_5 with SHA-256, Section 8.2 of [RFC3447]) using a key of at least 2048 bits.                        |
+| 1     | RSA signatures (RSASSA-PKCS1-v1_5 with SHA-256, Section 8.2 of [RFC8017]) using a key of at least 2048 bits.                        |
 |-------+-------------------------------------------------------------------------------------------------------------------------------------|
 
 ## SCT Extensions    {#sct_extension_types}
