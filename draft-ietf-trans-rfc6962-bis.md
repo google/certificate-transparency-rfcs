@@ -1,5 +1,5 @@
 ---
-title: "Certificate Transparency"
+title: "Certificate Transparency (Version 2.0)"
 docname: draft-ietf-trans-rfc6962-bis-22
 obsoletes: 6962
 category: "std"
@@ -135,13 +135,14 @@ informative:
 
 --- abstract
 
-This document describes a protocol for publicly logging the existence of
-Transport Layer Security (TLS) server certificates as they are issued or
-observed, in a manner that allows anyone to audit certification authority (CA)
-activity and notice the issuance of suspect certificates as well as to audit the
-certificate logs themselves. The intent is that eventually clients would refuse
-to honor certificates that do not appear in a log, effectively forcing CAs to
-add all issued certificates to the logs.
+This document describes version 2.0 of the Certificate Transparency (CT)
+protocol for publicly logging the existence of Transport Layer Security (TLS)
+server certificates as they are issued or observed, in a manner that allows
+anyone to audit certification authority (CA) activity and notice the issuance of
+suspect certificates as well as to audit the certificate logs themselves. The
+intent is that eventually clients would refuse to honor certificates that do not
+appear in a log, effectively forcing CAs to add all issued certificates to the
+logs.
 
 Logs are network services that implement the protocol operations for submissions
 and queries that are defined in this document.
