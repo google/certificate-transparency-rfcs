@@ -64,15 +64,6 @@ normative:
     date: 2009-06
     seriesinfo:
       FIPS: 186-3
-  FIPS180-4:
-    target: http://csrc.nist.gov/publications/fips/fips180-4/fips-180-4.pdf
-    title: Secure Hash Standard
-    author:
-      abbrev: NIST
-      org: National Institute of Standards and Technology
-    date: 2012-03
-    seriesinfo:
-      FIPS: 180-4
   HTML401:
     target: http://www.w3.org/TR/1999/REC-html401-19991224
     title: HTML 4.01 Specification
@@ -91,6 +82,7 @@ normative:
       "World Wide Web Consortium Recommendation": REC-html401-19991224
 
 informative:
+  RFC4634:
   RFC6962:
   RFC6979:
   I-D.ietf-trans-gossip:
@@ -1956,20 +1948,20 @@ CachedInformationType Values" registry that was defined in [RFC7924].
 
 ## Hash Algorithms    {#hash_algorithms}
 
-IANA is asked to establish a registry of hash algorithm values, initially
-consisting of:
+IANA is asked to establish a registry of hash algorithm values, named
+"CT Hash Algorithms", that initially consists of:
 
 |-------+---------------------|
 | Index | Hash                |
 |-------+---------------------|
-| 0     | SHA-256 [FIPS180-4] |
+| 0     | SHA-256 [RFC4634]   |
 | 255   | reserved            |
 |-------+---------------------|
 
 ## Signature Algorithms    {#signature_algorithms}
 
-IANA is asked to establish a registry of signature algorithm values, initially
-consisting of:
+IANA is asked to establish a registry of signature algorithm values, named
+"CT Signature Algorithms", that initially consists of:
 
 |-------+-------------------------------------------------------------------------------------------------------------------------------------|
 | Index | Signature Algorithm                                                                                                                 |
@@ -1980,8 +1972,8 @@ consisting of:
 
 ## SCT Extensions    {#sct_extension_types}
 
-IANA is asked to establish a registry of SCT extensions, initially consisting
-of:
+IANA is asked to establish a registry of SCT extensions, named "CT Extension
+Types for SCT", that initially consists of:
 
 |-------+-----------|
 | Type  | Extension |
@@ -1993,8 +1985,8 @@ TBD: policy for adding to the registry
 
 ## STH Extensions    {#sth_extension_types}
 
-IANA is asked to establish a registry of STH extensions, initially consisting
-of:
+IANA is asked to establish a registry of STH extensions, named "CT Extension
+Types for STH", that initially consists of:
 
 |-------+-----------|
 | Type  | Extension |
@@ -2019,8 +2011,8 @@ All OIDs in the range from 1.3.101.8192 to 1.3.101.16383 have been reserved.
 This is a limited resource of 8,192 OIDs, each of which has an encoded length of
 4 octets.
 
-IANA is requested to establish a registry that will allocate Log IDs from this
-range.
+IANA is requested to establish a registry, named "CT Log ID Registry 1", that
+will allocate Log IDs from this range.
 
 TBD: policy for adding to the registry. Perhaps "Expert Review"?
 
@@ -2030,8 +2022,8 @@ The 1.3.101.80 arc has been delegated. This is an unlimited resource, but only
 the 128 OIDs from 1.3.101.80.0 to 1.3.101.80.127 have an encoded length of only
 4 octets.
 
-IANA is requested to establish a registry that will allocate Log IDs from this
-arc.
+IANA is requested to establish a registry, named "CT Log ID Registry 2", that
+will allocate Log IDs from this arc.
 
 TBD: policy for adding to the registry. Perhaps "Expert Review"?
 
