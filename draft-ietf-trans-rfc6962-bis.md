@@ -2131,3 +2131,30 @@ SCTs:
 
 * Sign that TBSCertificate (which now contains v1 and v2 SCTs) to issue the
   final X.509 certificate.
+
+# Major Differences from RFC6962
+
+- The concept of Precertificate Signing Certificate is gone.
+
+- The poison extension in Precertificates is gone.
+
+- Precertificates are CMS objects, not X.509 certificates.
+
+- Simplification of the structure used for Merkle tree leaves to have one less
+  layer of abstraction.
+
+- Signatures in SCTs for X.509 Certificates no longer cover the entire
+  certificate. Instead, leaf entries for Precertificates and X.509
+  certificates include the same data.
+
+- Logs are now identified by OIDs rather than a hash of the log's public key.
+
+- SCT extensions are typed.
+
+- STHs can contain exceptions, which are typed.
+
+- A new data structure, TransItem, is now used for encapsulating all CT data
+  and can be used anywhere SCTs in [RFC6962] were used.
+
+- New Client API has been added to allow returning a combination of inclusion
+  and consistency proofs at the same time.
