@@ -1,5 +1,5 @@
 ---
-title: "Certificate Transparency (Version 2.0)"
+title: "Certificate Transparency Version 2.0"
 docname: draft-ietf-trans-rfc6962-bis-22
 obsoletes: 6962
 category: "std"
