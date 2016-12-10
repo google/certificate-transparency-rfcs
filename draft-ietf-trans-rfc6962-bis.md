@@ -218,10 +218,13 @@ of [RFC5246].
 
 - The poison extension in Precertificates is gone.
 
-- Precertificates are CMS objects, not X.509 certificates.
+- Precertificates are CMS objects, not X.509 certificates. That was done to
+  resolve concerns about violating prohibition on duplicate serial numbers
+  in [RFC5280].
 
-- Simplification of the structure used for Merkle tree leaves to have one less
-  layer of abstraction.
+- The structure used for Merkle tree leaves is TransItem, replacing
+  MerkleTreeLeaf, simplifying the leaf structure by removing one layer of
+  abstraction and easing extensibility.
 
 - Signatures in SCTs for X.509 Certificates no longer cover the entire
   certificate. Instead, leaf entries for Precertificates and X.509
@@ -231,7 +234,7 @@ of [RFC5246].
 
 - SCT extensions are typed.
 
-- STHs can contain exceptions, which are typed.
+- STHs can contain extensions, which are typed.
 
 - A new data structure, TransItem, is now used for encapsulating all CT data
   and can be used anywhere SCTs in [RFC6962] were used.
@@ -2158,4 +2161,3 @@ SCTs:
 
 * Sign that TBSCertificate (which now contains v1 and v2 SCTs) to issue the
   final X.509 certificate.
-
