@@ -244,8 +244,11 @@ community. The major changes are:
 - STH extensions: STHs can now contain extensions, which are typed and managed
   by an IANA registry.
 
-- New Client API has been added to allow returning a combination of inclusion
-  and consistency proofs at the same time.
+- API outputs: complete TransItem structures are returned, rather than the
+  constituent parts of each structure.
+
+- get-all-by-hash: new client API for obtaining an inclusion proof and
+  corresponding consistency proofs at the same time.
 
 # Cryptographic Components
 
