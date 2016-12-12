@@ -83,6 +83,7 @@ normative:
 
 informative:
   RFC4634:
+  RFC5226:
   RFC6962:
   RFC6979:
   I-D.ietf-trans-gossip:
@@ -1997,6 +1998,15 @@ IANA is asked to establish a registry of hash algorithm values, named
 | 255   | reserved            |
 |-------+---------------------|
 
+An expert review for adding values to this registry, to comply with the
+"Expert Review" policy described in [RFC5226].
+
+### Expert Review guidelines
+
+The appointed Expert should ensure that the proposed hash algorithm is
+suitable for use as a cryptographic hash function, has a public specification
+and does not suffer from, or is known to be susceptible to, preimage attacks.
+
 ## Signature Algorithms    {#signature_algorithms}
 
 IANA is asked to establish a registry of signature algorithm values, named
@@ -2008,6 +2018,14 @@ IANA is asked to establish a registry of signature algorithm values, named
 | 0     | deterministic ECDSA [RFC6979] using the NIST P-256 curve (Section D.1.2.3 of the Digital Signature Standard [DSS]) and HMAC-SHA256. |
 | 1     | RSA signatures (RSASSA-PKCS1-v1_5 with SHA-256, Section 8.2 of [RFC8017]) using a key of at least 2048 bits.                        |
 |-------+-------------------------------------------------------------------------------------------------------------------------------------|
+
+An expert review for adding values to this registry, to comply with the
+"Expert Review" policy described in [RFC5226].
+
+### Expert Review guidelines
+
+The appointed Expert should ensure that the proposed signature algorithm has a
+public specification and can generate signatures deterministically.
 
 ## VersionedTransTypes    {#versioned_trans_types}
 
@@ -2030,7 +2048,10 @@ IANA is asked to establish a registry of `VersionedTransType` values, named
 | 65535 | reserved                  |
 |-------+---------------------------|
 
-TBD: policy for adding to the registry
+A public specification,as described in [RFC5226], is required for new values
+proposed for this registry.
+An Expert should review the proposal, to ensure the public specification is
+detailed enough for interoperable implementations.
 
 ## SCT Extensions    {#sct_extension_types}
 
@@ -2043,7 +2064,10 @@ Types for SCT", that initially consists of:
 | 65535 | reserved  |
 |-------+-----------|
 
-TBD: policy for adding to the registry
+A public specification,as described in [RFC5226], is required for new values
+proposed for this registry.
+An Expert should review the proposal, to ensure the public specification is
+detailed enough for interoperable implementations.
 
 ## STH Extensions    {#sth_extension_types}
 
@@ -2056,7 +2080,10 @@ Types for STH", that initially consists of:
 | 65535 | reserved  |
 |-------+-----------|
 
-TBD: policy for adding to the registry
+A public specification,as described in [RFC5226], is required for new values
+proposed for this registry.
+An Expert should review the proposal, to ensure the public specification is
+detailed enough for interoperable implementations.
 
 ## Object Identifiers
 
@@ -2076,7 +2103,13 @@ This is a limited resource of 8,192 OIDs, each of which has an encoded length of
 IANA is requested to establish a registry, named "CT Log ID Registry 1", that
 will allocate Log IDs from this range.
 
-TBD: policy for adding to the registry. Perhaps "Expert Review"?
+Applications for Log ID allocations should include all metadata listed in the
+{{metadata}} section (excluding the Log ID).
+An Expert Review, as defined in as defined in [RFC5226], is required prior to
+allocation of values in this registry, as it is a limited resource.
+The Expert should make sure the requester is requesting an OID from this range
+in good faith, with the intention of running a CT log identified by the
+allocated OID.
 
 ### Log ID Registry 2    {#log_id_registry2}
 
@@ -2087,7 +2120,10 @@ the 128 OIDs from 1.3.101.80.0 to 1.3.101.80.127 have an encoded length of only
 IANA is requested to establish a registry, named "CT Log ID Registry 2", that
 will allocate Log IDs from this arc.
 
-TBD: policy for adding to the registry. Perhaps "Expert Review"?
+Applications for Log ID allocations should include all metadata listed in the
+{{metadata}} section (excluding the Log ID).
+Values from this registry will be handed on a "First Come First Served" policy,
+as defined in [RFC5226].
 
 # Security Considerations
 
