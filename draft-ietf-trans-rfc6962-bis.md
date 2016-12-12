@@ -227,8 +227,9 @@ community. The major changes are:
 - Logs IDs: each log is now identified by an OID rather than by the hash of its
   public key. OIDs allocations are managed by two IANA registries.
 
-- `TransItem` structure: this new data structure, which encapsulates most types
-  of CT data, can be used anywhere that `SignedCertificateTimestampList` was
+- `TransItem` structure: this new data structure is used to encapsulate most
+  types of CT data. A `TransItemList`, consisting of one or more `TransItem`
+  structures, can be used anywhere that `SignedCertificateTimestampList` was
   used in [RFC6962].
 
 - Merkle tree leaves: the `MerkleTreeLeaf` structure has been replaced by the
