@@ -213,13 +213,13 @@ community. The major changes are:
 - Hash and signature algorithm agility: permitted algorithms are now specified
   in IANA registries.
 
-- The concept of Precertificate Signing Certificate is gone.
+- Changed precertificate format: precertificates are now CMS objects rather than
+  X.509 certificates, which avoids violating the certificate serial number
+  uniqueness requirement in Section 4.1.2.2 of [RFC5280].
 
-- The poison extension in Precertificates is gone.
-
-- Precertificates are CMS objects, not X.509 certificates. That was done to
-  resolve concerns about violating prohibition on duplicate serial numbers
-  in [RFC5280].
+- Removed precertificate signing certificates and the precertificate poison
+  extension: the change of precertificate format means that these are no longer
+  needed.
 
 - The structure used for Merkle tree leaves is TransItem, replacing
   MerkleTreeLeaf, simplifying the leaf structure by removing one layer of
