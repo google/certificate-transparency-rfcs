@@ -227,6 +227,10 @@ community. The major changes are:
 - Logs IDs: each log is now identified by an OID rather than by the hash of its
   public key.
 
+- TransItem structure: this new data structure, which encapsulates most types of
+  CT data, can be used anywhere that SignedCertificateTimestampList was used in
+  [RFC6962].
+
 - The structure used for Merkle tree leaves is TransItem, replacing
   MerkleTreeLeaf, simplifying the leaf structure by removing one layer of
   abstraction and easing extensibility.
@@ -238,9 +242,6 @@ community. The major changes are:
 - SCT extensions are typed.
 
 - STHs can contain extensions, which are typed.
-
-- A new data structure, TransItem, is now used for encapsulating all CT data
-  and can be used anywhere SCTs in [RFC6962] were used.
 
 - New Client API has been added to allow returning a combination of inclusion
   and consistency proofs at the same time.
