@@ -619,10 +619,10 @@ Below is an example Name Constraints extension that meets these conditions:
 A log is a single, append-only Merkle Tree of submitted certificate and
 precertificate entries.
 
-When it receives a valid submission, the log MUST return an SCT that corresponds
-to the submitted certificate or precertificate. If the log has previously seen
-this valid submission, it SHOULD return the same SCT as it returned before (to
-reduce the ability to track clients as described in
+When it receives and accepts a valid submission, the log MUST return an SCT that
+corresponds to the submitted certificate or precertificate. If the log has
+previously seen this valid submission, it SHOULD return the same SCT as it
+returned before (to reduce the ability to track clients as described in
 {{deterministic_signatures}}). If different SCTs are produced for the same
 submission, multiple log entries will have to be created, one for each SCT (as
 the timestamp is a part of the leaf structure). Note that if a certificate was
@@ -640,13 +640,13 @@ the log.
 
 ## Accepting Submissions
 
-Logs MUST verify that each submitted certificate or precertificate has a valid
-signature chain to an accepted trust anchor, using the chain of intermediate CA
-certificates provided by the submitter. Logs SHOULD accept certificates and
-precertificates that are fully valid according to RFC 5280 [RFC5280]
-verification rules and are submitted with such a chain (A log may decide, for
-example, to temporarily reject valid submissions to protect itself against
-denial-of-service attacks).
+Before accepting a submitted certificate or precertificate, the log MUST verify
+that it has a valid signature chain to an accepted trust anchor, using the chain
+of intermediate CA certificates provided by the submitter. Logs SHOULD accept
+certificates and precertificates that are fully valid according to RFC 5280
+[RFC5280] verification rules and are submitted with such a chain (A log may
+decide, for example, to temporarily reject valid submissions to protect itself
+against denial-of-service attacks).
 
 Logs MAY accept certificates and precertificates that have expired, are not yet
 valid, have been revoked, or are otherwise not fully valid according to RFC
