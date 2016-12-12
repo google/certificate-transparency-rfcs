@@ -213,9 +213,9 @@ community. The major changes are:
 - Hash and signature algorithm agility: permitted algorithms are now specified
   in IANA registries.
 
-- Changed precertificate format: precertificates are now CMS objects rather than
-  X.509 certificates, which avoids violating the certificate serial number
-  uniqueness requirement in Section 4.1.2.2 of [RFC5280].
+- Precertificate format: precertificates are now CMS objects rather than X.509
+  certificates, which avoids violating the certificate serial number uniqueness
+  requirement in Section 4.1.2.2 of [RFC5280].
 
 - Removed precertificate signing certificates and the precertificate poison
   extension: the change of precertificate format means that these are no longer
@@ -225,14 +225,14 @@ community. The major changes are:
   intermediate in place of end-entity certificates issued by that CA.
 
 - Logs IDs: each log is now identified by an OID rather than by the hash of its
-  public key.
+  public key. OIDs allocations are managed by two IANA registries.
 
-- TransItem structure: this new data structure, which encapsulates most types of
-  CT data, can be used anywhere that SignedCertificateTimestampList was used in
-  [RFC6962].
+- `TransItem` structure: this new data structure, which encapsulates most types
+  of CT data, can be used anywhere that `SignedCertificateTimestampList` was
+  used in [RFC6962].
 
-- Merkle tree leaves: the MerkleTreeLeaf structure has been replaced by the
-  TransItem structure, which eases extensibility and simplifies the leaf
+- Merkle tree leaves: the `MerkleTreeLeaf` structure has been replaced by the
+  `TransItem` structure, which eases extensibility and simplifies the leaf
   structure by removing one layer of abstraction.
 
 - Unified leaf format and SCT signatures: the structure for both certificate and
@@ -244,7 +244,7 @@ community. The major changes are:
 - STH extensions: STHs can now contain extensions, which are typed and managed
   by an IANA registry.
 
-- API outputs: complete TransItem structures are returned, rather than the
+- API outputs: complete `TransItem` structures are returned, rather than the
   constituent parts of each structure.
 
 - get-all-by-hash: new client API for obtaining an inclusion proof and
