@@ -224,6 +224,9 @@ community. The major changes are:
 - Private domain name labels: added a mechanism for logging a name-constrained
   intermediate in place of end-entity certificates issued by that CA.
 
+- Logs IDs: each log is now identified by an OID rather than by the hash of its
+  public key.
+
 - The structure used for Merkle tree leaves is TransItem, replacing
   MerkleTreeLeaf, simplifying the leaf structure by removing one layer of
   abstraction and easing extensibility.
@@ -231,8 +234,6 @@ community. The major changes are:
 - Signatures in SCTs for X.509 Certificates no longer cover the entire
   certificate. Instead, leaf entries for Precertificates and X.509
   certificates include the same data.
-
-- Logs are now identified by OIDs rather than a hash of the log's public key.
 
 - SCT extensions are typed.
 
