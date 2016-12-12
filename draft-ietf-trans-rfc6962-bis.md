@@ -231,9 +231,9 @@ community. The major changes are:
   CT data, can be used anywhere that SignedCertificateTimestampList was used in
   [RFC6962].
 
-- The structure used for Merkle tree leaves is TransItem, replacing
-  MerkleTreeLeaf, simplifying the leaf structure by removing one layer of
-  abstraction and easing extensibility.
+- Merkle tree leaves: the MerkleTreeLeaf structure has been replaced by the
+  TransItem structure, which eases extensibility and simplifies the leaf
+  structure by removing one layer of abstraction.
 
 - Signatures in SCTs for X.509 Certificates no longer cover the entire
   certificate. Instead, leaf entries for Precertificates and X.509
