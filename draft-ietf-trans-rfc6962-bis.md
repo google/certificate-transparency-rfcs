@@ -204,35 +204,73 @@ interpreted as described in RFC 2119 [RFC2119].
 Data structures are defined according to the conventions laid out in Section 4
 of [RFC5246].
 
-## Major Differences from RFC6962
+## Major Differences from CT 1.0
 
-- The concept of Precertificate Signing Certificate is gone.
+This document revises and obsoletes the experimental CT 1.0 [RFC6962] protocol,
+drawing on insights gained from CT 1.0 deployments and on feedback from the
+community. The major changes are:
 
-- The poison extension in Precertificates is gone.
+- Hash and signature algorithm agility: permitted algorithms are now specified
+  in IANA registries.
 
-- Precertificates are CMS objects, not X.509 certificates. That was done to
-  resolve concerns about violating prohibition on duplicate serial numbers
-  in [RFC5280].
+- Precertificate format: precertificates are now CMS objects rather than X.509
+  certificates, which avoids violating the certificate serial number uniqueness
+  requirement in Section 4.1.2.2 of [RFC5280].
 
-- The structure used for Merkle tree leaves is TransItem, replacing
-  MerkleTreeLeaf, simplifying the leaf structure by removing one layer of
-  abstraction and easing extensibility.
+- Removed precertificate signing certificates and the precertificate poison
+  extension: the change of precertificate format means that these are no longer
+  needed.
 
-- Signatures in SCTs for X.509 Certificates no longer cover the entire
-  certificate. Instead, leaf entries for Precertificates and X.509
-  certificates include the same data.
+- Private domain name labels: added a mechanism for logging a name-constrained
+  intermediate in place of end-entity certificates issued by that CA.
 
-- Logs are now identified by OIDs rather than a hash of the log's public key.
+- Logs IDs: each log is now identified by an OID rather than by the hash of its
+  public key. OIDs allocations are managed by two IANA registries.
 
-- SCT extensions are typed.
+- `TransItem` structure: this new data structure is used to encapsulate most
+  types of CT data. A `TransItemList`, consisting of one or more `TransItem`
+  structures, can be used anywhere that `SignedCertificateTimestampList` was
+  used in [RFC6962].
 
-- STHs can contain extensions, which are typed.
+- Merkle tree leaves: the `MerkleTreeLeaf` structure has been replaced by the
+  `TransItem` structure, which eases extensibility and simplifies the leaf
+  structure by removing one layer of abstraction.
 
-- A new data structure, TransItem, is now used for encapsulating all CT data
-  and can be used anywhere SCTs in [RFC6962] were used.
+- Unified leaf format: the structure for both certificate and precertificate
+  entries now includes only the TBSCertificate (whereas certificate entries in
+  [RFC6962] included the entire certificate).
 
-- New Client API has been added to allow returning a combination of inclusion
-  and consistency proofs at the same time.
+- SCT extensions: these are now typed and managed by an IANA registry.
+
+- STH extensions: STHs can now contain extensions, which are typed and managed
+  by an IANA registry.
+
+- API outputs: complete `TransItem` structures are returned, rather than the
+  constituent parts of each structure.
+
+- get-all-by-hash: new client API for obtaining an inclusion proof and the
+  corresponding consistency proof at the same time.
+
+- Presenting SCTs with proofs: TLS servers may present SCTs together with the
+  corresponding inclusion proofs using any of the mechanisms that [RFC6962]
+  defined for presenting SCTs only. (Presenting SCTs only is still supported).
+
+- CT TLS extension: the `signed_certificate_timestamp` TLS extension has been
+  replaced by the `transparency_info` TLS extension.
+
+- Other TLS extensions: `status_request_v2` may be used (in the same
+  manner as `status_request`); `cached_info` may be used to avoid sending the
+  same complete SCTs and inclusion proofs to the same TLS clients multiple
+  times.
+
+- TLS Feature extension: this certificate extension may be used by a CA to
+  indicate that CT compliance is required.
+
+- Verification algorithms: added detailed algorithms for verifying inclusion
+  proofs, for verifying consistency between two STHs, and for verifying a root
+  hash given a complete list of the relevant leaf input entries.
+
+- Extensive clarifications and editorial work.
 
 # Cryptographic Components
 
