@@ -724,7 +724,8 @@ that the type and version of each one is identified in a common fashion:
     } TransItem;
 ~~~~~~~~~~~
 
-`versioned_type` is the type of the encapsulated data structure and the earliest
+`versioned_type` is a value from the IANA registry in {{versioned_trans_types}}
+that identifies the type of the encapsulated data structure and the earliest
 version of this protocol to which it conforms. This document is v2.
 
 `data` is the encapsulated data structure. The various structures named with the
@@ -1969,6 +1970,29 @@ IANA is asked to establish a registry of signature algorithm values, named
 | 0     | deterministic ECDSA [RFC6979] using the NIST P-256 curve (Section D.1.2.3 of the Digital Signature Standard [DSS]) and HMAC-SHA256. |
 | 1     | RSA signatures (RSASSA-PKCS1-v1_5 with SHA-256, Section 8.2 of [RFC8017]) using a key of at least 2048 bits.                        |
 |-------+-------------------------------------------------------------------------------------------------------------------------------------|
+
+## VersionedTransTypes    {#versioned_trans_types}
+
+IANA is asked to establish a registry of `VersionedTransType` values, named
+"CT VersionedTransTypes", that initially consists of:
+
+|-------+---------------------------|
+| Index | Type and Version          |
+|-------+---------------------------|
+| 0     | reserved                  |
+| 1     | x509_entry_v2             |
+| 2     | precert_entry_v2          |
+| 3     | x509_sct_v2               |
+| 4     | precert_sct_v2            |
+| 5     | signed_tree_head_v2       |
+| 6     | consistency_proof_v2      |
+| 7     | inclusion_proof_v2        |
+| 8     | x509_sct_with_proof_v2    |
+| 9     | precert_sct_with_proof_v2 |
+| 65535 | reserved                  |
+|-------+---------------------------|
+
+TBD: policy for adding to the registry
 
 ## SCT Extensions    {#sct_extension_types}
 
