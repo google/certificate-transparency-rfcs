@@ -221,6 +221,9 @@ community. The major changes are:
   extension: the change of precertificate format means that these are no longer
   needed.
 
+- Private domain name labels: added a mechanism for logging a name-constrained
+  intermediate in place of end-entity certificates issued by that CA.
+
 - The structure used for Merkle tree leaves is TransItem, replacing
   MerkleTreeLeaf, simplifying the leaf structure by removing one layer of
   abstraction and easing extensibility.
