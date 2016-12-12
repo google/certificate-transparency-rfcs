@@ -247,8 +247,8 @@ community. The major changes are:
 - API outputs: complete `TransItem` structures are returned, rather than the
   constituent parts of each structure.
 
-- get-all-by-hash: new client API for obtaining an inclusion proof and
-  corresponding consistency proofs at the same time.
+- get-all-by-hash: new client API for obtaining an inclusion proof and the
+  corresponding consistency proof at the same time.
 
 - Presenting SCTs with proofs: TLS servers may present SCTs together with the
   corresponding inclusion proofs using any of the mechanisms that [RFC6962]
