@@ -235,9 +235,9 @@ community. The major changes are:
   TransItem structure, which eases extensibility and simplifies the leaf
   structure by removing one layer of abstraction.
 
-- Signatures in SCTs for X.509 Certificates no longer cover the entire
-  certificate. Instead, leaf entries for Precertificates and X.509
-  certificates include the same data.
+- Unified leaf format and SCT signatures: the structure for both certificate and
+  precertificate entries now includes only the TBSCertificate (whereas
+  certificate entries in [RFC6962] included the entire certificate).
 
 - SCT extensions are typed.
 
