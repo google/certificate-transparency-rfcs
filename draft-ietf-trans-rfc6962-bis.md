@@ -250,6 +250,27 @@ community. The major changes are:
 - get-all-by-hash: new client API for obtaining an inclusion proof and
   corresponding consistency proofs at the same time.
 
+- Presenting SCTs with proofs: TLS servers may present SCTs together with the
+  corresponding inclusion proofs using any of the mechanisms that [RFC6962]
+  defined for presenting SCTs only. (Presenting SCTs only is still supported).
+
+- CT TLS extension: the `signed_certificate_timestamp` TLS extension has been
+  replaced by the `transparency_info` TLS extension.
+
+- Other TLS extensions: `status_request_v2` may be used (in the same
+  manner as `status_request`); `cached_info` may be used to avoid sending the
+  same complete SCTs and inclusion proofs to the same TLS clients multiple
+  times.
+
+- TLS Feature extension: this certificate extension may be used by a CA to
+  indicate that CT compliance is required.
+
+- Verification algorithms: added detailed algorithms for verifying inclusion
+  proofs, for verifying consistency between two STHs, and for verifying a root
+  hash given a complete list of the relevant leaf input entries.
+
+- Extensive clarifications and editorial work.
+
 # Cryptographic Components
 
 ## Merkle Hash Trees    {#mht}
