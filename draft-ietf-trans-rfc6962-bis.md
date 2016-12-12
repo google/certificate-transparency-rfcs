@@ -236,9 +236,9 @@ community. The major changes are:
   `TransItem` structure, which eases extensibility and simplifies the leaf
   structure by removing one layer of abstraction.
 
-- Unified leaf format and SCT signatures: the structure for both certificate and
-  precertificate entries now includes only the TBSCertificate (whereas
-  certificate entries in [RFC6962] included the entire certificate).
+- Unified leaf format: the structure for both certificate and precertificate
+  entries now includes only the TBSCertificate (whereas certificate entries in
+  [RFC6962] included the entire certificate).
 
 - SCT extensions: these are now typed and managed by an IANA registry.
 
