@@ -239,7 +239,7 @@ community. The major changes are:
   precertificate entries now includes only the TBSCertificate (whereas
   certificate entries in [RFC6962] included the entire certificate).
 
-- SCT extensions are typed.
+- SCT extensions: these are now typed and managed by an IANA registry.
 
 - STHs can contain extensions, which are typed.
 
