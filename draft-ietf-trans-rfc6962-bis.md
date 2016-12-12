@@ -241,7 +241,8 @@ community. The major changes are:
 
 - SCT extensions: these are now typed and managed by an IANA registry.
 
-- STHs can contain extensions, which are typed.
+- STH extensions: STHs can now contain extensions, which are typed and managed
+  by an IANA registry.
 
 - New Client API has been added to allow returning a combination of inclusion
   and consistency proofs at the same time.
