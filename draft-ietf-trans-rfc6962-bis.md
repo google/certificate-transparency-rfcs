@@ -204,7 +204,11 @@ interpreted as described in RFC 2119 [RFC2119].
 Data structures are defined according to the conventions laid out in Section 4
 of [RFC5246].
 
-## Major Differences from RFC6962
+## Major Differences from CT 1.0
+
+This document revises and obsoletes the experimental CT 1.0 [RFC6962] protocol,
+drawing on insights gained from CT 1.0 deployments and on feedback from the
+community. The major changes are:
 
 - The concept of Precertificate Signing Certificate is gone.
 
