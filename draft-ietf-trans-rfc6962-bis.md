@@ -212,6 +212,36 @@ interpreted as described in RFC 2119 [RFC2119].
 Data structures are defined according to the conventions laid out in Section 4
 of [RFC5246].
 
+## Major Differences from RFC6962
+
+- The concept of Precertificate Signing Certificate is gone.
+
+- The poison extension in Precertificates is gone.
+
+- Precertificates are CMS objects, not X.509 certificates. That was done to
+  resolve concerns about violating prohibition on duplicate serial numbers
+  in [RFC5280].
+
+- The structure used for Merkle tree leaves is TransItem, replacing
+  MerkleTreeLeaf, simplifying the leaf structure by removing one layer of
+  abstraction and easing extensibility.
+
+- Signatures in SCTs for X.509 Certificates no longer cover the entire
+  certificate. Instead, leaf entries for Precertificates and X.509
+  certificates include the same data.
+
+- Logs are now identified by OIDs rather than a hash of the log's public key.
+
+- SCT extensions are typed.
+
+- STHs can contain extensions, which are typed.
+
+- A new data structure, TransItem, is now used for encapsulating all CT data
+  and can be used anywhere SCTs in [RFC6962] were used.
+
+- New Client API has been added to allow returning a combination of inclusion
+  and consistency proofs at the same time.
+
 # Cryptographic Components
 
 ## Merkle Hash Trees    {#mht}
