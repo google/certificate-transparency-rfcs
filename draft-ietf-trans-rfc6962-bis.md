@@ -1991,21 +1991,21 @@ CachedInformationType Values" registry that was defined in [RFC7924].
 IANA is asked to establish a registry of hash algorithm values, named
 "CT Hash Algorithms", that initially consists of:
 
-|-------+---------------------|
-| Index | Hash                |
-|-------+---------------------|
-| 0     | SHA-256 [RFC4634]   |
-| 255   | reserved            |
-|-------+---------------------|
-
-An expert review for adding values to this registry, to comply with the
-"Expert Review" policy described in [RFC5226].
+|-------------+----------------+------------------------------------------|
+| Value       | Hash Algorithm | Reference / [RFC5226] Assignment Policy  |
+|-------------+----------------+------------------------------------------|
+| 0x00        | SHA-256        | [RFC4634]                                |
+| 0x01 - 0xDF | Unassigned     | Specification Required and Expert Review |
+| 0xE0 - 0xEF | Reserved       | Experimental Use                         |
+| 0xF0 - 0xFF | Reserved       | Private Use                              |
+|-------------+----------------+------------------------------------------|
 
 ### Expert Review guidelines
 
-The appointed Expert should ensure that the proposed hash algorithm is
-suitable for use as a cryptographic hash function, has a public specification
-and does not suffer from, or is known to be susceptible to, preimage attacks.
+The appointed Expert should ensure that the proposed hash algorithm has a public
+specification, neither suffers from nor is known to be susceptible to preimage
+attacks, and is otherwise considered suitable for use as a cryptographic hash
+function.
 
 ## Signature Algorithms    {#signature_algorithms}
 
