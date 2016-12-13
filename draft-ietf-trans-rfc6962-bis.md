@@ -2024,26 +2024,33 @@ otherwise considered suitable for use as a cryptographic signature algorithm.
 IANA is asked to establish a registry of `VersionedTransType` values, named
 "CT VersionedTransTypes", that initially consists of:
 
-|-------+---------------------------|
-| Index | Type and Version          |
-|-------+---------------------------|
-| 0     | reserved                  |
-| 1     | x509_entry_v2             |
-| 2     | precert_entry_v2          |
-| 3     | x509_sct_v2               |
-| 4     | precert_sct_v2            |
-| 5     | signed_tree_head_v2       |
-| 6     | consistency_proof_v2      |
-| 7     | inclusion_proof_v2        |
-| 8     | x509_sct_with_proof_v2    |
-| 9     | precert_sct_with_proof_v2 |
-| 65535 | reserved                  |
-|-------+---------------------------|
+|-----------------+---------------------------+------------------------------------------|
+| Value           | Type and Version          | Reference / RFC5226 Assignment Policy    |
+|-----------------+---------------------------+------------------------------------------|
+| 0x0000          | Reserved                  | [RFC6962] (*)                            |
+| 0x0001          | x509_entry_v2             | RFCXXXX                                  |
+| 0x0002          | precert_entry_v2          | RFCXXXX                                  |
+| 0x0003          | x509_sct_v2               | RFCXXXX                                  |
+| 0x0004          | precert_sct_v2            | RFCXXXX                                  |
+| 0x0005          | signed_tree_head_v2       | RFCXXXX                                  |
+| 0x0006          | consistency_proof_v2      | RFCXXXX                                  |
+| 0x0007          | inclusion_proof_v2        | RFCXXXX                                  |
+| 0x0008          | x509_sct_with_proof_v2    | RFCXXXX                                  |
+| 0x0009          | precert_sct_with_proof_v2 | RFCXXXX                                  |
+| 0x0010 - 0xDFFF | Unassigned                | Specification Required and Expert Review |
+| 0xE000 - 0xEFFF | Reserved                  | Experimental Use                         |
+| 0xF000 - 0xFFFF | Reserved                  | Private Use                              |
+|-----------------+---------------------------+------------------------------------------|
 
-A public specification,as described in [RFC5226], is required for new values
-proposed for this registry.
-An Expert should review the proposal, to ensure the public specification is
-detailed enough for interoperable implementations.
+(*) The 0x0000 value is reserved so that v1 SCTs are distinguishable from v2
+SCTs and other `TransItem` structures.
+
+`[RFC Editor: please update 'RFCXXXX' to refer to this document, once its RFC number is known.]`
+
+### Expert Review guidelines
+
+The appointed Expert should review the public specification to ensure that it is
+detailed enough to ensure implementation interoperability.
 
 ## SCT Extensions    {#sct_extension_types}
 
