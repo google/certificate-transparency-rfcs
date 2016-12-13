@@ -55,15 +55,6 @@ normative:
   RFC7633:
   RFC7924:
   RFC8017:
-  DSS:
-    target: http://csrc.nist.gov/publications/fips/fips186-3/fips_186-3.pdf
-    title: Digital Signature Standard (DSS)
-    author:
-      abbrev: NIST
-      org: National Institute of Standards and Technology
-    date: 2009-06
-    seriesinfo:
-      FIPS: 186-3
   HTML401:
     target: http://www.w3.org/TR/1999/REC-html401-19991224
     title: HTML 4.01 Specification
@@ -1992,7 +1983,7 @@ IANA is asked to establish a registry of hash algorithm values, named
 "CT Hash Algorithms", that initially consists of:
 
 |-------------+----------------+------------------------------------------|
-| Value       | Hash Algorithm | Reference / [RFC5226] Assignment Policy  |
+| Value       | Hash Algorithm | Reference / RFC5226 Assignment Policy    |
 |-------------+----------------+------------------------------------------|
 | 0x00        | SHA-256        | [RFC4634]                                |
 | 0x01 - 0xDF | Unassigned     | Specification Required and Expert Review |
@@ -2012,20 +2003,21 @@ function.
 IANA is asked to establish a registry of signature algorithm values, named
 "CT Signature Algorithms", that initially consists of:
 
-|-------+-------------------------------------------------------------------------------------------------------------------------------------|
-| Index | Signature Algorithm                                                                                                                 |
-|-------+-------------------------------------------------------------------------------------------------------------------------------------|
-| 0     | deterministic ECDSA [RFC6979] using the NIST P-256 curve (Section D.1.2.3 of the Digital Signature Standard [DSS]) and HMAC-SHA256. |
-| 1     | RSA signatures (RSASSA-PKCS1-v1_5 with SHA-256, Section 8.2 of [RFC8017]) using a key of at least 2048 bits.                        |
-|-------+-------------------------------------------------------------------------------------------------------------------------------------|
-
-An expert review for adding values to this registry, to comply with the
-"Expert Review" policy described in [RFC5226].
+|-------------+--------------------------------------------------------+------------------------------------------|
+| Value       | Signature Algorithm                                    | Reference / RFC5226 Assignment Policy    |
+|-------------+--------------------------------------------------------+------------------------------------------|
+| 0x00        | Deterministic ECDSA (NIST P-256) with HMAC-SHA256      | [RFC6979]                                |
+| 0x01        | RSA (RSASSA-PKCS1-v1_5, key >= 2048 bits) with SHA-256 | [RFC8017]                                |
+| 0x02 - 0xDF | Unassigned                                             | Specification Required and Expert Review |
+| 0xE0 - 0xEF | Reserved                                               | Experimental Use                         |
+| 0xF0 - 0xFF | Reserved                                               | Private Use                              |
+|-------------+--------------------------------------------------------+------------------------------------------|
 
 ### Expert Review guidelines
 
 The appointed Expert should ensure that the proposed signature algorithm has a
-public specification and can generate signatures deterministically.
+public specification, always generates signatures deterministically, and is
+otherwise considered suitable for use as a cryptographic signature algorithm.
 
 ## VersionedTransTypes    {#versioned_trans_types}
 
