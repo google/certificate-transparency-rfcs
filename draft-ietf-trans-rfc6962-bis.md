@@ -2075,16 +2075,18 @@ detailed enough to ensure implementation interoperability.
 IANA is asked to establish a registry of STH extensions, named "CT Extension
 Types for STH", that initially consists of:
 
-|-------+-----------|
-| Type  | Extension |
-|-------+-----------|
-| 65535 | reserved  |
-|-------+-----------|
+|-----------------+------------+------------------------------------------|
+| Value           | Extension  | Reference / RFC5226 Assignment Policy    |
+|-----------------+------------+------------------------------------------|
+| 0x0000 - 0xDFFF | Unassigned | Specification Required and Expert Review |
+| 0xE000 - 0xEFFF | Reserved   | Experimental Use                         |
+| 0xF000 - 0xFFFF | Reserved   | Private Use                              |
+|-----------------+------------+------------------------------------------|
 
-A public specification,as described in [RFC5226], is required for new values
-proposed for this registry.
-An Expert should review the proposal, to ensure the public specification is
-detailed enough for interoperable implementations.
+### Expert Review guidelines
+
+The appointed Expert should review the public specification to ensure that it is
+detailed enough to ensure implementation interoperability.
 
 ## Object Identifiers
 
