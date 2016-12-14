@@ -1995,10 +1995,10 @@ IANA is asked to establish a registry of hash algorithm values, named
 
 ### Expert Review guidelines
 
-The appointed Expert should ensure that the proposed hash algorithm has a public
-specification, neither suffers from nor is known to be susceptible to preimage
-attacks, and is otherwise considered suitable for use as a cryptographic hash
-function.
+The appointed Expert should ensure that the proposed algorithm has a public
+specification and is suitable for use as a cryptographic hash algorithm with no
+known preimage or collision attacks. These attacks can damage the integrity of
+the log.
 
 ## Signature Algorithms    {#signature_algorithms}
 
@@ -2017,9 +2017,10 @@ IANA is asked to establish a registry of signature algorithm values, named
 
 ### Expert Review guidelines
 
-The appointed Expert should ensure that the proposed signature algorithm has a
-public specification, always generates signatures deterministically, and is
-otherwise considered suitable for use as a cryptographic signature algorithm.
+The appointed Expert should ensure that the proposed algorithm has a public
+specification and is suitable for use as a cryptographic signature algorithm
+that always generates signatures deterministically (for the reasons listed in
+{{deterministic_signatures}}).
 
 ## VersionedTransTypes    {#versioned_trans_types}
 
