@@ -55,15 +55,6 @@ normative:
   RFC7633:
   RFC7924:
   RFC8017:
-  DSS:
-    target: http://csrc.nist.gov/publications/fips/fips186-3/fips_186-3.pdf
-    title: Digital Signature Standard (DSS)
-    author:
-      abbrev: NIST
-      org: National Institute of Standards and Technology
-    date: 2009-06
-    seriesinfo:
-      FIPS: 186-3
   HTML401:
     target: http://www.w3.org/TR/1999/REC-html401-19991224
     title: HTML 4.01 Specification
@@ -226,7 +217,7 @@ community. The major changes are:
   intermediate in place of end-entity certificates issued by that CA.
 
 - Logs IDs: each log is now identified by an OID rather than by the hash of its
-  public key. OIDs allocations are managed by two IANA registries.
+  public key. OID allocations are managed by an IANA registry.
 
 - `TransItem` structure: this new data structure is used to encapsulate most
   types of CT data. A `TransItemList`, consisting of one or more `TransItem`
@@ -714,10 +705,9 @@ preceding it. The final certificate MUST be a trust anchor accepted by the log.
 
 Each log is identified by an OID, which is specified in the log's metadata and
 which MUST NOT be used to identify any other log. A log's operator MUST either
-allocate the OID themselves or request an OID from one of the two Log ID
-Registries (see {{log_id_registry1}} and {{log_id_registry2}}). Various data
-structures include the DER encoding of this OID, excluding the ASN.1 tag and
-length bytes, in an opaque vector:
+allocate the OID themselves or request an OID from the Log ID Registry (see
+{{log_id_registry}}. Various data structures include the DER encoding of this
+OID, excluding the ASN.1 tag and length bytes, in an opaque vector:
 
 ~~~~~~~~~~~
     opaque LogID<2..127>;
@@ -1975,6 +1965,9 @@ instead.
 
 # IANA Considerations
 
+The assignment policy criteria mentioned in this section refer to the policies
+outlined in [RFC5226].
+
 ## TLS Extension Type
 
 IANA is asked to allocate an RFC 5246 ExtensionType value for the
@@ -1991,99 +1984,112 @@ CachedInformationType Values" registry that was defined in [RFC7924].
 IANA is asked to establish a registry of hash algorithm values, named
 "CT Hash Algorithms", that initially consists of:
 
-|-------+---------------------|
-| Index | Hash                |
-|-------+---------------------|
-| 0     | SHA-256 [RFC4634]   |
-| 255   | reserved            |
-|-------+---------------------|
-
-An expert review for adding values to this registry, to comply with the
-"Expert Review" policy described in [RFC5226].
+|-------------+----------------+------------------------------------------|
+| Value       | Hash Algorithm | Reference / Assignment Policy            |
+|-------------+----------------+------------------------------------------|
+| 0x00        | SHA-256        | [RFC4634]                                |
+| 0x01 - 0xDF | Unassigned     | Specification Required and Expert Review |
+| 0xE0 - 0xEF | Reserved       | Experimental Use                         |
+| 0xF0 - 0xFF | Reserved       | Private Use                              |
+|-------------+----------------+------------------------------------------|
 
 ### Expert Review guidelines
 
-The appointed Expert should ensure that the proposed hash algorithm is
-suitable for use as a cryptographic hash function, has a public specification
-and does not suffer from, or is known to be susceptible to, preimage attacks.
+The appointed Expert should ensure that the proposed algorithm has a public
+specification and is suitable for use as a cryptographic hash algorithm with no
+known preimage or collision attacks. These attacks can damage the integrity of
+the log.
 
 ## Signature Algorithms    {#signature_algorithms}
 
 IANA is asked to establish a registry of signature algorithm values, named
 "CT Signature Algorithms", that initially consists of:
 
-|-------+-------------------------------------------------------------------------------------------------------------------------------------|
-| Index | Signature Algorithm                                                                                                                 |
-|-------+-------------------------------------------------------------------------------------------------------------------------------------|
-| 0     | deterministic ECDSA [RFC6979] using the NIST P-256 curve (Section D.1.2.3 of the Digital Signature Standard [DSS]) and HMAC-SHA256. |
-| 1     | RSA signatures (RSASSA-PKCS1-v1_5 with SHA-256, Section 8.2 of [RFC8017]) using a key of at least 2048 bits.                        |
-|-------+-------------------------------------------------------------------------------------------------------------------------------------|
-
-An expert review for adding values to this registry, to comply with the
-"Expert Review" policy described in [RFC5226].
+|-------------+--------------------------------------------------------+------------------------------------------|
+| Value       | Signature Algorithm                                    | Reference / Assignment Policy            |
+|-------------+--------------------------------------------------------+------------------------------------------|
+| 0x00        | Deterministic ECDSA (NIST P-256) with HMAC-SHA256      | [RFC6979]                                |
+| 0x01        | RSA (RSASSA-PKCS1-v1_5, key >= 2048 bits) with SHA-256 | [RFC8017]                                |
+| 0x02 - 0xDF | Unassigned                                             | Specification Required and Expert Review |
+| 0xE0 - 0xEF | Reserved                                               | Experimental Use                         |
+| 0xF0 - 0xFF | Reserved                                               | Private Use                              |
+|-------------+--------------------------------------------------------+------------------------------------------|
 
 ### Expert Review guidelines
 
-The appointed Expert should ensure that the proposed signature algorithm has a
-public specification and can generate signatures deterministically.
+The appointed Expert should ensure that the proposed algorithm has a public
+specification and is suitable for use as a cryptographic signature algorithm
+that always generates signatures deterministically (for the reasons listed in
+{{deterministic_signatures}}).
 
 ## VersionedTransTypes    {#versioned_trans_types}
 
 IANA is asked to establish a registry of `VersionedTransType` values, named
 "CT VersionedTransTypes", that initially consists of:
 
-|-------+---------------------------|
-| Index | Type and Version          |
-|-------+---------------------------|
-| 0     | reserved                  |
-| 1     | x509_entry_v2             |
-| 2     | precert_entry_v2          |
-| 3     | x509_sct_v2               |
-| 4     | precert_sct_v2            |
-| 5     | signed_tree_head_v2       |
-| 6     | consistency_proof_v2      |
-| 7     | inclusion_proof_v2        |
-| 8     | x509_sct_with_proof_v2    |
-| 9     | precert_sct_with_proof_v2 |
-| 65535 | reserved                  |
-|-------+---------------------------|
+|-----------------+---------------------------+------------------------------------------|
+| Value           | Type and Version          | Reference / Assignment Policy            |
+|-----------------+---------------------------+------------------------------------------|
+| 0x0000          | Reserved                  | [RFC6962] (*)                            |
+| 0x0001          | x509_entry_v2             | RFCXXXX                                  |
+| 0x0002          | precert_entry_v2          | RFCXXXX                                  |
+| 0x0003          | x509_sct_v2               | RFCXXXX                                  |
+| 0x0004          | precert_sct_v2            | RFCXXXX                                  |
+| 0x0005          | signed_tree_head_v2       | RFCXXXX                                  |
+| 0x0006          | consistency_proof_v2      | RFCXXXX                                  |
+| 0x0007          | inclusion_proof_v2        | RFCXXXX                                  |
+| 0x0008          | x509_sct_with_proof_v2    | RFCXXXX                                  |
+| 0x0009          | precert_sct_with_proof_v2 | RFCXXXX                                  |
+| 0x0010 - 0xDFFF | Unassigned                | Specification Required and Expert Review |
+| 0xE000 - 0xEFFF | Reserved                  | Experimental Use                         |
+| 0xF000 - 0xFFFF | Reserved                  | Private Use                              |
+|-----------------+---------------------------+------------------------------------------|
 
-A public specification,as described in [RFC5226], is required for new values
-proposed for this registry.
-An Expert should review the proposal, to ensure the public specification is
-detailed enough for interoperable implementations.
+(*) The 0x0000 value is reserved so that v1 SCTs are distinguishable from v2
+SCTs and other `TransItem` structures.
+
+\[RFC Editor: please update 'RFCXXXX' to refer to this document, once its RFC number is known.\]
+
+### Expert Review guidelines
+
+The appointed Expert should review the public specification to ensure that it is
+detailed enough to ensure implementation interoperability.
 
 ## SCT Extensions    {#sct_extension_types}
 
 IANA is asked to establish a registry of SCT extensions, named "CT Extension
 Types for SCT", that initially consists of:
 
-|-------+-----------|
-| Type  | Extension |
-|-------+-----------|
-| 65535 | reserved  |
-|-------+-----------|
+|-----------------+------------+------------------------------------------|
+| Value           | Extension  | Reference / Assignment Policy            |
+|-----------------+------------+------------------------------------------|
+| 0x0000 - 0xDFFF | Unassigned | Specification Required and Expert Review |
+| 0xE000 - 0xEFFF | Reserved   | Experimental Use                         |
+| 0xF000 - 0xFFFF | Reserved   | Private Use                              |
+|-----------------+------------+------------------------------------------|
 
-A public specification,as described in [RFC5226], is required for new values
-proposed for this registry.
-An Expert should review the proposal, to ensure the public specification is
-detailed enough for interoperable implementations.
+### Expert Review guidelines
+
+The appointed Expert should review the public specification to ensure that it is
+detailed enough to ensure implementation interoperability.
 
 ## STH Extensions    {#sth_extension_types}
 
 IANA is asked to establish a registry of STH extensions, named "CT Extension
 Types for STH", that initially consists of:
 
-|-------+-----------|
-| Type  | Extension |
-|-------+-----------|
-| 65535 | reserved  |
-|-------+-----------|
+|-----------------+------------+------------------------------------------|
+| Value           | Extension  | Reference / Assignment Policy            |
+|-----------------+------------+------------------------------------------|
+| 0x0000 - 0xDFFF | Unassigned | Specification Required and Expert Review |
+| 0xE000 - 0xEFFF | Reserved   | Experimental Use                         |
+| 0xF000 - 0xFFFF | Reserved   | Private Use                              |
+|-----------------+------------+------------------------------------------|
 
-A public specification,as described in [RFC5226], is required for new values
-proposed for this registry.
-An Expert should review the proposal, to ensure the public specification is
-detailed enough for interoperable implementations.
+### Expert Review guidelines
+
+The appointed Expert should review the public specification to ensure that it is
+detailed enough to ensure implementation interoperability.
 
 ## Object Identifiers
 
@@ -2094,36 +2100,36 @@ and X.509v3 extensions in certificates (see {{name_constrained}} and
 {{ocsp_transinfo_extension}}). The OIDs are defined in an arc that was selected
 due to its short encoding.
 
-### Log ID Registry 1    {#log_id_registry1}
+### Log ID Registry    {#log_id_registry}
+
+IANA is asked to establish a registry of Log IDs, named "CT Log ID Registry",
+that initially consists of:
+
+|-------------------------------+------------+---------------------------------------|
+| Value                         | Log        | Reference / Assignment Policy         |
+|-------------------------------+------------+---------------------------------------|
+| 1.3.101.8192 - 1.3.101.16383  | Unassigned | Metadata Required and Expert Review   |
+| 1.3.101.80.0 - 1.3.101.80.127 | Unassigned | Metadata Required and Expert Review   |
+| 1.3.101.80.128 - 1.3.101.80.* | Unassigned | First Come First Served               |
+|-------------------------------+------------+---------------------------------------|
 
 All OIDs in the range from 1.3.101.8192 to 1.3.101.16383 have been reserved.
 This is a limited resource of 8,192 OIDs, each of which has an encoded length of
 4 octets.
 
-IANA is requested to establish a registry, named "CT Log ID Registry 1", that
-will allocate Log IDs from this range.
-
-Applications for Log ID allocations should include all metadata listed in the
-{{metadata}} section (excluding the Log ID).
-An Expert Review, as defined in as defined in [RFC5226], is required prior to
-allocation of values in this registry, as it is a limited resource.
-The Expert should make sure the requester is requesting an OID from this range
-in good faith, with the intention of running a CT log identified by the
-allocated OID.
-
-### Log ID Registry 2    {#log_id_registry2}
-
 The 1.3.101.80 arc has been delegated. This is an unlimited resource, but only
 the 128 OIDs from 1.3.101.80.0 to 1.3.101.80.127 have an encoded length of only
 4 octets.
 
-IANA is requested to establish a registry, named "CT Log ID Registry 2", that
-will allocate Log IDs from this arc.
+Each application for the allocation of a Log ID should be accompanied by all of
+the required metadata (except for the Log ID) listed in {{metadata}}.
 
-Applications for Log ID allocations should include all metadata listed in the
-{{metadata}} section (excluding the Log ID).
-Values from this registry will be handed on a "First Come First Served" policy,
-as defined in [RFC5226].
+### Expert Review guidelines
+
+Since the Log IDs with the shortest encodings are a limited resource, the
+appointed Expert should review the submitted metadata and judge whether or not
+the applicant is requesting a Log ID in good faith (with the intention of
+actually running a CT log that will be identified by the allocated Log ID).
 
 # Security Considerations
 
