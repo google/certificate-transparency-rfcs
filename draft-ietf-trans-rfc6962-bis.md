@@ -1965,6 +1965,9 @@ instead.
 
 # IANA Considerations
 
+The assignment policy criteria mentioned in this section refer to the policies
+outlined in [RFC5226].
+
 ## TLS Extension Type
 
 IANA is asked to allocate an RFC 5246 ExtensionType value for the
@@ -1982,7 +1985,7 @@ IANA is asked to establish a registry of hash algorithm values, named
 "CT Hash Algorithms", that initially consists of:
 
 |-------------+----------------+------------------------------------------|
-| Value       | Hash Algorithm | Reference / RFC5226 Assignment Policy    |
+| Value       | Hash Algorithm | Reference / Assignment Policy            |
 |-------------+----------------+------------------------------------------|
 | 0x00        | SHA-256        | [RFC4634]                                |
 | 0x01 - 0xDF | Unassigned     | Specification Required and Expert Review |
@@ -2003,7 +2006,7 @@ IANA is asked to establish a registry of signature algorithm values, named
 "CT Signature Algorithms", that initially consists of:
 
 |-------------+--------------------------------------------------------+------------------------------------------|
-| Value       | Signature Algorithm                                    | Reference / RFC5226 Assignment Policy    |
+| Value       | Signature Algorithm                                    | Reference / Assignment Policy            |
 |-------------+--------------------------------------------------------+------------------------------------------|
 | 0x00        | Deterministic ECDSA (NIST P-256) with HMAC-SHA256      | [RFC6979]                                |
 | 0x01        | RSA (RSASSA-PKCS1-v1_5, key >= 2048 bits) with SHA-256 | [RFC8017]                                |
@@ -2024,7 +2027,7 @@ IANA is asked to establish a registry of `VersionedTransType` values, named
 "CT VersionedTransTypes", that initially consists of:
 
 |-----------------+---------------------------+------------------------------------------|
-| Value           | Type and Version          | Reference / RFC5226 Assignment Policy    |
+| Value           | Type and Version          | Reference / Assignment Policy            |
 |-----------------+---------------------------+------------------------------------------|
 | 0x0000          | Reserved                  | [RFC6962] (*)                            |
 | 0x0001          | x509_entry_v2             | RFCXXXX                                  |
@@ -2057,7 +2060,7 @@ IANA is asked to establish a registry of SCT extensions, named "CT Extension
 Types for SCT", that initially consists of:
 
 |-----------------+------------+------------------------------------------|
-| Value           | Extension  | Reference / RFC5226 Assignment Policy    |
+| Value           | Extension  | Reference / Assignment Policy            |
 |-----------------+------------+------------------------------------------|
 | 0x0000 - 0xDFFF | Unassigned | Specification Required and Expert Review |
 | 0xE000 - 0xEFFF | Reserved   | Experimental Use                         |
@@ -2075,7 +2078,7 @@ IANA is asked to establish a registry of STH extensions, named "CT Extension
 Types for STH", that initially consists of:
 
 |-----------------+------------+------------------------------------------|
-| Value           | Extension  | Reference / RFC5226 Assignment Policy    |
+| Value           | Extension  | Reference / Assignment Policy            |
 |-----------------+------------+------------------------------------------|
 | 0x0000 - 0xDFFF | Unassigned | Specification Required and Expert Review |
 | 0xE000 - 0xEFFF | Reserved   | Experimental Use                         |
@@ -2102,7 +2105,7 @@ IANA is asked to establish a registry of Log IDs, named "CT Log ID Registry",
 that initially consists of:
 
 |-------------------------------+------------+---------------------------------------|
-| Value                         | Log        | Reference / RFC5226 Assignment Policy |
+| Value                         | Log        | Reference / Assignment Policy         |
 |-------------------------------+------------+---------------------------------------|
 | 1.3.101.8192 - 1.3.101.16383  | Unassigned | Metadata Required and Expert Review   |
 | 1.3.101.80.0 - 1.3.101.80.127 | Unassigned | Metadata Required and Expert Review   |
