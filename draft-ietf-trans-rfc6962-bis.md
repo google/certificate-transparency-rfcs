@@ -2047,7 +2047,7 @@ IANA is asked to establish a registry of `VersionedTransType` values, named
 (*) The 0x0000 value is reserved so that v1 SCTs are distinguishable from v2
 SCTs and other `TransItem` structures.
 
-`[RFC Editor: please update 'RFCXXXX' to refer to this document, once its RFC number is known.]`
+\[RFC Editor: please update 'RFCXXXX' to refer to this document, once its RFC number is known.\]
 
 ### Expert Review guidelines
 
