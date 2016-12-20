@@ -706,7 +706,7 @@ preceding it. The final certificate MUST be a trust anchor accepted by the log.
 Each log is identified by an OID, which is specified in the log's metadata and
 which MUST NOT be used to identify any other log. A log's operator MUST either
 allocate the OID themselves or request an OID from the Log ID Registry (see
-{{log_id_registry}}. Various data structures include the DER encoding of this
+{{log_id_registry}}). Various data structures include the DER encoding of this
 OID, excluding the ASN.1 tag and length bytes, in an opaque vector:
 
 ~~~~~~~~~~~
