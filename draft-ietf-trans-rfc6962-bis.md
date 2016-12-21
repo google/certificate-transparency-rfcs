@@ -47,7 +47,6 @@ normative:
   RFC5652:
   RFC5905:
   RFC6066:
-  RFC6125:
   RFC6960:
   RFC6961:
   RFC7159:
@@ -91,12 +90,6 @@ informative:
     date: 2009-08
     seriesinfo:
       "Proceedings of the 18th USENIX Security Symposium,": Montreal
-  EVSSLGuidelines:
-    target: https://cabforum.org/wp-content/uploads/EV_Certificate_Guidelines.pdf
-    title: Guidelines For The Issuance And Management Of Extended Validation Certificates
-    author:
-      org: CA/Browser Forum
-    date: 2007
   Chromium.Policy:
     target: http://www.chromium.org/Home/chromium-security/certificate-transparency
     title: Chromium Certificate Transparency
@@ -212,9 +205,6 @@ community. The major changes are:
 - Removed precertificate signing certificates and the precertificate poison
   extension: the change of precertificate format means that these are no longer
   needed.
-
-- Private domain name labels: added a mechanism for logging a name-constrained
-  intermediate in place of end-entity certificates issued by that CA.
 
 - Logs IDs: each log is now identified by an OID rather than by the hash of its
   public key. OID allocations are managed by an IANA registry.
@@ -540,71 +530,6 @@ following requirements:
   cannot be used to construct a certificate from the precertificate).
 
 * `SignedData.certificates` SHOULD be omitted.
-
-# Private Domain Name Labels
-
-Some regard certain DNS domain name labels within their registered domain space
-as private and security sensitive. Even though these domains are often only
-accessible within the domain owner's private network, it's common for them to be
-secured using publicly trusted TLS server certificates.
-
-## Wildcard Certificates
-
-A certificate containing a DNS-ID [RFC6125] of `*.example.com` could be used to
-secure the domain `topsecret.example.com`, without revealing the string
-`topsecret` publicly.
-
-Since TLS clients only match the wildcard character to the complete leftmost
-label of the DNS domain name (see Section 6.4.3 of [RFC6125]), a different
-approach is needed when any label other than the leftmost label in a DNS-ID is
-considered private (e.g., `top.secret.example.com`). Also, wildcard certificates
-are prohibited in some cases, such as Extended Validation Certificates
-[EVSSLGuidelines].
-
-## Using a Name-Constrained Intermediate CA    {#name_constrained}
-
-An intermediate CA certificate or intermediate CA precertificate that contains
-the Name Constraints [RFC5280] extension MAY be logged in place of end-entity
-certificates issued by that intermediate CA, as long as all of the following
-conditions are met:
-
-* there MUST be a non-critical extension (OID 1.3.101.76, whose extnValue OCTET
-  STRING contains ASN.1 NULL data (0x05 0x00)). This extension is an explicit
-  indication that it is acceptable to not log certificates issued by this
-  intermediate CA.
-
-* there MUST be a Name Constraints extension, in which:
-
-  * permittedSubtrees MUST specify one or more dNSNames.
-
-  * excludedSubtrees MUST specify the entire IPv4 and IPv6 address ranges.
-
-Below is an example Name Constraints extension that meets these conditions:
-
-~~~~~~~~~~~
-    SEQUENCE {
-      OBJECT IDENTIFIER '2 5 29 30'
-      OCTET STRING, encapsulates {
-        SEQUENCE {
-          [0] {
-            SEQUENCE {
-              [2] 'example.com'
-              }
-            }
-          [1] {
-            SEQUENCE {
-              [7] 00 00 00 00 00 00 00 00
-              }
-            SEQUENCE {
-              [7]
-                00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-                00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-              }
-            }
-          }
-        }
-      }
-~~~~~~~~~~~
 
 # Log Format and Operation
 
@@ -1401,9 +1326,8 @@ Outputs:
 
 TLS servers MUST use at least one of the three mechanisms listed below to
 present one or more SCTs from one or more logs to each TLS client during full
-TLS handshakes, where each SCT corresponds to the server certificate or to a
-name-constrained intermediate the server certificate chains to. TLS servers
-SHOULD also present corresponding inclusion proofs and STHs (see
+TLS handshakes, where each SCT corresponds to the server certificate. TLS
+servers SHOULD also present corresponding inclusion proofs and STHs (see
 {{sct_with_proof}}).
 
 Three mechanisms are provided because they have different tradeoffs.
@@ -1494,8 +1418,7 @@ type `x509_sct_v2`) or `precert_sct_with_proof_v2` (for an SCT of type
 ~~~~~~~~~~~
 
 `sct` is the encapsulated data structure from an SCT that corresponds to the
-server certificate or to a name-constrained intermediate the server certificate
-chains to.
+server certificate.
 
 `sth` is the encapsulated data structure from an STH that was signed by the same
 log as `sct`.
@@ -1567,15 +1490,13 @@ A certification authority MAY include a Transparency Information X.509v3
 extension in the `singleExtensions` of a `SingleResponse` in an OCSP response.
 The included SCTs or inclusion proofs MUST be for the certificate identified by
 the `certID` of that `SingleResponse`, or for a precertificate that corresponds
-to that certificate, or for a name-constrained intermediate to which that
-certificate chains.
+to that certificate.
 
 ### Certificate Extension    {#cert_transinfo_extension}
 
 A certification authority MAY include a Transparency Information X.509v3
-extension in a certificate. Any included SCTs or inclusion proofs MUST be either
-for a precertificate that corresponds to this certificate, or for a
-name-constrained intermediate to which this certificate chains.
+extension in a certificate. Any included SCTs or inclusion proofs MUST be for a
+precertificate that corresponds to this certificate.
 
 ## TLS Feature Extension    {#tls_feature_extension}
 
@@ -1676,15 +1597,9 @@ and v2 SCTs to co-exist in a certificate (See {{v1_coexistence}}).
 In addition to normal validation of the server certificate and its chain, TLS
 clients SHOULD validate each received SCT for which they have the corresponding
 log's metadata. To validate an SCT, a TLS client computes the signature input
-from the SCT data and the corresponding certificate, and then verifies the
-signature using the corresponding log's public key. TLS clients MUST NOT
-consider valid any SCT whose timestamp is in the future.
-
-Before considering any SCT to be invalid, the TLS client MUST attempt to
-validate it against the server certificate and against each of the zero or more
-suitable name-constrained intermediates ({{name_constrained}}) in the chain.
-These certificates may be evaluated in the order they appear in the chain, or,
-indeed, in any order.
+from the SCT data and the server certificate, and then verifies the signature
+using the corresponding log's public key. TLS clients MUST NOT consider valid
+any SCT whose timestamp is in the future.
 
 ### Validating inclusion proofs    {#validating_inclusion_proofs}
 
@@ -1821,9 +1736,8 @@ result of making a tree from all fetched entries.
 A TLS client ({{tls_clients}}) can audit by verifying an SCT against any STH
 dated after the SCT timestamp + the Maximum Merge Delay by requesting a Merkle
 inclusion proof ({{get-proof-by-hash}}). It can also verify that the SCT
-corresponds to the certificate it arrived with (i.e., the log entry is that
-certificate, is a precertificate for that certificate or is an appropriate
-name-constrained intermediate ({{name_constrained}}).
+corresponds to the server certificate it arrived with (i.e., the log entry is
+that certificate, or is a precertificate corresponding to that certificate).
 
 Checking of the consistency of the log view presented to all entities is more
 difficult to perform because it requires a way to share log responses among a
@@ -2095,10 +2009,9 @@ detailed enough to ensure implementation interoperability.
 
 This document uses object identifiers (OIDs) to identify Log IDs (see
 {{log_id}}), the precertificate CMS `eContentType` (see {{precertificates}}),
-and X.509v3 extensions in certificates (see {{name_constrained}} and
-{{cert_transinfo_extension}}) and OCSP responses (see
-{{ocsp_transinfo_extension}}). The OIDs are defined in an arc that was selected
-due to its short encoding.
+and X.509v3 extensions in certificates (see {{cert_transinfo_extension}}) and
+OCSP responses (see {{ocsp_transinfo_extension}}). The OIDs are defined in an
+arc that was selected due to its short encoding.
 
 ### Log ID Registry    {#log_id_registry}
 
