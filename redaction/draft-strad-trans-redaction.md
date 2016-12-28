@@ -94,7 +94,9 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
 "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be
 interpreted as described in [RFC2119].
 
-# Wildcard Certificates
+# Redaction Mechanisms
+
+## Using Wildcard Certificates
 
 A certificate containing a DNS-ID [RFC6125] of `*.example.com` could be used to
 secure the domain `topsecret.example.com`, without revealing the string
@@ -107,7 +109,7 @@ considered private (e.g., `top.secret.example.com`). Also, wildcard certificates
 are prohibited in some cases, such as Extended Validation Certificates
 [EV.Certificate.Guidelines].
 
-# Using a Name-Constrained Intermediate CA    {#name_constrained}
+## Using a Name-Constrained Intermediate CA    {#name_constrained}
 
 An intermediate CA certificate or intermediate CA precertificate that contains
 the Name Constraints [RFC5280] extension MAY be logged in place of end-entity
@@ -152,7 +154,7 @@ Below is an example Name Constraints extension that meets these conditions:
       }
 ~~~~~~~~~~~
 
-# Redacting Labels in Precertificates    {#redacting_labels}
+## Redacting Labels in Precertificates    {#redacting_labels}
 
 When creating a precertificate, the CA MAY include a redactedSubjectAltName
 ({{redacted_san_extension}}) extension that contains, in a redacted form,
@@ -191,7 +193,7 @@ characters MUST NOT be appended to the encoded data.
 
 `LABELHASH` is the hash function identified by `index`.
 
-# redactedSubjectAltName Certificate Extension    {#redacted_san_extension}
+### redactedSubjectAltName Certificate Extension    {#redacted_san_extension}
 
 The redactedSubjectAltName extension is a non-critical extension
 (OID 1.3.101.77) that is identical in structure to the subjectAltName extension,
@@ -217,7 +219,7 @@ domain name labels in other subjectAltName entries to not appear in logs.
 
 TODO: Should we support redaction of SRV-IDs and URI-IDs using this mechanism?
 
-# Verifying the redactedSubjectAltName extension    {#verifying_redacted_san}
+### Verifying the redactedSubjectAltName extension    {#verifying_redacted_san}
 
 If the redactedSubjectAltName extension is present, TLS clients MUST check that
 the subjectAltName extension is present, that the subjectAltName extension
@@ -236,7 +238,7 @@ either:
 
 If any of these checks fail, the certificate MUST NOT be considered compliant.
 
-# Reconstructing the TBSCertificate    {#reconstructing_tbscertificate}
+### Reconstructing the TBSCertificate    {#reconstructing_tbscertificate}
 
 Section TBD of [I-D.ietf-trans-rfc6962-bis] describes how TLS clients can
 reconstruct the TBSCertificate component of a precertificate from a certificate,
