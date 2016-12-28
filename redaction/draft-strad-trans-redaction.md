@@ -32,6 +32,12 @@ normative:
   I-D.ietf-trans-rfc6962-bis:
 
 informative:
+  EV.Certificate.Guidelines:
+    target: https://cabforum.org/wp-content/uploads/EV_Certificate_Guidelines.pdf
+    title: Guidelines For The Issuance And Management Of Extended Validation Certificates
+    author:
+      org: CA/Browser Forum
+    date: 2007
   Public.Suffix.List:
     target: https://publicsuffix.org
     title: Public Suffix List
@@ -87,6 +93,64 @@ redaction mechanism) for a certificate to be considered compliant.
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
 "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be
 interpreted as described in [RFC2119].
+
+# Wildcard Certificates
+
+A certificate containing a DNS-ID [RFC6125] of `*.example.com` could be used to
+secure the domain `topsecret.example.com`, without revealing the string
+`topsecret` publicly.
+
+Since TLS clients only match the wildcard character to the complete leftmost
+label of the DNS domain name (see Section 6.4.3 of [RFC6125]), a different
+approach is needed when any label other than the leftmost label in a DNS-ID is
+considered private (e.g., `top.secret.example.com`). Also, wildcard certificates
+are prohibited in some cases, such as Extended Validation Certificates
+[EV.Certificate.Guidelines].
+
+# Using a Name-Constrained Intermediate CA    {#name_constrained}
+
+An intermediate CA certificate or intermediate CA precertificate that contains
+the Name Constraints [RFC5280] extension MAY be logged in place of end-entity
+certificates issued by that intermediate CA, as long as all of the following
+conditions are met:
+
+* there MUST be a non-critical extension (OID 1.3.101.76, whose extnValue OCTET
+  STRING contains ASN.1 NULL data (0x05 0x00)). This extension is an explicit
+  indication that it is acceptable to not log certificates issued by this
+  intermediate CA.
+
+* there MUST be a Name Constraints extension, in which:
+
+  * permittedSubtrees MUST specify one or more dNSNames.
+
+  * excludedSubtrees MUST specify the entire IPv4 and IPv6 address ranges.
+
+Below is an example Name Constraints extension that meets these conditions:
+
+~~~~~~~~~~~
+    SEQUENCE {
+      OBJECT IDENTIFIER '2 5 29 30'
+      OCTET STRING, encapsulates {
+        SEQUENCE {
+          [0] {
+            SEQUENCE {
+              [2] 'example.com'
+              }
+            }
+          [1] {
+            SEQUENCE {
+              [7] 00 00 00 00 00 00 00 00
+              }
+            SEQUENCE {
+              [7]
+                00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+                00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+              }
+            }
+          }
+        }
+      }
+~~~~~~~~~~~
 
 # Redacting Labels in Precertificates    {#redacting_labels}
 
