@@ -265,14 +265,14 @@ in the certificate, TLS clients MUST also:
 
 # Security Considerations
 
-## Avoiding Overly Redacting Domain Name Labels
+## Avoiding Overly Redacted Domain Names
 
-Redaction of domain name labels carries the same risks as the use of wildcards
-(e.g., section 7.2 of [RFC6125]). If the entirety of the domain space below the
-unredacted part of a domain name is not registered by a single domain owner
-(e.g., REDACT(label).com, REDACT(label).co.uk and other [Public.Suffix.List]
-entries), then the domain name may be considered by clients to be overly
-redacted.
+Redaction of domain name labels ({{redacting_labels}}) carries the same risks as
+the use of wildcards (e.g., section 7.2 of [RFC6125]). If the entirety of the
+domain space below the unredacted part of a domain name is not registered by a
+single domain owner (e.g., REDACT(label).com, REDACT(label).co.uk and other
+[Public.Suffix.List] entries), then the domain name may be considered by clients
+to be overly redacted.
 
 CAs should take care to avoid overly redacting domain names in precertificates.
 It is expected that monitors will treat precertificates that contain overly
@@ -284,10 +284,10 @@ certificate to be non-compliant if the reconstructed TBSCertificate
 
 ## Ensuring Effective Redaction
 
-Although the domain label redaction mechanism removes the need for private
-labels to appear in logs, it does not guarantee that this will never happen.
-Anyone who encounters a certificate could choose to submit it to one or more
-logs, thereby rendering the redaction futile.
+Although the mechanisms described in this document remove the need for private
+labels to appear in CT logs, they do not guarantee that this will never happen.
+For example, anyone who encounters a certificate could choose to submit it to
+one or more logs, thereby rendering the redaction futile.
 
 Domain owners are advised to take the following steps to minimize the likelihood
 that their private labels will become known outside their closed communities:
@@ -299,11 +299,11 @@ that their private labels will become known outside their closed communities:
   be feasible to recover the label via a brute-force attack.
 * Avoid using publicly trusted certificates to secure private domain space.
 
-CAs are advised to carefully consider each request to redact a label. When a CA
-believes that redacting a particular label would be futile, we advise rejecting
-the redaction request. TLS clients may have policies that forbid redaction, so
-redaction should only be used when it's absolutely necessary and likely to be
-effective.
+CAs are advised to carefully consider each request to redact a label using the
+{{redacting_labels}} mechanism. When a CA believes that redacting a particular
+label would be futile, we advise rejecting the redaction request. TLS clients
+may have policies that forbid redaction, so label redaction should only be used
+when it's absolutely necessary and likely to be effective.
 
 # Acknowledgements
 
