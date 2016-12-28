@@ -143,6 +143,7 @@ Below is an example Name Constraints extension that meets these conditions:
 ~~~~~~~~~~~
     SEQUENCE {
       OBJECT IDENTIFIER '2 5 29 30'
+      BOOLEAN TRUE
       OCTET STRING, encapsulates {
         SEQUENCE {
           [0] {
