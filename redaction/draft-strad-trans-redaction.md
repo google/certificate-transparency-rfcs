@@ -115,7 +115,7 @@ secure the domain `topsecret.example.com`, without revealing the string
 
 Since TLS clients only match the wildcard character to the complete leftmost
 label of the DNS domain name (see Section 6.4.3 of [RFC6125]), a different
-approach is needed when any label other than the leftmost label in a DNS-ID is
+mechanism is needed when any label other than the leftmost label in a DNS-ID is
 considered private (e.g., `top.secret.example.com`). Also, wildcard certificates
 are prohibited in some cases, such as Extended Validation Certificates
 [EV.Certificate.Guidelines].
