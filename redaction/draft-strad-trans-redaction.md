@@ -310,5 +310,5 @@ when it's absolutely necessary and likely to be effective.
 The authors would like to thank Andrew Ayer and TBD for their valuable
 contributions.
 
-A big thank you to Symantec for kindly donating the OID from the 1.3.101 arc
-that is used in this document.
+A big thank you to Symantec for kindly donating the OIDs from the 1.3.101 arc
+that are used in this document.
