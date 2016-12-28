@@ -1,4 +1,4 @@
-DOC = draft-ietf-trans-redaction
+DOC = draft-strad-trans-redaction
 
 # Not much user servicable parts below this line.
 
