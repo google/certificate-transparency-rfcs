@@ -226,8 +226,8 @@ a random salt and including that salt in an extension in the certificate (and
 not including the salt in the precertificate).
 
 Only DNS-ID labels can be redacted using this mechanism. However, CAs can use
-Name Constraints (section TBD of [I-D.ietf-trans-rfc6962-bis]) to allow DNS
-domain name labels in other subjectAltName entries to not appear in logs.
+the {{name_constrained}} mechanism to allow DNS domain name labels in other
+subjectAltName entries to not appear in logs.
 
 TODO: Should we support redaction of SRV-IDs and URI-IDs using this mechanism?
 
