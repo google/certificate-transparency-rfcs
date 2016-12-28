@@ -41,10 +41,10 @@ informative:
 
 --- abstract
 
-We define a mechanism to allow DNS domain name labels that are considered to be
-private to not appear in public Certificate Transparency (CT) logs, while still
-retaining most of the security benefits that accrue from using Certificate
-Transparency mechanisms.
+This document defines mechanisms to allow DNS domain name labels that are
+considered to be private to not appear in public Certificate Transparency (CT)
+logs, while still retaining most of the security benefits that accrue from using
+Certificate Transparency.
 
 --- middle
 
