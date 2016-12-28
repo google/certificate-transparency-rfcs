@@ -75,19 +75,6 @@ certificates.
 TODO: Highlight better the differences between registered domains and
 subdomains, referencing the relevant DNS RFCs.
 
-Section TBD of [I-D.ietf-trans-rfc6962-bis] proposes two mechanisms for dealing
-with this conundrum: wildcard certificates and name-constrained intermediate
-CAs. However, these mechanisms are insufficient to cover all use cases.
-
-TODO(eranm): Expand on when each of the other mechanisms is suitable and when
-this mechanism may be suitable.
-
-We define a domain label redaction mechanism that covers all use cases, at the
-cost of increased implementation complexity. CAs and domain owners should note
-that there are privacy considerations ({{privacy_considerations}}) and that
-TLS clients may apply additional requirements (relating to the use of this
-redaction mechanism) for a certificate to be considered compliant.
-
 # Requirements Language
 
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
@@ -96,7 +83,31 @@ interpreted as described in [RFC2119].
 
 # Redaction Mechanisms
 
-## Using Wildcard Certificates
+We propose three mechanisms to deal with this conundrum, in increasing order of
+implementation complexity:
+
+* Using wildcard certificates ({{wildcard_certificates}}) is the simplest
+  option, but it only covers certain use cases.
+
+* Logging a name-constrained intermediate CA certificate in place of the
+  end-entity certificate ({{name_constrained}}) covers more, but not all, use
+  cases.
+
+* Therefore, we define a domain label redaction mechanism ({{redacting_labels}})
+  that covers all use cases, at the cost of considerably increased
+  implementation complexity.
+
+We anticipate that TLS clients may develop policies that impose additional
+compliancy requirements on the use of the {{name_constrained}} and
+{{redacting_labels}} mechanisms.
+
+To ensure effective redaction, CAs and domain owners should note the privacy
+considerations ({{privacy_considerations}}).
+
+TODO(eranm): Do we need to further expand (either here or in the following
+subsections) on when each of the mechanisms is/isn't suitable?
+
+## Using Wildcard Certificates    {#wildcard_certificates}
 
 A certificate containing a DNS-ID [RFC6125] of `*.example.com` could be used to
 secure the domain `topsecret.example.com`, without revealing the string
