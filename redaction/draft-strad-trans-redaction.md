@@ -166,6 +166,41 @@ Below is an example Name Constraints extension that meets these conditions:
       }
 ~~~~~~~~~~~
 
+### Presenting SCTs, Inclusion Proofs and STHs
+
+Each SCT (and optional corresponding inclusion proof and STH) presented by a TLS
+server MAY correspond to an intermediate CA certificate or intermediate CA
+precertificate (to which the server certificate chains) that meets the
+requirements in {{name_constrained}}. This extends section TBD of CT v2
+[I-D.ietf-trans-rfc6962-bis], which specifies that each SCT always corresponds
+to the server certificate or to a precertificate that corresponds to that
+certificate.
+
+Each SCT (and optional corresponding inclusion proof and STH) included by a
+certification authority in a Transparency Information X.509v3 extension in the
+`singleExtensions` of a `SingleResponse` in an OCSP response MAY correspond to
+an intermediate CA certificate or intermediate CA precertificate (to which the
+certificate identified by the `certID` of that `SingleResponse` chains) that
+meets the requirements in {{name_constrained}}. This extends section TBD of CT
+v2 [I-D.ietf-trans-rfc6962-bis], which specifies that each SCT always
+corresponds to the certificate identified by the `certID` of that
+`SingleResponse` or to a precertificate that corresponds to that certificate.
+
+Each SCT (and optional corresponding inclusion proof and STH) included by a
+certification authority in a Transparency Information X.509v3 extension in a
+certificate MAY correspond to an intermediate CA certificate or intermediate CA
+precertificate (to which the certificate chains) that meets the requirements in
+{{name_constrained}}. This extends section TBD of CT v2
+[I-D.ietf-trans-rfc6962-bis], which specifies that each SCT always corresponds
+to a precertificate that corresponds to that certificate.
+
+### Matching an SCT to the Correct Certificate
+
+Before considering any SCT to be invalid, a TLS client MUST attempt to validate
+it against the server certificate and against each of the zero or more suitable
+name-constrained intermediates in the chain. These certificates may be evaluated
+in the order they appear in the chain, or indeed, in any order.
+
 ## Redacting Labels in Precertificates    {#redacting_labels}
 
 When creating a precertificate, the CA MAY include a redactedSubjectAltName
