@@ -314,7 +314,10 @@ It is expected that monitors will treat precertificates that contain overly
 redacted domain names as potentially misissued. TLS clients MAY consider a
 certificate to be non-compliant if the reconstructed TBSCertificate
 ({{reconstructing_tbscertificate}}) contains any overly redacted domain names.
-      
+
+TODO(eranm): Describe how the CT ecosystem would be harmed if the use of
+redaction becomes too widespread.
+
 # Privacy Considerations    {#privacy_considerations}
 
 ## Ensuring Effective Redaction
