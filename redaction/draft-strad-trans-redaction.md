@@ -110,7 +110,7 @@ subsections) on when each of the mechanisms is/isn't suitable?
 ## Using Wildcard Certificates    {#wildcard_certificates}
 
 A certificate containing a DNS-ID [RFC6125] of `*.example.com` could be used to
-secure the domain `topsecret.example.com`, without revealing the string
+secure the domain `topsecret.example.com`, without revealing the label
 `topsecret` publicly.
 
 Since TLS clients only match the wildcard character to the complete leftmost
