@@ -83,8 +83,8 @@ interpreted as described in [RFC2119].
 
 # Redaction Mechanisms
 
-We propose three mechanisms to deal with this conundrum, in increasing order of
-implementation complexity:
+We propose three mechanisms, in increasing order of implementation complexity,
+to allow certain DNS domain name labels to not appear in public CT logs:
 
 * Using wildcard certificates ({{wildcard_certificates}}) is the simplest
   option, but it only covers certain use cases.
