@@ -29,6 +29,7 @@ normative:
   RFC4648:
   RFC5280:
   RFC6125:
+  RFC6962:
   I-D.ietf-trans-rfc6962-bis:
 
 informative:
@@ -62,15 +63,15 @@ often only accessible within the domain owner's private network, it's common for
 them to be secured using publicly trusted Transport Layer Security (TLS) server
 certificates.
 
-Certificate Transparency [I-D.ietf-trans-rfc6962-bis] describes a protocol for
-publicly logging the existence of TLS server certificates as they are issued or
-observed. Since each TLS server certificate lists the domain names that it is
-intended to secure, private domain name labels within registered domain space
-could end up appearing in CT logs, especially as TLS clients develop policies
-that mandate CT compliance. This seems like an unfortunate and potentially
-unnecessary privacy leak, because it's the registered domain names in each
-certificate that are of primary interest when using CT to look for suspect
-certificates.
+Certificate Transparency v1 [RFC6962] and v2 [I-D.ietf-trans-rfc6962-bis]
+describe protocols for publicly logging the existence of TLS server certificates
+as they are issued or observed. Since each TLS server certificate lists the
+domain names that it is intended to secure, private domain name labels within
+registered domain space could end up appearing in CT logs, especially as TLS
+clients develop policies that mandate CT compliance. This seems like an
+unfortunate and potentially unnecessary privacy leak, because it's the
+registered domain names in each certificate that are of primary interest when
+using CT to look for suspect certificates.
 
 TODO: Highlight better the differences between registered domains and
 subdomains, referencing the relevant DNS RFCs.
@@ -106,6 +107,14 @@ considerations ({{privacy_considerations}}).
 
 TODO(eranm): Do we need to further expand (either here or in the following
 subsections) on when each of the mechanisms is/isn't suitable?
+
+TODO: Previously, these mechanisms were defined in earlier revisions of CTv2
+[I-D.ietf-trans-rfc6962-bis], and nothing was said about compatibility with
+CTv1. But now, given that these mechanisms have been decoupled from
+[I-D.ietf-trans-rfc6962-bis], and given that at least one major TLS client has
+announced a policy of mandatory CT compliance that will almost certainly take
+effect before CTv2 is widely deployed, we should consider making some
+or all of these mechnanisms compatible with both CTv1 and CTv2.
 
 ## Using Wildcard Certificates    {#wildcard_certificates}
 
