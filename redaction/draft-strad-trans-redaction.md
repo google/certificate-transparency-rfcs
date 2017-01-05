@@ -194,12 +194,20 @@ precertificate (to which the certificate chains) that meets the requirements in
 [I-D.ietf-trans-rfc6962-bis], which specifies that each SCT always corresponds
 to a precertificate that corresponds to that certificate.
 
+TODO: Refactor this section to avoid repetition.
+
 ### Matching an SCT to the Correct Certificate
 
 Before considering any SCT to be invalid, a TLS client MUST attempt to validate
 it against the server certificate and against each of the zero or more suitable
 name-constrained intermediates in the chain. These certificates may be evaluated
 in the order they appear in the chain, or indeed, in any order.
+
+TODO: Shall we specify that there MUST be no more than ONE name-constrained
+intermediate in the chain?
+
+TODO: Shall we specify that all presented SCTs MUST correspond to the same
+(end-entity or name-constrained intermediate) certificate?
 
 ## Redacting Labels in Precertificates    {#redacting_labels}
 
