@@ -28,6 +28,7 @@ normative:
   RFC2119:
   RFC4648:
   RFC5280:
+  RFC5936:
   RFC6125:
   RFC6962:
   I-D.ietf-trans-rfc6962-bis:
@@ -353,6 +354,8 @@ that their private labels will become known outside their closed communities:
   then redaction will only provide a thin layer of obfuscation, because it will
   be feasible to recover the label via a brute-force attack.
 * Avoid using publicly trusted certificates to secure private domain space.
+* Avoid enabling unrestricted access for DNS zone transfer (AXFR) requests (see
+  section 5 of [RFC5936]).
 
 CAs are advised to carefully consider each request to redact a label using the
 {{redacting_labels}} mechanism. When a CA believes that redacting a particular
