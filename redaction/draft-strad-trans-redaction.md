@@ -336,6 +336,7 @@ that their private labels will become known outside their closed communities:
   then redaction will only provide a thin layer of obfuscation, because it will
   be feasible to recover the label via a brute-force attack.
 * Avoid using publicly trusted certificates to secure private domain space.
+* Avoid publicly enabling DNS zone transfer.
 
 CAs are advised to carefully consider each request to redact a label using the
 {{redacting_labels}} mechanism. When a CA believes that redacting a particular
