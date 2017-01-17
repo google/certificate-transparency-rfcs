@@ -1,6 +1,6 @@
 ---
 title: "Certificate Transparency: Domain Label Redaction"
-docname: draft-strad-trans-redaction-01
+docname: draft-strad-trans-redaction-02
 abbrev: CT Domain Label Redaction
 category: exp
 
