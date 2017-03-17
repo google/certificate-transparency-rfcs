@@ -672,8 +672,6 @@ that the type and version of each one is identified in a common fashion:
             case signed_tree_head_v2: SignedTreeHeadDataV2;
             case consistency_proof_v2: ConsistencyProofDataV2;
             case inclusion_proof_v2: InclusionProofDataV2;
-            case x509_sct_with_proof_v2: SCTWithProofDataV2;
-            case precert_sct_with_proof_v2: SCTWithProofDataV2;
         } data;
     } TransItem;
 ~~~~~~~~~~~
@@ -1402,30 +1400,6 @@ decode each `TransItem` individually (so, for example, if there is a version
 upgrade, out-of-date clients can still parse old `TransItem` structures while
 skipping over new `TransItem` structures whose versions they don't understand).
 
-## Presenting SCTs, inclusion proofs and STHs    {#sct_with_proof}
-
-When constructing a `TransItemList` structure, a TLS server SHOULD construct and
-include `TransItem` structures of type `x509_sct_with_proof_v2` (for an SCT of
-type `x509_sct_v2`) or `precert_sct_with_proof_v2` (for an SCT of type
-`precert_sct_v2`), both of which encapsulate a `SCTWithProofDataV2` structure:
-
-~~~~~~~~~~~
-    struct {
-        SignedCertificateTimestampDataV2 sct;
-        SignedTreeHeadDataV2 sth;
-        InclusionProofDataV2 inclusion_proof;
-    } SCTWithProofDataV2;
-~~~~~~~~~~~
-
-`sct` is the encapsulated data structure from an SCT that corresponds to the
-server certificate.
-
-`sth` is the encapsulated data structure from an STH that was signed by the same
-log as `sct`.
-
-`inclusion_proof` is the encapsulated data structure from an inclusion proof
-that corresponds to `sct` and can be used to compute the root in `sth`.
-
 ## Presenting SCTs only
 
 Presenting inclusion proofs and STHs in the TLS handshake helps to protect the
@@ -1446,8 +1420,7 @@ resumed, since session resumption uses the original session information.
 ## cached_info TLS Extension
 
 When a TLS server includes the `transparency_info` extension in the ServerHello,
-it SHOULD NOT include any `TransItem` structures of type
-`x509_sct_with_proof_v2`, `x509_sct_v2`, `precert_sct_with_proof_v2` or
+it SHOULD NOT include any `TransItem` structures of type `x509_sct_v2` or
 `precert_sct_v2` in the `TransItemList` if all of the following conditions are
 met:
 
