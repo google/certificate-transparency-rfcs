@@ -300,6 +300,38 @@ uniquely determined by the number of leaves. (Note: This Merkle Tree is
 essentially the same as the history tree [CrosbyWallach] proposal, except our
 definition handles non-full trees differently.)
 
+### Verifying a Tree Head Given Entries    {#verify_hash}
+
+When a client has a complete list of n input `entries` from `0` up to
+`tree_size - 1` and wishes to verify this list against an tree head `root_hash`
+returned by the log for the same `tree_size`, the following algorithm may be
+used:
+
+1. Set `stack` to an empty stack.
+
+2. For each `i` from `0` up to `tree_size - 1`:
+
+    1. Push `HASH(0x00 || entries[i])` to `stack`.
+
+    2. Set `merge_count` to the lowest value (`0` included) such that `LSB(i >>
+       merge_count)` is not set. In other words, set `merge_count` to the number
+       of consecutive `1`s found starting at the least significant bit of `i`.
+
+    3. Repeat `merge_count` times:
+
+        1. Pop `right` from `stack`.
+
+        2. Pop `left` from `stack`.
+
+        3. Push `HASH(0x01 || left || right)` to `stack`.
+
+3. If there is more than one element in the `stack`, repeat the same merge
+   procedure (Step 2.3 above) until only a single element remains.
+
+4. The remaining element in `stack` is the Merkle Tree hash for the given
+   `tree_size` and should be compared by equality against the supplied
+   `root_hash`.
+
 ### Merkle Inclusion Proofs    {#merkle_inclusion_proof}
 
 A Merkle inclusion proof for a leaf in a Merkle Hash Tree is the shortest list
@@ -311,6 +343,8 @@ the node computed so far. In other words, the inclusion proof consists of the
 list of missing nodes required to compute the nodes leading from a leaf to the
 root of the tree. If the root computed from the inclusion proof matches the true
 root, then the inclusion proof proves that the leaf exists in the tree.
+
+#### Generating an Inclusion Proof
 
 Given an ordered list of n inputs to the tree, D\[n] = {d(0), ..., d(n-1)}, the
 Merkle inclusion proof PATH(m, D\[n]) for the (m+1)th input d(m), 0 \<= m \< n,
@@ -335,6 +369,41 @@ PATH(m, D[n]) = PATH(m - k, D[k:n]) : MTH(D[0:k]) for m >= k,
 where : is concatenation of lists and D\[k1:k2] denotes the length (k2 - k1)
 list {d(k1), d(k1+1),..., d(k2-1)} as before.
 
+#### Verifying an Inclusion Proof    {#verify_inclusion}
+
+When a client has received an inclusion proof (e.g., in a `TransItem` of type
+`inclusion_proof_v2`) and wishes to verify inclusion of an input `hash` for a
+given `tree_size` and `root_hash`, the following algorithm may be used to prove
+the `hash` was included in the `root_hash`:
+
+1. Compare `leaf_index` against `tree_size`. If `leaf_index` is greater than or
+   equal to `tree_size` fail the proof verification.
+
+2. Set `fn` to `leaf_index` and `sn` to `tree_size - 1`.
+
+3. Set `r` to `hash`.
+
+4. For each value `p` in the `inclusion_path` array:
+
+    If `sn` is 0, stop the iteration and fail the proof verification.
+
+    If `LSB(fn)` is set, or if `fn` is equal to `sn`, then:
+
+    1. Set `r` to `HASH(0x01 || p || r)`
+
+    2. If `LSB(fn)` is not set, then right-shift both `fn` and `sn` equally
+       until either `LSB(fn)` is set or `fn` is `0`.
+
+    Otherwise:
+
+    1. Set `r` to `HASH(0x01 || r || p)`
+
+    Finally, right-shift both `fn` and `sn` one time.
+
+5. Compare `sn` to 0. Compare `r` against the `root_hash`. If `sn` is equal to
+   0, and `r` and the `root_hash` are equal, then the log has proven the
+   inclusion of `hash`. Otherwise, fail the proof verification.
+
 ### Merkle Consistency Proofs    {#consistency}
 
 Merkle consistency proofs prove the append-only property of the tree. A Merkle
@@ -345,6 +414,8 @@ trees. Thus, a consistency proof must contain a set of intermediate nodes (i.e.,
 commitments to inputs) sufficient to verify MTH(D\[n]), such that (a subset of)
 the same nodes can be used to verify MTH(D\[0:m]). We define an algorithm that
 outputs the (unique) minimal consistency proof.
+
+#### Generating a Consistency Proof
 
 Given an ordered list of n inputs to the tree, D\[n] = {d(0), ..., d(n-1)}, the
 Merkle consistency proof PROOF(m, D\[n]) for a previous Merkle Tree Hash
@@ -400,6 +471,47 @@ list {d(k1), d(k1+1),..., d(k2-1)} as before.
 
 The number of nodes in the resulting proof is bounded above by ceil(log2(n)) +
 1.
+
+#### Verifying Consistency between Two Tree Heads    {#verify_consistency}
+
+When a client has a tree head `first_hash` for tree size `first`, a tree head
+`second_hash` for tree size `second` where `0 < first < second`, and has
+received a consistency proof between the two (e.g., in a `TransItem` of type
+`consistency_proof_v2`), the following algorithm may be used to verify the
+consistency proof:
+
+1. If `first` is an exact power of 2, then prepend `first_hash` to the
+   `consistency_path` array.
+
+2. Set `fn` to `first - 1` and `sn` to `second - 1`.
+
+3. If `LSB(fn)` is set, then right-shift both `fn` and `sn` equally until
+   `LSB(fn)` is not set.
+
+4. Set both `fr` and `sr` to the first value in the `consistency_path` array.
+
+5. For each subsequent value `c` in the `consistency_path` array:
+
+    If `sn` is 0, stop the iteration and fail the proof verification.
+
+    If `LSB(fn)` is set, or if `fn` is equal to `sn`, then:
+
+    1. Set `fr` to `HASH(0x01 || c || fr)`\\
+       Set `sr` to `HASH(0x01 || c || sr)`
+
+    2. If `LSB(fn)` is not set, then right-shift both `fn` and `sn` equally
+       until either `LSB(fn)` is set or `fn` is `0`.
+
+    Otherwise:
+
+    1. Set `sr` to `HASH(0x01 || sr || c)`
+
+    Finally, right-shift both `fn` and `sn` one time.
+
+6. After completing iterating through the `consistency_path` array as described
+   above, verify that the `fr` calculated is equal to the `first_hash` supplied,
+   that the `sr` calculated is equal to the `second_hash` supplied and that `sn`
+   is 0.
 
 ### Example
 
@@ -1742,116 +1854,6 @@ that certificate, or is a precertificate corresponding to that certificate).
 Checking of the consistency of the log view presented to all entities is more
 difficult to perform because it requires a way to share log responses among a
 set of CT-aware entities, and is discussed in {{misbehaving_logs}}.
-
-The following algorithm outlines may be useful for clients that wish to perform
-various audit operations.
-
-### Verifying an inclusion proof    {#verify_inclusion}
-
-When a client has received a `TransItem` of type `inclusion_proof_v2` and wishes
-to verify inclusion of an input `hash` for an STH with a given `tree_size` and
-`root_hash`, the following algorithm may be used to prove the `hash` was
-included in the `root_hash`:
-
-1. Compare `leaf_index` against `tree_size`. If `leaf_index` is greater than or
-   equal to `tree_size` fail the proof verification.
-
-2. Set `fn` to `leaf_index` and `sn` to `tree_size - 1`.
-
-3. Set `r` to `hash`.
-
-4. For each value `p` in the `inclusion_path` array:
-
-    If `sn` is 0, stop the iteration and fail the proof verification.
-
-    If `LSB(fn)` is set, or if `fn` is equal to `sn`, then:
-
-    1. Set `r` to `HASH(0x01 || p || r)`
-
-    2. If `LSB(fn)` is not set, then right-shift both `fn` and `sn` equally
-       until either `LSB(fn)` is set or `fn` is `0`.
-
-    Otherwise:
-
-    1. Set `r` to `HASH(0x01 || r || p)`
-
-    Finally, right-shift both `fn` and `sn` one time.
-
-5. Compare `sn` to 0. Compare `r` against the `root_hash`. If `sn` is equal to
-   0, and `r` and the `root_hash` are equal, then the log has proven the
-   inclusion of `hash`. Otherwise, fail the proof verification.
-
-### Verifying consistency between two STHs    {#verify_consistency}
-
-When a client has an STH `first_hash` for tree size `first`, an STH
-`second_hash` for tree size `second` where `0 < first < second`, and has
-received a `TransItem` of type `consistency_proof_v2` that they wish to use to
-verify both hashes, the following algorithm may be used:
-
-1. If `first` is an exact power of 2, then prepend `first_hash` to the
-   `consistency_path` array.
-
-2. Set `fn` to `first - 1` and `sn` to `second - 1`.
-
-3. If `LSB(fn)` is set, then right-shift both `fn` and `sn` equally until
-   `LSB(fn)` is not set.
-
-4. Set both `fr` and `sr` to the first value in the `consistency_path` array.
-
-5. For each subsequent value `c` in the `consistency_path` array:
-
-    If `sn` is 0, stop the iteration and fail the proof verification.
-
-    If `LSB(fn)` is set, or if `fn` is equal to `sn`, then:
-
-    1. Set `fr` to `HASH(0x01 || c || fr)`\\
-       Set `sr` to `HASH(0x01 || c || sr)`
-
-    2. If `LSB(fn)` is not set, then right-shift both `fn` and `sn` equally
-       until either `LSB(fn)` is set or `fn` is `0`.
-
-    Otherwise:
-
-    1. Set `sr` to `HASH(0x01 || sr || c)`
-
-    Finally, right-shift both `fn` and `sn` one time.
-
-6. After completing iterating through the `consistency_path` array as described
-   above, verify that the `fr` calculated is equal to the `first_hash` supplied,
-   that the `sr` calculated is equal to the `second_hash` supplied and that `sn`
-   is 0.
-
-### Verifying root hash given entries    {#verify_hash}
-
-When a client has a complete list of leaf input `entries` from `0` up to
-`tree_size - 1` and wishes to verify this list against an STH `root_hash`
-returned by the log for the same `tree_size`, the following algorithm may be
-used:
-
-1. Set `stack` to an empty stack.
-
-2. For each `i` from `0` up to `tree_size - 1`:
-
-    1. Push `HASH(0x00 || entries[i])` to `stack`.
-
-    2. Set `merge_count` to the lowest value (`0` included) such that `LSB(i >>
-       merge_count)` is not set. In other words, set `merge_count` to the number
-       of consecutive `1`s found starting at the least significant bit of `i`.
-
-    3. Repeat `merge_count` times:
-
-        1. Pop `right` from `stack`.
-
-        2. Pop `left` from `stack`.
-
-        3. Push `HASH(0x01 || left || right)` to `stack`.
-
-3. If there is more than one element in the `stack`, repeat the same merge
-   procedure (Step 2.3 above) until only a single element remains.
-
-4. The remaining element in `stack` is the Merkle Tree hash for the given
-   `tree_size` and should be compared by equality against the supplied
-   `root_hash`.
 
 # Algorithm Agility
 
