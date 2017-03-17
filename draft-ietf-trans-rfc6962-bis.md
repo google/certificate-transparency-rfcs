@@ -265,8 +265,8 @@ algorithms, see {{hash_algorithms}}. The hashing algorithm in use is referred to
 as HASH throughout this document and the size of its output in bytes as
 HASH_SIZE. The input to the Merkle Tree Hash is a list of data entries; these
 entries will be hashed to form the leaves of the Merkle Hash Tree. The output is
-a single HASH_SIZE Merkle Tree Hash. Given an ordered list of n inputs, D\[n] =
-{d(0), d(1), ..., d(n-1)}, the Merkle Tree Hash (MTH) is thus defined as
+a single HASH_SIZE Merkle Tree Hash. Given an ordered list of n inputs, D^(n) =
+{d[0], d[1], ..., d[n-1]}, the Merkle Tree Hash (MTH) is thus defined as
 follows:
 
 The hash of an empty list is the hash of an empty string:
@@ -278,19 +278,19 @@ MTH({}) = HASH().
 The hash of a list with one entry (also known as a leaf hash) is:
 
 ~~~~~~~~~~~
-MTH({d(0)}) = HASH(0x00 || d(0)).
+MTH({d[0]}) = HASH(0x00 || d[0]).
 ~~~~~~~~~~~
 
 For n > 1, let k be the largest power of two smaller than n
 (i.e., k \< n \<= 2k).
-The Merkle Tree Hash of an n-element list D\[n] is then defined recursively as
+The Merkle Tree Hash of an n-element list D^(n) is then defined recursively as
 
 ~~~~~~~~~~~
-MTH(D[n]) = HASH(0x01 || MTH(D[0:k]) || MTH(D[k:n])),
+MTH(D^(n)) = HASH(0x01 || MTH(D[0:k]) || MTH(D[k:n])),
 ~~~~~~~~~~~
 
-where || is concatenation and D\[k1:k2] denotes the list {d(k1), d(k1+1), ...,
-d(k2-1)} of length (k2 - k1). (Note that the hash calculations for leaves and
+where || is concatenation and D\[k1:k2] denotes the list {d[k1], d[k1+1], ...,
+d[k2-1]} of length (k2 - k1). (Note that the hash calculations for leaves and
 nodes differ. This domain separation is required to give second preimage
 resistance.)
 
@@ -312,57 +312,57 @@ list of missing nodes required to compute the nodes leading from a leaf to the
 root of the tree. If the root computed from the inclusion proof matches the true
 root, then the inclusion proof proves that the leaf exists in the tree.
 
-Given an ordered list of n inputs to the tree, D\[n] = {d(0), ..., d(n-1)}, the
-Merkle inclusion proof PATH(m, D\[n]) for the (m+1)th input d(m), 0 \<= m \< n,
-is defined as follows:
+Given an ordered list of n inputs to the tree, D^(n) = {d[0], d[1], ...,
+d[n-1]}, the Merkle inclusion proof PATH(m, D^(n)) for the (m+1)th input d[m], 0
+\<= m \< n, is defined as follows:
 
 The proof for the single leaf in a tree with a one-element input list D\[1] =
-{d(0)} is empty:
+{d[0]} is empty:
 
 ~~~~~~~~~~~
-PATH(0, {d(0)}) = {}
+PATH(0, {d[0]}) = {}
 ~~~~~~~~~~~
 
 For n > 1, let k be the largest power of two smaller than n. The proof for the
-(m+1)th element d(m) in a list of n > m elements is then defined recursively as
+(m+1)th element d[m] in a list of n > m elements is then defined recursively as
 
 ~~~~~~~~~~~
-PATH(m, D[n]) = PATH(m, D[0:k]) : MTH(D[k:n]) for m < k; and
+PATH(m, D^(n)) = PATH(m, D[0:k]) : MTH(D[k:n]) for m < k; and
 
-PATH(m, D[n]) = PATH(m - k, D[k:n]) : MTH(D[0:k]) for m >= k,
+PATH(m, D^(n)) = PATH(m - k, D[k:n]) : MTH(D[0:k]) for m >= k,
 ~~~~~~~~~~~
 
-where : is concatenation of lists and D\[k1:k2] denotes the length (k2 - k1)
-list {d(k1), d(k1+1),..., d(k2-1)} as before.
+Here, : is a concatenation of lists, and as before, D\[k1:k2] denotes the list
+{d[k1], d[k1+1], ..., d[k2-1]} of length (k2 - k1).
 
 ### Merkle Consistency Proofs    {#consistency}
 
 Merkle consistency proofs prove the append-only property of the tree. A Merkle
-consistency proof for a Merkle Tree Hash MTH(D\[n]) and a previously advertised
+consistency proof for a Merkle Tree Hash MTH(D^(n)) and a previously advertised
 hash MTH(D\[0:m]) of the first m leaves, m \<= n, is the list of nodes in the
 Merkle Tree required to verify that the first m inputs D\[0:m] are equal in both
 trees. Thus, a consistency proof must contain a set of intermediate nodes (i.e.,
-commitments to inputs) sufficient to verify MTH(D\[n]), such that (a subset of)
+commitments to inputs) sufficient to verify MTH(D^(n)), such that (a subset of)
 the same nodes can be used to verify MTH(D\[0:m]). We define an algorithm that
 outputs the (unique) minimal consistency proof.
 
-Given an ordered list of n inputs to the tree, D\[n] = {d(0), ..., d(n-1)}, the
-Merkle consistency proof PROOF(m, D\[n]) for a previous Merkle Tree Hash
-MTH(D\[0:m]), 0 \< m \< n, is defined as:
+Given an ordered list of n inputs to the tree, D^(n) = {d[0], d[1], ...,
+d[n-1]}, the Merkle consistency proof PROOF(m, D^(n)) for a previous Merkle Tree
+Hash MTH(D\[0:m]), 0 \< m \< n, is defined as:
 
 ~~~~~~~~~~~
-PROOF(m, D[n]) = SUBPROOF(m, D[n], true)
+PROOF(m, D^(n)) = SUBPROOF(m, D^(n), true)
 ~~~~~~~~~~~
 
 In SUBPROOF, the boolean value represents whether the subtree created from
-D\[0:m] is a complete subtree of the Merkle Tree created from D\[n], and,
+D\[0:m] is a complete subtree of the Merkle Tree created from D^(n), and,
 consequently, whether the subtree Merkle Tree Hash MTH(D\[0:m]) is known. The
 initial call to SUBPROOF sets this to be true, and SUBPROOF is then defined as
 follows:
 
 The subproof for m = n is empty if m is the value for which PROOF was originally
 requested (meaning that the subtree created from D\[0:m] is a complete subtree
-of the Merkle Tree created from the original D\[n] for which PROOF was
+of the Merkle Tree created from the original D^(n) for which PROOF was
 requested, and the subtree Merkle Tree Hash MTH(D\[0:m]) is known):
 
 ~~~~~~~~~~~
@@ -384,7 +384,7 @@ We prove that the left subtree entries D\[0:k] are consistent and add a
 commitment to D\[k:n]:
 
 ~~~~~~~~~~~
-SUBPROOF(m, D[n], b) = SUBPROOF(m, D[0:k], b) : MTH(D[k:n])
+SUBPROOF(m, D^(n), b) = SUBPROOF(m, D[0:k], b) : MTH(D[k:n])
 ~~~~~~~~~~~
 
 If m > k, the left subtree entries D\[0:k] are identical in both trees. We prove
@@ -392,11 +392,11 @@ that the right subtree entries D\[k:n] are consistent and add a commitment to
 D\[0:k].
 
 ~~~~~~~~~~~
-SUBPROOF(m, D[n], b) = SUBPROOF(m - k, D[k:n], false) : MTH(D[0:k])
+SUBPROOF(m, D^(n), b) = SUBPROOF(m - k, D[k:n], false) : MTH(D[0:k])
 ~~~~~~~~~~~
 
-Here, : is a concatenation of lists, and D\[k1:k2] denotes the length (k2 - k1)
-list {d(k1), d(k1+1),..., d(k2-1)} as before.
+Here, : is a concatenation of lists, and as before, D\[k1:k2] denotes the list
+{d[k1], d[k1+1], ..., d[k2-1]} of length (k2 - k1).
 
 The number of nodes in the resulting proof is bounded above by ceil(log2(n)) +
 1.
