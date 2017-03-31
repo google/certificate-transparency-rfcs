@@ -503,7 +503,7 @@ submit them.
 ## Precertificates    {#precertificates}
 
 CAs may preannounce a certificate prior to issuance by submitting a
-precertificate ({{add-pre-chain}}) that the log can use to create an entry that
+precertificate ({{add-chain}}) that the log can use to create an entry that
 will be valid against the issued certificate. The CA MAY incorporate the
 returned SCT in the issued certificate. One example of where the returned SCT is
 not incorporated in the issued certificate is when a CA sends the precertificate
@@ -1028,11 +1028,16 @@ POST https://\<log server>/ct/v2/add-chain
 
 Inputs:
 
+: precertificate:
+  : The base64 encoded precertificate.  This field MUST be included if and only
+    if the certificate is being submitted as a precertificate.
+
 : chain:
-  : An array of base64 encoded certificates. The first element is the
-    certificate for which the submitter desires an SCT; the second certifies the
-    first and so on to the last, which either is, or is certified by, an
-    accepted trust anchor.
+  : An array of base64 encoded certificates. If the certificate is being
+    submitted as a precertificate, then the first element is the signer of the
+    precertificate; otherwise, the first element is the certificate being
+    submitted.  The second certifies the first and so on to the last, which
+    either is, or is certified by, an accepted trust anchor.
 
 Outputs:
 
@@ -1060,28 +1065,6 @@ the log MUST either log the certificate or return the "bad certificate" error.
 If the certificate is logged, an SCT MUST be issued. Logging the certificate is
 useful, because monitors ({{monitor}}) can then detect these encoding errors,
 which may be accepted by some TLS clients.
-
-## Add PreCertChain to Log    {#add-pre-chain}
-
-POST https://\<log server>/ct/v2/add-pre-chain
-
-Inputs:
-
-: precertificate:
-  : The base64 encoded precertificate.
-
-  chain:
-  : An array of base64 encoded CA certificates. The first element is the signer
-    of the precertificate; the second certifies the first and so on to the last,
-    which either is, or is certified by, an accepted trust anchor.
-
-Outputs:
-
-: sct:
-  : A base64 encoded `TransItem` of type `precert_sct_v2`, signed by this log,
-    that corresponds to the submitted precertificate.
-
-Errors are the same as in {{add-chain}}.
 
 ## Retrieve Latest Signed Tree Head    {#get-sth}
 
