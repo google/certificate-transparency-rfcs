@@ -1122,10 +1122,6 @@ Outputs:
     `tree_size_1` MUST match the `first` input. If the `sth` output is omitted,
     then `tree_size_2` MUST match the `second` input.
 
-  sth:
-  : A base64 encoded `TransItem` of type `signed_tree_head_v2`, signed by this
-    log.
-
 > Note that no signature is required for the `consistency` output as it is used
 > to verify the consistency between two STHs, which are signed.
 
@@ -1135,7 +1131,9 @@ Error codes:
 | Error Code     | Meaning                                                                  |
 |----------------+--------------------------------------------------------------------------|
 | first unknown  | `first` is before the latest known STH but is not from an existing STH.  |
+| first invalid  | `first` is after the latest known STH.                                  |
 | second unknown | `second` is before the latest known STH but is not from an existing STH. |
+| second invalid | `second` is after the latest known STH.                                  |
 |----------------+--------------------------------------------------------------------------|
 
 See {{verify_consistency}} for an outline of how to use the `consistency`
@@ -1154,10 +1152,9 @@ Inputs:
   : The tree_size of the tree on which to base the proof, in decimal.
 
 > The `hash` must be calculated as defined in {{tree_leaves}}. The `tree_size`
-> must designate an existing v2 STH. Because of skew, the front-end may not know
-> the requested STH. In that case, it will return the latest STH it knows, along
-> with an inclusion proof to that STH. If the front-end knows the requested STH
-> then only `inclusion` is returned.
+> must designate an existing v2 STH. If the server does not have an STH
+> corresponding to `tree_size`, then it MUST return an error `tree_size
+> unknown`.
 
 Outputs:
 
@@ -1166,12 +1163,8 @@ Outputs:
     `inclusion_path` array of Merkle Tree nodes proves the inclusion of the
     chosen certificate in the selected STH.
 
-  sth:
-  : A base64 encoded `TransItem` of type `signed_tree_head_v2`, signed by this
-    log.
-
 > Note that no signature is required for the `inclusion` output as it is used to
-> verify inclusion in the selected STH, which is signed.
+> verify inclusion under the selected STH, which is signed.
 
 Error codes:
 
@@ -1197,24 +1190,12 @@ Inputs:
   : The tree_size of the tree on which to base the proofs, in decimal.
 
 > The `hash` must be calculated as defined in {{tree_leaves}}. The `tree_size`
-> must designate an existing v2 STH.
-
-> Because of skew, the front-end may not know the requested STH or the requested
-> hash, which leads to a number of cases.
-
-> latest STH < requested STH
-> : Return latest STH.
-
-> latest STH > requested STH
-> : Return latest STH and a consistency proof between it and the requested STH
->   (see {{get-sth-consistency}}).
-
-> index of requested hash < latest STH
-> : Return `inclusion`.
-
-> Note that more than one case can be true, in which case the returned data is
-> their concatenation. It is also possible for none to be true, in which case
-> the front-end MUST return an empty response.
+> must designate an existing v2 STH. If the server does not have an STH
+> corresponding to `tree_size`, then it MUST return an error `tree_size
+> unknown`.  If `tree_size` indicates the latest STH, then the server simply
+> returns an inclusion proof.  Otherwise, the server returns an inclusion proof
+> to the STH of its choosing, together with a consistency proof to the STH
+> indicated by `tree_size`.
 
 Outputs:
 
@@ -1225,11 +1206,12 @@ Outputs:
 
   sth:
   : A base64 encoded `TransItem` of type `signed_tree_head_v2`, signed by this
-    log.
+    log.  The inclusion proof MUST connect the indicated leaf hash to this STH.
 
   consistency:
   : A base64 encoded `TransItem` of type `consistency_proof_v2` that proves the
-    consistency of the requested STH and the returned STH.
+    consistency from the returned STH and the requested STH, if they are
+    different.
 
 > Note that no signature is required for the `inclusion` or `consistency`
 > outputs as they are used to verify inclusion in and consistency of STHs, which
@@ -1241,7 +1223,7 @@ See {{verify_inclusion}} for an outline of how to use the `inclusion` output,
 and see {{verify_consistency}} for an outline of how to use the `consistency`
 output.
 
-## Retrieve Entries and STH from Log    {#get-entries}
+## Retrieve Entries from Log    {#get-entries}
 
 GET https://\<log server>/ct/v2/get-entries
 
@@ -1271,10 +1253,6 @@ Outputs:
     : The base64 encoded `TransItem` of type `x509_sct_v2` or `precert_sct_v2`
       corresponding to this log entry.
 
-  sth:
-  : A base64 encoded `TransItem` of type `signed_tree_head_v2`, signed by this
-    log.
-
 Note that this message is not signed \-- the `entries` data can be verified by
 constructing the Merkle Tree Hash corresponding to a retrieved STH. All leaves
 MUST be v2. However, a compliant v2 client MUST NOT construe an unrecognized
@@ -1298,10 +1276,8 @@ request. If a client requests more than the permitted number of entries, the log
 SHALL return the maximum number of entries permissible. These entries SHALL be
 sequential beginning with the entry specified by `start`.
 
-Because of skew, it is possible the log server will not have any entries between
-`start` and `end`. In this case it MUST return an empty `entries` array.
-
-In any case, the log server MUST return the latest STH it knows about.
+It is possible the log server will not have any entries between `start` and
+`end`. In this case it MUST return an empty `entries` array.
 
 See {{verify_hash}} for an outline of how to use a complete list of `leaf_input`
 entries to verify the `root_hash`.
