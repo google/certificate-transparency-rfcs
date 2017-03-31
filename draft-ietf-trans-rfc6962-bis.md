@@ -245,9 +245,6 @@ community. The major changes are:
   same complete SCTs and inclusion proofs to the same TLS clients multiple
   times.
 
-- TLS Feature extension: this certificate extension may be used by a CA to
-  indicate that CT compliance is required.
-
 - Verification algorithms: added detailed algorithms for verifying inclusion
   proofs, for verifying consistency between two STHs, and for verifying a root
   hash given a complete list of the relevant leaf input entries.
@@ -1497,14 +1494,6 @@ to that certificate.
 A certification authority MAY include a Transparency Information X.509v3
 extension in a certificate. Any included SCTs or inclusion proofs MUST be for a
 precertificate that corresponds to this certificate.
-
-## TLS Feature Extension    {#tls_feature_extension}
-
-A certification authority MAY include the transparency_info
-({{tls_transinfo_extension}}) TLS extension identifier in the TLS Feature
-[RFC7633] certificate extension in root, intermediate and end-entity
-certificates. When a certificate chain includes such a certificate, this
-indicates that CT compliance is required.
 
 # Clients
 
