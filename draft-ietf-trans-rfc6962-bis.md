@@ -1626,12 +1626,22 @@ client uses `get-all-by-hash`, then it will already have the new STH.
 
 ### Evaluating compliance
 
-To be considered compliant, a certificate MUST be accompanied by at least one
-valid SCT. A certificate not accompanied by any valid SCTs MUST NOT be
-considered compliant by TLS clients.
+To be considered compliant with this specification, a certificate MUST be
+accompanied by evidence that it has been included in one or more logs. There
+are two types of proof that a client might require:
 
-A TLS client MUST NOT evaluate compliance if it did not send both the
-`transparency_info` and `status_request` TLS extensions in the ClientHello.
+1. A log inclusion proof to a Signed Tree Head
+2. A Signed Certificate Timestamp
+
+It is up to a client's local policy which forms of evidence are sufficient for
+compliance.  For example, a client might require certificates to come with some
+minimum number of SCTs from among a collection of trusted logs, or require a
+single inclusion proof to an audited tree head.
+
+Servers may provide evidence of logging via any of the channels described in
+{{tls_servers}}.  In order to ensure that any information sent by the server is
+successfully received by the client, clients that intend to evaluate compliance
+MUST support both the `transparency_info` and `status_request` TLS extensions.
 
 ### TLS Feature Extension
 
@@ -1647,13 +1657,6 @@ or more cached certificates, all of which it already considers to be CT
 compliant, the TLS client MAY also include a `CachedObject` of type
 `ct_compliant` in the `cached_info` extension. The `hash_value` field MUST be 1
 byte long with the value 0.
-
-### Handling of Non-compliance
-
-If a TLS server presents a certificate chain that is non-compliant, and the use
-of a compliant certificate is mandated by an explicit security policy,
-application protocol specification, the TLS Feature extension or any other
-means, the TLS client MUST refuse the connection.
 
 ## Monitor    {#monitor}
 
