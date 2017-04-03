@@ -543,9 +543,9 @@ returned before (to reduce the ability to track clients as described in
 {{deterministic_signatures}}). If different SCTs are produced for the same
 submission, multiple log entries will have to be created, one for each SCT (as
 the timestamp is a part of the leaf structure). Note that if a certificate was
-previously logged as a precertificate, then the precertificate's SCT of type
-`precert_sct_v2` would not be appropriate; instead, a fresh SCT of type
-`x509_sct_v2` should be generated.
+previously logged as a precertificate, then the precertificate's SCT (with
+`entry_type` set to `precertificate`) would not be appropriate; instead, a fresh
+SCT with `entry_type` set to `certificate` should be generated.
 
 An SCT is the log's promise to incorporate the submitted entry in its Merkle
 Tree no later than a fixed amount of time, known as the Maximum Merge Delay
@@ -654,26 +654,21 @@ that the type and version of each one is identified in a common fashion:
 ~~~~~~~~~~~
     enum {
         reserved(0),
-        x509_entry_v2(1), precert_entry_v2(2),
-        x509_sct_v2(3), precert_sct_v2(4),
-        signed_tree_head_v2(5), consistency_proof_v2(6),
-        inclusion_proof_v2(7), x509_sct_with_proof_v2(8),
-        precert_sct_with_proof_v2(9),
+        entry_v2(1), sct_v2(2), signed_tree_head_v2(3), 
+        consistency_proof_v2(4), inclusion_proof_v2(5),
+        sct_with_proof_v2(6),
         (65535)
     } VersionedTransType;
 
     struct {
         VersionedTransType versioned_type;
         select (versioned_type) {
-            case x509_entry_v2: TimestampedCertificateEntryDataV2;
-            case precert_entry_v2: TimestampedCertificateEntryDataV2;
-            case x509_sct_v2: SignedCertificateTimestampDataV2;
-            case precert_sct_v2: SignedCertificateTimestampDataV2;
+            case entry_v2: TimestampedCertificateEntryDataV2;
+            case sct_v2: SignedCertificateTimestampDataV2;
             case signed_tree_head_v2: SignedTreeHeadDataV2;
             case consistency_proof_v2: ConsistencyProofDataV2;
             case inclusion_proof_v2: InclusionProofDataV2;
-            case x509_sct_with_proof_v2: SCTWithProofDataV2;
-            case precert_sct_with_proof_v2: SCTWithProofDataV2;
+            case sct_with_proof_v2: SCTWithProofDataV2;
         } data;
     } TransItem;
 ~~~~~~~~~~~
@@ -699,7 +694,7 @@ and may add new `VersionedTransType` values for new or modified data structures.
 
 The leaves of a log's Merkle Tree correspond to the log's entries (see
 {{log_entries}}). Each leaf is the leaf hash ({{mht}}) of a `TransItem`
-structure of type `x509_entry_v2` or `precert_entry_v2`, which encapsulates a
+structure of type `entry_v2`, which encapsulates a
 `TimestampedCertificateEntryDataV2` structure. Note that leaf hashes are
 calculated as HASH(0x00 || TransItem), where the hashing algorithm is specified
 in the log's metadata.
@@ -707,8 +702,13 @@ in the log's metadata.
 ~~~~~~~~~~~
     opaque TBSCertificate<1..2^24-1>;
 
+    enum {
+      certificate(0), precertificate(1), (255)
+    } EntryType;
+
     struct {
         uint64 timestamp;
+        EntryType entry_type;
         opaque issuer_key_hash<32..2^8-1>;
         TBSCertificate tbs_certificate;
         SctExtension sct_extensions<0..2^16-1>;
@@ -720,6 +720,9 @@ was accepted by the log, measured in milliseconds since the epoch (January 1,
 1970, 00:00 UTC), ignoring leap seconds. Note that the leaves of a log's Merkle
 Tree are not required to be in strict chronological order.
 
+`entry_type` specifies how the contents of the `tbs_certificate` field should
+be interpreted, as described below.
+
 `issuer_key_hash` is the HASH of the public key of the CA that issued the
 certificate or precertificate, calculated over the DER encoding of the key
 represented as SubjectPublicKeyInfo [RFC5280]. This is needed to bind the CA to
@@ -728,18 +731,18 @@ SCT to be valid for any other certificate or precertificate whose TBSCertificate
 matches `tbs_certificate`. The length of the `issuer_key_hash` MUST match
 HASH_SIZE.
 
-`tbs_certificate` is the DER encoded TBSCertificate from either the
-`leaf_certificate` (in the case of an `X509ChainEntry`) or the `pre_certificate`
-(in the case of a `PrecertChainEntryV2`). (Note that a precertificate's
-TBSCertificate can be reconstructed from the corresponding certificate as
-described in {{reconstructing_tbscertificate}}).
+`tbs_certificate` is the DER encoded TBSCertificate from either a certificate
+that was submitted (if `entry_type` is `certificate`) or a `precertificate` (if
+`entry_type` is `precertificate`). (Note that a precertificate's TBSCertificate
+can be reconstructed from the corresponding certificate as described in
+{{reconstructing_tbscertificate}}).
 
 `sct_extensions` matches the SCT extensions of the corresponding SCT.
 
 ## Signed Certificate Timestamp (SCT)    {#sct}
 
-An SCT is a `TransItem` structure of type `x509_sct_v2` or `precert_sct_v2`,
-which encapsulates a `SignedCertificateTimestampDataV2` structure:
+An SCT is a `TransItem` structure of type `sct_v2`, which encapsulates a
+`SignedCertificateTimestampDataV2` structure:
 
 ~~~~~~~~~~~
     enum {
@@ -754,6 +757,7 @@ which encapsulates a `SignedCertificateTimestampDataV2` structure:
     struct {
         LogID log_id;
         uint64 timestamp;
+        EntryType entry_type;
         SctExtension sct_extensions<0..2^16-1>;
         digitally-signed struct {
             TransItem timestamped_entry;
@@ -761,12 +765,18 @@ which encapsulates a `SignedCertificateTimestampDataV2` structure:
     } SignedCertificateTimestampDataV2;
 ~~~~~~~~~~~
 
+This structure reflects a signature over a Merkle tree entry, together with the
+information required to reconstruct the entry from a certificate.
+
 `log_id` is this log's unique ID, encoded in an opaque vector as described in
 {{log_id}}.
 
 `timestamp` is equal to the timestamp from the
 `TimestampedCertificateEntryDataV2` structure encapsulated in the
 `timestamped_entry`.
+
+`entry_type` is equal to the timestamp from the underlying
+`TimestampedCertificateEntryDataV2` structure.
 
 `sct_extension_type` identifies a single extension from the IANA registry in
 {{sct_extension_types}}. At the time of writing, no extensions are specified.
@@ -787,7 +797,7 @@ does understand.
 The encoding of the digitally-signed element is defined in [RFC5246].
 
 `timestamped_entry` is a `TransItem` structure that MUST be of type
-`x509_entry_v2` or `precert_entry_v2` (see {{tree_leaves}}).
+`entry_v2` (see {{tree_leaves}}).
 
 ## Merkle Tree Head    {#tree_head}
 
@@ -1037,7 +1047,7 @@ Inputs:
 Outputs:
 
 : sct:
-  : A base64 encoded `TransItem` of type `x509_sct_v2`, signed by this log, that
+  : A base64 encoded `TransItem` of type `sct_v2`, signed by this log, that
     corresponds to the submitted certificate.
 
 Error codes:
@@ -1078,8 +1088,8 @@ Inputs:
 Outputs:
 
 : sct:
-  : A base64 encoded `TransItem` of type `precert_sct_v2`, signed by this log,
-    that corresponds to the submitted precertificate.
+  : A base64 encoded `TransItem` of type `sct_v2`, signed by this log, that
+    corresponds to the submitted precertificate.
 
 Errors are the same as in {{add-chain}}.
 
@@ -1259,17 +1269,18 @@ Outputs:
   : An array of objects, each consisting of
 
     leaf_input:
-    : The base64 encoded `TransItem` structure of type `x509_entry_v2` or
-      `precert_entry_v2` (see {{tree_leaves}}).
+    : The base64 encoded `TransItem` structure of type `entry_v2` (see
+      {{tree_leaves}}).
 
     log_entry:
     : The base64 encoded log entry (see {{log_entries}}). In the case of an
-      `x509_entry_v2` entry, this is the whole `X509ChainEntry`; and in the case
-      of a `precert_entry_v2`, this is the whole `PrecertChainEntryV2`.
+      entry with `entry_type` set to `certificate`, this is the whole
+      `X509ChainEntry`.  If `entry_type` is set to `precertificate`, this is
+      the whole `PrecertChainEntryV2`.
 
     sct:
-    : The base64 encoded `TransItem` of type `x509_sct_v2` or `precert_sct_v2`
-      corresponding to this log entry.
+    : The base64 encoded `TransItem` of type `sct_v2` corresponding to this log
+      entry.
 
   sth:
   : A base64 encoded `TransItem` of type `signed_tree_head_v2`, signed by this
@@ -1405,9 +1416,8 @@ skipping over new `TransItem` structures whose versions they don't understand).
 ## Presenting SCTs, inclusion proofs and STHs    {#sct_with_proof}
 
 When constructing a `TransItemList` structure, a TLS server SHOULD construct and
-include `TransItem` structures of type `x509_sct_with_proof_v2` (for an SCT of
-type `x509_sct_v2`) or `precert_sct_with_proof_v2` (for an SCT of type
-`precert_sct_v2`), both of which encapsulate a `SCTWithProofDataV2` structure:
+include a `TransItem` structure of type `sct_with_proof_v2`, which encapsulates
+a `SCTWithProofDataV2` structure:
 
 ~~~~~~~~~~~
     struct {
@@ -1431,8 +1441,8 @@ that corresponds to `sct` and can be used to compute the root in `sth`.
 Presenting inclusion proofs and STHs in the TLS handshake helps to protect the
 client's privacy (see {{validating_inclusion_proofs}}) and reduces load on log
 servers. However, if a TLS server is unable to obtain an inclusion proof and STH
-that correspond to an SCT, then it MUST include `TransItem` structures of type
-`x509_sct_v2` or `precert_sct_v2` in the `TransItemList`.
+that correspond to an SCT, then it MUST include a `TransItem` structures of type
+`sct_v2` in the `TransItemList`.
 
 ## transparency_info TLS Extension    {#tls_transinfo_extension}
 
@@ -1445,11 +1455,10 @@ resumed, since session resumption uses the original session information.
 
 ## cached_info TLS Extension
 
-When a TLS server includes the `transparency_info` extension in the ServerHello,
-it SHOULD NOT include any `TransItem` structures of type
-`x509_sct_with_proof_v2`, `x509_sct_v2`, `precert_sct_with_proof_v2` or
-`precert_sct_v2` in the `TransItemList` if all of the following conditions are
-met:
+When a TLS server includes the `transparency_info` extension in the
+ServerHello, it SHOULD NOT include any `TransItem` structures of type
+`sct_with_proof_v2` or `sct_v2` in the `TransItemList` if all of the following
+conditions are met:
 
 * The TLS client includes the `transparency_info` extension type in the
   ClientHello.
@@ -1586,11 +1595,11 @@ To reconstruct the TBSCertificate component of a precertificate from a
 certificate, TLS clients should remove the Transparency Information extension
 described in {{x509v3_transinfo_extension}}.
 
-If the SCT checked is for a Precertificate (where the `type` of the `TransItem`
-is `precert_sct_v2`), then the client SHOULD also remove embedded v1 SCTs,
-identified by OID 1.3.6.1.4.1.11129.2.4.2 (See Section 3.3. of [RFC6962]), in
-the process of reconstructing the TBSCertificate. That is to allow embedded v1
-and v2 SCTs to co-exist in a certificate (See {{v1_coexistence}}).
+If the SCT checked is for a Precertificate (where the `entry_type` of the SCT is
+`precert`), then the client SHOULD also remove embedded v1 SCTs, identified by
+OID 1.3.6.1.4.1.11129.2.4.2 (See Section 3.3. of [RFC6962]), in the process of
+reconstructing the TBSCertificate. That is to allow embedded v1 and v2 SCTs to
+co-exist in a certificate (See {{v1_coexistence}}).
 
 ### Validating SCTs
 
@@ -1945,15 +1954,12 @@ IANA is asked to establish a registry of `VersionedTransType` values, named
 | Value           | Type and Version          | Reference / Assignment Policy            |
 |-----------------+---------------------------+------------------------------------------|
 | 0x0000          | Reserved                  | [RFC6962] (*)                            |
-| 0x0001          | x509_entry_v2             | RFCXXXX                                  |
-| 0x0002          | precert_entry_v2          | RFCXXXX                                  |
-| 0x0003          | x509_sct_v2               | RFCXXXX                                  |
-| 0x0004          | precert_sct_v2            | RFCXXXX                                  |
-| 0x0005          | signed_tree_head_v2       | RFCXXXX                                  |
-| 0x0006          | consistency_proof_v2      | RFCXXXX                                  |
-| 0x0007          | inclusion_proof_v2        | RFCXXXX                                  |
-| 0x0008          | x509_sct_with_proof_v2    | RFCXXXX                                  |
-| 0x0009          | precert_sct_with_proof_v2 | RFCXXXX                                  |
+| 0x0001          | entry_v2                  | RFCXXXX                                  |
+| 0x0002          | sct_v2                    | RFCXXXX                                  |
+| 0x0003          | signed_tree_head_v2       | RFCXXXX                                  |
+| 0x0004          | consistency_proof_v2      | RFCXXXX                                  |
+| 0x0005          | inclusion_proof_v2        | RFCXXXX                                  |
+| 0x0006          | sct_with_proof_v2         | RFCXXXX                                  |
 | 0x0010 - 0xDFFF | Unassigned                | Specification Required and Expert Review |
 | 0xE000 - 0xEFFF | Reserved                  | Experimental Use                         |
 | 0xF000 - 0xFFFF | Reserved                  | Private Use                              |
