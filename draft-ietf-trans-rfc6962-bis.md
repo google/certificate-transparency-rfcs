@@ -799,6 +799,18 @@ The encoding of the digitally-signed element is defined in [RFC5246].
 `timestamped_entry` is a `TransItem` structure that MUST be of type
 `entry_v2` (see {{tree_leaves}}).
 
+To verify an SCT over a given certificate, a client must perform the following
+steps:
+
+1. Reconstruct the `TimestampedCertificateEntryDataV2` structure from the
+   certificate and the contents of the SCT
+
+2. Encapsulate the `TimestampedCertificateEntryDataV2` structure in a
+   `TransItem` with type `entry_v2`
+
+3. Verify the signature from the SCT over the encoded `TransItem` structure
+
+
 ## Merkle Tree Head    {#tree_head}
 
 The log stores information about its Merkle Tree in a `TreeHeadDataV2`:
