@@ -591,40 +591,19 @@ omitted from the submission). The log MUST present this chain for auditing upon
 request (see {{get-entries}}). This chain is required to prevent a CA from
 avoiding blame by logging a partial or empty chain.
 
-Each certificate entry in a log MUST include a `X509ChainEntry` structure, and
-each precertificate entry MUST include a `PrecertChainEntryV2` structure:
+For each certificate or precertificate in the log, the log MUST store the
+following information:
 
-~~~~~~~~~~~
-    opaque ASN.1Cert<1..2^24-1>;
+- A `TimestampedCertificateEntryDataV2` structure (defined in {{tree_leaves}})
+  representing the Merkle tree leaf for the certificate
 
-    struct {
-        ASN.1Cert leaf_certificate;
-        ASN.1Cert certificate_chain<0..2^24-1>;
-    } X509ChainEntry;
+- The certificate or precertificate itself
 
-    opaque CMSPrecert<1..2^24-1>;
+- The chain of CA certificates that was presented when the certificte /
+  precertificate was submitted.
 
-    struct {
-        CMSPrecert pre_certificate;
-        ASN.1Cert precertificate_chain<1..2^24-1>;
-    } PrecertChainEntryV2;
-~~~~~~~~~~~
-
-`leaf_certificate` is a submitted certificate that has been accepted by the log.
-
-`certificate_chain` is a vector of 0 or more additional certificates required to
-verify `leaf_certificate`. The first certificate MUST certify
-`leaf_certificate`. Each following certificate MUST directly certify the one
-preceding it. The final certificate MUST be a trust anchor accepted by the log.
-If `leaf_certificate` is an accepted trust anchor, then this vector is empty.
-
-`pre_certificate` is a submitted precertificate that has been accepted by the
-log.
-
-`precertificate_chain` is a vector of 1 or more additional certificates required
-to verify `pre_certificate`. The first certificate MUST certify
-`pre_certificate`. Each following certificate MUST directly certify the one
-preceding it. The final certificate MUST be a trust anchor accepted by the log.
+This information is presented to clients in response to queries for entries from
+the log.
 
 ## Log ID    {#log_id}
 
@@ -1272,15 +1251,23 @@ Outputs:
     : The base64 encoded `TransItem` structure of type `entry_v2` (see
       {{tree_leaves}}).
 
-    log_entry:
-    : The base64 encoded log entry (see {{log_entries}}). In the case of an
-      entry with `entry_type` set to `certificate`, this is the whole
-      `X509ChainEntry`.  If `entry_type` is set to `precertificate`, this is
-      the whole `PrecertChainEntryV2`.
+    certificate:
+    : The base64 encoded leaf certificate.  This field MUST be present if and
+      only if the `entry_type` of the `leaf_input` is `certificate`.
+
+    precertificate:
+    : The base64 encoded leaf certificate.  This field MUST be present if and
+      only if the `entry_type` of the `leaf_input` is `precertificate`.
+
+    chain:
+    : An array of base64 encoded CA certificates. The first element is the signer
+      of the precertificate; the second certifies the first and so on to the last,
+      which either is, or is certified by, an accepted trust anchor. 
 
     sct:
     : The base64 encoded `TransItem` of type `sct_v2` corresponding to this log
       entry.
+
 
   sth:
   : A base64 encoded `TransItem` of type `signed_tree_head_v2`, signed by this
