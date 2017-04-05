@@ -552,6 +552,9 @@ Tree no later than a fixed amount of time, known as the Maximum Merge Delay
 (MMD), after the issuance of the SCT. Periodically, the log MUST append all its
 new entries to its Merkle Tree and sign the root of the tree.
 
+Log operators SHOULD NOT impose any conditions on retrieving or sharing data
+from the log.
+
 ## Accepting Submissions
 
 Before accepting a submitted certificate or precertificate, the log MUST verify
