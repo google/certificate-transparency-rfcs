@@ -1572,13 +1572,20 @@ elements.
 
 ### Receiving SCTs
 
-TLS clients receive SCTs alongside or in certificates. TLS clients MUST
-implement all of the three mechanisms by which TLS servers may present SCTs (see
-{{tls_servers}}). TLS clients MAY also accept SCTs via the `status_request_v2`
-extension ([RFC6961]). TLS clients that support the `transparency_info` TLS
-extension SHOULD include it in ClientHello messages, with empty
-`extension_data`. TLS clients may also receive inclusion proofs in addition to
-SCTs, which should be checked once the SCTs are validated.
+Servers may provide evidence of logging via any of the channels described in
+{{tls_servers}}.  In order to ensure that any information sent by the server is
+successfully received by the client, clients that intend to evaluate compliance
+MUST support both the `transparency_info` and `status_request` TLS extensions.
+
+TLS clients receive SCTs alongside or in certificates. In order to ensure that
+any information sent by the server is successfully received by the client, TLS
+clients MUST implement all of the three mechanisms by which TLS servers may
+present SCTs (see {{tls_servers}}).  In particular, clients MUST support both
+the `transparency_info` and `status_request` TLS extensions. TLS clients that
+support the `transparency_info` TLS extension SHOULD include it in ClientHello
+messages, with empty `extension_data`. TLS clients may also receive inclusion
+proofs in addition to SCTs, which should be checked once the SCTs are
+validated.
 
 ### Reconstructing the TBSCertificate    {#reconstructing_tbscertificate}
 
@@ -1637,11 +1644,6 @@ It is up to a client's local policy which forms of evidence are sufficient for
 compliance.  For example, a client might require certificates to come with some
 minimum number of SCTs from among a collection of trusted logs, or require a
 single inclusion proof to an audited tree head.
-
-Servers may provide evidence of logging via any of the channels described in
-{{tls_servers}}.  In order to ensure that any information sent by the server is
-successfully received by the client, clients that intend to evaluate compliance
-MUST support both the `transparency_info` and `status_request` TLS extensions.
 
 ### TLS Feature Extension
 
