@@ -978,7 +978,7 @@ error_message:
 
 error_code:
 : An error code readable by the client. Other than the generic codes detailed
-  here, each error codes is specific to individual type of request.  Specific
+  here, each error code is specific to individual type of request.  Specific
   errors are specified in the respective sections below. Error codes are fixed
   text strings.
 
