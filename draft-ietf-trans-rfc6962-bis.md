@@ -702,13 +702,30 @@ in the log's metadata.
 ~~~~~~~~~~~
     opaque TBSCertificate<1..2^24-1>;
 
+    enum {
+        reserved(65535)
+    } ExtensionType;
+
+    struct {
+        ExtensionType extension_type;
+        opaque extension_data<0..2^16-1>;
+    } Extension;
+
     struct {
         uint64 timestamp;
         opaque issuer_key_hash<32..2^8-1>;
         TBSCertificate tbs_certificate;
-        SctExtension sct_extensions<0..2^16-1>;
+        Extension sct_extensions<0..2^16-1>;
     } TimestampedCertificateEntryDataV2;
 ~~~~~~~~~~~
+
+Extensions provide a generic extensibility for entries, Signed Certificate
+Timestamps ({{sct}}), and Signed Tree Heads ({{tree_head}}).  The interpretation
+of the `extension_data` field is determined solely by the value of the
+`extension_type` field. Each document that registers a new `extension_type` must
+describe how to interpret the corresponding `extension_data`.  This document
+does not define any extensions types, either for SCTs or STHs, but establishes a
+registry for future values in {{extension_types}}.
 
 `timestamp` is the NTP Time [RFC5905] at which the certificate or precertificate
 was accepted by the log, measured in milliseconds since the epoch (January 1,
@@ -737,15 +754,6 @@ An SCT is a `TransItem` structure of type `x509_sct_v2` or `precert_sct_v2`,
 which encapsulates a `SignedCertificateTimestampDataV2` structure:
 
 ~~~~~~~~~~~
-    enum {
-        reserved(65535)
-    } SctExtensionType;
-
-    struct {
-        SctExtensionType sct_extension_type;
-        opaque sct_extension_data<0..2^16-1>;
-    } SctExtension;
-
     struct {
         LogID log_id;
         uint64 timestamp;
@@ -763,18 +771,10 @@ which encapsulates a `SignedCertificateTimestampDataV2` structure:
 `TimestampedCertificateEntryDataV2` structure encapsulated in the
 `timestamped_entry`.
 
-`sct_extension_type` identifies a single extension from the IANA registry in
-{{sct_extension_types}}. At the time of writing, no extensions are specified.
-
-The interpretation of the `sct_extension_data` field is determined solely by the
-value of the `sct_extension_type` field. Each document that registers a new
-`sct_extension_type` must describe how to interpret the corresponding
-`sct_extension_data`.
-
 `sct_extensions` is a vector of 0 or more SCT extensions. This vector MUST NOT
-include more than one extension with the same `sct_extension_type`. The
+include more than one extension with the same `extension_type`. The
 extensions in the vector MUST be ordered by the value of the
-`sct_extension_type` field, smallest value first. If an implementation sees an
+`extension_type` field, smallest value first. If an implementation sees an
 extension that it does not understand, it SHOULD ignore that extension.
 Furthermore, an implementation MAY choose to ignore any extension(s) that it
 does understand.
@@ -791,32 +791,15 @@ The log stores information about its Merkle Tree in a `TreeHeadDataV2`:
 ~~~~~~~~~~~
     opaque NodeHash<32..2^8-1>;
 
-    enum {
-        reserved(65535)
-    } SthExtensionType;
-
-    struct {
-        SthExtensionType sth_extension_type;
-        opaque sth_extension_data<0..2^16-1>;
-    } SthExtension;
-
     struct {
         uint64 timestamp;
         uint64 tree_size;
         NodeHash root_hash;
-        SthExtension sth_extensions<0..2^16-1>;
+        Extension sth_extensions<0..2^16-1>;
     } TreeHeadDataV2;
 ~~~~~~~~~~~
 
 The length of NodeHash MUST match HASH_SIZE of the log.
-
-`sth_extension_type` identifies a single extension from the IANA registry in
-{{sth_extension_types}}. At the time of writing, no extensions are specified.
-
-The interpretation of the `sth_extension_data` field is determined solely by the
-value of the `sth_extension_type` field. Each document that registers a new
-`sth_extension_type` must describe how to interpret the corresponding
-`sth_extension_data`.
 
 `timestamp` is the current NTP Time [RFC5905], measured in milliseconds since
 the epoch (January 1, 1970, 00:00 UTC), ignoring leap seconds.
@@ -826,9 +809,9 @@ the epoch (January 1, 1970, 00:00 UTC), ignoring leap seconds.
 `root_hash` is the root of the Merkle Hash Tree.
 
 `sth_extensions` is a vector of 0 or more STH extensions. This vector MUST NOT
-include more than one extension with the same `sth_extension_type`. The
+include more than one extension with the same `extension_type`. The
 extensions in the vector MUST be ordered by the value of the
-`sth_extension_type` field, smallest value first. If an implementation sees an
+`extension_type` field, smallest value first. If an implementation sees an
 extension that it does not understand, it SHOULD ignore that extension.
 Furthermore, an implementation MAY choose to ignore any extension(s) that it
 does understand.
@@ -1931,41 +1914,30 @@ SCTs and other `TransItem` structures.
 The appointed Expert should review the public specification to ensure that it is
 detailed enough to ensure implementation interoperability.
 
-## SCT Extensions    {#sct_extension_types}
+## Extensions    {#extension_types}
 
 IANA is asked to establish a registry of SCT extensions, named "CT Extension
 Types for SCT", that initially consists of:
 
-|-----------------+------------+------------------------------------------|
-| Value           | Extension  | Reference / Assignment Policy            |
-|-----------------+------------+------------------------------------------|
-| 0x0000 - 0xDFFF | Unassigned | Specification Required and Expert Review |
-| 0xE000 - 0xEFFF | Reserved   | Experimental Use                         |
-| 0xF000 - 0xFFFF | Reserved   | Private Use                              |
-|-----------------+------------+------------------------------------------|
+|-----------------+------------+-----+------------------------------------------|
+| Value           | Extension  | Use | Reference / Assignment Policy            |
+|-----------------+------------+-----+------------------------------------------|
+| 0x0000 - 0xDFFF | Unassigned | n/a | Specification Required and Expert Review |
+| 0xE000 - 0xEFFF | Reserved   | n/a | Experimental Use                         |
+| 0xF000 - 0xFFFF | Reserved   | n/a | Private Use                              |
+|-----------------+------------+-----+------------------------------------------|
+
+The "Use" column should contain the value "SCT" for extensions specified for use
+in Signed Certificate Timestamps, "STH" for extensions specified for use in
+Signed Tree Heads.  If an extension can be used in both types of object, then
+both values should be listed in the "Use" column.
 
 ### Expert Review guidelines
 
 The appointed Expert should review the public specification to ensure that it is
-detailed enough to ensure implementation interoperability.
-
-## STH Extensions    {#sth_extension_types}
-
-IANA is asked to establish a registry of STH extensions, named "CT Extension
-Types for STH", that initially consists of:
-
-|-----------------+------------+------------------------------------------|
-| Value           | Extension  | Reference / Assignment Policy            |
-|-----------------+------------+------------------------------------------|
-| 0x0000 - 0xDFFF | Unassigned | Specification Required and Expert Review |
-| 0xE000 - 0xEFFF | Reserved   | Experimental Use                         |
-| 0xF000 - 0xFFFF | Reserved   | Private Use                              |
-|-----------------+------------+------------------------------------------|
-
-### Expert Review guidelines
-
-The appointed Expert should review the public specification to ensure that it is
-detailed enough to ensure implementation interoperability.
+detailed enough to ensure implementation interoperability.  The Expert should
+also verify that the extension is appropriate to the contexts in which it is
+specified to be used (SCT, STH, or both).
 
 ## Object Identifiers
 
