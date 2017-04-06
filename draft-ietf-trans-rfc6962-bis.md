@@ -688,7 +688,7 @@ Future versions of this protocol may reuse `VersionedTransType` values defined
 in this document as long as the corresponding data structures are not modified,
 and may add new `VersionedTransType` values for new or modified data structures.
 
-## Extensions
+## Log Artifact Extensions
 
 ~~~~~~~~~~~
     enum {
@@ -701,10 +701,10 @@ and may add new `VersionedTransType` values for new or modified data structures.
     } Extension;
 ~~~~~~~~~~~
 
-Extensions provide a generic extensibility for log entries, Signed Certificate
-Timestamps ({{sct}}), and Signed Tree Heads ({{sth}}). The interpretation
-of the `extension_data` field is determined solely by the value of the
-`extension_type` field.
+The `Extension` structure provides a generic extensibility for log entries,
+Signed Certificate Timestamps ({{sct}}), and Signed Tree Heads ({{sth}}). The
+interpretation of the `extension_data` field is determined solely by the value
+of the `extension_type` field.
 
 This document does not define any extensions, but it does establish a registry
 for future `ExtensionType` values (see {{extension_types}}). Each document that
@@ -1919,10 +1919,10 @@ SCTs and other `TransItem` structures.
 The appointed Expert should review the public specification to ensure that it is
 detailed enough to ensure implementation interoperability.
 
-## Extensions    {#extension_types}
+## Extension Types    {#extension_types}
 
-IANA is asked to establish a registry of extensions, named "CT Extension Types",
-that initially consists of:
+IANA is asked to establish a registry of `ExtensionType` values, named "CT
+Extension Types", that initially consists of:
 
 |-----------------+------------+-----+------------------------------------------|
 | Value           | Extension  | Use | Reference / Assignment Policy            |
