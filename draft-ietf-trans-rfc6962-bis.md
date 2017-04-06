@@ -654,8 +654,7 @@ that the type and version of each one is identified in a common fashion:
         x509_entry_v2(1), precert_entry_v2(2),
         x509_sct_v2(3), precert_sct_v2(4),
         signed_tree_head_v2(5), consistency_proof_v2(6),
-        inclusion_proof_v2(7), x509_sct_with_proof_v2(8),
-        precert_sct_with_proof_v2(9),
+        inclusion_proof_v2(7),
         (65535)
     } VersionedTransType;
 
@@ -1305,8 +1304,7 @@ Outputs:
 TLS servers MUST use at least one of the three mechanisms listed below to
 present one or more SCTs from one or more logs to each TLS client during full
 TLS handshakes, where each SCT corresponds to the server certificate. TLS
-servers SHOULD also present corresponding inclusion proofs and STHs (see
-{{sct_with_proof}}).
+servers SHOULD also present corresponding inclusion proofs and STHs.
 
 Three mechanisms are provided because they have different tradeoffs.
 
@@ -1897,9 +1895,7 @@ IANA is asked to establish a registry of `VersionedTransType` values, named
 | 0x0005          | signed_tree_head_v2       | RFCXXXX                                  |
 | 0x0006          | consistency_proof_v2      | RFCXXXX                                  |
 | 0x0007          | inclusion_proof_v2        | RFCXXXX                                  |
-| 0x0008          | x509_sct_with_proof_v2    | RFCXXXX                                  |
-| 0x0009          | precert_sct_with_proof_v2 | RFCXXXX                                  |
-| 0x0010 - 0xDFFF | Unassigned                | Specification Required and Expert Review |
+| 0x0008 - 0xDFFF | Unassigned                | Specification Required and Expert Review |
 | 0xE000 - 0xEFFF | Reserved                  | Experimental Use                         |
 | 0xF000 - 0xFFFF | Reserved                  | Private Use                              |
 |-----------------+---------------------------+------------------------------------------|
