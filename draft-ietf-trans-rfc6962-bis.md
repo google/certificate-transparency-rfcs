@@ -222,10 +222,8 @@ community. The major changes are:
   entries now includes only the TBSCertificate (whereas certificate entries in
   [RFC6962] included the entire certificate).
 
-- SCT extensions: these are now typed and managed by an IANA registry.
-
-- STH extensions: STHs can now contain extensions, which are typed and managed
-  by an IANA registry.
+- Log Artifact Extensions: these are now typed and managed by an IANA registry,
+  and they can now appear not only in SCTs but also in STHs.
 
 - API outputs: complete `TransItem` structures are returned, rather than the
   constituent parts of each structure.
@@ -689,6 +687,30 @@ Future versions of this protocol may reuse `VersionedTransType` values defined
 in this document as long as the corresponding data structures are not modified,
 and may add new `VersionedTransType` values for new or modified data structures.
 
+## Log Artifact Extensions
+
+~~~~~~~~~~~
+    enum {
+        reserved(65535)
+    } ExtensionType;
+
+    struct {
+        ExtensionType extension_type;
+        opaque extension_data<0..2^16-1>;
+    } Extension;
+~~~~~~~~~~~
+
+The `Extension` structure provides a generic extensibility for log artifacts,
+including Signed Certificate Timestamps ({{sct}}) and Signed Tree Heads
+({{sth}}). The interpretation of the `extension_data` field is determined solely
+by the value of the `extension_type` field.
+
+This document does not define any extensions, but it does establish a registry
+for future `ExtensionType` values (see {{log_artifact_extension_registry}}).
+Each document that registers a new `ExtensionType` must specify the context in
+which it may be used (e.g., SCT, STH, or both) and describe how to interpret the
+corresponding `extension_data`.
+
 ## Merkle Tree Leaves    {#tree_leaves}
 
 The leaves of a log's Merkle Tree correspond to the log's entries (see
@@ -701,15 +723,6 @@ in the log's metadata.
 ~~~~~~~~~~~
     opaque TBSCertificate<1..2^24-1>;
 
-    enum {
-        reserved(65535)
-    } ExtensionType;
-
-    struct {
-        ExtensionType extension_type;
-        opaque extension_data<0..2^16-1>;
-    } Extension;
-
     struct {
         uint64 timestamp;
         opaque issuer_key_hash<32..2^8-1>;
@@ -717,14 +730,6 @@ in the log's metadata.
         Extension sct_extensions<0..2^16-1>;
     } TimestampedCertificateEntryDataV2;
 ~~~~~~~~~~~
-
-Extensions provide a generic extensibility for entries, Signed Certificate
-Timestamps ({{sct}}), and Signed Tree Heads ({{tree_head}}).  The interpretation
-of the `extension_data` field is determined solely by the value of the
-`extension_type` field. Each document that registers a new `extension_type` must
-describe how to interpret the corresponding `extension_data`.  This document
-does not define any extensions types, either for SCTs or STHs, but establishes a
-registry for future values in {{extension_types}}.
 
 `timestamp` is the NTP Time [RFC5905] at which the certificate or precertificate
 was accepted by the log, measured in milliseconds since the epoch (January 1,
@@ -756,7 +761,7 @@ which encapsulates a `SignedCertificateTimestampDataV2` structure:
     struct {
         LogID log_id;
         uint64 timestamp;
-        SctExtension sct_extensions<0..2^16-1>;
+        Extension sct_extensions<0..2^16-1>;
         digitally-signed struct {
             TransItem timestamped_entry;
         } signature;
@@ -815,7 +820,7 @@ extension that it does not understand, it SHOULD ignore that extension.
 Furthermore, an implementation MAY choose to ignore any extension(s) that it
 does understand.
 
-## Signed Tree Head (STH)    {#STH}
+## Signed Tree Head (STH)    {#sth}
 
 Periodically each log SHOULD sign its current tree head information (see
 {{tree_head}}) to produce an STH. When a client requests a log's latest STH (see
@@ -1499,7 +1504,7 @@ Maximum Chain Length:
 
 STH Frequency Count:
 : The maximum number of STHs the log may produce in any period equal to the
-  `Maximum Merge Delay` (see {{STH}}).
+  `Maximum Merge Delay` (see {{sth}}).
 
 Final STH:
 : If a log has been closed down (i.e., no longer accepts new entries), existing
@@ -1910,23 +1915,24 @@ SCTs and other `TransItem` structures.
 The appointed Expert should review the public specification to ensure that it is
 detailed enough to ensure implementation interoperability.
 
-## Extensions    {#extension_types}
+## Log Artifact Extension Registry    {#log_artifact_extension_registry}
 
-IANA is asked to establish a registry of SCT extensions, named "CT Extension
-Types for SCT", that initially consists of:
+IANA is asked to establish a registry of `ExtensionType` values, named "CT Log
+Artifact Extensions", that initially consists of:
 
 |-----------------+------------+-----+------------------------------------------|
-| Value           | Extension  | Use | Reference / Assignment Policy            |
+| ExtensionType   | Status     | Use | Reference / Assignment Policy            |
 |-----------------+------------+-----+------------------------------------------|
 | 0x0000 - 0xDFFF | Unassigned | n/a | Specification Required and Expert Review |
 | 0xE000 - 0xEFFF | Reserved   | n/a | Experimental Use                         |
 | 0xF000 - 0xFFFF | Reserved   | n/a | Private Use                              |
 |-----------------+------------+-----+------------------------------------------|
 
-The "Use" column should contain the value "SCT" for extensions specified for use
-in Signed Certificate Timestamps, "STH" for extensions specified for use in
-Signed Tree Heads.  If an extension can be used in both types of object, then
-both values should be listed in the "Use" column.
+The "Use" column should contain one or both of the following values:
+
+* "SCT", for extensions specified for use in Signed Certificate Timestamps.
+
+* "STH", for extensions specified for use in Signed Tree Heads.
 
 ### Expert Review guidelines
 
