@@ -222,8 +222,8 @@ community. The major changes are:
   entries now includes only the TBSCertificate (whereas certificate entries in
   [RFC6962] included the entire certificate).
 
-- Extensions: these are now typed and managed by an IANA registry, and they can
-  now appear in STHs as well as SCTs.
+- Log Artifact Extensions: these are now typed and managed by an IANA registry,
+  and they can now appear not only in SCTs but also in STHs.
 
 - API outputs: complete `TransItem` structures are returned, rather than the
   constituent parts of each structure.
@@ -707,10 +707,10 @@ including Signed Certificate Timestamps ({{sct}}) and Signed Tree Heads
 by the value of the `extension_type` field.
 
 This document does not define any extensions, but it does establish a registry
-for future `ExtensionType` values (see {{extension_types}}). Each document that
-registers a new `ExtensionType` must specify the context in which it may be used
-(e.g., SCT, STH, or both) and describe how to interpret the corresponding
-`extension_data`.
+for future `ExtensionType` values (see {{log_artifact_extension_registry}}).
+Each document that registers a new `ExtensionType` must specify the context in
+which it may be used (e.g., SCT, STH, or both) and describe how to interpret the
+corresponding `extension_data`.
 
 ## Merkle Tree Leaves    {#tree_leaves}
 
@@ -1919,13 +1919,13 @@ SCTs and other `TransItem` structures.
 The appointed Expert should review the public specification to ensure that it is
 detailed enough to ensure implementation interoperability.
 
-## Extension Types    {#extension_types}
+## Log Artifact Extension Registry    {#log_artifact_extension_registry}
 
 IANA is asked to establish a registry of `ExtensionType` values, named "CT Log
-Artifact ExtensionTypes", that initially consists of:
+Artifact Extensions", that initially consists of:
 
 |-----------------+------------+-----+------------------------------------------|
-| Value           | Extension  | Use | Reference / Assignment Policy            |
+| ExtensionType   | Status     | Use | Reference / Assignment Policy            |
 |-----------------+------------+-----+------------------------------------------|
 | 0x0000 - 0xDFFF | Unassigned | n/a | Specification Required and Expert Review |
 | 0xE000 - 0xEFFF | Reserved   | n/a | Experimental Use                         |
