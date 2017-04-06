@@ -701,15 +701,15 @@ and may add new `VersionedTransType` values for new or modified data structures.
     } Extension;
 ~~~~~~~~~~~
 
-The `Extension` structure provides a generic extensibility for log entries,
-Signed Certificate Timestamps ({{sct}}), and Signed Tree Heads ({{sth}}). The
-interpretation of the `extension_data` field is determined solely by the value
-of the `extension_type` field.
+The `Extension` structure provides a generic extensibility for log artifacts,
+including Signed Certificate Timestamps ({{sct}}) and Signed Tree Heads
+({{sth}}). The interpretation of the `extension_data` field is determined solely
+by the value of the `extension_type` field.
 
 This document does not define any extensions, but it does establish a registry
 for future `ExtensionType` values (see {{extension_types}}). Each document that
 registers a new `ExtensionType` must specify the context in which it may be used
-(SCT, STH, or both) and describe how to interpret the corresponding
+(e.g., SCT, STH, or both) and describe how to interpret the corresponding
 `extension_data`.
 
 ## Merkle Tree Leaves    {#tree_leaves}
@@ -1921,8 +1921,8 @@ detailed enough to ensure implementation interoperability.
 
 ## Extension Types    {#extension_types}
 
-IANA is asked to establish a registry of `ExtensionType` values, named "CT
-Extension Types", that initially consists of:
+IANA is asked to establish a registry of `ExtensionType` values, named "CT Log
+Artifact ExtensionTypes", that initially consists of:
 
 |-----------------+------------+-----+------------------------------------------|
 | Value           | Extension  | Use | Reference / Assignment Policy            |
