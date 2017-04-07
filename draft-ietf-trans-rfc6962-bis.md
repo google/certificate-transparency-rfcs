@@ -1216,6 +1216,9 @@ Outputs:
   : A base64 encoded `TransItem` of type `consistency_proof_v2`, whose
     `tree_size_1` MUST match the `first` input. If the `sth` output is omitted,
     then `tree_size_2` MUST match the `second` input.
+    If `first` and `second` are equal and correspond to a known STH, the
+    returned consistency proof MUST be empty (a `consistency_path` array with
+    zero elements).
 
   sth:
   : A base64 encoded `TransItem` of type `signed_tree_head_v2`, signed by this
