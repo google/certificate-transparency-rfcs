@@ -1369,10 +1369,6 @@ Outputs:
     : The base64 encoded `TransItem` of type `x509_sct_v2` or `precert_sct_v2`
       corresponding to this log entry.
 
-  sth:
-  : A base64 encoded `TransItem` of type `signed_tree_head_v2`, signed by this
-    log.
-
 Note that this message is not signed \-- the `entries` data can be verified by
 constructing the Merkle Tree Hash corresponding to a retrieved STH. All leaves
 MUST be v2. However, a compliant v2 client MUST NOT construe an unrecognized
@@ -1398,8 +1394,6 @@ sequential beginning with the entry specified by `start`.
 
 Because of skew, it is possible the log server will not have any entries between
 `start` and `end`. In this case it MUST return an empty `entries` array.
-
-In any case, the log server MUST return the latest STH it knows about.
 
 See {{verify_hash}} for an outline of how to use a complete list of `leaf_input`
 entries to verify the `root_hash`.
