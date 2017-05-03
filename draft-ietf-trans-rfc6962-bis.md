@@ -621,7 +621,9 @@ following requirements:
 
 * It MUST be DER encoded.
 
-* `SignedData.encapContentInfo.eContentType` MUST be the OID 1.3.101.78.
+* `SignedData.encapContentInfo.eContentType` MUST be the OID 1.3.6.1.5.TBD.1. [[
+  NOTE TO RFC EDITOR: Please replace TBD with the value assigned by IANA for
+  this specification within this OID arc ]]
 
 * `SignedData.encapContentInfo.eContent` MUST contain a TBSCertificate [RFC5280]
   that will be identical to the TBSCertificate in the issued certificate, except
@@ -1534,8 +1536,8 @@ TLS servers SHOULD ignore the `hash_value` fields of each `CachedObject` of type
 
 ## Transparency Information X.509v3 Extension    {#x509v3_transinfo_extension}
 
-The Transparency Information X.509v3 extension, which has OID 1.3.101.75 and
-SHOULD be non-critical, contains one or more `TransItem` structures in a
+The Transparency Information X.509v3 extension, which has OID 1.3.6.1.5.TBD.1
+and SHOULD be non-critical, contains one or more `TransItem` structures in a
 `TransItemList`. This extension MAY be included in OCSP responses (see
 {{ocsp_transinfo_extension}}) and certificates (see
 {{cert_transinfo_extension}}). Since RFC5280 requires the `extnValue` field (an
@@ -1549,6 +1551,9 @@ wrapped inside an additional OCTET STRING, which is then put into the
 ~~~~~~~~~~~
 
 `TransparencyInformationSyntax` contains a `TransItemList`.
+
+[[ NOTE TO RFC EDITOR: Please replace TBD above with the value assigned by IANA
+for this specification within this OID arc ]]
 
 ### OCSP Response Extension    {#ocsp_transinfo_extension}
 
@@ -1943,42 +1948,32 @@ specified to be used (SCT, STH, or both).
 
 ## Object Identifiers
 
-This document uses object identifiers (OIDs) to identify Log IDs (see
-{{log_id}}), the precertificate CMS `eContentType` (see {{precertificates}}),
-and X.509v3 extensions in certificates (see {{cert_transinfo_extension}}) and
-OCSP responses (see {{ocsp_transinfo_extension}}). The OIDs are defined in an
-arc that was selected due to its short encoding.
+This document uses object identifiers (OIDs) to identify the precertificate CMS
+`eContentType` (see {{precertificates}}), and X.509v3 extensions in certificates
+(see {{cert_transinfo_extension}}) and OCSP responses (see
+{{ocsp_transinfo_extension}}). The OIDs are defined in an arc that was selected
+due to its short encoding.
 
-### Log ID Registry    {#log_id_registry}
+IANA is asked to register a value in the "SMI Security Codes" registry, with the
+following data:
 
-IANA is asked to establish a registry of Log IDs, named "CT Log ID Registry",
-that initially consists of:
+|---------+-------+---------------------------------------------+------------|
+| Decimal | Name  | Description                                 | References |
+|---------+-------+---------------------------------------------+------------|
+| TBD     | trans | Objects related to certificate transparency | RFC XXXX   |
+|---------+-------+---------------------------------------------+------------|
 
-|-------------------------------+------------+---------------------------------------|
-| Value                         | Log        | Reference / Assignment Policy         |
-|-------------------------------+------------+---------------------------------------|
-| 1.3.101.8192 - 1.3.101.16383  | Unassigned | Metadata Required and Expert Review   |
-| 1.3.101.80.0 - 1.3.101.80.127 | Unassigned | Metadata Required and Expert Review   |
-| 1.3.101.80.128 - 1.3.101.80.* | Unassigned | First Come First Served               |
-|-------------------------------+------------+---------------------------------------|
+IANA is also asked to establish a registry of values within this OID arc, named
+"CT OID Registry".  The initial contents of this registry are as follows:
 
-All OIDs in the range from 1.3.101.8192 to 1.3.101.16383 have been reserved.
-This is a limited resource of 8,192 OIDs, each of which has an encoded length of
-4 octets.
+|---------+-----------+----------------------------------------+------------|
+| Decimal | Name      | Description                            | References |
+|---------+-----------+----------------------------------------+------------|
+| 1       | precert   | Precertificate content type            | RFC XXXX   |
+| 2       | transinfo | TransInfo certificate / OCSP extension | RFC XXXX   |
+|---------+-----------+----------------------------------------+------------|
 
-The 1.3.101.80 arc has been delegated. This is an unlimited resource, but only
-the 128 OIDs from 1.3.101.80.0 to 1.3.101.80.127 have an encoded length of only
-4 octets.
-
-Each application for the allocation of a Log ID should be accompanied by all of
-the required metadata (except for the Log ID) listed in {{metadata}}.
-
-### Expert Review guidelines
-
-Since the Log IDs with the shortest encodings are a limited resource, the
-appointed Expert should review the submitted metadata and judge whether or not
-the applicant is requesting a Log ID in good faith (with the intention of
-actually running a CT log that will be identified by the allocated Log ID).
+This registry is to be governed by a Specification Required policy.
 
 # Security Considerations
 
@@ -2069,9 +2064,6 @@ Hoffman, Jeffrey Hutzelman, Kat Joyce, Stephen Kent, SM, Alexey Melnikov, Linus
 Nordberg, Chris Palmer, Trevor Perrin, Pierre Phaneuf, Eric Rescorla, Melinda
 Shore, Ryan Sleevi, Martin Smith, Carl Wallace and Paul Wouters for their
 valuable contributions.
-
-A big thank you to Symantec for kindly donating the OIDs from the 1.3.101 arc
-that are used in this document.
 
 --- back
 
