@@ -602,7 +602,7 @@ it available in the log), it MAY validate the SCT.
 
 ## Certificates
 
-Any entity can submit a certificate ({{add-chain}}) to a log. Since it is
+Any entity can submit a certificate ({{add-entry}}) to a log. Since it is
 anticipated that TLS clients will reject certificates that are not logged, it is
 expected that certificate issuers and subjects will be strongly motivated to
 submit them.
@@ -610,7 +610,7 @@ submit them.
 ## Precertificates    {#precertificates}
 
 CAs may preannounce a certificate prior to issuance by submitting a
-precertificate ({{add-chain}}) that the log can use to create an entry that
+precertificate ({{add-entry}}) that the log can use to create an entry that
 will be valid against the issued certificate. The CA MAY incorporate the
 returned SCT in the issued certificate. One example of where the returned SCT is
 not incorporated in the issued certificate is when a CA sends the precertificate
@@ -1117,9 +1117,9 @@ modification at a later date. Note that as per [RFC7231], in the case of a 503
 response the log MAY include a `Retry-After:` header in order to request a
 minimum time for the client to wait before retrying the request.
 
-## Add Chain to Log    {#add-chain}
+## Add Entry to Log    {#add-entry}
 
-POST https://\<log server>/ct/v2/add-chain
+POST https://\<log server>/ct/v2/add-entry
 
 Inputs:
 
