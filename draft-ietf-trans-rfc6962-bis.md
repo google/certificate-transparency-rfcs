@@ -1196,6 +1196,8 @@ Inputs:
     first and so on to the last, which either is, or is certified by, an
     accepted trust anchor.
 
+Either `certificate` or `precertificate` needs to be supplied.
+
 Outputs:
 
 : sct:
@@ -1212,6 +1214,7 @@ Error codes:
 | bad chain             | The alleged chain is not actually a chain of certificates.                                        |
 | bad certificate       | One or more certificates in the chain are not valid (e.g., not properly encoded).                 |
 | ambiguous submission  | Both a certificate and a precertificate were submitted simultaneously.                            |
+| missing submission    | Neither a certificate nor a precertificate were submitted.                                        |
 | shutdown              | The log has ceased operation and is not accepting new submissions.                                |
 |-----------------------+---------------------------------------------------------------------------------------------------|
 
