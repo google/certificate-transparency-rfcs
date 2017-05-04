@@ -76,6 +76,7 @@ informative:
   RFC5226:
   RFC6962:
   RFC6979:
+  RFC7320:
   I-D.ietf-trans-gossip:
   CrosbyWallach:
     target: http://static.usenix.org/event/sec09/tech/full_papers/crosby.pdf
@@ -1056,9 +1057,8 @@ in the individual messages.
 Clients are configured with a base URL for a log and construct URLs for
 requests by appending suffixes to this base URL.  This structure places some
 degree of restriction on how log operators can deploy these services, as noted
-in {{?BCP190}}.  However, operational experience with version 1 of this
+in [RFC7320].  However, operational experience with version 1 of this
 protocol has not indicated that these restrictions are a problem in practice.
-This protocol can be updated to allow more flexibility if it is needed.
 
 Note that JSON objects and URL parameters may contain fields not specified here.
 These extra fields should be ignored.
