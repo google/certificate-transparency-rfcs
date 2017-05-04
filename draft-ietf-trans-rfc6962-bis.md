@@ -255,8 +255,8 @@ community. The major changes are:
 ## Merkle Hash Trees    {#mht}
 
 Logs use a binary Merkle Hash Tree for efficient auditing. The hashing algorithm
-used by each log is expected to be specified as part of the metadata relating to
-that log (see {{metadata}}). We have established a registry of acceptable
+used by each log is expected to be specified as part of the parameters relating to
+that log (see {{log_parameters}}). We have established a registry of acceptable
 algorithms, see {{hash_algorithms}}. The hashing algorithm in use is referred to
 as HASH throughout this document and the size of its output in bytes as
 HASH_SIZE. The input to the Merkle Tree Hash is a list of data entries; these
@@ -663,7 +663,7 @@ new entries to its Merkle Tree and sign the root of the tree.
 Log operators SHOULD NOT impose any conditions on retrieving or sharing data
 from the log.
 
-## Log Parameters
+## Log Parameters    {#log_parameters}
 
 A log is defined by a collection of parameters, which clients of the log use to
 communicate with the log and verify objects that the log produces.
@@ -729,7 +729,7 @@ accepted trust anchor. Logs MUST also reject precertificates that do not conform
 to the requirements in {{precertificates}}.
 
 Logs SHOULD limit the length of chain they will accept. The maximum chain length
-is specified in the log's metadata.
+is specified as one of the log's parameters.
 
 The log SHALL allow retrieval of its list of accepted trust anchors (see
 {{get-anchors}}), each of which is a root or intermediate CA certificate. This
@@ -783,11 +783,12 @@ preceding it. The final certificate MUST be a trust anchor accepted by the log.
 
 ## Log ID    {#log_id}
 
-Each log is identified by an OID, which is specified in the log's metadata and
-which MUST NOT be used to identify any other log. A log's operator MUST either
-allocate the OID themselves or request an OID from the Log ID Registry (see
-{{log_id_registry}}). Various data structures include the DER encoding of this
-OID, excluding the ASN.1 tag and length bytes, in an opaque vector:
+Each log is identified by an OID, which is specified as one of the log's
+parameters and which MUST NOT be used to identify any other log. A log's
+operator MUST either allocate the OID themselves or request an OID from the Log
+ID Registry (see {{log_id_registry}}). Various data structures include the DER
+encoding of this OID, excluding the ASN.1 tag and length bytes, in an opaque
+vector:
 
 ~~~~~~~~~~~
     opaque LogID<2..127>;
@@ -878,7 +879,7 @@ The leaves of a log's Merkle Tree correspond to the log's entries (see
 structure of type `x509_entry_v2` or `precert_entry_v2`, which encapsulates a
 `TimestampedCertificateEntryDataV2` structure. Note that leaf hashes are
 calculated as HASH(0x00 || TransItem), where the hashing algorithm is specified
-in the log's metadata.
+as one of the log's parameters.
 
 ~~~~~~~~~~~
     opaque TBSCertificate<1..2^24-1>;
@@ -987,7 +988,7 @@ Periodically each log SHOULD sign its current tree head information (see
 {{get-sth}}), the log MUST return an STH that is no older than the log's MMD.
 However, STHs could be used to mark individual clients (by producing a new one
 for each query), so logs MUST NOT produce them more frequently than is declared
-in their metadata. In general, there is no need to produce a new STH unless
+in their parameters. In general, there is no need to produce a new STH unless
 there are new entries in the log; however, in the unlikely event that it
 receives no new submissions during an MMD period, the log SHALL sign the same
 Merkle Tree Hash with a fresh timestamp.
@@ -1067,7 +1068,7 @@ inclusion proof.
 `inclusion_path` is a vector of Merkle Tree nodes proving the inclusion of the
 chosen certificate or precertificate.
 
-## Shutting down a log
+## Shutting down a log   {#log_shutdown}
 
 Log operators may decide to shut down a log for various reasons, such as
 deprecation of the signature algorithm. If there are entries in the log for
@@ -1081,8 +1082,8 @@ To avoid that, the following actions are suggested:
   for such requests).
 
 * Once MMD from the last accepted submission has passed and all pending
-  submissions are incorporated, issue a final STH and publish it as a part of
-  the log's metadata. Having an STH with a timestamp that is after the MMD has
+  submissions are incorporated, issue a final STH and publish it as one of the
+  log's parameters. Having an STH with a timestamp that is after the MMD has
   passed from the last SCT issuance allows clients to audit this log regularly
   without special handling for the final STH. At this point the log's private
   key is no longer needed and can be destroyed.
@@ -1110,7 +1111,7 @@ protocol has not indicated that these restrictions are a problem in practice.
 Note that JSON objects and URL parameters may contain fields not specified here.
 These extra fields should be ignored.
 
-The \<log server> prefix, which is part of the log's metadata, MAY include a
+The \<log server> prefix, which is one of the log's parameters, MAY include a
 path as well as a server name and a port.
 
 In practice, log servers may include multiple front-end machines. Since it is
@@ -1631,10 +1632,10 @@ here some typical clients and how they should function. Any inconsistency may be
 used as evidence that a log has not behaved correctly, and the signatures on the
 data structures prevent the log from denying that misbehavior.
 
-All clients need various metadata in order to communicate with logs and verify
-their responses. This metadata is described below, but note that this document
-does not describe how the metadata is obtained, which is implementation
-dependent (see, for example, [Chromium.Policy]).
+All clients need various parameters in order to communicate with logs and verify
+their responses. These parameters are described in {{log_parameters}}, but note
+that this document does not describe how the parameters are obtained, which is
+implementation-dependent (see, for example, [Chromium.Policy]).
 
 Clients should somehow exchange STHs they see, or make them available for
 scrutiny, in order to ensure that they all have a consistent view. The exact
@@ -1669,7 +1670,7 @@ and v2 SCTs to co-exist in a certificate (See {{v1_coexistence}}).
 
 In addition to normal validation of the server certificate and its chain, TLS
 clients SHOULD validate each received SCT for which they have the corresponding
-log's metadata. To validate an SCT, a TLS client computes the signature input
+log's parameters. To validate an SCT, a TLS client computes the signature input
 from the SCT data and the server certificate, and then verifies the signature
 using the corresponding log's public key. TLS clients MUST NOT consider valid
 any SCT whose timestamp is in the future.
@@ -1689,7 +1690,7 @@ provided STH. The client then has to verify consistency between the provided STH
 and an STH it knows about, which is less sensitive from a privacy perspective.
 
 TLS clients SHOULD also verify each received inclusion proof (see
-{{verify_inclusion}}) for which they have the corresponding log's metadata, to
+{{verify_inclusion}}) for which they have the corresponding log's parameters, to
 audit the log and gain confidence that the certificate is logged.
 
 If the TLS client holds an STH that predates the SCT, it MAY, in the process of
@@ -1835,8 +1836,8 @@ data structures support it and would significantly complicate client
 implementation, which is why it is not supported by this document.
 
 If it should become necessary to deprecate an algorithm used by a live log, then
-the log should be frozen as specified in {{metadata}} and a new log should be
-started. Certificates in the frozen log that have not yet expired and require
+the log should be frozen as specified in {{log_shutdown}} and a new log should
+be started. Certificates in the frozen log that have not yet expired and require
 new SCTs SHOULD be submitted to the new log and the SCTs from that log used
 instead.
 
@@ -1972,8 +1973,8 @@ that initially consists of:
 |-------------------------------+------------+---------------------------------------|
 | Value                         | Log        | Reference / Assignment Policy         |
 |-------------------------------+------------+---------------------------------------|
-| 1.3.101.8192 - 1.3.101.16383  | Unassigned | Metadata Required and Expert Review   |
-| 1.3.101.80.0 - 1.3.101.80.127 | Unassigned | Metadata Required and Expert Review   |
+| 1.3.101.8192 - 1.3.101.16383  | Unassigned | Parameters Required and Expert Review |
+| 1.3.101.80.0 - 1.3.101.80.127 | Unassigned | Parameters Required and Expert Review |
 | 1.3.101.80.128 - 1.3.101.80.* | Unassigned | First Come First Served               |
 |-------------------------------+------------+---------------------------------------|
 
@@ -1986,12 +1987,12 @@ the 128 OIDs from 1.3.101.80.0 to 1.3.101.80.127 have an encoded length of only
 4 octets.
 
 Each application for the allocation of a Log ID should be accompanied by all of
-the required metadata (except for the Log ID) listed in {{metadata}}.
+the required parameters (except for the Log ID) listed in {{log_parameters}}.
 
 ### Expert Review guidelines
 
 Since the Log IDs with the shortest encodings are a limited resource, the
-appointed Expert should review the submitted metadata and judge whether or not
+appointed Expert should review the submitted parameters and judge whether or not
 the applicant is requesting a Log ID in good faith (with the intention of
 actually running a CT log that will be identified by the allocated Log ID).
 
