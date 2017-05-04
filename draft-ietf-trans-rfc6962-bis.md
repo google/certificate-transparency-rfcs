@@ -738,23 +738,9 @@ preceding it. The final certificate MUST be a trust anchor accepted by the log.
 
 ## Log ID    {#log_id}
 
-Each log is identified by an OID, which is specified in the log's metadata and
-which MUST NOT be used to identify any other log. A log's operator MUST either
-allocate the OID themselves or request an OID from the Log ID Registry (see
-{{log_id_registry}}). Various data structures include the DER encoding of this
-OID, excluding the ASN.1 tag and length bytes, in an opaque vector:
-
-~~~~~~~~~~~
-    opaque LogID<2..127>;
-~~~~~~~~~~~
-
-Note that the ASN.1 length and the opaque vector length are identical in size (1
-byte) and value, so the DER encoding of the OID can be reproduced simply by
-prepending an OBJECT IDENTIFIER tag (0x06) to the opaque vector length and
-contents.
-
-OIDs used to identify logs are limited such that the DER encoding of their value
-is less than or equal to 127 octets.
+Each log is identified by a 32-bit log ID.  These IDs are allocated from a
+registry managed by IANA.  Log operators that do not wish to register a public
+log ID may select one from the private use range listed in {{log_id_registry}}.
 
 ## TransItem Structure
 
@@ -874,7 +860,7 @@ which encapsulates a `SignedCertificateTimestampDataV2` structure:
 
 ~~~~~~~~~~~
     struct {
-        LogID log_id;
+        uint32 log_id;
         uint64 timestamp;
         Extension sct_extensions<0..2^16-1>;
         digitally-signed struct {
@@ -952,7 +938,7 @@ encapsulates a `SignedTreeHeadDataV2` structure:
 
 ~~~~~~~~~~~
     struct {
-        LogID log_id;
+        uint32 log_id;
         TreeHeadDataV2 tree_head;
         digitally-signed struct {
             TreeHeadDataV2 tree_head;
@@ -979,7 +965,7 @@ encapsulates a `ConsistencyProofDataV2` structure:
 
 ~~~~~~~~~~~
     struct {
-        LogID log_id;
+        uint32 log_id;
         uint64 tree_size_1;
         uint64 tree_size_2;
         NodeHash consistency_path<1..2^16-1>;
@@ -1004,7 +990,7 @@ encapsulates an `InclusionProofDataV2` structure:
 
 ~~~~~~~~~~~
     struct {
-        LogID log_id;
+        uint32 log_id;
         uint64 tree_size;
         uint64 leaf_index;
         NodeHash inclusion_path<1..2^16-1>;
@@ -1856,6 +1842,20 @@ point at this document.
 IANA is asked to add an entry for `ct_compliant(TBD)` to the "TLS
 CachedInformationType Values" registry that was defined in [RFC7924].
 
+## Log ID Registry {#log_id_registry}
+
+IANA is asked to establish a registry of Log IDs, named "CT Log ID Registry".
+Code points in this registry are four-octet values, assigned according to a
+First Come First Served policy.  The ranges indicated below are reserved for
+experimental and private use.
+
+|-------------------------+------------------+---------|
+| Value                   | Log Name         | Log URL |
+|-------------------------+------------------+---------|
+| 0xFE000000 - 0xFEFFFFFF | Experimental Use | N/A     |
+| 0xFF000000 - 0xFFFFFFFF | Private Use      | N/A     |
+|-------------------------+------------------+---------|
+
 ## Hash Algorithms    {#hash_algorithms}
 
 IANA is asked to establish a registry of hash algorithm values, named
@@ -1955,45 +1955,6 @@ The appointed Expert should review the public specification to ensure that it is
 detailed enough to ensure implementation interoperability.  The Expert should
 also verify that the extension is appropriate to the contexts in which it is
 specified to be used (SCT, STH, or both).
-
-## Object Identifiers
-
-This document uses object identifiers (OIDs) to identify Log IDs (see
-{{log_id}}), the precertificate CMS `eContentType` (see {{precertificates}}),
-and X.509v3 extensions in certificates (see {{cert_transinfo_extension}}) and
-OCSP responses (see {{ocsp_transinfo_extension}}). The OIDs are defined in an
-arc that was selected due to its short encoding.
-
-### Log ID Registry    {#log_id_registry}
-
-IANA is asked to establish a registry of Log IDs, named "CT Log ID Registry",
-that initially consists of:
-
-|-------------------------------+------------+---------------------------------------|
-| Value                         | Log        | Reference / Assignment Policy         |
-|-------------------------------+------------+---------------------------------------|
-| 1.3.101.8192 - 1.3.101.16383  | Unassigned | Metadata Required and Expert Review   |
-| 1.3.101.80.0 - 1.3.101.80.127 | Unassigned | Metadata Required and Expert Review   |
-| 1.3.101.80.128 - 1.3.101.80.* | Unassigned | First Come First Served               |
-|-------------------------------+------------+---------------------------------------|
-
-All OIDs in the range from 1.3.101.8192 to 1.3.101.16383 have been reserved.
-This is a limited resource of 8,192 OIDs, each of which has an encoded length of
-4 octets.
-
-The 1.3.101.80 arc has been delegated. This is an unlimited resource, but only
-the 128 OIDs from 1.3.101.80.0 to 1.3.101.80.127 have an encoded length of only
-4 octets.
-
-Each application for the allocation of a Log ID should be accompanied by all of
-the required metadata (except for the Log ID) listed in {{metadata}}.
-
-### Expert Review guidelines
-
-Since the Log IDs with the shortest encodings are a limited resource, the
-appointed Expert should review the submitted metadata and judge whether or not
-the applicant is requesting a Log ID in good faith (with the intention of
-actually running a CT log that will be identified by the allocated Log ID).
 
 # Security Considerations
 
