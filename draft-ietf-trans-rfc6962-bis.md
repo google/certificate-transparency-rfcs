@@ -1198,6 +1198,7 @@ Error codes:
 | unknown anchor  | The last certificate in the chain both is not, and is not certified by, an accepted trust anchor. |
 | bad chain       | The alleged chain is not actually a chain of certificates.                                        |
 | bad certificate | One or more certificates in the chain are not valid (e.g., not properly encoded).                 |
+| try later       | The log is operational but is temporarily unable to accept new submissions.                       |
 | shutdown        | The log has ceased operation and is not accepting new submissions.                                |
 |-----------------+---------------------------------------------------------------------------------------------------|
 
