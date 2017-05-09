@@ -1708,13 +1708,6 @@ considered compliant by TLS clients.
 A TLS client MUST NOT evaluate compliance if it did not send both the
 `transparency_info` and `status_request` TLS extensions in the ClientHello.
 
-### TLS Feature Extension
-
-If any certificate in a chain includes the transparency_info
-({{tls_transinfo_extension}}) TLS extension identifier in the TLS Feature
-[RFC7633] certificate extension, then CT compliance (using any of the mechanisms
-from {{tls_servers}}) is required.
-
 ### cached_info TLS Extension    {#tls_cachedinfo_extension}
 
 If a TLS client uses the `cached_info` TLS extension ([RFC7924]) to indicate 1
@@ -1727,8 +1720,8 @@ byte long with the value 0.
 
 If a TLS server presents a certificate chain that is non-compliant, and the use
 of a compliant certificate is mandated by an explicit security policy,
-application protocol specification, the TLS Feature extension or any other
-means, the TLS client MUST refuse the connection.
+application protocol specification or any other means, the TLS client MUST
+refuse the connection.
 
 ## Monitor    {#monitor}
 
