@@ -256,14 +256,14 @@ community. The major changes are:
 
 ### Definition of the Merkle Tree    {#mht_definition}
 
-Logs use a binary Merkle Hash Tree for efficient auditing. The hash algorithm
-used by each log is expected to be specified as part of the parameters relating to
-that log (see {{log_parameters}}). We have established a registry of acceptable
-algorithms, see {{hash_algorithms}}. The hash algorithm in use is referred to
-as HASH throughout this document and the size of its output in bytes as
-HASH_SIZE. The input to the Merkle Tree Hash is a list of data entries; these
-entries will be hashed to form the leaves of the Merkle Hash Tree. The output is
-a single HASH_SIZE Merkle Tree Hash. Given an ordered list of n inputs, D\_n =
+The log uses a binary Merkle Hash Tree for efficient auditing. The hash
+algorithm used is one of the log's parameters (see {{log_parameters}}).
+We have established a registry of acceptable hash algorithms (see
+{{hash_algorithms}}). Throughout this document, the hash algorithm in use is
+referred to as HASH and the size of its output in bytes as HASH_SIZE. The input
+to the Merkle Tree Hash is a list of data entries; these entries will be
+hashed to form the leaves of the Merkle Hash Tree. The output is a single
+HASH_SIZE Merkle Tree Hash. Given an ordered list of n inputs, D\_n =
 {d\[0], d\[1], ..., d\[n-1]}, the Merkle Tree Hash (MTH) is thus defined as
 follows:
 
