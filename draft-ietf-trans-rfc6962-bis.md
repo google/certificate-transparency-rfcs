@@ -1626,6 +1626,13 @@ A certification authority MAY include a Transparency Information X.509v3
 extension in a certificate. Any included SCTs or inclusion proofs MUST be for a
 precertificate that corresponds to this certificate.
 
+## TLS Feature X.509v3 Extension
+
+A certification authority SHOULD NOT issue any certificate that identifies the
+`transparency_info` TLS extension in a TLS feature extension [RFC7633], because
+TLS servers are not required to support the `transparency_info` TLS extension in
+order to participate in CT (see {{tls_servers}}).
+
 # Clients
 
 There are various different functions clients of logs might perform. We describe
