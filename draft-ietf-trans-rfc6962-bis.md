@@ -256,10 +256,10 @@ community. The major changes are:
 
 ### Definition of the Merkle Tree    {#mht_definition}
 
-Logs use a binary Merkle Hash Tree for efficient auditing. The hashing algorithm
+Logs use a binary Merkle Hash Tree for efficient auditing. The hash algorithm
 used by each log is expected to be specified as part of the parameters relating to
 that log (see {{log_parameters}}). We have established a registry of acceptable
-algorithms, see {{hash_algorithms}}. The hashing algorithm in use is referred to
+algorithms, see {{hash_algorithms}}. The hash algorithm in use is referred to
 as HASH throughout this document and the size of its output in bytes as
 HASH_SIZE. The input to the Merkle Tree Hash is a list of data entries; these
 entries will be hashed to form the leaves of the Merkle Hash Tree. The output is
@@ -879,7 +879,7 @@ The leaves of a log's Merkle Tree correspond to the log's entries (see
 {{log_entries}}). Each leaf is the leaf hash ({{mht}}) of a `TransItem`
 structure of type `x509_entry_v2` or `precert_entry_v2`, which encapsulates a
 `TimestampedCertificateEntryDataV2` structure. Note that leaf hashes are
-calculated as HASH(0x00 || TransItem), where the hashing algorithm is specified
+calculated as HASH(0x00 || TransItem), where the hash algorithm is specified
 as one of the log's parameters.
 
 ~~~~~~~~~~~
