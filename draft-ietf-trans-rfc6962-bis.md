@@ -656,10 +656,15 @@ previously logged as a precertificate, then the precertificate's SCT of type
 `precert_sct_v2` would not be appropriate; instead, a fresh SCT of type
 `x509_sct_v2` should be generated.
 
-An SCT is the log's promise to incorporate the submitted entry in its Merkle
-Tree no later than a fixed amount of time, known as the Maximum Merge Delay
-(MMD), after the issuance of the SCT. Periodically, the log MUST append all its
-new entries to its Merkle Tree and sign the root of the tree.
+An SCT is the log's promise to append to its Merkle Tree an entry for the
+accepted submission. Upon producing an SCT, the log MUST fulfil this promise by
+performing the following actions within a fixed amount of time known as the
+Maximum Merge Delay (MMD), which is one of the log's parameters (see
+{{log_parameters}}):
+* Allocate a tree index to the entry representing the accepted submission.
+* Calculate the root of the tree.
+* Sign the root of the tree (see {{sth}}).
+The log may append multiple entries before signing the root of the tree.
 
 Log operators SHOULD NOT impose any conditions on retrieving or sharing data
 from the log.
