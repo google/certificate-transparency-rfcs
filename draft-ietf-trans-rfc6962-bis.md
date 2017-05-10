@@ -666,8 +666,8 @@ from the log.
 
 ## Log Parameters    {#log_parameters}
 
-A log is defined by a collection of parameters, which clients of the log use to
-communicate with the log and verify objects that the log produces.
+A log is defined by a collection of parameters, which are used by clients to
+communicate with the log and to verify log artifacts.
 
 Base URL:
 : The URL to substitute for \<log server> in {{client_messages}}.
