@@ -256,14 +256,14 @@ community. The major changes are:
 
 ### Definition of the Merkle Tree    {#mht_definition}
 
-Logs use a binary Merkle Hash Tree for efficient auditing. The hashing algorithm
-used by each log is expected to be specified as part of the parameters relating to
-that log (see {{log_parameters}}). We have established a registry of acceptable
-algorithms, see {{hash_algorithms}}. The hashing algorithm in use is referred to
-as HASH throughout this document and the size of its output in bytes as
-HASH_SIZE. The input to the Merkle Tree Hash is a list of data entries; these
-entries will be hashed to form the leaves of the Merkle Hash Tree. The output is
-a single HASH_SIZE Merkle Tree Hash. Given an ordered list of n inputs, D\_n =
+The log uses a binary Merkle Hash Tree for efficient auditing. The hash
+algorithm used is one of the log's parameters (see {{log_parameters}}).
+We have established a registry of acceptable hash algorithms (see
+{{hash_algorithms}}). Throughout this document, the hash algorithm in use is
+referred to as HASH and the size of its output in bytes as HASH_SIZE. The input
+to the Merkle Tree Hash is a list of data entries; these entries will be
+hashed to form the leaves of the Merkle Hash Tree. The output is a single
+HASH_SIZE Merkle Tree Hash. Given an ordered list of n inputs, D\_n =
 {d\[0], d\[1], ..., d\[n-1]}, the Merkle Tree Hash (MTH) is thus defined as
 follows:
 
@@ -671,8 +671,8 @@ from the log.
 
 ## Log Parameters    {#log_parameters}
 
-A log is defined by a collection of parameters, which clients of the log use to
-communicate with the log and verify objects that the log produces.
+A log is defined by a collection of parameters, which are used by clients to
+communicate with the log and to verify log artifacts.
 
 Base URL:
 : The URL to substitute for \<log server> in {{client_messages}}.
@@ -735,7 +735,7 @@ accepted trust anchor. Logs MUST also reject precertificates that do not conform
 to the requirements in {{precertificates}}.
 
 Logs SHOULD limit the length of chain they will accept. The maximum chain length
-is specified as one of the log's parameters.
+is one of the log's parameters (see {{log_parameters}}).
 
 The log SHALL allow retrieval of its list of accepted trust anchors (see
 {{get-anchors}}), each of which is a root or intermediate CA certificate. This
@@ -789,12 +789,12 @@ preceding it. The final certificate MUST be a trust anchor accepted by the log.
 
 ## Log ID    {#log_id}
 
-Each log is identified by an OID, which is specified as one of the log's
-parameters and which MUST NOT be used to identify any other log. A log's
-operator MUST either allocate the OID themselves or request an OID from the Log
-ID Registry (see {{log_id_registry}}). Various data structures include the DER
-encoding of this OID, excluding the ASN.1 tag and length bytes, in an opaque
-vector:
+Each log is identified by an OID, which is one of the log's parameters (see
+{{log_parameters}}) and which MUST NOT be used to identify any other log. A
+log's operator MUST either allocate the OID themselves or request an OID from
+the Log ID Registry (see {{log_id_registry}}). Various data structures include
+the DER encoding of this OID, excluding the ASN.1 tag and length bytes, in an
+opaque vector:
 
 ~~~~~~~~~~~
     opaque LogID<2..127>;
@@ -884,8 +884,8 @@ The leaves of a log's Merkle Tree correspond to the log's entries (see
 {{log_entries}}). Each leaf is the leaf hash ({{mht}}) of a `TransItem`
 structure of type `x509_entry_v2` or `precert_entry_v2`, which encapsulates a
 `TimestampedCertificateEntryDataV2` structure. Note that leaf hashes are
-calculated as HASH(0x00 || TransItem), where the hashing algorithm is specified
-as one of the log's parameters.
+calculated as HASH(0x00 || TransItem), where the hash algorithm is one of the
+log's parameters.
 
 ~~~~~~~~~~~
     opaque TBSCertificate<1..2^24-1>;
@@ -992,12 +992,12 @@ does understand.
 Periodically each log SHOULD sign its current tree head information (see
 {{tree_head}}) to produce an STH. When a client requests a log's latest STH (see
 {{get-sth}}), the log MUST return an STH that is no older than the log's MMD.
-However, STHs could be used to mark individual clients (by producing a new one
-for each query), so logs MUST NOT produce them more frequently than is declared
-in their parameters. In general, there is no need to produce a new STH unless
-there are new entries in the log; however, in the unlikely event that it
-receives no new submissions during an MMD period, the log SHALL sign the same
-Merkle Tree Hash with a fresh timestamp.
+However, since STHs could be used to mark individual clients (by producing a new
+STH for each query), a log MUST NOT produce STHs more frequently than its
+parameters declare (see {{log_parameters}}). In general, there is no need to
+produce a new STH unless there are new entries in the log; however, in the event
+that a log does not accept any submissions during an MMD period, the log MUST
+sign the same Merkle Tree Hash with a fresh timestamp.
 
 An STH is a `TransItem` structure of type `signed_tree_head_v2`, which
 encapsulates a `SignedTreeHeadDataV2` structure:
