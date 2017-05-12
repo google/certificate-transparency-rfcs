@@ -1647,7 +1647,7 @@ variety.
 
 ## TLS Client    {#tls_clients}
 
-### Receiving SCTs
+### Receiving SCTs and inclusion proofs
 
 TLS clients receive SCTs alongside or in certificates. TLS clients MUST
 implement all of the three mechanisms by which TLS servers may present SCTs (see
@@ -1688,13 +1688,9 @@ that this will disclose to the log which TLS server the client has been
 communicating with.
 
 Alternatively, if the TLS client has received an inclusion proof (and an STH)
-alongside the SCT, it can proceed to verifying the inclusion proof to the
+alongside the SCT, it SHOULD proceed to verifying the inclusion proof to the
 provided STH. The client then has to verify consistency between the provided STH
 and an STH it knows about, which is less sensitive from a privacy perspective.
-
-TLS clients SHOULD also verify each received inclusion proof (see
-{{verify_inclusion}}) for which they have the corresponding log's parameters, to
-audit the log and gain confidence that the certificate is logged.
 
 If the TLS client holds an STH that predates the SCT, it MAY, in the process of
 auditing, request a new STH from the log ({{get-sth}}), then verify it by
