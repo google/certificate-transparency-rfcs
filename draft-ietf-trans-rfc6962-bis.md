@@ -2013,6 +2013,10 @@ system.
 [I-D.ietf-trans-threat-analysis] provides a more detailed threat analysis of the
 Certificate Transparency architecture.
 
+Note that it may take up to twice the Maximum Merge Delay for a given submission
+to be available to monitors, as a log is required to include the submission in
+the tree within the MMD, but may also serve an STH that's up to MMD old.
+
 ## Misissued Certificates
 
 Misissued certificates that have not been publicly logged, and thus do not have
