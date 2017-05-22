@@ -1892,7 +1892,7 @@ IANA is asked to establish a registry of signature algorithm values, named
 |-------------+--------------------------------------------------------+------------------------------------------|
 | Value       | Signature Algorithm                                    | Reference / Assignment Policy            |
 |-------------+--------------------------------------------------------+------------------------------------------|
-| 0x00        | Deterministic ECDSA (NIST P-256) with HMAC-SHA256      | [RFC6979]                                |
+| 0x00        | ECDSA (NIST P-256) with HMAC-SHA256                    | [RFC6979]                                |
 | 0x01        | RSA (RSASSA-PKCS1-v1_5, key >= 2048 bits) with SHA-256 | [RFC8017]                                |
 | 0x02 - 0xDF | Unassigned                                             | Specification Required and Expert Review |
 | 0xE0 - 0xEF | Reserved                                               | Experimental Use                         |
@@ -1902,9 +1902,7 @@ IANA is asked to establish a registry of signature algorithm values, named
 ### Expert Review guidelines
 
 The appointed Expert should ensure that the proposed algorithm has a public
-specification and is suitable for use as a cryptographic signature algorithm
-that always generates signatures deterministically (for the reasons listed in
-{{deterministic_signatures}}).
+specification and is suitable for use as a cryptographic signature algorithm.
 
 ## VersionedTransTypes    {#versioned_trans_types}
 
@@ -2067,15 +2065,15 @@ the log, proving violation of the append-only property.
 
 ## Deterministic Signatures    {#deterministic_signatures}
 
-Logs are required to use deterministic signatures for the following reasons:
+Logs are encouraged to use deterministic signatures to reduce the risk of
+tracking clients: clients that gossip STHs or report back SCTs can be tracked
+or traced if a log was to produce multiple STHs or SCTs with the same timestamp
+and data but different signatures.
 
-* Using non-deterministic ECDSA with a predictable source of randomness means
-  that each signature can potentially expose the secret material of the signing
-  key.
-
-* Clients that gossip STHs or report back SCTs can be tracked or traced if a log
-  was to produce multiple STHs or SCTs with the same timestamp and data but
-  different signatures.
+Note that deterministic signatures can be provided without the use of a
+signature scheme that's designed for deterministic signing: The signature bytes
+for each SCT or STH could be stored and served when the same certificate is
+submitted or the same STH requested, rather than re-signing the same data.
 
 ## Multiple SCTs    {#offering_multiple_scts}
 
