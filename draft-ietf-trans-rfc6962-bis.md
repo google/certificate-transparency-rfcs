@@ -70,6 +70,12 @@ normative:
     date: 1999-12-24
     seriesinfo:
       "World Wide Web Consortium Recommendation": REC-html401-19991224
+  FIPS186-4:
+    target: http://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.186-4.pdf
+    title: FIPS PUB 186-4
+    author:
+      org: NIST
+    date: 2013-07-01
 
 informative:
   RFC4634:
@@ -1892,7 +1898,8 @@ IANA is asked to establish a registry of signature algorithm values, named
 |-------------+--------------------------------------------------------+------------------------------------------|
 | Value       | Signature Algorithm                                    | Reference / Assignment Policy            |
 |-------------+--------------------------------------------------------+------------------------------------------|
-| 0x00        | ECDSA (NIST P-256) with HMAC-SHA256                    | [RFC6979]                                |
+| 0x00        | ECDSA (NIST P-256) with SHA-256                        | [FIPS186-4]                              |
+| 0x00        | Deterministic ECDSA (NIST P-256) with HMAC-SHA256      | [RFC6979]                                |
 | 0x01        | RSA (RSASSA-PKCS1-v1_5, key >= 2048 bits) with SHA-256 | [RFC8017]                                |
 | 0x02 - 0xDF | Unassigned                                             | Specification Required and Expert Review |
 | 0xE0 - 0xEF | Reserved                                               | Experimental Use                         |
