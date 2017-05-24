@@ -2072,15 +2072,17 @@ the log, proving violation of the append-only property.
 
 ## Deterministic Signatures    {#deterministic_signatures}
 
-Logs are encouraged to use deterministic signatures to reduce the risk of
-tracking clients: clients that gossip STHs or report back SCTs can be tracked
-or traced if a log was to produce multiple STHs or SCTs with the same timestamp
-and data but different signatures.
+Clients that gossip STHs or report back SCTs can be tracked or traced if a log
+produces multiple STHs or SCTs with the same timestamp and data but different
+signatures.
+Logs SHOULD mitigate this risk by either:
 
-Note that deterministic signatures can be provided without the use of a
-signature scheme that's designed for deterministic signing: The signature bytes
-for each SCT or STH could be stored and served when the same certificate is
-submitted or the same STH requested, rather than re-signing the same data.
+- Using deterministic signature schemes, or
+
+- Producing no more than one SCT for each distinct submission and no more than one
+STH for each distinct tree_size. Each of these SCTs and STHs can be stored by
+the log and served to other clients that submit the same certificate or request
+the same STH.
 
 ## Multiple SCTs    {#offering_multiple_scts}
 
