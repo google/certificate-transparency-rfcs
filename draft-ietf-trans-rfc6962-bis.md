@@ -655,7 +655,7 @@ When it receives and accepts a valid submission, the log MUST return an SCT that
 corresponds to the submitted certificate or precertificate. If the log has
 previously seen this valid submission, it SHOULD return the same SCT as it
 returned before (to reduce the ability to track clients as described in
-{{deterministic_signatures}}). If different SCTs are produced for the same
+{{prevent_tracking_clients}}). If different SCTs are produced for the same
 submission, multiple log entries will have to be created, one for each SCT (as
 the timestamp is a part of the leaf structure). Note that if a certificate was
 previously logged as a precertificate, then the precertificate's SCT of type
@@ -2070,7 +2070,7 @@ issued too closely together, proving violation of the STH issuance rate limit,
 or an STH with a root hash that does not match the one calculated from a copy of
 the log, proving violation of the append-only property.
 
-## Deterministic Signatures    {#deterministic_signatures}
+## Preventing Tracking Clients    {#prevent_tracking_clients}
 
 Clients that gossip STHs or report back SCTs can be tracked or traced if a log
 produces multiple STHs or SCTs with the same timestamp and data but different
