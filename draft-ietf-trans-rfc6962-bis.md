@@ -610,7 +610,7 @@ it available in the log), it MAY validate the SCT.
 
 ## Certificates
 
-Any entity can submit a certificate ({{add-chain}}) to a log. Since it is
+Any entity can submit a certificate ({{add-entry}}) to a log. Since it is
 anticipated that TLS clients will reject certificates that are not logged, it is
 expected that certificate issuers and subjects will be strongly motivated to
 submit them.
@@ -618,7 +618,7 @@ submit them.
 ## Precertificates    {#precertificates}
 
 CAs may preannounce a certificate prior to issuance by submitting a
-precertificate ({{add-pre-chain}}) that the log can use to create an entry that
+precertificate ({{add-entry}}) that the log can use to create an entry that
 will be valid against the issued certificate. The CA MAY incorporate the
 returned SCT in the issued certificate. One example of where the returned SCT is
 not incorporated in the issued certificate is when a CA sends the precertificate
@@ -1184,34 +1184,45 @@ modification at a later date. Note that as per [RFC7231], in the case of a 503
 response the log MAY include a `Retry-After:` header in order to request a
 minimum time for the client to wait before retrying the request.
 
-## Add Chain to Log    {#add-chain}
+## Add Entry to Log    {#add-entry}
 
-POST https://\<log server>/ct/v2/add-chain
+POST https://\<log server>/ct/v2/add-entry
 
 Inputs:
 
-: chain:
-  : An array of base64 encoded certificates. The first element is the
-    certificate for which the submitter desires an SCT; the second certifies the
+: precertificate:
+  : The base64 encoded precertificate.
+
+  certificate:
+  : The base64 encoded certificate.
+
+  chain:
+  : An array of base64 encoded CA certificates. The first element is the
+    signer of the certificate or precertificate; the second certifies the
     first and so on to the last, which either is, or is certified by, an
     accepted trust anchor.
+
+Either `certificate` or `precertificate` needs to be supplied.
 
 Outputs:
 
 : sct:
-  : A base64 encoded `TransItem` of type `x509_sct_v2`, signed by this log, that
-    corresponds to the submitted certificate.
+  : A base64 encoded `TransItem` of type `x509_sct_v2` or `precert_sct_v2`,
+    signed by this log, that corresponds to the submitted certificate or
+    precertificate.
 
 Error codes:
 
-|-----------------+---------------------------------------------------------------------------------------------------|
-| Error Code      | Meaning                                                                                           |
-|-----------------+---------------------------------------------------------------------------------------------------|
-| unknown anchor  | The last certificate in the chain both is not, and is not certified by, an accepted trust anchor. |
-| bad chain       | The alleged chain is not actually a chain of certificates.                                        |
-| bad certificate | One or more certificates in the chain are not valid (e.g., not properly encoded).                 |
-| shutdown        | The log has ceased operation and is not accepting new submissions.                                |
-|-----------------+---------------------------------------------------------------------------------------------------|
+|-----------------------+---------------------------------------------------------------------------------------------------|
+| Error Code            | Meaning                                                                                           |
+|-----------------------+---------------------------------------------------------------------------------------------------|
+| unknown anchor        | The last certificate in the chain both is not, and is not certified by, an accepted trust anchor. |
+| bad chain             | The alleged chain is not actually a chain of certificates.                                        |
+| bad certificate       | One or more certificates in the chain are not valid (e.g., not properly encoded).                 |
+| ambiguous submission  | Both a certificate and a precertificate were submitted simultaneously.                            |
+| missing submission    | Neither a certificate nor a precertificate were submitted.                                        |
+| shutdown              | The log has ceased operation and is not accepting new submissions.                                |
+|-----------------------+---------------------------------------------------------------------------------------------------|
 
 If the version of `sct` is not v2, then a v2 client may be unable to verify the
 signature. It MUST NOT construe this as an error. This is to avoid forcing an
@@ -1223,27 +1234,8 @@ If the certificate is logged, an SCT MUST be issued. Logging the certificate is
 useful, because monitors ({{monitor}}) can then detect these encoding errors,
 which may be accepted by some TLS clients.
 
-## Add PreCertChain to Log    {#add-pre-chain}
-
-POST https://\<log server>/ct/v2/add-pre-chain
-
-Inputs:
-
-: precertificate:
-  : The base64 encoded precertificate.
-
-  chain:
-  : An array of base64 encoded CA certificates. The first element is the signer
-    of the precertificate; the second certifies the first and so on to the last,
-    which either is, or is certified by, an accepted trust anchor.
-
-Outputs:
-
-: sct:
-  : A base64 encoded `TransItem` of type `precert_sct_v2`, signed by this log,
-    that corresponds to the submitted precertificate.
-
-Errors are the same as in {{add-chain}}.
+A log MUST reject a submission where both the `precertificate` and `certificate`
+parameters were specified and return the `ambiguous submission` error.
 
 ## Retrieve Latest Signed Tree Head    {#get-sth}
 
