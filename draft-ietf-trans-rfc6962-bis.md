@@ -70,6 +70,12 @@ normative:
     date: 1999-12-24
     seriesinfo:
       "World Wide Web Consortium Recommendation": REC-html401-19991224
+  FIPS186-4:
+    target: http://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.186-4.pdf
+    title: FIPS PUB 186-4
+    author:
+      org: NIST
+    date: 2013-07-01
 
 informative:
   RFC4634:
@@ -649,7 +655,7 @@ When it receives and accepts a valid submission, the log MUST return an SCT that
 corresponds to the submitted certificate or precertificate. If the log has
 previously seen this valid submission, it SHOULD return the same SCT as it
 returned before (to reduce the ability to track clients as described in
-{{deterministic_signatures}}). If different SCTs are produced for the same
+{{prevent_tracking_clients}}). If different SCTs are produced for the same
 submission, multiple log entries will have to be created, one for each SCT (as
 the timestamp is a part of the leaf structure). Note that if a certificate was
 previously logged as a precertificate, then the precertificate's SCT of type
@@ -1892,6 +1898,7 @@ IANA is asked to establish a registry of signature algorithm values, named
 |-------------+--------------------------------------------------------+------------------------------------------|
 | Value       | Signature Algorithm                                    | Reference / Assignment Policy            |
 |-------------+--------------------------------------------------------+------------------------------------------|
+| 0x00        | ECDSA (NIST P-256) with SHA-256                        | [FIPS186-4]                              |
 | 0x00        | Deterministic ECDSA (NIST P-256) with HMAC-SHA256      | [RFC6979]                                |
 | 0x01        | RSA (RSASSA-PKCS1-v1_5, key >= 2048 bits) with SHA-256 | [RFC8017]                                |
 | 0x02 - 0xDF | Unassigned                                             | Specification Required and Expert Review |
@@ -1902,9 +1909,7 @@ IANA is asked to establish a registry of signature algorithm values, named
 ### Expert Review guidelines
 
 The appointed Expert should ensure that the proposed algorithm has a public
-specification and is suitable for use as a cryptographic signature algorithm
-that always generates signatures deterministically (for the reasons listed in
-{{deterministic_signatures}}).
+specification and is suitable for use as a cryptographic signature algorithm.
 
 ## VersionedTransTypes    {#versioned_trans_types}
 
@@ -2065,17 +2070,19 @@ issued too closely together, proving violation of the STH issuance rate limit,
 or an STH with a root hash that does not match the one calculated from a copy of
 the log, proving violation of the append-only property.
 
-## Deterministic Signatures    {#deterministic_signatures}
+## Preventing Tracking Clients    {#prevent_tracking_clients}
 
-Logs are required to use deterministic signatures for the following reasons:
+Clients that gossip STHs or report back SCTs can be tracked or traced if a log
+produces multiple STHs or SCTs with the same timestamp and data but different
+signatures.
+Logs SHOULD mitigate this risk by either:
 
-* Using non-deterministic ECDSA with a predictable source of randomness means
-  that each signature can potentially expose the secret material of the signing
-  key.
+- Using deterministic signature schemes, or
 
-* Clients that gossip STHs or report back SCTs can be tracked or traced if a log
-  was to produce multiple STHs or SCTs with the same timestamp and data but
-  different signatures.
+- Producing no more than one SCT for each distinct submission and no more than one
+STH for each distinct tree_size. Each of these SCTs and STHs can be stored by
+the log and served to other clients that submit the same certificate or request
+the same STH.
 
 ## Multiple SCTs    {#offering_multiple_scts}
 
