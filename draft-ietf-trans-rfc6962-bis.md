@@ -604,7 +604,7 @@ it available in the log), it MAY validate the SCT.
 
 ## Certificates
 
-Any entity can submit a certificate ({{add-entry}}) to a log. Since it is
+Any entity can submit a certificate ({{submit-entry}}) to a log. Since it is
 anticipated that TLS clients will reject certificates that are not logged, it is
 expected that certificate issuers and subjects will be strongly motivated to
 submit them.
@@ -612,7 +612,7 @@ submit them.
 ## Precertificates    {#precertificates}
 
 CAs may preannounce a certificate prior to issuance by submitting a
-precertificate ({{add-entry}}) that the log can use to create an entry that
+precertificate ({{submit-entry}}) that the log can use to create an entry that
 will be valid against the issued certificate. The CA MAY incorporate the
 returned SCT in the issued certificate. One example of where the returned SCT is
 not incorporated in the issued certificate is when a CA sends the precertificate
@@ -1178,45 +1178,44 @@ modification at a later date. Note that as per [RFC7231], in the case of a 503
 response the log MAY include a `Retry-After:` header in order to request a
 minimum time for the client to wait before retrying the request.
 
-## Add Entry to Log    {#add-entry}
+## Submit Entry to Log    {#submit-entry}
 
-POST https://\<log server>/ct/v2/add-entry
+POST https://\<log server>/ct/v2/submit-entry
 
 Inputs:
 
-: precertificate:
-  : The base64 encoded precertificate.
+: submission:
+  : The base64 encoded certificate or precertificate.
 
-  certificate:
-  : The base64 encoded certificate.
+  type:
+  : The `VersionedTransType` integer value that indicates the type of the
+    `submission`: 1 for `x509_entry_v2`, or 2 for `precert_entry_v2`.
 
   chain:
-  : An array of base64 encoded CA certificates. The first element is the
-    signer of the certificate or precertificate; the second certifies the
-    first and so on to the last, which either is, or is certified by, an
-    accepted trust anchor.
+  : An array of zero or more base64 encoded CA certificates. The first element
+    is the signer of the `submission`; the second certifies the first; etc.
 
-Either `certificate` or `precertificate` needs to be supplied.
+  The last element of `chain` (or, if `chain` is an empty array, the
+  `submission`) either is, or is certified by, an accepted trust anchor.
 
 Outputs:
 
 : sct:
   : A base64 encoded `TransItem` of type `x509_sct_v2` or `precert_sct_v2`,
-    signed by this log, that corresponds to the submitted certificate or
-    precertificate.
+    signed by this log, that corresponds to the `submission`.
 
 Error codes:
 
-|-----------------------+---------------------------------------------------------------------------------------------------|
-| Error Code            | Meaning                                                                                           |
-|-----------------------+---------------------------------------------------------------------------------------------------|
-| unknown anchor        | The last certificate in the chain both is not, and is not certified by, an accepted trust anchor. |
-| bad chain             | The alleged chain is not actually a chain of certificates.                                        |
-| bad certificate       | One or more certificates in the chain are not valid (e.g., not properly encoded).                 |
-| ambiguous submission  | Both a certificate and a precertificate were submitted simultaneously.                            |
-| missing submission    | Neither a certificate nor a precertificate were submitted.                                        |
-| shutdown              | The log has ceased operation and is not accepting new submissions.                                |
-|-----------------------+---------------------------------------------------------------------------------------------------|
+|-----------------+--------------------------------------------------------------------------------------------------------------------------------------------------|
+| Error Code      | Meaning                                                                                                                                          |
+|-----------------+--------------------------------------------------------------------------------------------------------------------------------------------------|
+| bad submission  | `submission` is neither a valid certificate nor a valid precertificate.                                                                          |
+| bad type        | `type` is neither 1 nor 2.                                                                                                                       |
+| bad chain       | The first element of `chain` is not the signer of the `submission`, or the second element does not certify the first, etc.                       |
+| bad certificate | One or more certificates in the `chain` are not valid (e.g., not properly encoded).                                                              |
+| unknown anchor  | The last element of `chain` (or, if `chain` is an empty array, the `submission`) both is not, and is not certified by, an accepted trust anchor. |
+| shutdown        | The log is no longer accepting submissions.                                                                                                      |
+|-----------------+--------------------------------------------------------------------------------------------------------------------------------------------------|
 
 If the version of `sct` is not v2, then a v2 client may be unable to verify the
 signature. It MUST NOT construe this as an error. This is to avoid forcing an
@@ -1227,9 +1226,6 @@ the log MUST either log the certificate or return the "bad certificate" error.
 If the certificate is logged, an SCT MUST be issued. Logging the certificate is
 useful, because monitors ({{monitor}}) can then detect these encoding errors,
 which may be accepted by some TLS clients.
-
-A log MUST reject a submission where both the `precertificate` and `certificate`
-parameters were specified and return the `ambiguous submission` error.
 
 ## Retrieve Latest Signed Tree Head    {#get-sth}
 
