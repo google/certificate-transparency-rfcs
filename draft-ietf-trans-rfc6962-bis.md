@@ -1174,9 +1174,8 @@ Inputs:
   chain:
   : An array of zero or more base64 encoded CA certificates. The first element
     is the signer of the `submission`; the second certifies the first; etc.
-
-  The last element of `chain` (or, if `chain` is an empty array, the
-  `submission`) either is, or is certified by, an accepted trust anchor.
+    The last element of `chain` (or, if `chain` is an empty array, the
+    `submission`) either is, or is certified by, an accepted trust anchor.
 
 Outputs:
 
