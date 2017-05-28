@@ -757,41 +757,14 @@ the submitter, and the trust anchor used to verify the chain (even if it was
 omitted from the submission). The log MUST present this chain for auditing upon
 request (see {{get-entries}}). This chain is required to prevent a CA from
 avoiding blame by logging a partial or empty chain.
-
-Each certificate entry in a log MUST include a `X509ChainEntry` structure, and
-each precertificate entry MUST include a `PrecertChainEntryV2` structure:
-
-~~~~~~~~~~~
-    opaque ASN.1Cert<1..2^24-1>;
-
-    struct {
-        ASN.1Cert leaf_certificate;
-        ASN.1Cert certificate_chain<0..2^24-1>;
-    } X509ChainEntry;
-
-    opaque CMSPrecert<1..2^24-1>;
-
-    struct {
-        CMSPrecert pre_certificate;
-        ASN.1Cert precertificate_chain<1..2^24-1>;
-    } PrecertChainEntryV2;
-~~~~~~~~~~~
-
-`leaf_certificate` is a submitted certificate that has been accepted by the log.
-
-`certificate_chain` is a vector of 0 or more additional certificates required to
-verify `leaf_certificate`. The first certificate MUST certify
-`leaf_certificate`. Each following certificate MUST directly certify the one
-preceding it. The final certificate MUST be a trust anchor accepted by the log.
-If `leaf_certificate` is an accepted trust anchor, then this vector is empty.
-
-`pre_certificate` is a submitted precertificate that has been accepted by the
-log.
-
-`precertificate_chain` is a vector of 1 or more additional certificates required
-to verify `pre_certificate`. The first certificate MUST certify
-`pre_certificate`. Each following certificate MUST directly certify the one
-preceding it. The final certificate MUST be a trust anchor accepted by the log.
+Log entries, which are the input to the Merkle Tree, are TLS-encoded
+`TransItem`s of type `x509_entry_v2` or `precert_entry_v2`.
+To be able to construct a `TransItem` representing the entry in the future, in
+addition to storing the original submission, the log also has to store the
+timestamp of the issued SCT, as well as any SCT extensions.
+Implementations may store all of this information in any format, but MUST
+be able to construct from it the corresponding log entries, in the order they
+were created and added to the tree.
 
 ## Log ID    {#log_id}
 
@@ -917,13 +890,14 @@ SCT to be valid for any other certificate or precertificate whose TBSCertificate
 matches `tbs_certificate`. The length of the `issuer_key_hash` MUST match
 HASH_SIZE.
 
-`tbs_certificate` is the DER encoded TBSCertificate from either the
-`leaf_certificate` (in the case of an `X509ChainEntry`) or the `pre_certificate`
-(in the case of a `PrecertChainEntryV2`). (Note that a precertificate's
-TBSCertificate can be reconstructed from the corresponding certificate as
-described in {{reconstructing_tbscertificate}}).
+`tbs_certificate` is the DER encoded TBSCertificate from the submission. (Note
+that a precertificate's TBSCertificate can be reconstructed from the
+corresponding certificate as described in {{reconstructing_tbscertificate}}).
 
 `sct_extensions` matches the SCT extensions of the corresponding SCT.
+
+The type of the `TransItem` corresponds to the value of the `type` parameter
+supplied in the {{submit-entry}} call.
 
 ## Signed Certificate Timestamp (SCT)    {#sct}
 
@@ -1411,14 +1385,16 @@ Outputs:
 : entries:
   : An array of objects, each consisting of
 
-    leaf_input:
+    log_entry:
     : The base64 encoded `TransItem` structure of type `x509_entry_v2` or
       `precert_entry_v2` (see {{tree_leaves}}).
 
-    log_entry:
-    : The base64 encoded log entry (see {{log_entries}}). In the case of an
-      `x509_entry_v2` entry, this is the whole `X509ChainEntry`; and in the case
-      of a `precert_entry_v2`, this is the whole `PrecertChainEntryV2`.
+    submission:
+    : JSON object representing the original certificate, or precertificate,
+      submission. In the case of an `x509_entry_v2` entry, the object would
+      contain `certificate` and `chain` fields; ; and in the case
+      of a `precert_entry_v2`, it would contain `precertificate` and `chain`
+      fields.
 
     sct:
     : The base64 encoded `TransItem` of type `x509_sct_v2` or `precert_sct_v2`
@@ -1441,6 +1417,10 @@ as returned by `get-sth` in {{get-sth}}.
 
 The `start` parameter MUST be less than or equal to the `end` parameter.
 
+The `chain` field in the `submission` output parameter MUST include the trust
+anchor that the submission chained to, even if it was omitted in the original
+submission.
+
 Log servers MUST honor requests where 0 <= `start` < `tree_size` and `end` >=
 `tree_size` by returning a partial response covering only the valid entries in
 the specified range. `end` >= `tree_size` could be caused by skew. Note that the
@@ -1456,7 +1436,7 @@ Because of skew, it is possible the log server will not have any entries between
 
 In any case, the log server MUST return the latest STH it knows about.
 
-See {{verify_hash}} for an outline of how to use a complete list of `leaf_input`
+See {{verify_hash}} for an outline of how to use a complete list of `log_entry`
 entries to verify the `root_hash`.
 
 ## Retrieve Accepted Trust Anchors    {#get-anchors}
