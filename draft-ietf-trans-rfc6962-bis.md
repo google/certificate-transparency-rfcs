@@ -1885,6 +1885,7 @@ IANA is asked to establish a registry of signature algorithm values, named
 |--------------------------------+----------------------------------------------------+--------------------------------|
 | ecdsa_secp256r1_sha256(0x0403) | ECDSA (NIST P-256) with SHA-256                    | [FIPS186-4]                    |
 | ecdsa_secp256r1_sha256(0x0403) | Deterministic ECDSA (NIST P-256) with HMAC-SHA256  | [RFC6979]                      |
+| ed25519(0x0807)                | Ed25519 (PureEdDSA with the edwards25519 curve)    | [RFC8032]                      |
 | private_use(0xFE00..0xFFFF)    | Reserved                                           | Private Use                    |
 |--------------------------------+----------------------------------------------------+--------------------------------|
 
