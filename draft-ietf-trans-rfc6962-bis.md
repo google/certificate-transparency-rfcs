@@ -1678,19 +1678,20 @@ from the SCT data and the server certificate, and then verifies the signature
 using the corresponding log's public key. TLS clients MUST NOT consider valid
 any SCT whose timestamp is in the future.
 
+### Fetching inclusion proofs     {#fetching_inclusion_proofs}
+
+When a TLS client has validated a received SCT but does not yet possess
+a corresponding inclusion proof, the TLS client MAY request the inclusion
+proof directly from a log using `get-proof-by-hash` ({{get-proof-by-hash}}) or
+`get-all-by-hash` ({{get-all-by-hash}}). Note that this will disclose to the
+log which TLS server the client has been communicating with.
+
 ### Validating inclusion proofs    {#validating_inclusion_proofs}
 
-After validating a received SCT, a TLS client MAY request a corresponding
-inclusion proof (if one is not already available) and then verify it. An
-inclusion proof can be requested directly from a log using `get-proof-by-hash`
-({{get-proof-by-hash}}) or `get-all-by-hash` ({{get-all-by-hash}}), but note
-that this will disclose to the log which TLS server the client has been
-communicating with.
-
-Alternatively, if the TLS client has received an inclusion proof (and an STH)
-alongside the SCT, it SHOULD proceed to verifying the inclusion proof to the
-provided STH. The client then has to verify consistency between the provided STH
-and an STH it knows about, which is less sensitive from a privacy perspective.
+When a TLS client has received, or fetched, an inclusion proof (and an STH),
+it SHOULD proceed to verifying the inclusion proof to the provided STH.
+The TLS client SHOULD also verify consistency between the provided STH
+and an STH it knows about.
 
 If the TLS client holds an STH that predates the SCT, it MAY, in the process of
 auditing, request a new STH from the log ({{get-sth}}), then verify it by
