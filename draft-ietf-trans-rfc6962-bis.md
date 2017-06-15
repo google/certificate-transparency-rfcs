@@ -54,6 +54,7 @@ normative:
   RFC7633:
   RFC7924:
   RFC8017:
+  RFC8032:
   HTML401:
     target: http://www.w3.org/TR/1999/REC-html401-19991224
     title: HTML 4.01 Specification
@@ -1884,7 +1885,6 @@ IANA is asked to establish a registry of signature algorithm values, named
 |--------------------------------+----------------------------------------------------+--------------------------------|
 | ecdsa_secp256r1_sha256(0x0403) | ECDSA (NIST P-256) with SHA-256                    | [FIPS186-4]                    |
 | ecdsa_secp256r1_sha256(0x0403) | Deterministic ECDSA (NIST P-256) with HMAC-SHA256  | [RFC6979]                      |
-| rsa_pss_sha256(0x0804)         | RSA (RSASSA-PSS, key >= 2048 bits) with SHA-256    | [RFC8017]                      |
 | private_use(0xFE00..0xFFFF)    | Reserved                                           | Private Use                    |
 |--------------------------------+----------------------------------------------------+--------------------------------|
 
