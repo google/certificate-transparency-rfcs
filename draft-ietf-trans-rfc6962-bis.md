@@ -2013,18 +2013,14 @@ system.
 [I-D.ietf-trans-threat-analysis] provides a more detailed threat analysis of the
 Certificate Transparency architecture.
 
-Note that it may take up to twice the Maximum Merge Delay for a given submission
-to be available to monitors, as a log is required to include the submission in
-the tree within the MMD, but may also serve an STH that's up to MMD old.
-
 ## Misissued Certificates
 
 Misissued certificates that have not been publicly logged, and thus do not have
 a valid SCT, are not considered compliant. Misissued certificates that do have
 an SCT from a log will appear in that public log within the Maximum Merge Delay,
-assuming the log is operating correctly. Thus, the maximum period of time during
-which a misissued certificate can be used without being available for audit is
-the MMD.
+assuming the log is operating correctly. As a log is allowed to serve an STH
+that's up to MMD old, the maximum period of time during which a misissued
+certificate can be used without being available for audit is twice the MMD.
 
 ## Detection of Misissue
 
