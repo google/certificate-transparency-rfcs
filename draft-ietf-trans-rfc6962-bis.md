@@ -53,7 +53,6 @@ normative:
   RFC7231:
   RFC7633:
   RFC7924:
-  RFC8017:
   RFC8032:
   HTML401:
     target: http://www.w3.org/TR/1999/REC-html401-19991224
