@@ -757,14 +757,12 @@ the submitter, and the trust anchor used to verify the chain (even if it was
 omitted from the submission). The log MUST present this chain for auditing upon
 request (see {{get-entries}}). This chain is required to prevent a CA from
 avoiding blame by logging a partial or empty chain.
-Log entries, which are the input to the Merkle Tree, are TLS-encoded
-`TransItem`s of type `x509_entry_v2` or `precert_entry_v2`.
-To be able to construct a `TransItem` representing the entry in the future, in
-addition to storing the original submission, the log also has to store the
-timestamp of the issued SCT, as well as any SCT extensions.
-Implementations may store all of this information in any format, but MUST
-be able to construct from it the corresponding log entries, in the order they
-were created and added to the tree.
+Each log entry is a `TransItem`s structure of type `x509_entry_v2` or
+`precert_entry_v2`. However, a log may store its entries in any format. If a
+log does not store this `TransItem` in full, it must store the `timestamp`
+and `sct_extensions` of the corresponding `TimestampedCertificateEntryDataV2`
+structure. The `TransItem` can be reconstructed from these fields and the entire
+chain used for validation.
 
 ## Log ID    {#log_id}
 
@@ -1388,12 +1386,10 @@ Outputs:
     : The base64 encoded `TransItem` structure of type `x509_entry_v2` or
       `precert_entry_v2` (see {{tree_leaves}}).
 
-    submission:
-    : JSON object representing the original certificate, or precertificate,
-      submission. In the case of an `x509_entry_v2` entry, the object would
-      contain `certificate` and `chain` fields; ; and in the case
-      of a `precert_entry_v2`, it would contain `precertificate` and `chain`
-      fields.
+    submitted_entry:
+    : JSON object representing the inputs that were submitted to
+      `submit-entry`, with the addition of the trust anchor to the `chain`
+      field if the submission did not include it.
 
     sct:
     : The base64 encoded `TransItem` of type `x509_sct_v2` or `precert_sct_v2`
@@ -1417,8 +1413,8 @@ as returned by `get-sth` in {{get-sth}}.
 The `start` parameter MUST be less than or equal to the `end` parameter.
 
 The `chain` field in the `submission` output parameter MUST include the trust
-anchor that the submission chained to, even if it was omitted in the original
-submission.
+anchor that the log used to verify the submission, even if it was omitted in the
+original submission.
 
 Log servers MUST honor requests where 0 <= `start` < `tree_size` and `end` >=
 `tree_size` by returning a partial response covering only the valid entries in
