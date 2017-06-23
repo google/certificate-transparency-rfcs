@@ -763,7 +763,7 @@ Each log entry is a `TransItem` structure of type `x509_entry_v2` or
 log does not store this `TransItem` in full, it must store the `timestamp`
 and `sct_extensions` of the corresponding `TimestampedCertificateEntryDataV2`
 structure. The `TransItem` can be reconstructed from these fields and the entire
-chain used for validation.
+chain that the log used to verify the submission.
 
 ## Log ID    {#log_id}
 
