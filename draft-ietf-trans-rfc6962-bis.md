@@ -1380,7 +1380,7 @@ Outputs:
 
     log_entry:
     : The base64 encoded `TransItem` structure of type `x509_entry_v2` or
-      `precert_entry_v2` (see {{tree_leaves}}).
+      `precert_entry_v2` (see {{log_entries}}).
 
     submitted_entry:
     : JSON object representing the inputs that were submitted to
