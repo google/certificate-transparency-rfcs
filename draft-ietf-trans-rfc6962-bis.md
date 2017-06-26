@@ -649,11 +649,11 @@ following requirements:
 
 As described in Section 5.3 of [RFC5652], the `SignerInfo.signedAttrs` field
 MUST be present (because the `eContentType` is not `id-data`) and MUST contain
-at least a content-type attribute and a message-digest attribute. This field is
-included in the message digest calculation process (see Section 5.4 of
-[RFC5652]), which ensures that the `signature` in the CMS object will not be a
-valid X.509v3 signature and so cannot be used to construct a certificate from
-the precertificate.
+a content-type attribute and a message-digest attribute. This field is included
+in the message digest calculation process (see Section 5.4 of [RFC5652]), which
+ensures that the `signature` in the CMS object will not be a valid X.509v3
+signature and so cannot be used to construct a certificate from the
+precertificate.
 
 # Log Format and Operation
 
