@@ -643,6 +643,8 @@ following requirements:
   is considered binding (i.e., misissuance of the precertificate is considered
   equivalent to misissuance of the corresponding certificate).
 
+* `SignerInfo.SignerIdentifier` MUST use the `subjectKeyIdentifier` option.
+
 * `SignedData.certificates` SHOULD be omitted.
 
 As described in Section 5.3 of [RFC5652], the `SignerInfo.signedAttrs` field
