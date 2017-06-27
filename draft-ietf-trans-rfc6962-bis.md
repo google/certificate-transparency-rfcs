@@ -650,7 +650,11 @@ following profile:
   * `sid` MUST use the `subjectKeyIdentifier` option.
   * `digestAlgorithm` MUST be one of the hash algorithm OIDs listed in
     {{hash_algorithms}}.
-  * `signedAttrs` MUST be present (see below).
+  * `signedAttrs` MUST be present and MUST contain two attributes:
+    * A content-type attribute whose value is the same as
+      `SignedData.encapContentInfo.eContentType`.
+    * A message-digest attribute whose value is the message digest of
+      `SignedData.encapContentInfo.eContent`.
   * `signatureAlgorithm` MUST be the same OID as `TBSCertificate.signature`.
   * `signature` MUST be from the same (root or intermediate) CA that will
     ultimately issue the certificate. This signature indicates the CA's intent
@@ -658,15 +662,6 @@ following profile:
     misissuance of the precertificate is considered equivalent to misissuance of
     the corresponding certificate).
   * `unsignedAttrs` MUST be omitted.
-
-Since the `eContentType` is not `id-data`, the `SignerInfo.signedAttrs` field
-MUST be present (see Section 5.3 of [RFC5652]) and MUST contain:
-
-* A content-type attribute whose value is the same as
-  `SignedData.encapContentInfo.eContentType`.
-
-* A message-digest attribute whose value is the message digest of
-  `SignedData.encapContentInfo.eContent`.
 
 `SignerInfo.signedAttrs` is included in the message digest calculation process
 (see Section 5.4 of [RFC5652]), which ensures that the `SignerInfo.signature`
