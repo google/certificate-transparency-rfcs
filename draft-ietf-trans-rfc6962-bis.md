@@ -630,6 +630,8 @@ following requirements:
 
 * It MUST be DER encoded.
 
+* `SignedData.version` MUST be v3(3).
+
 * `SignedData.encapContentInfo.eContentType` MUST be the OID 1.3.101.78.
 
 * `SignedData.encapContentInfo.eContent` MUST contain a TBSCertificate [RFC5280]
@@ -637,7 +639,9 @@ following requirements:
   that the Transparency Information ({{x509v3_transinfo_extension}}) extension
   MUST be omitted.
 
-* `SignedData.certificates` SHOULD be omitted.
+* `SignedData.certificates` MUST be omitted.
+
+* `SignedData.crls` MUST be omitted.
 
 * `SignedData.signerInfos` MUST contain 1 `SignerInfo` with a `signature` from
   the same (root or intermediate) CA that will ultimately issue the certificate.
