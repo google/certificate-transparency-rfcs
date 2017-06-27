@@ -79,7 +79,7 @@ normative:
   I-D.ietf-tls-tls13:
 
 informative:
-  RFC4634:
+  RFC6234:
   RFC5226:
   RFC6962:
   RFC6979:
@@ -1894,14 +1894,14 @@ CachedInformationType Values" registry that was defined in [RFC7924].
 IANA is asked to establish a registry of hash algorithm values, named
 "CT Hash Algorithms", that initially consists of:
 
-|-------------+----------------+------------------------------------------|
-| Value       | Hash Algorithm | Reference / Assignment Policy            |
-|-------------+----------------+------------------------------------------|
-| 0x00        | SHA-256        | [RFC4634]                                |
-| 0x01 - 0xDF | Unassigned     | Specification Required and Expert Review |
-| 0xE0 - 0xEF | Reserved       | Experimental Use                         |
-| 0xF0 - 0xFF | Reserved       | Private Use                              |
-|-------------+----------------+------------------------------------------|
+|-------------+----------------+------------------------+------------------------------------------|
+| Value       | Hash Algorithm | OID                    | Reference / Assignment Policy            |
+|-------------+----------------+------------------------|------------------------------------------|
+| 0x00        | SHA-256        | 2.16.840.1.101.3.4.2.1 | [RFC6234]                                |
+| 0x01 - 0xDF | Unassigned     |                        | Specification Required and Expert Review |
+| 0xE0 - 0xEF | Reserved       |                        | Experimental Use                         |
+| 0xF0 - 0xFF | Reserved       |                        | Private Use                              |
+|-------------+----------------+------------------------+------------------------------------------|
 
 ### Expert Review guidelines
 
