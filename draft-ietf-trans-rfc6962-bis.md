@@ -626,36 +626,45 @@ not incorporated in the issued certificate is when a CA sends the precertificate
 to multiple logs, but only incorporates the SCTs that are returned first.
 
 A precertificate is a CMS [RFC5652] `signed-data` object that conforms to the
-following requirements:
+following profile:
 
 * It MUST be DER encoded.
 
 * `SignedData.version` MUST be v3(3).
 
-* `SignedData.encapContentInfo.eContentType` MUST be the OID 1.3.101.78.
+* `SignedData.digestAlgorithms` MUST only include the
+  `SignerInfo.digestAlgorithm` OID value (see below).
 
-* `SignedData.encapContentInfo.eContent` MUST contain a TBSCertificate [RFC5280]
-  that will be identical to the TBSCertificate in the issued certificate, except
-  that the Transparency Information ({{x509v3_transinfo_extension}}) extension
-  MUST be omitted.
+* `SignedData.encapContentInfo`:
+  * `eContentType` MUST be the OID 1.3.101.78.
+  * `eContent` MUST contain a TBSCertificate [RFC5280] that will be identical to
+    the TBSCertificate in the issued certificate, except that the Transparency
+    Information ({{x509v3_transinfo_extension}}) extension MUST be omitted.
 
 * `SignedData.certificates` MUST be omitted.
 
 * `SignedData.crls` MUST be omitted.
 
-* `SignedData.signerInfos` MUST contain 1 `SignerInfo` with a `signature` from
-  the same (root or intermediate) CA that will ultimately issue the certificate.
-  This signature indicates the CA's intent to issue the certificate. This intent
-  is considered binding (i.e., misissuance of the precertificate is considered
-  equivalent to misissuance of the corresponding certificate).
-  * `SignerInfo.sid` MUST use the `subjectKeyIdentifier` option.
+* `SignedData.signerInfos` MUST contain one `SignerInfo`:
+  * `version` MUST be v3(3).
+  * `sid` MUST use the `subjectKeyIdentifier` option.
+  * `digestAlgorithm` MUST be one of the hash algorithm OIDs listed in
+    {{hash_algorithms}}.
+  * `signedAttrs` MUST be present (see below).
+  * `signatureAlgorithm` MUST be the same OID as `TBSCertificate.signature`.
+  * `signature` MUST be from the same (root or intermediate) CA that will
+    ultimately issue the certificate. This signature indicates the CA's intent
+    to issue the certificate. This intent is considered binding (i.e.,
+    misissuance of the precertificate is considered equivalent to misissuance of
+    the corresponding certificate).
+  * `unsignedAttrs` MUST be omitted.
 
 Since the `eContentType` is not `id-data`, the `SignerInfo.signedAttrs` field
 MUST be present (see Section 5.3 of [RFC5652]) and MUST contain:
 
 * A content-type attribute whose value is the same as
   `SignedData.encapContentInfo.eContentType`.
-  
+
 * A message-digest attribute whose value is the message digest of
   `SignedData.encapContentInfo.eContent`.
 
