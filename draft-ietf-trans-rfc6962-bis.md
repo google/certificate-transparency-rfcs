@@ -647,13 +647,20 @@ following requirements:
 
 * `SignedData.certificates` SHOULD be omitted.
 
-As described in Section 5.3 of [RFC5652], the `SignerInfo.signedAttrs` field
-MUST be present (because the `eContentType` is not `id-data`) and MUST contain
-a content-type attribute and a message-digest attribute. This field is included
-in the message digest calculation process (see Section 5.4 of [RFC5652]), which
-ensures that the `signature` in the CMS object will not be a valid X.509v3
-signature and so cannot be used to construct a certificate from the
-precertificate.
+Since the `eContentType` is not `id-data`, the `SignerInfo.signedAttrs` field
+MUST be present (see Section 5.3 of [RFC5652]) and MUST contain:
+
+* A content-type attribute whose value is the same as
+  `SignedData.encapContentInfo.eContentType`.
+  
+* A message-digest attribute whose value is the message digest of
+  `SignedData.encapContentInfo.eContent`.
+
+`SignerInfo.signedAttrs` is included in the message digest calculation process
+(see Section 5.4 of [RFC5652]), which ensures that the `SignerInfo.signature`
+value will not be a valid X.509v3 signature that could be used in conjunction
+with the TBSCertificate (from `SignedData.encapContentInfo.eContent`) to
+construct a valid certificate.
 
 # Log Format and Operation
 
