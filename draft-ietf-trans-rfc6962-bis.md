@@ -637,15 +637,14 @@ following requirements:
   that the Transparency Information ({{x509v3_transinfo_extension}}) extension
   MUST be omitted.
 
+* `SignedData.certificates` SHOULD be omitted.
+
 * `SignedData.signerInfos` MUST contain 1 `SignerInfo` with a `signature` from
   the same (root or intermediate) CA that will ultimately issue the certificate.
   This signature indicates the CA's intent to issue the certificate. This intent
   is considered binding (i.e., misissuance of the precertificate is considered
   equivalent to misissuance of the corresponding certificate).
-
-* `SignerInfo.SignerIdentifier` MUST use the `subjectKeyIdentifier` option.
-
-* `SignedData.certificates` SHOULD be omitted.
+  * `SignerInfo.sid` MUST use the `subjectKeyIdentifier` option.
 
 Since the `eContentType` is not `id-data`, the `SignerInfo.signedAttrs` field
 MUST be present (see Section 5.3 of [RFC5652]) and MUST contain:
