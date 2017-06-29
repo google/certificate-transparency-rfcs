@@ -79,7 +79,7 @@ normative:
   I-D.ietf-tls-tls13:
 
 informative:
-  RFC4634:
+  RFC6234:
   RFC5226:
   RFC6962:
   RFC6979:
@@ -626,26 +626,48 @@ not incorporated in the issued certificate is when a CA sends the precertificate
 to multiple logs, but only incorporates the SCTs that are returned first.
 
 A precertificate is a CMS [RFC5652] `signed-data` object that conforms to the
-following requirements:
+following profile:
 
 * It MUST be DER encoded.
 
-* `SignedData.encapContentInfo.eContentType` MUST be the OID 1.3.101.78.
+* `SignedData.version` MUST be v3(3).
 
-* `SignedData.encapContentInfo.eContent` MUST contain a TBSCertificate [RFC5280]
-  that will be identical to the TBSCertificate in the issued certificate, except
-  that the Transparency Information ({{x509v3_transinfo_extension}}) extension
-  MUST be omitted.
+* `SignedData.digestAlgorithms` MUST only include the
+  `SignerInfo.digestAlgorithm` OID value (see below).
 
-* `SignedData.signerInfos` MUST contain a signature from the same (root or
-  intermediate) CA that will ultimately issue the certificate. This signature
-  indicates the CA's intent to issue the certificate. This intent is considered
-  binding (i.e., misissuance of the precertificate is considered equivalent to
-  misissuance of the certificate). (Note that, because of the structure of CMS,
-  the signature on the CMS object will not be a valid X.509v3 signature and so
-  cannot be used to construct a certificate from the precertificate).
+* `SignedData.encapContentInfo`:
+  * `eContentType` MUST be the OID 1.3.101.78.
+  * `eContent` MUST contain a TBSCertificate [RFC5280] that will be identical to
+    the TBSCertificate in the issued certificate, except that the Transparency
+    Information ({{x509v3_transinfo_extension}}) extension MUST be omitted.
 
-* `SignedData.certificates` SHOULD be omitted.
+* `SignedData.certificates` MUST be omitted.
+
+* `SignedData.crls` MUST be omitted.
+
+* `SignedData.signerInfos` MUST contain one `SignerInfo`:
+  * `version` MUST be v3(3).
+  * `sid` MUST use the `subjectKeyIdentifier` option.
+  * `digestAlgorithm` MUST be one of the hash algorithm OIDs listed in
+    {{hash_algorithms}}.
+  * `signedAttrs` MUST be present and MUST contain two attributes:
+    * A content-type attribute whose value is the same as
+      `SignedData.encapContentInfo.eContentType`.
+    * A message-digest attribute whose value is the message digest of
+      `SignedData.encapContentInfo.eContent`.
+  * `signatureAlgorithm` MUST be the same OID as `TBSCertificate.signature`.
+  * `signature` MUST be from the same (root or intermediate) CA that will
+    ultimately issue the certificate. This signature indicates the CA's intent
+    to issue the certificate. This intent is considered binding (i.e.,
+    misissuance of the precertificate is considered equivalent to misissuance of
+    the corresponding certificate).
+  * `unsignedAttrs` MUST be omitted.
+
+`SignerInfo.signedAttrs` is included in the message digest calculation process
+(see Section 5.4 of [RFC5652]), which ensures that the `SignerInfo.signature`
+value will not be a valid X.509v3 signature that could be used in conjunction
+with the TBSCertificate (from `SignedData.encapContentInfo.eContent`) to
+construct a valid certificate.
 
 # Log Format and Operation
 
@@ -1842,14 +1864,14 @@ CachedInformationType Values" registry that was defined in [RFC7924].
 IANA is asked to establish a registry of hash algorithm values, named
 "CT Hash Algorithms", that initially consists of:
 
-|-------------+----------------+------------------------------------------|
-| Value       | Hash Algorithm | Reference / Assignment Policy            |
-|-------------+----------------+------------------------------------------|
-| 0x00        | SHA-256        | [RFC4634]                                |
-| 0x01 - 0xDF | Unassigned     | Specification Required and Expert Review |
-| 0xE0 - 0xEF | Reserved       | Experimental Use                         |
-| 0xF0 - 0xFF | Reserved       | Private Use                              |
-|-------------+----------------+------------------------------------------|
+|-------------+----------------+------------------------+------------------------------------------|
+| Value       | Hash Algorithm | OID                    | Reference / Assignment Policy            |
+|-------------+----------------+------------------------|------------------------------------------|
+| 0x00        | SHA-256        | 2.16.840.1.101.3.4.2.1 | [RFC6234]                                |
+| 0x01 - 0xDF | Unassigned     |                        | Specification Required and Expert Review |
+| 0xE0 - 0xEF | Reserved       |                        | Experimental Use                         |
+| 0xF0 - 0xFF | Reserved       |                        | Private Use                              |
+|-------------+----------------+------------------------+------------------------------------------|
 
 ### Expert Review guidelines
 
