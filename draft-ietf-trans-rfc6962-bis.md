@@ -1199,8 +1199,8 @@ Outputs:
   : A base64 encoded `TransItem` of type `x509_sct_v2` or `precert_sct_v2`,
     signed by this log, that corresponds to the `submission`.
 
-  If the submitted entry has already been appended to this log's tree, or if
-  the log is able to append it immediately, then the log SHOULD also output:
+  If the submitted entry is immediately appended to (or already exists in) this
+  log's tree, then the log SHOULD also output:
 
   sth:
   : A base64 encoded `TransItem` of type `signed_tree_head_v2`, signed by this
@@ -1233,6 +1233,10 @@ the log MUST either log the certificate or return the "bad certificate" error.
 If the certificate is logged, an SCT MUST be issued. Logging the certificate is
 useful, because monitors ({{monitor}}) can then detect these encoding errors,
 which may be accepted by some TLS clients.
+
+If the returned `sct` is intended to be provided to clients, then `sth` and
+`inclusion` (if returned) SHOULD also be provided to clients (e.g., if `type`
+was 1 then all three `TransItem`s could be embedded in the certificate).
 
 ## Retrieve Latest Signed Tree Head    {#get-sth}
 
