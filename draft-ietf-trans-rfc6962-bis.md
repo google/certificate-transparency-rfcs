@@ -1199,6 +1199,18 @@ Outputs:
   : A base64 encoded `TransItem` of type `x509_sct_v2` or `precert_sct_v2`,
     signed by this log, that corresponds to the `submission`.
 
+  If the submitted entry has already been appended to this log's tree, or if
+  the log is able to append it immediately, then the log SHOULD also output:
+
+  sth:
+  : A base64 encoded `TransItem` of type `signed_tree_head_v2`, signed by this
+    log.
+
+  inclusion:
+  : A base64 encoded `TransItem` of type `inclusion_proof_v2` whose
+    `inclusion_path` array of Merkle Tree nodes proves the inclusion of the
+    `submission` in the returned `sth`.
+
 Error codes:
 
 |-----------------+--------------------------------------------------------------------------------------------------------------------------------------------------|
