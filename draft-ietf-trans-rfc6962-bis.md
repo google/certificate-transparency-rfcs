@@ -1709,9 +1709,9 @@ client uses `get-all-by-hash`, then it will already have the new STH.
 
 ### Evaluating compliance
 
-To be considered compliant, a certificate MUST be accompanied by at least one
-valid SCT. A certificate not accompanied by any valid SCTs MUST NOT be
-considered compliant by TLS clients.
+It is up to a client's local policy to specify the quantity and form of
+evidence (SCTs, inclusion proofs or a combination) needed to achieve
+compliance and how to handle non-compliance.
 
 A TLS client MUST NOT evaluate compliance if it did not send both the
 `transparency_info` and `status_request` TLS extensions in the ClientHello.
@@ -1723,13 +1723,6 @@ or more cached certificates, all of which it already considers to be CT
 compliant, the TLS client MAY also include a `CachedObject` of type
 `ct_compliant` in the `cached_info` extension. The `hash_value` field MUST be 1
 byte long with the value 0.
-
-### Handling of Non-compliance
-
-If a TLS server presents a certificate chain that is non-compliant, and the use
-of a compliant certificate is mandated by an explicit security policy,
-application protocol specification or any other means, the TLS client MUST
-refuse the connection.
 
 ## Monitor    {#monitor}
 
