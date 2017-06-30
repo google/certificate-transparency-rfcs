@@ -2076,8 +2076,7 @@ the log, proving violation of the append-only property.
 
 Clients that gossip STHs or report back SCTs can be tracked or traced if a log
 produces multiple STHs or SCTs with the same timestamp and data but different
-signatures.
-Logs SHOULD mitigate this risk by either:
+signatures. Logs SHOULD mitigate this risk by either:
 
 - Using deterministic signature schemes, or
 
@@ -2133,7 +2132,7 @@ SCTs:
 * Use that TBSCertificate to create a v1 precertificate, as described in
   Section 3.1. of [RFC6962] and submit it to v1 logs.
 
-* Embed the v1 SCTs in the TBSCertificate, as described in Section 3.3. of
+* Embed the v1 SCTs in the TBSCertificate, as described in Section 3.3 of
   [RFC6962].
 
 * Sign that TBSCertificate (which now contains v1 and v2 SCTs) to issue the
