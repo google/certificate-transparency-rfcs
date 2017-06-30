@@ -1680,7 +1680,7 @@ To reconstruct the TBSCertificate component of a precertificate from a
 certificate, TLS clients should remove the Transparency Information extension
 described in {{x509v3_transinfo_extension}}.
 
-If the SCT checked is for a Precertificate (where the `type` of the `TransItem`
+If the SCT checked is for a precertificate (where the `type` of the `TransItem`
 is `precert_sct_v2`), then the client SHOULD also remove embedded v1 SCTs,
 identified by OID 1.3.6.1.4.1.11129.2.4.2 (See Section 3.3. of [RFC6962]), in
 the process of reconstructing the TBSCertificate. That is to allow embedded v1
