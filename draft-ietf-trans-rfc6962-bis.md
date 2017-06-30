@@ -1479,7 +1479,7 @@ Outputs:
 : certificates:
   : An array of base64 encoded trust anchors that are acceptable to the log.
 
-  max_chain:
+  max_chain_length:
   : If the server has chosen to limit the length of chains it accepts, this is
     the maximum number of certificates in the chain, in decimal. If there is no
     limit, this is omitted.
