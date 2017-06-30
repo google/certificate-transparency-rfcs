@@ -778,8 +778,8 @@ entire chain used for verification. This chain MUST include the certificate or
 precertificate itself, the zero or more intermediate CA certificates provided by
 the submitter, and the trust anchor used to verify the chain (even if it was
 omitted from the submission). The log MUST present this chain for auditing upon
-request (see {{get-entries}}). This chain is required to prevent a CA from
-avoiding blame by logging a partial or empty chain.
+request (see {{get-entries}}). This prevents the CA from avoiding blame by
+logging a partial or empty chain.
 Each log entry is a `TransItem` structure of type `x509_entry_v2` or
 `precert_entry_v2`. However, a log may store its entries in any format. If a
 log does not store this `TransItem` in full, it must store the `timestamp`
