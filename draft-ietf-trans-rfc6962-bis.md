@@ -1628,14 +1628,14 @@ wrapped inside an additional OCTET STRING, which is then put into the
 
 A certification authority MAY include a Transparency Information X.509v3
 extension in the `singleExtensions` of a `SingleResponse` in an OCSP response.
-The included SCTs or inclusion proofs MUST be for the certificate identified by
+All included SCTs and inclusion proofs MUST be for the certificate identified by
 the `certID` of that `SingleResponse`, or for a precertificate that corresponds
 to that certificate.
 
 ### Certificate Extension {#cert_transinfo_extension}
 
 A certification authority MAY include a Transparency Information X.509v3
-extension in a certificate. Any included SCTs or inclusion proofs MUST be for a
+extension in a certificate. All included SCTs and inclusion proofs MUST be for a
 precertificate that corresponds to this certificate.
 
 ## TLS Feature X.509v3 Extension
