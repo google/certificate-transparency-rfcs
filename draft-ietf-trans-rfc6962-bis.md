@@ -1797,7 +1797,7 @@ previously published states that are known to be good, and that the promises
 made by the log in the form of SCTs have been kept. Audits are performed by
 monitors or TLS clients.
 
-In particular, there are four log behaviour properties that should be checked:
+In particular, there are four log behavior properties that should be checked:
 
 * The Maximum Merge Delay (MMD).
 
