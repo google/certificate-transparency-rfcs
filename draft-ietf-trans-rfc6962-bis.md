@@ -309,7 +309,7 @@ definition handles non-full trees differently.)
 ### Verifying a Tree Head Given Entries {#verify_hash}
 
 When a client has a complete list of n input `entries` from `0` up to
-`tree_size - 1` and wishes to verify this list against an tree head `root_hash`
+`tree_size - 1` and wishes to verify this list against a tree head `root_hash`
 returned by the log for the same `tree_size`, the following algorithm may be
 used:
 
