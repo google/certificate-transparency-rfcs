@@ -1567,7 +1567,7 @@ skipping over new `TransItem` structures whose versions they don't understand).
 
 In each `TransItemList` that is sent to a client during a TLS handshake, the TLS
 server MUST include a `TransItem` structure of type `x509_sct_v2` or
-`precert_sct_v2`.
+`precert_sct_v2` (except as described in {{cached_info}}).
 
 Presenting inclusion proofs and STHs in the TLS handshake helps to protect the
 client's privacy (see {{validating_inclusion_proofs}}) and reduces load on log
@@ -1584,7 +1584,7 @@ server SHOULD ignore any `extension_data` sent by the TLS client. Additionally,
 the TLS server MUST NOT process or include this extension when a TLS session is
 resumed, since session resumption uses the original session information.
 
-## cached_info TLS Extension
+## cached_info TLS Extension {#cached_info}
 
 When a TLS server includes the `transparency_info` extension in the ServerHello,
 it SHOULD NOT include any `TransItem` structures of type `x509_sct_v2` or
