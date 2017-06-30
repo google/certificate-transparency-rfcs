@@ -1910,7 +1910,7 @@ IANA is asked to establish a registry of signature algorithm values, named
 ### Expert Review guidelines
 
 The appointed Expert should ensure that the proposed algorithm has a public
-specification,has a value assigned to it in the TLS SignatureScheme Registry
+specification, has a value assigned to it in the TLS SignatureScheme Registry
 (that IANA is asked to establish in [I-D.ietf-tls-tls13]) and is suitable for
 use as a cryptographic signature algorithm.
 
@@ -2049,10 +2049,10 @@ action when a misissue is detected.
 
 ## Misbehaving Logs {#misbehaving_logs}
 
-A log can misbehave in several ways. Examples include failing to incorporate a
-certificate with an SCT in the Merkle Tree within the MMD, presenting different,
+A log can misbehave in several ways. Examples include: failing to incorporate a
+certificate with an SCT in the Merkle Tree within the MMD; presenting different,
 conflicting views of the Merkle Tree at different times and/or to different
-parties and issuing STHs too frequently. Such misbehavior is detectable and the
+parties; and issuing STHs too frequently. Such misbehavior is detectable and
 [I-D.ietf-trans-threat-analysis] provides more details on how this can be done.
 
 Violation of the MMD contract is detected by log clients requesting a Merkle
