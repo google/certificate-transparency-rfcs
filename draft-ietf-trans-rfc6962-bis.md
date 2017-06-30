@@ -136,7 +136,7 @@ and queries that are defined in this document.
 
 # Introduction
 
-Certificate transparency aims to mitigate the problem of misissued certificates
+Certificate Transparency aims to mitigate the problem of misissued certificates
 by providing append-only logs of issued certificates. The logs do not need to be
 trusted because they are publicly auditable. Anyone may verify the correctness
 of each log and monitor when new certificates are added to it. The logs do not
