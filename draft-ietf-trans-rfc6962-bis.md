@@ -752,7 +752,7 @@ only the chain of intermediate CA certificates provided by the submitter.
 
 Logs SHOULD accept certificates and precertificates that are fully valid
 according to RFC 5280 [RFC5280] verification rules and are submitted with such
-a chain (A log may decide, for example, to temporarily reject valid submissions
+a chain. (A log may decide, for example, to temporarily reject valid submissions
 to protect itself against denial-of-service attacks).
 
 Logs MAY accept certificates and precertificates that have expired, are not yet
