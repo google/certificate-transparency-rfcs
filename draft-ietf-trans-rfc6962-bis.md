@@ -1563,13 +1563,17 @@ decode each `TransItem` individually (so, for example, if there is a version
 upgrade, out-of-date clients can still parse old `TransItem` structures while
 skipping over new `TransItem` structures whose versions they don't understand).
 
-## Presenting SCTs only
+## Presenting SCTs, inclusions proofs and STHs
+
+In each `TransItemList` that is sent to a client during a TLS handshake, the TLS
+server MUST include a `TransItem` structure of type `x509_sct_v2` or
+`precert_sct_v2`.
 
 Presenting inclusion proofs and STHs in the TLS handshake helps to protect the
 client's privacy (see {{validating_inclusion_proofs}}) and reduces load on log
-servers. However, if a TLS server is unable to obtain an inclusion proof and STH
-that correspond to an SCT, then it MUST include `TransItem` structures of type
-`x509_sct_v2` or `precert_sct_v2` in the `TransItemList`.
+servers. Therefore, if the TLS server can obtain them, it SHOULD also include
+`TransItem`s of type `inclusion_proof_v2` and `signed_tree_head_v2` in the
+`TransItemList`.
 
 ## transparency_info TLS Extension {#tls_transinfo_extension}
 
