@@ -2057,19 +2057,18 @@ parties; and issuing STHs too frequently. Such misbehavior is detectable and
 
 Violation of the MMD contract is detected by log clients requesting a Merkle
 inclusion proof ({{get-proof-by-hash}}) for each observed SCT. These checks can
-be asynchronous and need only be done once per each certificate. In order to
-protect the clients' privacy, these checks need not reveal the exact certificate
-to the log. Instead, clients can request the proof from a trusted auditor (since
-anyone can compute the proofs from the log) or communicate with the log via
-proxies.
+be asynchronous and need only be done once per certificate. In order to protect
+the clients' privacy, these checks need not reveal the exact certificate to the
+log. Instead, clients can request the proof from a trusted auditor (since anyone
+can compute the proofs from the log) or communicate with the log via proxies.
 
 Violation of the append-only property or the STH issuance rate limit can be
 detected by clients comparing their instances of the Signed Tree Heads. There
 are various ways this could be done, for example via gossip (see
 [I-D.ietf-trans-gossip]) or peer-to-peer communications or by sending STHs to
 monitors (who could then directly check against their own copy of the relevant
-log). A proof of misbehavior in such cases would be a series of STHs that were
-issued too closely together, proving violation of the STH issuance rate limit,
+log). Proof of misbehavior in such cases would be: a series of STHs that were
+issued too closely together, proving violation of the STH issuance rate limit;
 or an STH with a root hash that does not match the one calculated from a copy of
 the log, proving violation of the append-only property.
 
