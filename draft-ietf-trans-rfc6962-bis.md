@@ -1791,6 +1791,27 @@ follow these steps for each log:
 
 9. Go to Step 5.
 
+### Verifying the Submitted Entry
+
+To prevent a malicious log from mutating a certificate's signature (which would
+allow a CA to avoid responsibility for misissuing a certificate), monitors
+should perform the following checks for each entry they download:
+
+1. Verify that the `type` field of `submitted_entry` matches the type
+   of `log_entry`.
+
+2. Verify that the TBSCertificate portion of the certificate or
+   precertificate in the `submission` field of `submitted_entry`
+   is byte-for-byte identical to the `tbs_certificate` field of
+   `log_entry`.
+
+3. Verify the signature of the certificate or precertificate in
+   the `submission` field of `submitted_entry`, using the public key
+   contained in the `issuer_key` field of `log_entry`.
+
+If an entry fails these checks, it should be considered misbehavior by
+the log equivalent to violating the append-only property.
+
 ## Auditing
 
 Auditing ensures that the current published state of a log is reachable from
