@@ -4,8 +4,8 @@
 
 3. Go to https://datatracker.ietf.org/submit/.
 
-4. Upload draft-ietf-trans-rfc6962-bis-NN.txt and rfc6962-bis.xml
-   (choose both, then upload).
+4. Upload draft-ietf-trans-rfc6962-bis-NN.txt and
+   draft-ietf-trans-rfc6962-bis.xml (choose both, then upload).
 
 5. If there are errors, correct them and try again.
 
