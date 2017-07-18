@@ -1234,9 +1234,10 @@ If the certificate is logged, an SCT MUST be issued. Logging the certificate is
 useful, because monitors ({{monitor}}) can then detect these encoding errors,
 which may be accepted by some TLS clients.
 
-If the returned `sct` is intended to be provided to clients, then `sth` and
-`inclusion` (if returned) SHOULD also be provided to clients (e.g., if `type`
-was 1 then all three `TransItem`s could be embedded in the certificate).
+If the returned `sct` is intended to be provided to TLS clients, then `sth` and
+`inclusion` (if returned) SHOULD also be provided to TLS clients (e.g., if
+`type` was 2 (for `precert_sct_v2`) then all three `TransItem`s could be
+embedded in the certificate).
 
 ## Retrieve Latest Signed Tree Head {#get-sth}
 
