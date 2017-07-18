@@ -239,6 +239,8 @@ community. The major changes are:
 - get-all-by-hash: new client API for obtaining an inclusion proof and the
   corresponding consistency proof at the same time.
 
+- submit-entry: new client API, replacing add-chain and add-pre-chain.
+
 - Presenting SCTs with proofs: TLS servers may present SCTs together with the
   corresponding inclusion proofs using any of the mechanisms that [RFC6962]
   defined for presenting SCTs only. (Presenting SCTs only is still supported).
@@ -1447,9 +1449,9 @@ as returned by `get-sth` in {{get-sth}}.
 
 The `start` parameter MUST be less than or equal to the `end` parameter.
 
-The `chain` field in the `submission` output parameter MUST include the trust
-anchor that the log used to verify the submission, even if it was omitted in the
-original submission.
+The `chain` field in each `submitted_entry` output parameter MUST include the
+trust anchor that the log used to verify the submission, even if it was omitted
+in the original submission.
 
 Log servers MUST honor requests where 0 <= `start` < `tree_size` and `end` >=
 `tree_size` by returning a partial response covering only the valid entries in
