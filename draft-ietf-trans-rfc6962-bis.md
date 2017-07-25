@@ -1193,7 +1193,7 @@ Inputs:
   : An array of zero or more base64 encoded CA certificates. The first element
     is the signer of the `submission`; the second certifies the first; etc.
     The last element of `chain` (or, if `chain` is an empty array, the
-    `submission`) either is, or is certified by, an accepted trust anchor.
+    `submission`) is certified by an accepted trust anchor.
 
 Outputs:
 
@@ -1235,6 +1235,11 @@ the log MUST either log the certificate or return the "bad certificate" error.
 If the certificate is logged, an SCT MUST be issued. Logging the certificate is
 useful, because monitors ({{monitor}}) can then detect these encoding errors,
 which may be accepted by some TLS clients.
+
+If `submission` is an accepted trust anchor whose certifier is neither an
+accepted trust anchor nor the first element of `chain`, then the log MUST return
+the "unknown anchor" error. A log cannot generate an SCT for a submission if it
+does not have access to the issuer's public key.
 
 If the returned `sct` is intended to be provided to TLS clients, then `sth` and
 `inclusion` (if returned) SHOULD also be provided to TLS clients (e.g., if
@@ -2055,8 +2060,9 @@ action when a misissue is detected.
 A log can misbehave in several ways. Examples include: failing to incorporate a
 certificate with an SCT in the Merkle Tree within the MMD; presenting different,
 conflicting views of the Merkle Tree at different times and/or to different
-parties; and issuing STHs too frequently. Such misbehavior is detectable and
-[I-D.ietf-trans-threat-analysis] provides more details on how this can be done.
+parties; issuing STHs too frequently; and mutating the signature of a logged
+certificate. Such misbehavior is detectable and [I-D.ietf-trans-threat-analysis]
+provides more details on how this can be done.
 
 Violation of the MMD contract is detected by log clients requesting a Merkle
 inclusion proof ({{get-proof-by-hash}}) for each observed SCT. These checks can
