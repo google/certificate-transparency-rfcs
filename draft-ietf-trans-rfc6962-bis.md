@@ -1191,9 +1191,9 @@ Inputs:
 
   chain:
   : An array of zero or more base64 encoded CA certificates. The first element
-    is the signer of the `submission`; the second certifies the first; etc.
+    is the certifier of the `submission`; the second certifies the first; etc.
     The last element of `chain` (or, if `chain` is an empty array, the
-    `submission`) either is, or is certified by, an accepted trust anchor.
+    `submission`) is certified by an accepted trust anchor.
 
 Outputs:
 
@@ -1220,7 +1220,7 @@ Error codes:
 |-----------------+--------------------------------------------------------------------------------------------------------------------------------------------------|
 | bad submission  | `submission` is neither a valid certificate nor a valid precertificate.                                                                          |
 | bad type        | `type` is neither 1 nor 2.                                                                                                                       |
-| bad chain       | The first element of `chain` is not the signer of the `submission`, or the second element does not certify the first, etc.                       |
+| bad chain       | The first element of `chain` is not the certifier of the `submission`, or the second element does not certify the first, etc.                    |
 | bad certificate | One or more certificates in the `chain` are not valid (e.g., not properly encoded).                                                              |
 | unknown anchor  | The last element of `chain` (or, if `chain` is an empty array, the `submission`) both is not, and is not certified by, an accepted trust anchor. |
 | shutdown        | The log is no longer accepting submissions.                                                                                                      |
@@ -1235,6 +1235,11 @@ the log MUST either log the certificate or return the "bad certificate" error.
 If the certificate is logged, an SCT MUST be issued. Logging the certificate is
 useful, because monitors ({{monitor}}) can then detect these encoding errors,
 which may be accepted by some TLS clients.
+
+If `submission` is an accepted trust anchor whose certifier is neither an
+accepted trust anchor nor the first element of `chain`, then the log MUST return
+the "unknown anchor" error. A log cannot generate an SCT for a submission if it
+does not have access to the issuer's public key.
 
 If the returned `sct` is intended to be provided to TLS clients, then `sth` and
 `inclusion` (if returned) SHOULD also be provided to TLS clients (e.g., if
@@ -1449,9 +1454,11 @@ as returned by `get-sth` in {{get-sth}}.
 
 The `start` parameter MUST be less than or equal to the `end` parameter.
 
-The `chain` field in each `submitted_entry` output parameter MUST include the
-trust anchor that the log used to verify the submission, even if it was omitted
-in the original submission.
+Each `submitted_entry` output parameter MUST include the trust anchor that the
+log used to verify the `submission`, even if that trust anchor was not provided
+to `submit-entry` (see {{submit-entry}}). If the `submission` does not certify
+itself, then the first element of `chain` MUST be present and MUST certify the
+`submission`.
 
 Log servers MUST honor requests where 0 <= `start` < `tree_size` and `end` >=
 `tree_size` by returning a partial response covering only the valid entries in
@@ -2055,8 +2062,10 @@ action when a misissue is detected.
 A log can misbehave in several ways. Examples include: failing to incorporate a
 certificate with an SCT in the Merkle Tree within the MMD; presenting different,
 conflicting views of the Merkle Tree at different times and/or to different
-parties; and issuing STHs too frequently. Such misbehavior is detectable and
-[I-D.ietf-trans-threat-analysis] provides more details on how this can be done.
+parties; issuing STHs too frequently; mutating the signature of a logged
+certificate; and failing to present a chain containing the certifier of a logged
+certificate. Such misbehavior is detectable and [I-D.ietf-trans-threat-analysis]
+provides more details on how this can be done.
 
 Violation of the MMD contract is detected by log clients requesting a Merkle
 inclusion proof ({{get-proof-by-hash}}) for each observed SCT. These checks can
