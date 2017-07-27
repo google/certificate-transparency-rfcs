@@ -1191,7 +1191,7 @@ Inputs:
 
   chain:
   : An array of zero or more base64 encoded CA certificates. The first element
-    is the signer of the `submission`; the second certifies the first; etc.
+    is the certifier of the `submission`; the second certifies the first; etc.
     The last element of `chain` (or, if `chain` is an empty array, the
     `submission`) is certified by an accepted trust anchor.
 
@@ -1220,7 +1220,7 @@ Error codes:
 |-----------------+--------------------------------------------------------------------------------------------------------------------------------------------------|
 | bad submission  | `submission` is neither a valid certificate nor a valid precertificate.                                                                          |
 | bad type        | `type` is neither 1 nor 2.                                                                                                                       |
-| bad chain       | The first element of `chain` is not the signer of the `submission`, or the second element does not certify the first, etc.                       |
+| bad chain       | The first element of `chain` is not the certifier of the `submission`, or the second element does not certify the first, etc.                    |
 | bad certificate | One or more certificates in the `chain` are not valid (e.g., not properly encoded).                                                              |
 | unknown anchor  | The last element of `chain` (or, if `chain` is an empty array, the `submission`) both is not, and is not certified by, an accepted trust anchor. |
 | shutdown        | The log is no longer accepting submissions.                                                                                                      |
