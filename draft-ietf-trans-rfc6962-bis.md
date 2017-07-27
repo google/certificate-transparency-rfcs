@@ -890,11 +890,12 @@ calculated as HASH(0x00 || TransItem), where the hash algorithm is one of the
 log's parameters.
 
 ~~~~~~~~~~~
+    opaque SubjectPublicKeyInfo<1..2^24-1>;
     opaque TBSCertificate<1..2^24-1>;
 
     struct {
         uint64 timestamp;
-        opaque issuer_key_hash<32..2^8-1>;
+        SubjectPublicKeyInfo issuer_key;
         TBSCertificate tbs_certificate;
         Extension sct_extensions<0..2^16-1>;
     } TimestampedCertificateEntryDataV2;
@@ -905,13 +906,13 @@ was accepted by the log, measured in milliseconds since the epoch (January 1,
 1970, 00:00 UTC), ignoring leap seconds. Note that the leaves of a log's Merkle
 Tree are not required to be in strict chronological order.
 
-`issuer_key_hash` is the HASH of the public key of the CA that issued the
-certificate or precertificate, calculated over the DER encoding of the key
-represented as SubjectPublicKeyInfo [RFC5280]. This is needed to bind the CA to
-the certificate or precertificate, making it impossible for the corresponding
-SCT to be valid for any other certificate or precertificate whose TBSCertificate
-matches `tbs_certificate`. The length of the `issuer_key_hash` MUST match
-HASH_SIZE.
+`issuer_key` is the DER encoded public key of the CA that issued the
+certificate or precertificate, represented as SubjectPublicKeyInfo
+[RFC5280]. This is needed (1) to bind the CA to the certificate or
+precertificate, making it impossible for the corresponding SCT to be
+valid for any other certificate or precertificate whose TBSCertificate
+matches `tbs_certificate`, and (2) to make it possible to verify the
+certificate signature to prevent a malicious log from mutating it.
 
 `tbs_certificate` is the DER encoded TBSCertificate from the submission. (Note
 that a precertificate's TBSCertificate can be reconstructed from the
@@ -1708,7 +1709,7 @@ structure is constructed in the following manner:
 * `timestamp` is copied from the SCT.
 * `tbs_certificate` is the reconstructed TBSCertificate portion of the server
    certificate, as described in {{reconstructing_tbscertificate}}.
-* `issuer_key_hash` is computed as described in {{tree_leaves}}.
+* `issuer_key` is computed as described in {{tree_leaves}}.
 * `sct_extensions` is copied from the SCT.
 
 The SCT's `signature` is then verified using the public key of the corresponding
@@ -1799,6 +1800,27 @@ follow these steps for each log:
        consistency proof.
 
 9. Go to Step 5.
+
+### Verifying the Submitted Entry
+
+To prevent a malicious log from mutating a certificate's signature (which would
+allow a CA to avoid responsibility for misissuing a certificate), monitors
+should perform the following checks for each entry they download:
+
+1. Verify that the `type` field of `submitted_entry` matches the type
+   of `log_entry`.
+
+2. Verify that the TBSCertificate portion of the certificate or
+   precertificate in the `submission` field of `submitted_entry`
+   is byte-for-byte identical to the `tbs_certificate` field of
+   `log_entry`.
+
+3. Verify the signature of the certificate or precertificate in
+   the `submission` field of `submitted_entry`, using the public key
+   contained in the `issuer_key` field of `log_entry`.
+
+If an entry fails these checks, it should be considered misbehavior by
+the log equivalent to violating the append-only property.
 
 ## Auditing
 
