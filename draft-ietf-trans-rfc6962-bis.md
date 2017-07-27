@@ -1454,9 +1454,11 @@ as returned by `get-sth` in {{get-sth}}.
 
 The `start` parameter MUST be less than or equal to the `end` parameter.
 
-The `chain` field in each `submitted_entry` output parameter MUST include the
-trust anchor that the log used to verify the submission, even if it was omitted
-in the original submission.
+Each `submitted_entry` output parameter MUST include the trust anchor that the
+log used to verify the `submission`, even if that trust anchor was not provided
+to `submit-entry` (see {{submit-entry}}). If the `submission` does not certify
+itself, then the first element of `chain` MUST be present and MUST certify the
+`submission`.
 
 Log servers MUST honor requests where 0 <= `start` < `tree_size` and `end` >=
 `tree_size` by returning a partial response covering only the valid entries in
@@ -2060,7 +2062,8 @@ action when a misissue is detected.
 A log can misbehave in several ways. Examples include: failing to incorporate a
 certificate with an SCT in the Merkle Tree within the MMD; presenting different,
 conflicting views of the Merkle Tree at different times and/or to different
-parties; issuing STHs too frequently; and mutating the signature of a logged
+parties; issuing STHs too frequently; mutating the signature of a logged
+certificate; and failing to present a chain containing the certifier of a logged
 certificate. Such misbehavior is detectable and [I-D.ietf-trans-threat-analysis]
 provides more details on how this can be done.
 
