@@ -1377,8 +1377,8 @@ hash, which leads to a number of cases:
 |--------------------------------------+----------------------------------------------------------------------------------------------------------|
 
 Note that more than one case can be true, in which case the returned data is
-their concatenation. It is also possible for none to be true, in which case the
-the front-end MUST return an empty response.
+their union. It is also possible for none to be true, in which case the
+front-end MUST return an empty response.
 
 Outputs:
 
