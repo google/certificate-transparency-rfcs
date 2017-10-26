@@ -1496,10 +1496,10 @@ Outputs:
 
 # TLS Servers {#tls_servers}
 
-TLS servers MUST use at least one of the three mechanisms listed below to
-present one or more SCTs from one or more logs to each TLS client during full
-TLS handshakes, where each SCT corresponds to the server certificate. TLS
-servers SHOULD also present corresponding inclusion proofs and STHs.
+CT-using TLS servers MUST use at least one of the three mechanisms listed below
+to present one or more SCTs from one or more logs to each TLS client during full
+TLS handshakes, where each SCT corresponds to the server certificate. They
+SHOULD also present corresponding inclusion proofs and STHs.
 
 Three mechanisms are provided because they have different tradeoffs.
 
@@ -1531,10 +1531,10 @@ one of the three mechanisms listed above.
 
 ## Multiple SCTs {#multiple-scts}
 
-TLS servers SHOULD send SCTs from multiple logs in case one or more logs are not
-acceptable to the TLS client (for example, if a log has been struck off for
-misbehavior, has had a key compromise, or is not known to the TLS client). For
-example:
+CT-using TLS servers SHOULD send SCTs from multiple logs in case one or more
+logs are not acceptable to the TLS client (for example, if a log has been struck
+off for misbehavior, has had a key compromise, or is not known to the TLS
+client). For example:
 
 * If a CA and a log collude, it is possible to temporarily hide misissuance from
   clients. Including SCTs from different logs makes it more difficult to mount
@@ -1588,10 +1588,10 @@ servers. Therefore, if the TLS server can obtain them, it SHOULD also include
 ## transparency_info TLS Extension {#tls_transinfo_extension}
 
 Provided that a TLS client includes the `transparency_info` extension type in
-the ClientHello, the TLS server SHOULD include the `transparency_info` extension
-in the ServerHello with `extension_data` set to a `TransItemList`. The TLS
-server SHOULD ignore any `extension_data` sent by the TLS client. Additionally,
-the TLS server MUST NOT process or include this extension when a TLS session is
+the ClientHello, the CT-using TLS server SHOULD include the `transparency_info`
+extension in the ServerHello with `extension_data` set to a `TransItemList` and
+SHOULD ignore any `extension_data` sent by the TLS client. Additionally, TLS
+servers MUST NOT process or include this extension when a TLS session is
 resumed, since session resumption uses the original session information.
 
 ## cached_info TLS Extension {#cached_info}
