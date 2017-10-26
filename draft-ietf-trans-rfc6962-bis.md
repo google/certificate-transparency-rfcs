@@ -1365,22 +1365,20 @@ Inputs:
 > The `hash` must be calculated as defined in {{tree_leaves}}. The `tree_size`
 > must designate an existing v2 STH.
 
-> Because of skew, the front-end may not know the requested STH or the requested
-> hash, which leads to a number of cases.
+Because of skew, the front-end may not know the requested STH or the requested
+hash, which leads to a number of cases:
 
-> latest STH < requested STH
-> : Return latest STH.
+|--------------------------------------+----------------------------------------------------------------------------------------------------------|
+| Case                                 | Response                                                                                                 |
+|--------------------------------------+----------------------------------------------------------------------------------------------------------|
+| latest STH < requested STH           | Return latest STH                                                                                        |
+| latest STH > requested STH           | Return latest STH and a consistency proof between it and the requested STH (see {{get-sth-consistency}}) |
+| index of requested hash < latest STH | Return `inclusion`                                                                                       |
+|--------------------------------------+----------------------------------------------------------------------------------------------------------|
 
-> latest STH > requested STH
-> : Return latest STH and a consistency proof between it and the requested STH
->   (see {{get-sth-consistency}}).
-
-> index of requested hash < latest STH
-> : Return `inclusion`.
-
-> Note that more than one case can be true, in which case the returned data is
-> their concatenation. It is also possible for none to be true, in which case
-> the front-end MUST return an empty response.
+Note that more than one case can be true, in which case the returned data is
+their concatenation. It is also possible for none to be true, in which case the
+the front-end MUST return an empty response.
 
 Outputs:
 
