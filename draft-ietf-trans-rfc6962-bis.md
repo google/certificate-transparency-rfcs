@@ -692,9 +692,13 @@ accepted submission. Upon producing an SCT, the log MUST fulfil this promise by
 performing the following actions within a fixed amount of time known as the
 Maximum Merge Delay (MMD), which is one of the log's parameters (see
 {{log_parameters}}):
+
 * Allocate a tree index to the entry representing the accepted submission.
+
 * Calculate the root of the tree.
+
 * Sign the root of the tree (see {{sth}}).
+
 The log may append multiple entries before signing the root of the tree.
 
 Log operators SHOULD NOT impose any conditions on retrieving or sharing data
