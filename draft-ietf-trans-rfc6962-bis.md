@@ -601,8 +601,9 @@ Submitters submit certificates or preannouncements of certificates prior to
 issuance (precertificates) to logs for public auditing, as described below. In
 order to enable attribution of each logged certificate or precertificate to its
 issuer, each submission MUST be accompanied by all additional certificates
-required to verify the chain up to an accepted trust anchor. The trust anchor (a
-root or intermediate CA certificate) MAY be omitted from the submission.
+required to verify the chain up to an accepted trust anchor ({{get-anchors}}).
+The trust anchor (a root or intermediate CA certificate) MAY be omitted from the
+submission.
 
 If a log accepts a submission, it will return a Signed Certificate Timestamp
 (SCT) (see {{sct}}). The submitter SHOULD validate the returned SCT as described
