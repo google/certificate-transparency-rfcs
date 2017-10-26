@@ -137,16 +137,13 @@ and queries that are defined in this document.
 # Introduction
 
 Certificate Transparency aims to mitigate the problem of misissued certificates
-by providing append-only logs of issued certificates. The logs do not need to be
-trusted because they are publicly auditable. Anyone may verify the correctness
-of each log and monitor when new certificates are added to it. The logs do not
-themselves prevent misissue, but they ensure that interested parties
-(particularly those named in certificates) can detect such misissuance. Note
-that this is a general mechanism that could be used for transparently logging
-any form of binary data, subject to some kind of inclusion criteria. In this
-document, we only describe its use for public TLS server certificates (i.e.,
-where the inclusion criteria is a valid certificate issued by a public
-certification authority (CA)).
+by providing append-only logs of issued certificates. The logs do not themselves
+prevent misissuance, but they ensure that interested parties (particularly those
+named in certificates) can detect such misissuance. Note that this is a general
+mechanism that could be used for transparently logging any form of binary data,
+subject to some kind of inclusion criteria. In this document, we only describe
+its use for public TLS server certificates (i.e., where the inclusion criteria
+is a valid certificate issued by a public certification authority (CA)).
 
 Each log contains certificate chains, which can be submitted by anyone. It is
 expected that public CAs will contribute all their newly issued certificates to
@@ -178,13 +175,17 @@ operation is asynchronous to allow clients to proceed without delay, despite
 possible issues such as network connectivity and the vagaries of firewalls.
 
 The append-only property of each log is achieved using Merkle Trees, which can
-be used to show that any particular instance of the log is a superset of any
-particular previous instance. Likewise, Merkle Trees avoid the need to blindly
-trust logs: if a log attempts to show different things to different people, this
-can be efficiently detected by comparing tree roots and consistency proofs.
-Similarly, other misbehaviors of any log (e.g., issuing signed timestamps for
-certificates they then don't log) can be efficiently detected and proved to the
-world at large.
+be used to efficiently prove that any particular instance of the log is a
+superset of any particular previous instance and to efficiently detect various
+misbehaviors of the log (e.g., issuing a signed timestamp for a certificate that
+is not subsequently logged).
+
+It is necessary to treat each log as a trusted third party, because the log
+auditing mechanisms described in this document can be circumvented by a
+misbehaving log that shows different, inconsistent views of itself to different
+clients. Whilst it is anticipated that additional mechanisms will be developed
+to address these shortcomings and thereby avoid the need to blindly trust logs,
+such mechanisms are outside the scope of this document.
 
 ## Requirements Language
 
