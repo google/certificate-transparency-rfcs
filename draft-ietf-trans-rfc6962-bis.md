@@ -105,7 +105,7 @@ informative:
       org: The Chromium Projects
     date: 2014
   JSON.Metadata:
-    target: http://www.certificate-transparency.org/known-logs/log_list_schema.json
+    target: https://www.gstatic.com/ct/log_list/log_list_schema.json
     title: Chromium Log Metadata JSON Schema
     author:
       org: The Chromium Projects
