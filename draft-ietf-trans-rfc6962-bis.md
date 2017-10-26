@@ -1113,7 +1113,7 @@ restriction on how log operators can deploy these services, as noted in
 not indicated that these restrictions are a problem in practice.
 
 Note that JSON objects and URL parameters may contain fields not specified here.
-These extra fields should be ignored.
+These extra fields SHOULD be ignored.
 
 The \<log server> prefix, which is one of the log's parameters, MAY include a
 path as well as a server name and a port.
