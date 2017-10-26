@@ -1531,23 +1531,22 @@ one of the three mechanisms listed above.
 
 ## Multiple SCTs {#multiple-scts}
 
-CT-using TLS servers SHOULD send SCTs from multiple logs in case one or more
-logs are not acceptable to the TLS client (for example, if a log has been struck
-off for misbehavior, has had a key compromise, or is not known to the TLS
-client). For example:
+CT-using TLS servers SHOULD send SCTs from multiple logs, because:
+
+* One or more logs may not have become acceptable to all CT-using TLS clients.
 
 * If a CA and a log collude, it is possible to temporarily hide misissuance from
-  clients. Including SCTs from different logs makes it more difficult to mount
-  this attack.
+  clients. When a TLS client requires SCTs from multiple logs to be provided, it
+  is more difficult to mount this attack.
 
-* If a log misbehaves, a consequence may be that clients cease to trust it.
-  Since the time an SCT may be in use can be considerable (several years is
-  common in current practice when embedded in a certificate), servers may wish
-  to reduce the probability of their certificates being rejected as a result by
-  including SCTs from different logs.
+* If a log misbehaves or suffers a key compromise, a consequence may be that
+  clients cease to trust it. Since the time an SCT may be in use can be
+  considerable (several years is common in current practice when embedded in a
+  certificate), including SCTs from multiple logs reduces the probability of the
+  certificate being rejected by TLS clients.
 
-* TLS clients may have policies related to the above risks requiring servers to
-  present multiple SCTs. For example, at the time of writing, Chromium
+* TLS clients may have policies related to the above risks requiring TLS servers
+  to present multiple SCTs. For example, at the time of writing, Chromium
   [Chromium.Log.Policy] requires multiple SCTs to be presented with EV
   certificates in order for the EV indicator to be shown.
 
