@@ -1700,12 +1700,13 @@ the certificate as follows:
 
 ### Validating SCTs
 
-In addition to normal validation of the server certificate and its chain, TLS
-clients SHOULD validate each received SCT for which they have the corresponding
-log's parameters. To validate an SCT, a TLS client computes the signature input
-by constructing a `TransItem` of type `x509_entry_v2` or `precert_entry_v2`,
-depending on the SCT's `TransItem` type. The `TimestampedCertificateEntryDataV2`
-structure is constructed in the following manner:
+In addition to normal validation of the server certificate and its chain,
+CT-using TLS clients MUST validate each received SCT for which they have the
+corresponding log's parameters. To validate an SCT, a TLS client computes the
+signature input by constructing a `TransItem` of type `x509_entry_v2` or
+`precert_entry_v2`, depending on the SCT's `TransItem` type. The
+`TimestampedCertificateEntryDataV2` structure is constructed in the following
+manner:
 
 * `timestamp` is copied from the SCT.
 * `tbs_certificate` is the reconstructed TBSCertificate portion of the server
