@@ -1994,13 +1994,12 @@ arc that was selected due to its short encoding.
 IANA is asked to establish a registry of Log IDs, named "CT Log ID Registry",
 that initially consists of:
 
-|-------------------------------+------------+---------------------------------------|
-| Value                         | Log        | Reference / Assignment Policy         |
-|-------------------------------+------------+---------------------------------------|
-| 1.3.101.8192 - 1.3.101.16383  | Unassigned | Parameters Required and Expert Review |
-| 1.3.101.80.0 - 1.3.101.80.127 | Unassigned | Parameters Required and Expert Review |
-| 1.3.101.80.128 - 1.3.101.80.* | Unassigned | First Come First Served               |
-|-------------------------------+------------+---------------------------------------|
+|------------------------------+------------+-------------------------------------------------|
+| Value                        | Log        | Reference / Assignment Policy                   |
+|------------------------------+------------+-------------------------------------------------|
+| 1.3.101.8192 - 1.3.101.16383 | Unassigned | Parameters Required and First Come First Served |
+| 1.3.101.80.0 - 1.3.101.80.*  | Unassigned | Parameters Required and First Come First Served |
+|------------------------------+------------+-------------------------------------------------|
 
 All OIDs in the range from 1.3.101.8192 to 1.3.101.16383 have been reserved.
 This is a limited resource of 8,192 OIDs, each of which has an encoded length of
@@ -2012,13 +2011,6 @@ the 128 OIDs from 1.3.101.80.0 to 1.3.101.80.127 have an encoded length of only
 
 Each application for the allocation of a Log ID should be accompanied by all of
 the required parameters (except for the Log ID) listed in {{log_parameters}}.
-
-### Expert Review guidelines
-
-Since the Log IDs with the shortest encodings are a limited resource, the
-appointed Expert should review the submitted parameters and judge whether or not
-the applicant is requesting a Log ID in good faith (with the intention of
-actually running a CT log that will be identified by the allocated Log ID).
 
 # Security Considerations
 
