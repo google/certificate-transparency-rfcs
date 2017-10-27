@@ -1572,7 +1572,7 @@ decode each `TransItem` individually (so, for example, if there is a version
 upgrade, out-of-date clients can still parse old `TransItem` structures while
 skipping over new `TransItem` structures whose versions they don't understand).
 
-## Presenting SCTs, inclusions proofs and STHs
+## Presenting SCTs, inclusions proofs and STHs {#presenting_transitems}
 
 In each `TransItemList` that is sent to a client during a TLS handshake, the TLS
 server MUST include a `TransItem` structure of type `x509_sct_v2` or
@@ -1587,9 +1587,17 @@ servers. Therefore, if the TLS server can obtain them, it SHOULD also include
 ## transparency_info TLS Extension {#tls_transinfo_extension}
 
 Provided that a TLS client includes the `transparency_info` extension type in
-the ClientHello, the CT-using TLS server SHOULD verify that the received
-`extension_data` is empty and SHOULD include the `transparency_info` extension
-in the ServerHello with `extension_data` set to a `TransItemList`. Additionally,
+the ClientHello and the TLS server supports the `transparency_info` extension:
+
+* The TLS server MUST verify that the received `extension_data` is empty.
+
+* The TLS server SHOULD construct a `TransItemList` of relevant `TransItem`s
+  (see {{presenting_transitems}}), which SHOULD omit any `TransItem`s that are
+  already embedded in the server certificate or the stapled OCSP response (see
+  {{x509v3_transinfo_extension}}). If the constructed `TransItemList` is not
+  empty, then the TLS server SHOULD include the `transparency_info` extension in
+  the ServerHello with the `extension_data` set to this `TransItemList`.
+
 TLS servers MUST NOT process or include this extension when a TLS session is
 resumed, since session resumption uses the original session information.
 
