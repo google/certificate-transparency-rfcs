@@ -2102,10 +2102,11 @@ STH for each distinct tree_size. Each of these SCTs and STHs can be stored by
 the log and served to other clients that submit the same certificate or request
 the same STH.
 
-## Multiple SCTs {#offering_multiple_scts}
+## Multiple SCTs {#requiring_multiple_scts}
 
-By offering multiple SCTs, each from a different log, TLS servers reduce the
-effectiveness of an attack where a CA and a log collude (see {{multiple-scts}}).
+By requiring TLS servers to offer multiple SCTs, each from a different log, TLS
+clients reduce the effectiveness of an attack where a CA and a log collude
+(see {{multiple-scts}}).
 
 # Acknowledgements
 
