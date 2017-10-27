@@ -1669,7 +1669,7 @@ implementation-dependent (see, for example, [Chromium.Policy]).
 
 ## TLS Client {#tls_clients}
 
-### Receiving SCTs and inclusion proofs
+### Receiving SCTs and inclusion proofs {#receiving_transitems}
 
 TLS clients receive SCTs and inclusion proofs alongside or in certificates.
 CT-using TLS clients MUST implement all of the three mechanisms by which TLS
@@ -1748,8 +1748,12 @@ It is up to a client's local policy to specify the quantity and form of
 evidence (SCTs, inclusion proofs or a combination) needed to achieve
 compliance and how to handle non-compliance.
 
-A TLS client MUST NOT evaluate compliance if it did not send both the
-`transparency_info` and `status_request` TLS extensions in the ClientHello.
+A TLS client can only evaluate compliance if it has given the TLS server the
+opportunity to send SCTs and inclusion proofs by any of the three mechanisms
+that are mandatory to implement for CT-using TLS clients (see
+{{receiving_transitems}}). Therefore, a TLS client MUST NOT evaluate compliance
+if it did not include both the `transparency_info` and `status_request` TLS
+extensions in the ClientHello.
 
 ### cached_info TLS Extension {#tls_cachedinfo_extension}
 
