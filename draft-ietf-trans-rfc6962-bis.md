@@ -1608,9 +1608,6 @@ it SHOULD NOT include any `TransItem` structures of type `x509_sct_v2` or
 `precert_sct_v2` in the `TransItemList` if all of the following conditions are
 met:
 
-* The TLS client includes the `transparency_info` extension type in the
-  ClientHello.
-
 * The TLS client includes the `cached_info` ([RFC7924]) extension type in the
   ClientHello, with a `CachedObject` of type `ct_compliant` (see
   {{tls_cachedinfo_extension}}) and at least one `CachedObject` of type `cert`.
