@@ -2027,12 +2027,10 @@ can use logs and signed timestamps to reduce the likelihood that they will
 accept misissued certificates. If a server presents a valid signed timestamp for
 a certificate, then the client knows that a log has committed to publishing the
 certificate. From this, the client knows that monitors acting for the subject of
-the certificate have had some time to notice the misissue and take some action,
-such as asking a CA to revoke a misissued certificate, or that the log has
-misbehaved, which will be discovered when the SCT is audited. A signed timestamp
-is not a guarantee that the certificate is not misissued, since appropriate
-monitors might not have checked the logs or the CA might have refused to revoke
-the certificate.
+the certificate have had some time to notice the misissuance and take some
+action, such as asking a CA to revoke a misissued certificate. A signed
+timestamp does not guarantee this though, since appropriate monitors might not
+have checked the logs or the CA might have refused to revoke the certificate.
 
 In addition, if TLS clients will not accept unlogged certificates, then site
 owners will have a greater incentive to submit certificates to logs, possibly
