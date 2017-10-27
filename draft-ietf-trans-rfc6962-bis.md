@@ -1679,10 +1679,13 @@ variety.
 TLS clients receive SCTs alongside or in certificates. TLS clients MUST
 implement all of the three mechanisms by which TLS servers may present SCTs (see
 {{tls_servers}}). TLS clients MAY also accept SCTs via the `status_request_v2`
-extension ([RFC6961]). TLS clients that support the `transparency_info` TLS
-extension SHOULD include it in ClientHello messages, with empty
-`extension_data`. TLS clients may also receive inclusion proofs in addition to
-SCTs, which should be checked once the SCTs are validated.
+extension ([RFC6961]). TLS clients may also receive inclusion proofs in addition
+to SCTs, which should be checked once the SCTs are validated.
+
+TLS clients that support the `transparency_info` TLS extension SHOULD include it
+in ClientHello messages, with empty `extension_data`. If a TLS server includes
+the `transparency_info` TLS extension when resuming a TLS session, the TLS
+client MUST abort the handshake.
 
 ### Reconstructing the TBSCertificate {#reconstructing_tbscertificate}
 
