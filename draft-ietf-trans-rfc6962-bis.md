@@ -2046,7 +2046,7 @@ Misissued certificates that have not been publicly logged, and thus do not have
 a valid SCT, are not considered compliant. Misissued certificates that do have
 an SCT from a log will appear in that public log within the Maximum Merge Delay,
 assuming the log is operating correctly. As a log is allowed to serve an STH
-that's up to MMD old, the maximum period of time during which a misissued
+that's up to the MMD old, the maximum period of time during which a misissued
 certificate can be used without being available for audit is twice the MMD.
 
 ## Detection of Misissue
