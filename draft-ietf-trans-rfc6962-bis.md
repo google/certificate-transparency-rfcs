@@ -1760,8 +1760,8 @@ extensions in the ClientHello.
 If a TLS client uses the `cached_info` TLS extension ([RFC7924]) to indicate 1
 or more cached certificates, all of which it already considers to be CT
 compliant, the TLS client MAY also include a `CachedObject` of type
-`ct_compliant` in the `cached_info` extension. The `hash_value` field MUST be 1
-byte long with the value 0.
+`ct_compliant` in the `cached_info` extension. Its `hash_value` field MUST have
+the value 0 and be 1 byte long (the minimum length permitted by [RFC7924]).
 
 ## Monitor {#monitor}
 
