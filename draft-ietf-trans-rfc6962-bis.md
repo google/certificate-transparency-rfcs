@@ -2067,10 +2067,8 @@ provides more details on how this can be done.
 
 Violation of the MMD contract is detected by log clients requesting a Merkle
 inclusion proof ({{get-proof-by-hash}}) for each observed SCT. These checks can
-be asynchronous and need only be done once per certificate. In order to protect
-the clients' privacy, these checks need not reveal the exact certificate to the
-log. Instead, clients can request the proof from a trusted auditor (since anyone
-can compute the proofs from the log) or communicate with the log via proxies.
+be asynchronous and need only be done once per certificate. However, note that
+there may be privacy concerns (see {{fetching_inclusion_proofs}}).
 
 Violation of the append-only property or the STH issuance rate limit can be
 detected by clients comparing their instances of the Signed Tree Heads. There
