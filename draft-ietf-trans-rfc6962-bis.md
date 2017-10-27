@@ -1683,15 +1683,20 @@ client MUST abort the handshake.
 
 ### Reconstructing the TBSCertificate {#reconstructing_tbscertificate}
 
-To reconstruct the TBSCertificate component of a precertificate from a
-certificate, TLS clients should remove the Transparency Information extension
-described in {{x509v3_transinfo_extension}}.
+Validation of an SCT for a certificate (where the `type` of the `TransItem` is
+`x509_sct_v2`) uses the unmodified TBSCertificate component of the certificate.
 
-If the SCT checked is for a precertificate (where the `type` of the `TransItem`
-is `precert_sct_v2`), then the client SHOULD also remove embedded v1 SCTs,
-identified by OID 1.3.6.1.4.1.11129.2.4.2 (See Section 3.3. of [RFC6962]), in
-the process of reconstructing the TBSCertificate. That is to allow embedded v1
-and v2 SCTs to co-exist in a certificate (See {{v1_coexistence}}).
+Before an SCT for a precertificate (where the `type` of the `TransItem` is
+`precert_sct_v2`) can be validated, the TBSCertificate component of the
+precertificate needs to be reconstructed from the TBSCertificate component of
+the certificate as follows:
+
+* Remove the Transparency Information extension
+  (see {{x509v3_transinfo_extension}}).
+
+* Remove embedded v1 SCTs, identified by OID 1.3.6.1.4.1.11129.2.4.2 (see
+  section 3.3 of [RFC6962]). This allows embedded v1 and v2 SCTs to co-exist in
+  a certificate (see {{v1_coexistence}}).
 
 ### Validating SCTs
 
