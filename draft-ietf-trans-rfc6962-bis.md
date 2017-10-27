@@ -1580,7 +1580,7 @@ server MUST include a `TransItem` structure of type `x509_sct_v2` or
 `precert_sct_v2` (except as described in {{cached_info}}).
 
 Presenting inclusion proofs and STHs in the TLS handshake helps to protect the
-client's privacy (see {{validating_inclusion_proofs}}) and reduces load on log
+client's privacy (see {{fetching_inclusion_proofs}}) and reduces load on log
 servers. Therefore, if the TLS server can obtain them, it SHOULD also include
 `TransItem`s of type `inclusion_proof_v2` and `signed_tree_head_v2` in the
 `TransItemList`.
@@ -1723,8 +1723,12 @@ one of the log's parameters.
 When a TLS client has validated a received SCT but does not yet possess
 a corresponding inclusion proof, the TLS client MAY request the inclusion
 proof directly from a log using `get-proof-by-hash` ({{get-proof-by-hash}}) or
-`get-all-by-hash` ({{get-all-by-hash}}). Note that this will disclose to the
-log which TLS server the client has been communicating with.
+`get-all-by-hash` ({{get-all-by-hash}}).
+
+Note that fetching inclusion proofs directly from a log will disclose to the
+log which TLS server the client has been communicating with. This may be
+regarded as a significant privacy concern, and so it is preferable for the TLS
+server to send the inclusion proofs (see {{presenting_transitems}}).
 
 ### Validating inclusion proofs {#validating_inclusion_proofs}
 
