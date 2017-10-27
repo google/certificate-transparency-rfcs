@@ -1615,8 +1615,9 @@ met:
 * The TLS server sends a modified Certificate message (as described in section
   4.1 of [RFC7924]).
 
-TLS servers SHOULD ignore the `hash_value` fields of each `CachedObject` of type
-`ct_compliant` sent by TLS clients.
+If the `hash_value` of any `CachedObject` of type `ct_compliant` sent by a TLS
+client is not 1 byte long with the value 0, the CT-using TLS server MUST abort
+the handshake.
 
 # Certification Authorities
 
