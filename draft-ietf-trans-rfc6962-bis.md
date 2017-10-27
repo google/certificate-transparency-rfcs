@@ -1587,10 +1587,10 @@ servers. Therefore, if the TLS server can obtain them, it SHOULD also include
 ## transparency_info TLS Extension {#tls_transinfo_extension}
 
 Provided that a TLS client includes the `transparency_info` extension type in
-the ClientHello, the CT-using TLS server SHOULD include the `transparency_info`
-extension in the ServerHello with `extension_data` set to a `TransItemList` and
-SHOULD ignore any `extension_data` sent by the TLS client. Additionally, TLS
-servers MUST NOT process or include this extension when a TLS session is
+the ClientHello, the CT-using TLS server SHOULD verify that the received
+`extension_data` is empty and SHOULD include the `transparency_info` extension
+in the ServerHello with `extension_data` set to a `TransItemList`. Additionally,
+TLS servers MUST NOT process or include this extension when a TLS session is
 resumed, since session resumption uses the original session information.
 
 ## cached_info TLS Extension {#cached_info}
