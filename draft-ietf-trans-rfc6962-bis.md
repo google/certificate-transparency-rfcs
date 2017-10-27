@@ -1871,16 +1871,17 @@ instead.
 The assignment policy criteria mentioned in this section refer to the policies
 outlined in [RFC5226].
 
-## TLS Extension Type
+## New Entry to the TLS ExtensionType Registry
 
-IANA is asked to allocate an RFC 5246 ExtensionType value for the
-`transparency_info` TLS extension. IANA should update this extension type to
-point at this document.
+IANA is asked to add an entry for `transparency_info(TBD)` to the "TLS
+ExtensionType Values" registry defined in [I-D.ietf-tls-tls13], citing this
+document as the "Reference" and setting the "Recommended" value to "Yes".
 
 ## New Entry to the TLS CachedInformationType registry
 
 IANA is asked to add an entry for `ct_compliant(TBD)` to the "TLS
-CachedInformationType Values" registry that was defined in [RFC7924].
+CachedInformationType Values" registry defined in [RFC7924], citing this
+document as the "Reference".
 
 ## Hash Algorithms {#hash_algorithms}
 
