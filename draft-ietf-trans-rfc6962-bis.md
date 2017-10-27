@@ -1761,19 +1761,23 @@ interest, or both. For example, a monitor may be configured to report on all
 certificates that apply to a specific domain name when fetching new entries for
 consistency validation.
 
-A monitor needs to, at least, inspect every new entry in each log it watches.
-It may also want to keep copies of entire logs. In order to do this, it should
-follow these steps for each log:
+A monitor MUST at least inspect every new entry in every log it watches, and it
+MAY also choose to keep copies of entire logs.
+
+To inspect all of the existing entries, the monitor SHOULD follow these steps
+once for each log:
 
 1. Fetch the current STH ({{get-sth}}).
 
 2. Verify the STH signature.
 
-3. Fetch all the entries in the tree corresponding to the STH
-   ({{get-entries}}).
+3. Fetch all the entries in the tree corresponding to the STH ({{get-entries}}).
 
 4. Confirm that the tree made from the fetched entries produces the same hash as
    that in the STH.
+
+To inspect new entries, the monitor SHOULD follow these steps repeatedly for
+each log:
 
 5. Fetch the current STH ({{get-sth}}). Repeat until the STH changes.
 
