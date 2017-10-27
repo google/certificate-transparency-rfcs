@@ -1718,8 +1718,6 @@ The SCT's `signature` is then verified using the public key of the corresponding
 log, which is identified by the `log_id`. The required signature algorithm is
 one of the log's parameters.
 
-TLS clients MUST NOT consider valid any SCT whose timestamp is in the future.
-
 ### Fetching inclusion proofs  {#fetching_inclusion_proofs}
 
 When a TLS client has validated a received SCT but does not yet possess
