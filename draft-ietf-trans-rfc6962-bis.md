@@ -1667,11 +1667,6 @@ their responses. These parameters are described in {{log_parameters}}, but note
 that this document does not describe how the parameters are obtained, which is
 implementation-dependent (see, for example, [Chromium.Policy]).
 
-Clients should somehow exchange STHs they see, or make them available for
-scrutiny, in order to ensure that they all have a consistent view. The exact
-mechanisms will be in separate documents, but it is expected there will be a
-variety.
-
 ## TLS Client {#tls_clients}
 
 ### Receiving SCTs and inclusion proofs
