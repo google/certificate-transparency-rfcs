@@ -1767,29 +1767,37 @@ interest, or both. For example, a monitor may be configured to report on all
 certificates that apply to a specific domain name when fetching new entries for
 consistency validation.
 
-A monitor needs to, at least, inspect every new entry in each log it watches.
-It may also want to keep copies of entire logs. In order to do this, it should
-follow these steps for each log:
+A monitor MUST at least inspect every new entry in every log it watches, and it
+MAY also choose to keep copies of entire logs.
+
+To inspect all of the existing entries, the monitor SHOULD follow these steps
+once for each log:
 
 1. Fetch the current STH ({{get-sth}}).
 
 2. Verify the STH signature.
 
-3. Fetch all the entries in the tree corresponding to the STH
-   ({{get-entries}}).
+3. Fetch all the entries in the tree corresponding to the STH ({{get-entries}}).
 
-4. Confirm that the tree made from the fetched entries produces the same hash as
+4. If applicable, check each entry to see if it's a certificate of interest.
+
+5. Confirm that the tree made from the fetched entries produces the same hash as
    that in the STH.
 
-5. Fetch the current STH ({{get-sth}}). Repeat until the STH changes.
+To inspect new entries, the monitor SHOULD follow these steps repeatedly for
+each log:
 
-6. Verify the STH signature.
+6. Fetch the current STH ({{get-sth}}). Repeat until the STH changes.
 
-7. Fetch all the new entries in the tree corresponding to the STH
+7. Verify the STH signature.
+
+8. Fetch all the new entries in the tree corresponding to the STH
    ({{get-entries}}). If they remain unavailable for an extended period, then
    this should be viewed as misbehavior on the part of the log.
 
-8. Either:
+9. If applicable, check each entry to see if it's a certificate of interest.
+
+10. Either:
 
     1. Verify that the updated list of all entries generates a tree with the
        same hash as the new STH.
@@ -1804,7 +1812,7 @@ follow these steps for each log:
     3. Verify that the new entries generate the corresponding elements in the
        consistency proof.
 
-9. Go to Step 5.
+11. Repeat from step 6.
 
 ## Auditing
 
