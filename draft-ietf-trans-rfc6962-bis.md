@@ -1583,7 +1583,7 @@ server MUST include a `TransItem` structure of type `x509_sct_v2` or
 `precert_sct_v2` (except as described in {{cached_info}}).
 
 Presenting inclusion proofs and STHs in the TLS handshake helps to protect the
-client's privacy (see {{validating_inclusion_proofs}}) and reduces load on log
+client's privacy (see {{fetching_inclusion_proofs}}) and reduces load on log
 servers. Therefore, if the TLS server can obtain them, it SHOULD also include
 `TransItem`s of type `inclusion_proof_v2` and `signed_tree_head_v2` in the
 `TransItemList`.
@@ -1676,43 +1676,46 @@ their responses. These parameters are described in {{log_parameters}}, but note
 that this document does not describe how the parameters are obtained, which is
 implementation-dependent (see, for example, [Chromium.Policy]).
 
-Clients should somehow exchange STHs they see, or make them available for
-scrutiny, in order to ensure that they all have a consistent view. The exact
-mechanisms will be in separate documents, but it is expected there will be a
-variety.
-
 ## TLS Client {#tls_clients}
 
-### Receiving SCTs and inclusion proofs
+### Receiving SCTs and inclusion proofs {#receiving_transitems}
 
-TLS clients receive SCTs alongside or in certificates. TLS clients MUST
-implement all of the three mechanisms by which TLS servers may present SCTs (see
-{{tls_servers}}). TLS clients MAY also accept SCTs via the `status_request_v2`
-extension ([RFC6961]). TLS clients that support the `transparency_info` TLS
-extension SHOULD include it in ClientHello messages, with empty
-`extension_data`. TLS clients may also receive inclusion proofs in addition to
-SCTs, which should be checked once the SCTs are validated.
+TLS clients receive SCTs and inclusion proofs alongside or in certificates.
+CT-using TLS clients MUST implement all of the three mechanisms by which TLS
+servers may present SCTs (see {{tls_servers}}) and MAY also accept SCTs via the
+`status_request_v2` extension ([RFC6961]).
+
+TLS clients that support the `transparency_info` TLS extension SHOULD include it
+in ClientHello messages, with empty `extension_data`. If a TLS server includes
+the `transparency_info` TLS extension when resuming a TLS session, the TLS
+client MUST abort the handshake.
 
 ### Reconstructing the TBSCertificate {#reconstructing_tbscertificate}
 
-To reconstruct the TBSCertificate component of a precertificate from a
-certificate, TLS clients should remove the Transparency Information extension
-described in {{x509v3_transinfo_extension}}.
+Validation of an SCT for a certificate (where the `type` of the `TransItem` is
+`x509_sct_v2`) uses the unmodified TBSCertificate component of the certificate.
 
-If the SCT checked is for a precertificate (where the `type` of the `TransItem`
-is `precert_sct_v2`), then the client SHOULD also remove embedded v1 SCTs,
-identified by OID 1.3.6.1.4.1.11129.2.4.2 (See Section 3.3. of [RFC6962]), in
-the process of reconstructing the TBSCertificate. That is to allow embedded v1
-and v2 SCTs to co-exist in a certificate (See {{v1_coexistence}}).
+Before an SCT for a precertificate (where the `type` of the `TransItem` is
+`precert_sct_v2`) can be validated, the TBSCertificate component of the
+precertificate needs to be reconstructed from the TBSCertificate component of
+the certificate as follows:
+
+* Remove the Transparency Information extension
+  (see {{x509v3_transinfo_extension}}).
+
+* Remove embedded v1 SCTs, identified by OID 1.3.6.1.4.1.11129.2.4.2 (see
+  section 3.3 of [RFC6962]). This allows embedded v1 and v2 SCTs to co-exist in
+  a certificate (see {{v1_coexistence}}).
 
 ### Validating SCTs
 
-In addition to normal validation of the server certificate and its chain, TLS
-clients SHOULD validate each received SCT for which they have the corresponding
-log's parameters. To validate an SCT, a TLS client computes the signature input
-by constructing a `TransItem` of type `x509_entry_v2` or `precert_entry_v2`,
-depending on the SCT's `TransItem` type. The `TimestampedCertificateEntryDataV2`
-structure is constructed in the following manner:
+In addition to normal validation of the server certificate and its chain,
+CT-using TLS clients MUST validate each received SCT for which they have the
+corresponding log's parameters. To validate an SCT, a TLS client computes the
+signature input by constructing a `TransItem` of type `x509_entry_v2` or
+`precert_entry_v2`, depending on the SCT's `TransItem` type. The
+`TimestampedCertificateEntryDataV2` structure is constructed in the following
+manner:
 
 * `timestamp` is copied from the SCT.
 * `tbs_certificate` is the reconstructed TBSCertificate portion of the server
@@ -1724,15 +1727,17 @@ The SCT's `signature` is then verified using the public key of the corresponding
 log, which is identified by the `log_id`. The required signature algorithm is
 one of the log's parameters.
 
-TLS clients MUST NOT consider valid any SCT whose timestamp is in the future.
-
 ### Fetching inclusion proofs  {#fetching_inclusion_proofs}
 
 When a TLS client has validated a received SCT but does not yet possess
 a corresponding inclusion proof, the TLS client MAY request the inclusion
 proof directly from a log using `get-proof-by-hash` ({{get-proof-by-hash}}) or
-`get-all-by-hash` ({{get-all-by-hash}}). Note that this will disclose to the
-log which TLS server the client has been communicating with.
+`get-all-by-hash` ({{get-all-by-hash}}).
+
+Note that fetching inclusion proofs directly from a log will disclose to the
+log which TLS server the client has been communicating with. This may be
+regarded as a significant privacy concern, and so it is preferable for the TLS
+server to send the inclusion proofs (see {{presenting_transitems}}).
 
 ### Validating inclusion proofs {#validating_inclusion_proofs}
 
@@ -1752,16 +1757,20 @@ It is up to a client's local policy to specify the quantity and form of
 evidence (SCTs, inclusion proofs or a combination) needed to achieve
 compliance and how to handle non-compliance.
 
-A TLS client MUST NOT evaluate compliance if it did not send both the
-`transparency_info` and `status_request` TLS extensions in the ClientHello.
+A TLS client can only evaluate compliance if it has given the TLS server the
+opportunity to send SCTs and inclusion proofs by any of the three mechanisms
+that are mandatory to implement for CT-using TLS clients (see
+{{receiving_transitems}}). Therefore, a TLS client MUST NOT evaluate compliance
+if it did not include both the `transparency_info` and `status_request` TLS
+extensions in the ClientHello.
 
 ### cached_info TLS Extension {#tls_cachedinfo_extension}
 
 If a TLS client uses the `cached_info` TLS extension ([RFC7924]) to indicate 1
 or more cached certificates, all of which it already considers to be CT
 compliant, the TLS client MAY also include a `CachedObject` of type
-`ct_compliant` in the `cached_info` extension. The `hash_value` field MUST be 1
-byte long with the value 0.
+`ct_compliant` in the `cached_info` extension. Its `hash_value` field MUST have
+the value 0 and be 1 byte long (the minimum length permitted by [RFC7924]).
 
 ## Monitor {#monitor}
 
