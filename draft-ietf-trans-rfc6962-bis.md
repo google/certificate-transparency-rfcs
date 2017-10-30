@@ -1500,10 +1500,10 @@ Outputs:
 
 # TLS Servers {#tls_servers}
 
-TLS servers MUST use at least one of the three mechanisms listed below to
-present one or more SCTs from one or more logs to each TLS client during full
-TLS handshakes, where each SCT corresponds to the server certificate. TLS
-servers SHOULD also present corresponding inclusion proofs and STHs.
+CT-using TLS servers MUST use at least one of the three mechanisms listed below
+to present one or more SCTs from one or more logs to each TLS client during full
+TLS handshakes, where each SCT corresponds to the server certificate. They
+SHOULD also present corresponding inclusion proofs and STHs.
 
 Three mechanisms are provided because they have different tradeoffs.
 
@@ -1535,23 +1535,22 @@ one of the three mechanisms listed above.
 
 ## Multiple SCTs {#multiple-scts}
 
-TLS servers SHOULD send SCTs from multiple logs in case one or more logs are not
-acceptable to the TLS client (for example, if a log has been struck off for
-misbehavior, has had a key compromise, or is not known to the TLS client). For
-example:
+CT-using TLS servers SHOULD send SCTs from multiple logs, because:
+
+* One or more logs may not have become acceptable to all CT-using TLS clients.
 
 * If a CA and a log collude, it is possible to temporarily hide misissuance from
-  clients. Including SCTs from different logs makes it more difficult to mount
-  this attack.
+  clients. When a TLS client requires SCTs from multiple logs to be provided, it
+  is more difficult to mount this attack.
 
-* If a log misbehaves, a consequence may be that clients cease to trust it.
-  Since the time an SCT may be in use can be considerable (several years is
-  common in current practice when embedded in a certificate), servers may wish
-  to reduce the probability of their certificates being rejected as a result by
-  including SCTs from different logs.
+* If a log misbehaves or suffers a key compromise, a consequence may be that
+  clients cease to trust it. Since the time an SCT may be in use can be
+  considerable (several years is common in current practice when embedded in a
+  certificate), including SCTs from multiple logs reduces the probability of the
+  certificate being rejected by TLS clients.
 
-* TLS clients may have policies related to the above risks requiring servers to
-  present multiple SCTs. For example, at the time of writing, Chromium
+* TLS clients may have policies related to the above risks requiring TLS servers
+  to present multiple SCTs. For example, at the time of writing, Chromium
   [Chromium.Log.Policy] requires multiple SCTs to be presented with EV
   certificates in order for the EV indicator to be shown.
 
@@ -1577,7 +1576,7 @@ decode each `TransItem` individually (so, for example, if there is a version
 upgrade, out-of-date clients can still parse old `TransItem` structures while
 skipping over new `TransItem` structures whose versions they don't understand).
 
-## Presenting SCTs, inclusions proofs and STHs
+## Presenting SCTs, inclusions proofs and STHs {#presenting_transitems}
 
 In each `TransItemList` that is sent to a client during a TLS handshake, the TLS
 server MUST include a `TransItem` structure of type `x509_sct_v2` or
@@ -1592,10 +1591,18 @@ servers. Therefore, if the TLS server can obtain them, it SHOULD also include
 ## transparency_info TLS Extension {#tls_transinfo_extension}
 
 Provided that a TLS client includes the `transparency_info` extension type in
-the ClientHello, the TLS server SHOULD include the `transparency_info` extension
-in the ServerHello with `extension_data` set to a `TransItemList`. The TLS
-server SHOULD ignore any `extension_data` sent by the TLS client. Additionally,
-the TLS server MUST NOT process or include this extension when a TLS session is
+the ClientHello and the TLS server supports the `transparency_info` extension:
+
+* The TLS server MUST verify that the received `extension_data` is empty.
+
+* The TLS server SHOULD construct a `TransItemList` of relevant `TransItem`s
+  (see {{presenting_transitems}}), which SHOULD omit any `TransItem`s that are
+  already embedded in the server certificate or the stapled OCSP response (see
+  {{x509v3_transinfo_extension}}). If the constructed `TransItemList` is not
+  empty, then the TLS server SHOULD include the `transparency_info` extension in
+  the ServerHello with the `extension_data` set to this `TransItemList`.
+
+TLS servers MUST NOT process or include this extension when a TLS session is
 resumed, since session resumption uses the original session information.
 
 ## cached_info TLS Extension {#cached_info}
@@ -1605,9 +1612,6 @@ it SHOULD NOT include any `TransItem` structures of type `x509_sct_v2` or
 `precert_sct_v2` in the `TransItemList` if all of the following conditions are
 met:
 
-* The TLS client includes the `transparency_info` extension type in the
-  ClientHello.
-
 * The TLS client includes the `cached_info` ([RFC7924]) extension type in the
   ClientHello, with a `CachedObject` of type `ct_compliant` (see
   {{tls_cachedinfo_extension}}) and at least one `CachedObject` of type `cert`.
@@ -1615,8 +1619,9 @@ met:
 * The TLS server sends a modified Certificate message (as described in section
   4.1 of [RFC7924]).
 
-TLS servers SHOULD ignore the `hash_value` fields of each `CachedObject` of type
-`ct_compliant` sent by TLS clients.
+If the `hash_value` of any `CachedObject` of type `ct_compliant` sent by a TLS
+client is not 1 byte long with the value 0, the CT-using TLS server MUST abort
+the handshake.
 
 # Certification Authorities
 
@@ -1852,7 +1857,7 @@ that certificate, or is a precertificate corresponding to that certificate).
 
 Checking of the consistency of the log view presented to all entities is more
 difficult to perform because it requires a way to share log responses among a
-set of CT-aware entities, and is discussed in {{misbehaving_logs}}.
+set of CT-using entities, and is discussed in {{misbehaving_logs}}.
 
 # Algorithm Agility
 
@@ -2102,10 +2107,11 @@ STH for each distinct tree_size. Each of these SCTs and STHs can be stored by
 the log and served to other clients that submit the same certificate or request
 the same STH.
 
-## Multiple SCTs {#offering_multiple_scts}
+## Multiple SCTs {#requiring_multiple_scts}
 
-By offering multiple SCTs, each from a different log, TLS servers reduce the
-effectiveness of an attack where a CA and a log collude (see {{multiple-scts}}).
+By requiring TLS servers to offer multiple SCTs, each from a different log, TLS
+clients reduce the effectiveness of an attack where a CA and a log collude
+(see {{multiple-scts}}).
 
 # Acknowledgements
 
