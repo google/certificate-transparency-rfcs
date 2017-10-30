@@ -1845,7 +1845,7 @@ that certificate, or is a precertificate corresponding to that certificate).
 
 Checking of the consistency of the log view presented to all entities is more
 difficult to perform because it requires a way to share log responses among a
-set of CT-aware entities, and is discussed in {{misbehaving_logs}}.
+set of CT-using entities, and is discussed in {{misbehaving_logs}}.
 
 # Algorithm Agility
 
