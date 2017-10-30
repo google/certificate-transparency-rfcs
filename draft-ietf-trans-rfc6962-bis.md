@@ -195,7 +195,7 @@ interpreted as described in [RFC2119].
 ## Data Structures {#data_structures}
 
 Data structures are defined and encoded according to the conventions laid out
-in Section 4 of [RFC5246].
+in Section 3 of [I-D.ietf-tls-tls13].
 
 ## Major Differences from CT 1.0
 
