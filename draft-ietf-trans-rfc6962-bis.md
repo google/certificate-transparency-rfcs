@@ -1861,8 +1861,8 @@ data structures support it and would significantly complicate client
 implementation, which is why it is not supported by this document.
 
 If it should become necessary to deprecate an algorithm used by a live log, then
-the log should be frozen as specified in {{log_shutdown}} and a new log should
-be started. Certificates in the frozen log that have not yet expired and require
+the log MUST be frozen as specified in {{log_shutdown}} and a new log SHOULD be
+started. Certificates in the frozen log that have not yet expired and require
 new SCTs SHOULD be submitted to the new log and the SCTs from that log used
 instead.
 
