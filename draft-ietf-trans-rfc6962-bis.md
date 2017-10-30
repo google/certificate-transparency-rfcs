@@ -748,10 +748,11 @@ elements.
 ## Accepting Submissions
 
 To avoid being overloaded by invalid submissions, the log MUST NOT accept any
-submission until it has verified that the submitted certificate or
-precertificate has a valid signature chain to an accepted trust anchor, using
-only the chain of intermediate CA certificates constructed and provided by the
-submitter.
+submission until it has verified that the certificate or precertificate was
+submitted with a valid signature chain to an accepted trust anchor. The log
+MUST NOT use other sources of intermediate CA certificates to attempt
+certification path construction; instead, it MUST only use the intermediate CA
+certificates provided in the submission, in the order provided.
 
 Logs SHOULD accept certificates and precertificates that are fully valid
 according to RFC 5280 [RFC5280] verification rules and are submitted with such
