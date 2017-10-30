@@ -2046,12 +2046,10 @@ can use logs and signed timestamps to reduce the likelihood that they will
 accept misissued certificates. If a server presents a valid signed timestamp for
 a certificate, then the client knows that a log has committed to publishing the
 certificate. From this, the client knows that monitors acting for the subject of
-the certificate have had some time to notice the misissue and take some action,
-such as asking a CA to revoke a misissued certificate, or that the log has
-misbehaved, which will be discovered when the SCT is audited. A signed timestamp
-is not a guarantee that the certificate is not misissued, since appropriate
-monitors might not have checked the logs or the CA might have refused to revoke
-the certificate.
+the certificate have had some time to notice the misissuance and take some
+action, such as asking a CA to revoke a misissued certificate. A signed
+timestamp does not guarantee this though, since appropriate monitors might not
+have checked the logs or the CA might have refused to revoke the certificate.
 
 In addition, if TLS clients will not accept unlogged certificates, then site
 owners will have a greater incentive to submit certificates to logs, possibly
@@ -2066,8 +2064,8 @@ Certificate Transparency architecture.
 Misissued certificates that have not been publicly logged, and thus do not have
 a valid SCT, are not considered compliant. Misissued certificates that do have
 an SCT from a log will appear in that public log within the Maximum Merge Delay,
-assuming the log is operating correctly. As a log is allowed to serve an STH
-that's up to MMD old, the maximum period of time during which a misissued
+assuming the log is operating correctly. Since a log is allowed to serve an STH
+of any age up to the MMD, the maximum period of time during which a misissued
 certificate can be used without being available for audit is twice the MMD.
 
 ## Detection of Misissue
@@ -2088,10 +2086,8 @@ provides more details on how this can be done.
 
 Violation of the MMD contract is detected by log clients requesting a Merkle
 inclusion proof ({{get-proof-by-hash}}) for each observed SCT. These checks can
-be asynchronous and need only be done once per certificate. In order to protect
-the clients' privacy, these checks need not reveal the exact certificate to the
-log. Instead, clients can request the proof from a trusted auditor (since anyone
-can compute the proofs from the log) or communicate with the log via proxies.
+be asynchronous and need only be done once per certificate. However, note that
+there may be privacy concerns (see {{fetching_inclusion_proofs}}).
 
 Violation of the append-only property or the STH issuance rate limit can be
 detected by clients comparing their instances of the Signed Tree Heads. There
