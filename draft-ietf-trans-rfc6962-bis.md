@@ -105,7 +105,7 @@ informative:
       org: The Chromium Projects
     date: 2014
   JSON.Metadata:
-    target: http://www.certificate-transparency.org/known-logs/log_list_schema.json
+    target: https://www.gstatic.com/ct/log_list/log_list_schema.json
     title: Chromium Log Metadata JSON Schema
     author:
       org: The Chromium Projects
@@ -734,8 +734,8 @@ Version:
 : The version of the protocol supported by the log (currently 1 or 2).
 
 Maximum Chain Length:
-: The longest chain submission the log is willing to accept, if the log chose to
-  limit it.
+: The longest chain submission the log is willing to accept, if the log imposes
+  any limit.
 
 STH Frequency Count:
 : The maximum number of STHs the log may produce in any period equal to the
