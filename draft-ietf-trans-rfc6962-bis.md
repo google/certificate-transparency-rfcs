@@ -756,8 +756,8 @@ elements.
 To avoid being overloaded by invalid submissions, the log SHOULD NOT accept any
 submission until it has verified that the certificate or precertificate was
 submitted with a valid signature chain to an accepted trust anchor. The log
-SHOULD NOT use other sources of intermediate CA certificates to attempt
-certification path construction; instead, it SHOULD only use the intermediate CA
+MUST NOT use other sources of intermediate CA certificates to attempt
+certification path construction; instead, it MUST only use the intermediate CA
 certificates provided in the submission, in the order provided.
 
 Logs SHOULD accept certificates and precertificates that are fully valid
