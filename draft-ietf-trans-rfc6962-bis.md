@@ -1597,11 +1597,11 @@ the ClientHello and the TLS server supports the `transparency_info` extension:
 
 * The TLS server MUST verify that the received `extension_data` is empty.
 
-* The TLS server SHOULD construct a `TransItemList` of relevant `TransItem`s
-  (see {{presenting_transitems}}), which SHOULD omit any `TransItem`s that are
+* The TLS server MUST construct a `TransItemList` of relevant `TransItem`s (see
+  {{presenting_transitems}}), which SHOULD omit any `TransItem`s that are
   already embedded in the server certificate or the stapled OCSP response (see
   {{x509v3_transinfo_extension}}). If the constructed `TransItemList` is not
-  empty, then the TLS server SHOULD include the `transparency_info` extension in
+  empty, then the TLS server MUST include the `transparency_info` extension in
   the ServerHello with the `extension_data` set to this `TransItemList`.
 
 TLS servers MUST NOT process or include this extension when a TLS session is
