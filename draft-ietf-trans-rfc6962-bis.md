@@ -1801,17 +1801,17 @@ once for each log:
 To inspect new entries, the monitor SHOULD follow these steps repeatedly for
 each log:
 
-6. Fetch the current STH ({{get-sth}}). Repeat until the STH changes.
+1. Fetch the current STH ({{get-sth}}). Repeat until the STH changes.
 
-7. Verify the STH signature.
+2. Verify the STH signature.
 
-8. Fetch all the new entries in the tree corresponding to the STH
+3. Fetch all the new entries in the tree corresponding to the STH
    ({{get-entries}}). If they remain unavailable for an extended period, then
    this should be viewed as misbehavior on the part of the log.
 
-9. If applicable, check each entry to see if it's a certificate of interest.
+4. If applicable, check each entry to see if it's a certificate of interest.
 
-10. Either:
+5. Either:
 
     1. Verify that the updated list of all entries generates a tree with the
        same hash as the new STH.
@@ -1826,7 +1826,7 @@ each log:
     3. Verify that the new entries generate the corresponding elements in the
        consistency proof.
 
-11. Repeat from step 6.
+6. Repeat from step 1.
 
 ## Auditing
 
