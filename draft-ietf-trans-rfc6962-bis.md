@@ -1687,10 +1687,11 @@ CT-using TLS clients MUST implement all of the three mechanisms by which TLS
 servers may present SCTs (see {{tls_servers}}) and MAY also accept SCTs via the
 `status_request_v2` extension ([RFC6961]).
 
-TLS clients that support the `transparency_info` TLS extension SHOULD include it
-in ClientHello messages, with empty `extension_data`. If a TLS server includes
-the `transparency_info` TLS extension when resuming a TLS session, the TLS
-client MUST abort the handshake.
+TLS clients that support the `transparency_info` TLS extension
+(see {{tls_transinfo_extension}}) SHOULD include it in ClientHello messages,
+with empty `extension_data`. If a TLS server includes the `transparency_info`
+TLS extension when resuming a TLS session, the TLS client MUST abort the
+handshake.
 
 ### Reconstructing the TBSCertificate {#reconstructing_tbscertificate}
 
