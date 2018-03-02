@@ -1601,18 +1601,23 @@ the ClientHello and the TLS server supports the `transparency_info` extension:
   {{presenting_transitems}}), which SHOULD omit any `TransItem`s that are
   already embedded in the server certificate or the stapled OCSP response (see
   {{x509v3_transinfo_extension}}). If the constructed `TransItemList` is not
-  empty, then the TLS server MUST include the `transparency_info` extension in
-  the ServerHello with the `extension_data` set to this `TransItemList`.
+  empty, then the TLS server MUST include the `transparency_info` extension with
+  the `extension_data` set to this `TransItemList`.
+
+TLS servers MUST only include this extension in the following messages:
+
+* the ServerHello message (for TLS 1.2 or earlier).
+
+* the Certificate or CertificateRequest message (for TLS 1.3).
 
 TLS servers MUST NOT process or include this extension when a TLS session is
 resumed, since session resumption uses the original session information.
 
 ## cached_info TLS Extension {#cached_info}
 
-When a TLS server includes the `transparency_info` extension in the ServerHello,
-it SHOULD NOT include any `TransItem` structures of type `x509_sct_v2` or
-`precert_sct_v2` in the `TransItemList` if all of the following conditions are
-met:
+When a TLS server includes the `transparency_info` extension, it SHOULD NOT
+include any `TransItem` structures of type `x509_sct_v2` or `precert_sct_v2` in
+the `TransItemList` if all of the following conditions are met:
 
 * The TLS client includes the `cached_info` ([RFC7924]) extension type in the
   ClientHello, with a `CachedObject` of type `ct_compliant` (see
@@ -1687,10 +1692,11 @@ CT-using TLS clients MUST implement all of the three mechanisms by which TLS
 servers may present SCTs (see {{tls_servers}}) and MAY also accept SCTs via the
 `status_request_v2` extension ([RFC6961]).
 
-TLS clients that support the `transparency_info` TLS extension SHOULD include it
-in ClientHello messages, with empty `extension_data`. If a TLS server includes
-the `transparency_info` TLS extension when resuming a TLS session, the TLS
-client MUST abort the handshake.
+TLS clients that support the `transparency_info` TLS extension
+(see {{tls_transinfo_extension}}) SHOULD include it in ClientHello messages,
+with empty `extension_data`. If a TLS server includes the `transparency_info`
+TLS extension when resuming a TLS session, the TLS client MUST abort the
+handshake.
 
 ### Reconstructing the TBSCertificate {#reconstructing_tbscertificate}
 
