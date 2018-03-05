@@ -753,7 +753,7 @@ elements.
 
 ## Accepting Submissions
 
-To avoid being overloaded by invalid submissions, the log MUST NOT accept any
+To avoid being overloaded by invalid submissions, the log SHOULD NOT accept any
 submission until it has verified that the certificate or precertificate was
 submitted with a valid signature chain to an accepted trust anchor. The log
 MUST NOT use other sources of intermediate CA certificates to attempt
