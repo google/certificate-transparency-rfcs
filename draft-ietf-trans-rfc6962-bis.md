@@ -753,10 +753,19 @@ elements.
 
 ## Accepting Submissions
 
-To avoid being overloaded by invalid submissions, the log MUST NOT accept any
-submission until it has verified that the certificate or precertificate was
-submitted with a valid signature chain to an accepted trust anchor. The log
-MUST NOT use other sources of intermediate CA certificates to attempt
+To set clear expectations for what monitors would find in a log, and to avoid
+avoid being overloaded by invalid submissions, the log MUST NOT accept any
+submission until it has verified that the certificate or precertificate
+submitted chains to an accepted trust anchor. While there are no security
+implications to a log accepting a submission that does not chain to one of its
+accepted trust anchors, it would put additional burden on clients and monitors
+to inspect log entries. Additionally, there are no provisions in the protocol
+for a long to indicate a particular entry was erroneously admitted. For these
+reasons, under no circumstances, should an implementation of a log according
+to this protocol admit a submission into the log without positively verifying
+that the submission chains to one of the log's accepted trust anchors.
+
+The log MUST NOT use other sources of intermediate CA certificates to attempt
 certification path construction; instead, it MUST only use the intermediate CA
 certificates provided in the submission, in the order provided.
 
