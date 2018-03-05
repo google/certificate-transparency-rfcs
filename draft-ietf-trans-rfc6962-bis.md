@@ -35,9 +35,9 @@ author:
     email: eranm@google.com
  -
     name: Rob Stradling
-    org: Comodo CA, Ltd.
-    abbrev: Comodo
-    email: rob.stradling@comodo.com
+    org: Comodo CA Ltd.
+    abbrev: Comodo CA
+    email: rob.stradling@comodoca.com
 
 normative:
   RFC2119:
