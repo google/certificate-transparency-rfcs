@@ -2113,19 +2113,6 @@ issued too closely together, proving violation of the STH issuance rate limit;
 or an STH with a root hash that does not match the one calculated from a copy of
 the log, proving violation of the append-only property.
 
-## Preventing Tracking Clients {#prevent_tracking_clients}
-
-Clients that gossip STHs or report back SCTs can be tracked or traced if a log
-produces multiple STHs or SCTs with the same timestamp and data but different
-signatures. Logs SHOULD mitigate this risk by either:
-
-- Using deterministic signature schemes, or
-
-- Producing no more than one SCT for each distinct submission and no more than one
-STH for each distinct tree_size. Each of these SCTs and STHs can be stored by
-the log and served to other clients that submit the same certificate or request
-the same STH.
-
 ## Multiple SCTs {#requiring_multiple_scts}
 
 By requiring TLS servers to offer multiple SCTs, each from a different log, TLS
