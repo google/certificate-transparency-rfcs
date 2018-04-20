@@ -37,7 +37,7 @@ author:
     name: Rob Stradling
     org: Comodo CA Ltd.
     abbrev: Comodo CA
-    email: rob.stradling@comodoca.com
+    email: rob@comodoca.com
 
 normative:
   RFC2119:
