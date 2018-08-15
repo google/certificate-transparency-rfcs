@@ -42,7 +42,6 @@ author:
 normative:
   RFC2119:
   RFC4648:
-  RFC5246:
   RFC5280:
   RFC5652:
   RFC5905:
@@ -54,6 +53,7 @@ normative:
   RFC7633:
   RFC7924:
   RFC8032:
+  RFC8446:
   HTML401:
     target: http://www.w3.org/TR/1999/REC-html401-19991224
     title: HTML 4.01 Specification
@@ -76,7 +76,6 @@ normative:
     author:
       org: NIST
     date: 2013-07-01
-  I-D.ietf-tls-tls13:
 
 informative:
   RFC6234:
@@ -196,7 +195,7 @@ interpreted as described in [RFC2119].
 ## Data Structures {#data_structures}
 
 Data structures are defined and encoded according to the conventions laid out
-in Section 3 of [I-D.ietf-tls-tls13].
+in Section 3 of [RFC8446].
 
 ## Major Differences from CT 1.0
 
@@ -1515,7 +1514,7 @@ SHOULD also present corresponding inclusion proofs and STHs.
 
 Three mechanisms are provided because they have different tradeoffs.
 
-* A TLS extension (Section 7.4.1.4 of [RFC5246]) with type `transparency_info`
+* A TLS extension (Section 4.2 of [RFC8446]) with type `transparency_info`
   (see {{tls_transinfo_extension}}). This mechanism allows TLS servers to
   participate in CT without the cooperation of CAs, unlike the other two
   mechanisms. It also allows SCTs and inclusion proofs to be updated on the fly.
@@ -1914,8 +1913,9 @@ outlined in [RFC5226].
 ## New Entry to the TLS ExtensionType Registry
 
 IANA is asked to add an entry for `transparency_info(TBD)` to the "TLS
-ExtensionType Values" registry defined in [I-D.ietf-tls-tls13], citing this
-document as the "Reference" and setting the "Recommended" value to "Yes".
+ExtensionType Values" registry defined in [RFC8446], setting the "Recommended"
+value to "Yes", setting the "TLS 1.3" value to "CH, CR, CT", and citing this
+document as the "Reference".
 
 ## New Entry to the TLS CachedInformationType registry
 
@@ -1962,8 +1962,8 @@ IANA is asked to establish a registry of signature algorithm values, named
 
 The appointed Expert should ensure that the proposed algorithm has a public
 specification, has a value assigned to it in the TLS SignatureScheme Registry
-(that IANA is asked to establish in [I-D.ietf-tls-tls13]) and is suitable for
-use as a cryptographic signature algorithm.
+(that IANA is asked to establish in [RFC8446]) and is suitable for use as a
+cryptographic signature algorithm.
 
 ## VersionedTransTypes {#versioned_trans_types}
 
