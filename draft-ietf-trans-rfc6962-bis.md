@@ -1914,7 +1914,7 @@ outlined in [RFC5226].
 
 IANA is asked to add an entry for `transparency_info(TBD)` to the "TLS
 ExtensionType Values" registry defined in [RFC8446], setting the "Recommended"
-value to "Yes", setting the "TLS 1.3" value to "CH, CR, CT", and citing this
+value to "Y", setting the "TLS 1.3" value to "CH, CR, CT", and citing this
 document as the "Reference".
 
 ## New Entry to the TLS CachedInformationType registry
