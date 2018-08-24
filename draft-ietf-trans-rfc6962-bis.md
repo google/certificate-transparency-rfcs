@@ -44,7 +44,6 @@ normative:
   RFC4648:
   RFC5280:
   RFC5652:
-  RFC5905:
   RFC6066:
   RFC6960:
   RFC6961:
@@ -76,6 +75,11 @@ normative:
     author:
       org: NIST
     date: 2013-07-01
+  UNIXTIME:
+    target: http://pubs.opengroup.org/onlinepubs/9699919799.2016edition/basedefs/V1_chap04.html#tag_04_16
+    title: The Open Group Base Specifications Issue 7 IEEE Std 1003.1-2008, 2016 Edition
+    author:
+      org: IEEE
 
 informative:
   RFC6234:
@@ -910,10 +914,11 @@ log's parameters.
     } TimestampedCertificateEntryDataV2;
 ~~~~~~~~~~~
 
-`timestamp` is the NTP Time [RFC5905] at which the certificate or precertificate
-was accepted by the log, measured in milliseconds since the epoch (January 1,
-1970, 00:00 UTC), ignoring leap seconds. Note that the leaves of a log's Merkle
-Tree are not required to be in strict chronological order.
+`timestamp` is the date and time at which the certificate or precertificate was
+accepted by the log, in the form of a 64-bit unsigned number of milliseconds
+elapsed since the Unix Epoch (1 January 1970 00:00:00 UTC - see [UNIXTIME]),
+ignoring leap seconds, in network byte order. Note that the leaves of a log's
+Merkle Tree are not required to be in strict chronological order.
 
 `issuer_key_hash` is the HASH of the public key of the CA that issued the
 certificate or precertificate, calculated over the DER encoding of the key
@@ -981,8 +986,9 @@ The log stores information about its Merkle Tree in a `TreeHeadDataV2`:
 
 The length of NodeHash MUST match HASH_SIZE of the log.
 
-`timestamp` is the current NTP Time [RFC5905], measured in milliseconds since
-the epoch (January 1, 1970, 00:00 UTC), ignoring leap seconds.
+`timestamp` is the current date and time, in the form of a 64-bit unsigned
+number of milliseconds elapsed since the Unix Epoch (1 January 1970
+00:00:00 UTC - see [UNIXTIME]), ignoring leap seconds, in network byte order.
 
 `tree_size` is the number of entries currently in the log's Merkle Tree.
 
