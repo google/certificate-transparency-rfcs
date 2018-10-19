@@ -50,6 +50,7 @@ normative:
   RFC7159:
   RFC7231:
   RFC7633:
+  RFC7807:
   RFC7924:
   RFC8032:
   RFC8446:
@@ -1153,26 +1154,29 @@ requirement above).
 
 If the log is unable to process a client's request, it MUST return an HTTP
 response code of 4xx/5xx (see [RFC7231]), and, in place of the responses
-outlined in the subsections below, the body SHOULD be a JSON structure
-containing at least the following field:
+outlined in the subsections below, the body SHOULD be a JSON Problem Details
+Object (see [RFC7807] Section 3), containing:
 
-error_message:
+type:
+: A URN reference identifying the problem. To facilitate automated response
+  to errors, this document defines a set of standard tokens for use in the
+  `type` field, within the URN namespace of: "urn:ietf:params:trans:error:".
+  Other than the "malformed" error type defined in this section, each error
+  type is specific to the type of request. Specific errors are defined in the
+  respective sections below.
+
+detail:
 : A human-readable string describing the error which prevented the log from
   processing the request.
 
 : In the case of a malformed request, the string SHOULD provide sufficient
   detail for the error to be rectified.
 
-error_code:
-: An error code readable by the client. Other than the generic codes detailed
-  here, each error code is specific to the type of request. Specific
-  errors are specified in the respective sections below. Error codes are fixed
-  text strings.
 
 |---------------+---------------------------------------------|
-| Error Code    | Meaning                                     |
+| type          | detail                                      |
 |---------------+---------------------------------------------|
-| not compliant | The request is not compliant with this RFC. |
+| malformed     | The request is not compliant with this RFC. |
 |---------------+---------------------------------------------|
 
 e.g., In response to a request of `/ct/v2/get-entries?start=100&end=99`, the log
@@ -1181,8 +1185,8 @@ following:
 
 ~~~~~~~~~~~
     {
-        "error_message": "'start' cannot be greater than 'end'",
-        "error_code": "not compliant",
+        "type": "urn:ietf:params:trans:error:endBeforeStart",
+        "detail": "'start' cannot be greater than 'end'"
     }
 ~~~~~~~~~~~
 
@@ -1231,16 +1235,16 @@ Outputs:
 
 Error codes:
 
-|-----------------+--------------------------------------------------------------------------------------------------------------------------------------------------|
-| Error Code      | Meaning                                                                                                                                          |
-|-----------------+--------------------------------------------------------------------------------------------------------------------------------------------------|
-| bad submission  | `submission` is neither a valid certificate nor a valid precertificate.                                                                          |
-| bad type        | `type` is neither 1 nor 2.                                                                                                                       |
-| bad chain       | The first element of `chain` is not the certifier of the `submission`, or the second element does not certify the first, etc.                    |
-| bad certificate | One or more certificates in the `chain` are not valid (e.g., not properly encoded).                                                              |
-| unknown anchor  | The last element of `chain` (or, if `chain` is an empty array, the `submission`) both is not, and is not certified by, an accepted trust anchor. |
-| shutdown        | The log is no longer accepting submissions.                                                                                                      |
-|-----------------+--------------------------------------------------------------------------------------------------------------------------------------------------|
+|----------------+--------------------------------------------------------------------------------------------------------------------------------------------------|
+| type           | detail                                                                                                                                           |
+|----------------+--------------------------------------------------------------------------------------------------------------------------------------------------|
+| badSubmission  | `submission` is neither a valid certificate nor a valid precertificate.                                                                          |
+| badType        | `type` is neither 1 nor 2.                                                                                                                       |
+| badChain       | The first element of `chain` is not the certifier of the `submission`, or the second element does not certify the first, etc.                    |
+| badCertificate | One or more certificates in the `chain` are not valid (e.g., not properly encoded).                                                              |
+| unknownAnchor  | The last element of `chain` (or, if `chain` is an empty array, the `submission`) both is not, and is not certified by, an accepted trust anchor. |
+| shutdown       | The log is no longer accepting submissions.                                                                                                      |
+|----------------+--------------------------------------------------------------------------------------------------------------------------------------------------|
 
 If the version of `sct` is not v2, then a v2 client may be unable to verify the
 signature. It MUST NOT construe this as an error. This is to avoid forcing an
@@ -1313,12 +1317,13 @@ Outputs:
 
 Error codes:
 
-|----------------+--------------------------------------------------------------------------|
-| Error Code     | Meaning                                                                  |
-|----------------+--------------------------------------------------------------------------|
-| first unknown  | `first` is before the latest known STH but is not from an existing STH.  |
-| second unknown | `second` is before the latest known STH but is not from an existing STH. |
-|----------------+--------------------------------------------------------------------------|
+|-------------------+--------------------------------------------------------------------------|
+| type              | detail                                                                   |
+|-------------------+--------------------------------------------------------------------------|
+| firstUnknown      | `first` is before the latest known STH but is not from an existing STH.  |
+| secondUnknown     | `second` is before the latest known STH but is not from an existing STH. |
+| secondBeforeFirst | `second` is smaller than `first`.                                        |
+|-------------------+--------------------------------------------------------------------------|
 
 See {{verify_consistency}} for an outline of how to use the `consistency`
 output.
@@ -1357,12 +1362,12 @@ Outputs:
 
 Error codes:
 
-|-------------------+----------------------------------------------------------------------------------------------------------|
-| Error Code        | Meaning                                                                                                  |
-|-------------------+----------------------------------------------------------------------------------------------------------|
-| hash unknown      | `hash` is not the hash of a known leaf (may be caused by skew or by a known certificate not yet merged). |
-| tree_size unknown | `hash` is before the latest known STH but is not from an existing STH.                                   |
-|-------------------+----------------------------------------------------------------------------------------------------------|
+|-----------------+----------------------------------------------------------------------------------------------------------|
+| type            | detail                                                                                                   |
+|-----------------+----------------------------------------------------------------------------------------------------------|
+| hashUnknown     | `hash` is not the hash of a known leaf (may be caused by skew or by a known certificate not yet merged). |
+| treeSizeUnknown | `hash` is before the latest known STH but is not from an existing STH.                                   |
+|-----------------+----------------------------------------------------------------------------------------------------------|
 
 See {{verify_inclusion}} for an outline of how to use the `inclusion` output.
 
@@ -1491,6 +1496,15 @@ In any case, the log server MUST return the latest STH it knows about.
 
 See {{verify_hash}} for an outline of how to use a complete list of `log_entry`
 entries to verify the `root_hash`.
+
+Error codes:
+
+|----------------+-------------------------------------------------------------------|
+| type           | detail                                                            |
+|----------------+-------------------------------------------------------------------|
+| startUnknown   | `start` is greater than the number of entries in the Merkle tree. |
+| endBeforeStart | `start` cannot be greater than `end`.                                    |
+|----------------+-------------------------------------------------------------------|
 
 ## Retrieve Accepted Trust Anchors {#get-anchors}
 
