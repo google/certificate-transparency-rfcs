@@ -1161,23 +1161,11 @@ type:
 : A URN reference identifying the problem. To facilitate automated response
   to errors, this document defines a set of standard tokens for use in the
   `type` field, within the URN namespace of: "urn:ietf:params:trans:error:".
-  Other than the "malformed" error type defined in this section, each error
-  type is specific to the type of request. Specific errors are defined in the
-  respective sections below.
 
 detail:
-: A human-readable string describing the error which prevented the log from
-  processing the request.
-
-: In the case of a malformed request, the string SHOULD provide sufficient
-  detail for the error to be rectified.
-
-
-|---------------+---------------------------------------------|
-| type          | detail                                      |
-|---------------+---------------------------------------------|
-| malformed     | The request is not compliant with this RFC. |
-|---------------+---------------------------------------------|
+: A human-readable string describing the error that prevented the log from
+  processing the request, ideally with sufficient detail to enable the error to
+  be rectified.
 
 e.g., In response to a request of `/ct/v2/get-entries?start=100&end=99`, the log
 would return a `400 Bad Request` response code with a body similar to the
@@ -1189,6 +1177,17 @@ following:
         "detail": "'start' cannot be greater than 'end'"
     }
 ~~~~~~~~~~~
+
+Most error types are specific to the type of request and are defined in the
+respective subsections below. The one exception is the "malformed" error type,
+which indicates that the log server could not parse the client's request because
+it did not comply with this document:
+
+|---------------+----------------------------------|
+| type          | detail                           |
+|---------------+----------------------------------|
+| malformed     | The request could not be parsed. |
+|---------------+----------------------------------|
 
 Clients SHOULD treat `500 Internal Server Error` and `503 Service Unavailable`
 responses as transient failures and MAY retry the same request without
@@ -1503,7 +1502,7 @@ Error codes:
 | type           | detail                                                            |
 |----------------+-------------------------------------------------------------------|
 | startUnknown   | `start` is greater than the number of entries in the Merkle tree. |
-| endBeforeStart | `start` cannot be greater than `end`.                                    |
+| endBeforeStart | `start` cannot be greater than `end`.                             |
 |----------------+-------------------------------------------------------------------|
 
 ## Retrieve Accepted Trust Anchors {#get-anchors}
