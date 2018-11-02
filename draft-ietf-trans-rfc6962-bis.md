@@ -46,7 +46,6 @@ normative:
   RFC5652:
   RFC6066:
   RFC6960:
-  RFC6961:
   RFC7159:
   RFC7231:
   RFC7633:
@@ -1554,11 +1553,6 @@ Three mechanisms are provided because they have different tradeoffs.
   subsequently consider the certificate to be non-compliant and in need of
   re-issuance.
 
-Additionally, a TLS server which supports presenting SCTs using an OCSP response
-MAY provide it when the TLS client included the `status_request_v2` extension
-([RFC6961]) in the (extended) `ClientHello`, but only in addition to at least
-one of the three mechanisms listed above.
-
 ## Multiple SCTs {#multiple-scts}
 
 CT-using TLS servers SHOULD send SCTs from multiple logs, because:
@@ -1713,8 +1707,7 @@ implementation-dependent (see, for example, [Chromium.Policy]).
 
 TLS clients receive SCTs and inclusion proofs alongside or in certificates.
 CT-using TLS clients MUST implement all of the three mechanisms by which TLS
-servers may present SCTs (see {{tls_servers}}) and MAY also accept SCTs via the
-`status_request_v2` extension ([RFC6961]).
+servers may present SCTs (see {{tls_servers}}).
 
 TLS clients that support the `transparency_info` TLS extension
 (see {{tls_transinfo_extension}}) SHOULD include it in ClientHello messages,
