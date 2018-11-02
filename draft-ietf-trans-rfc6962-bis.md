@@ -83,10 +83,10 @@ normative:
 
 informative:
   RFC6234:
-  RFC5226:
   RFC6962:
   RFC6979:
   RFC7320:
+  RFC8126:
   I-D.ietf-trans-gossip:
   CrosbyWallach:
     target: http://static.usenix.org/event/sec09/tech/full_papers/crosby.pdf
@@ -1920,7 +1920,7 @@ instead.
 # IANA Considerations
 
 The assignment policy criteria mentioned in this section refer to the policies
-outlined in [RFC5226].
+outlined in [RFC8126].
 
 ## New Entry to the TLS ExtensionType Registry
 
