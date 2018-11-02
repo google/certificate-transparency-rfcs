@@ -133,6 +133,9 @@ intent is that eventually clients would refuse to honor certificates that do not
 appear in a log, effectively forcing CAs to add all issued certificates to the
 logs.
 
+This document obsoletes RFC 6962.  It also specifies a new TLS extension that is
+used to send various CT log artifacts.
+
 Logs are network services that implement the protocol operations for submissions
 and queries that are defined in this document.
 
