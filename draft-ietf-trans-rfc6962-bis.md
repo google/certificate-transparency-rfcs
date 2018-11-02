@@ -46,12 +46,12 @@ normative:
   RFC5652:
   RFC6066:
   RFC6960:
-  RFC7159:
   RFC7231:
   RFC7633:
   RFC7807:
   RFC7924:
   RFC8032:
+  RFC8259:
   RFC8446:
   HTML401:
     target: http://www.w3.org/TR/1999/REC-html401-19991224
@@ -1119,7 +1119,7 @@ To avoid that, the following actions are suggested:
 # Log Client Messages {#client_messages}
 
 Messages are sent as HTTPS GET or POST requests. Parameters for POSTs and all
-responses are encoded as JavaScript Object Notation (JSON) objects [RFC7159].
+responses are encoded as JavaScript Object Notation (JSON) objects [RFC8259].
 Parameters for GETs are encoded as order-independent key/value URL parameters,
 using the "application/x-www-form-urlencoded" format described in the "HTML 4.01
 Specification" [HTML401]. Binary data is base64 encoded [RFC4648] as specified
