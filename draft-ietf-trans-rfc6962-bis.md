@@ -35,9 +35,9 @@ author:
     email: eranm@google.com
  -
     name: Rob Stradling
-    org: Comodo CA Ltd.
-    abbrev: Comodo CA
-    email: rob@comodoca.com
+    org: Sectigo Ltd.
+    abbrev: Sectigo
+    email: rob@sectigo.com
 
 normative:
   RFC2119:
