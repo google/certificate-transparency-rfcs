@@ -255,10 +255,8 @@ community. The major changes are:
 - CT TLS extension: the `signed_certificate_timestamp` TLS extension has been
   replaced by the `transparency_info` TLS extension.
 
-- Other TLS extensions: `status_request_v2` may be used (in the same
-  manner as `status_request`); `cached_info` may be used to avoid sending the
-  same complete SCTs and inclusion proofs to the same TLS clients multiple
-  times.
+- Other TLS extensions: `cached_info` may be used to avoid sending the same
+  complete SCTs and inclusion proofs to the same TLS clients multiple times.
 
 - Verification algorithms: added detailed algorithms for verifying inclusion
   proofs, for verifying consistency between two STHs, and for verifying a root
