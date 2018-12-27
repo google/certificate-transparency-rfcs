@@ -1646,7 +1646,9 @@ the `TransItemList` if all of the following conditions are met:
 
 If the `hash_value` of any `CachedObject` of type `ct_compliant` sent by a TLS
 client is not 1 byte long with the value 0, the CT-using TLS server MUST abort
-the handshake.
+the handshake. (No useful fingerprint can be included in the `hash_value` field,
+because `ct_compliant` does not correspond to any message that was sent
+previously by the TLS server to the TLS client).
 
 # Certification Authorities
 
