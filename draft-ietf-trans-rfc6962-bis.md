@@ -1752,8 +1752,8 @@ follows:
   required signature algorithm is one of the log's parameters.
 
 If the TLS client does not have the corresponding log's parameters, it cannot
-attempt to validate the SCT. When evaluating compliance
-{{evaluating_compliance}}, the TLS client will consider only those SCTs that it
+attempt to validate the SCT. When evaluating compliance (see
+{{evaluating_compliance}}), the TLS client will consider only those SCTs that it
 was able to validate.
 
 Note that SCT validation is not a substitute for the normal validation of the
