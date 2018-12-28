@@ -1752,6 +1752,9 @@ The SCT's `signature` is then verified using the public key of the corresponding
 log, which is identified by the `log_id`. The required signature algorithm is
 one of the log's parameters.
 
+When evaluating compliance {{evaluating_compliance}}, the TLS client will
+consider only those SCTs that it was able to validate.
+
 ### Fetching inclusion proofs  {#fetching_inclusion_proofs}
 
 When a TLS client has validated a received SCT but does not yet possess
@@ -1776,7 +1779,7 @@ auditing, request a new STH from the log ({{get-sth}}), then verify it by
 requesting a consistency proof ({{get-sth-consistency}}). Note that if the TLS
 client uses `get-all-by-hash`, then it will already have the new STH.
 
-### Evaluating compliance
+### Evaluating compliance {#evaluating_compliance}
 
 It is up to a client's local policy to specify the quantity and form of
 evidence (SCTs, inclusion proofs or a combination) needed to achieve
