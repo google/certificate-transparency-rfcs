@@ -779,11 +779,10 @@ accepted trust anchor, and to set clear expectations for what monitors would
 find in the log, and to avoid being overloaded by invalid submissions, the log
 MUST reject a submission if any of the following conditions are not met:
 
-* The submitted certificate or precertificate, together with the zero or more
-  intermediate CA certificates provided in the submission (in the order
-  provided), MUST form a valid signature chain to an accepted trust anchor. (The
-  log MUST NOT use any other source of intermediate CA certificates to attempt
-  certification path construction).
+* The `submission`, `type` and `chain` inputs MUST be set as described in
+  {{submit-entry}}. The log MUST NOT accommodate misordered CA certificates or
+  use any other source of intermediate CA certificates to attempt certification
+  path construction.
 
 * Each of the zero or more intermediate CA certificates in the chain MUST have
   one or both of the following features:
