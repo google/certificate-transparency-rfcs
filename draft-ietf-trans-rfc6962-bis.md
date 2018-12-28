@@ -1734,26 +1734,30 @@ the certificate as follows:
 
 ### Validating SCTs
 
-In addition to normal validation of the server certificate and its chain,
-CT-using TLS clients MUST validate each received SCT for which they have the
-corresponding log's parameters. To validate an SCT, a TLS client computes the
-signature input by constructing a `TransItem` of type `x509_entry_v2` or
-`precert_entry_v2`, depending on the SCT's `TransItem` type. The
-`TimestampedCertificateEntryDataV2` structure is constructed in the following
-manner:
+In order to make use of a received SCT, the TLS client MUST first validate it as
+follows:
 
-* `timestamp` is copied from the SCT.
-* `tbs_certificate` is the reconstructed TBSCertificate portion of the server
-   certificate, as described in {{reconstructing_tbscertificate}}.
-* `issuer_key_hash` is computed as described in {{tree_leaves}}.
-* `sct_extensions` is copied from the SCT.
+* Compute the signature input by constructing a `TransItem` of type
+  `x509_entry_v2` or `precert_entry_v2`, depending on the SCT's `TransItem`
+  type. The `TimestampedCertificateEntryDataV2` structure is constructed in the
+  following manner:
+  * `timestamp` is copied from the SCT.
+  * `tbs_certificate` is the reconstructed TBSCertificate portion of the server
+     certificate, as described in {{reconstructing_tbscertificate}}.
+  * `issuer_key_hash` is computed as described in {{tree_leaves}}.
+  * `sct_extensions` is copied from the SCT.
 
-The SCT's `signature` is then verified using the public key of the corresponding
-log, which is identified by the `log_id`. The required signature algorithm is
-one of the log's parameters.
+* Verify the SCT's `signature` against the computed signature input using the
+  public key of the corresponding log, which is identified by the `log_id`. The
+  required signature algorithm is one of the log's parameters.
 
-When evaluating compliance {{evaluating_compliance}}, the TLS client will
-consider only those SCTs that it was able to validate.
+If the TLS client does not have the corresponding log's parameters, it cannot
+attempt to validate the SCT. When evaluating compliance
+{{evaluating_compliance}}, the TLS client will consider only those SCTs that it
+was able to validate.
+
+Note that SCT validation is not a substitute for the normal validation of the
+server certificate and its chain.
 
 ### Fetching inclusion proofs  {#fetching_inclusion_proofs}
 
