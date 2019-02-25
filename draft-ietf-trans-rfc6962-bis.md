@@ -49,7 +49,6 @@ normative:
   RFC7231:
   RFC7633:
   RFC7807:
-  RFC7924:
   RFC8032:
   RFC8259:
   RFC8446:
@@ -254,9 +253,6 @@ community. The major changes are:
 
 - CT TLS extension: the `signed_certificate_timestamp` TLS extension has been
   replaced by the `transparency_info` TLS extension.
-
-- Other TLS extensions: `cached_info` may be used to avoid sending the same
-  complete SCTs and inclusion proofs to the same TLS clients multiple times.
 
 - Verification algorithms: added detailed algorithms for verifying inclusion
   proofs, for verifying consistency between two STHs, and for verifying a root
@@ -1619,7 +1615,7 @@ skipping over new `TransItem` structures whose versions they don't understand).
 
 In each `TransItemList` that is sent to a client during a TLS handshake, the TLS
 server MUST include a `TransItem` structure of type `x509_sct_v2` or
-`precert_sct_v2` (except as described in {{cached_info}}).
+`precert_sct_v2`.
 
 Presenting inclusion proofs and STHs in the TLS handshake helps to protect the
 client's privacy (see {{fetching_inclusion_proofs}}) and reduces load on log
@@ -1649,23 +1645,6 @@ TLS servers MUST only include this extension in the following messages:
 
 TLS servers MUST NOT process or include this extension when a TLS session is
 resumed, since session resumption uses the original session information.
-
-## cached_info TLS Extension {#cached_info}
-
-When a TLS server includes the `transparency_info` extension, it SHOULD NOT
-include any `TransItem` structures of type `x509_sct_v2` or `precert_sct_v2` in
-the `TransItemList` if all of the following conditions are met:
-
-* The TLS client includes the `cached_info` ([RFC7924]) extension type in the
-  ClientHello, with a `CachedObject` of type `ct_compliant` (see
-  {{tls_cachedinfo_extension}}) and at least one `CachedObject` of type `cert`.
-
-* The TLS server sends a modified Certificate message (as described in section
-  4.1 of [RFC7924]).
-
-If the `hash_value` of any `CachedObject` of type `ct_compliant` sent by a TLS
-client is not 1 byte long with the value 0, the CT-using TLS server MUST abort
-the handshake.
 
 # Certification Authorities
 
@@ -1815,14 +1794,6 @@ that are mandatory to implement for CT-using TLS clients (see
 if it did not include both the `transparency_info` and `status_request` TLS
 extensions in the ClientHello.
 
-### cached_info TLS Extension {#tls_cachedinfo_extension}
-
-If a TLS client uses the `cached_info` TLS extension ([RFC7924]) to indicate 1
-or more cached certificates, all of which it already considers to be CT
-compliant, the TLS client MAY also include a `CachedObject` of type
-`ct_compliant` in the `cached_info` extension. Its `hash_value` field MUST have
-the value 0 and be 1 byte long (the minimum length permitted by [RFC7924]).
-
 ## Monitor {#monitor}
 
 Monitors watch logs to check that they behave correctly, for certificates of
@@ -1953,12 +1924,6 @@ outlined in [RFC8126].
 IANA is asked to add an entry for `transparency_info(TBD)` to the "TLS
 ExtensionType Values" registry defined in [RFC8446], setting the "Recommended"
 value to "Y", setting the "TLS 1.3" value to "CH, CR, CT", and citing this
-document as the "Reference".
-
-## New Entry to the TLS CachedInformationType registry
-
-IANA is asked to add an entry for `ct_compliant(TBD)` to the "TLS
-CachedInformationType Values" registry defined in [RFC7924], citing this
 document as the "Reference".
 
 ## Hash Algorithms {#hash_algorithms}
