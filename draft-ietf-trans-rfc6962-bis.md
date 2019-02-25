@@ -755,38 +755,59 @@ Final STH:
 [JSON.Metadata] is an example of a metadata format which includes the above
 elements.
 
-## Accepting Submissions
+## Evaluating Submissions
 
-To ensure that logged certificates and precertificates are attributable to a
-known trust anchor, and to set clear expectations for what monitors would find
-in a log, and to avoid being overloaded by invalid submissions, the log MUST NOT
-accept any submission until it has verified that the submitted certificate or
-precertificate chains to an accepted trust anchor.
+A log determines whether to accept or reject a submission by evaluating it
+against the minimum acceptance criteria (see {{minimum_criteria}}) and against
+the log's discretionary acceptance criteria (see {{discretionary_criteria}}).
 
-The log MUST NOT use other sources of intermediate CA certificates to attempt
-certification path construction; instead, it MUST only use the intermediate CA
-certificates provided in the submission, in the order provided.
-
-Logs SHOULD accept certificates and precertificates that are fully valid
-according to RFC 5280 [RFC5280] verification rules and are submitted with such
-a chain. (A log may decide, for example, to temporarily reject valid submissions
-to protect itself against denial-of-service attacks).
-
-Logs MAY accept certificates and precertificates that have expired, are not yet
-valid, have been revoked, or are otherwise not fully valid according to RFC
-5280 verification rules in order to accommodate quirks of CA
-certificate-issuing software.
-However, logs MUST reject submissions without a valid signature chain to an
-accepted trust anchor. Logs MUST also reject precertificates that do not conform
-to the requirements in {{precertificates}}.
-
-Logs SHOULD limit the length of chain they will accept. The maximum chain length
-is one of the log's parameters (see {{log_parameters}}).
+If the acceptance criteria are met, the log SHOULD accept the submission. (A log
+may decide, for example, to temporarily reject acceptable submissions to protect
+itself against denial-of-service attacks).
 
 The log SHALL allow retrieval of its list of accepted trust anchors (see
 {{get-anchors}}), each of which is a root or intermediate CA certificate. This
 list might usefully be the union of root certificates trusted by major browser
 vendors.
+
+### Minimum Acceptance Criteria {#minimum_criteria}
+
+To ensure that logged certificates and precertificates are attributable to an
+accepted trust anchor, and to set clear expectations for what monitors would
+find in the log, and to avoid being overloaded by invalid submissions, the log
+MUST reject a submission if any of the following conditions are not met:
+
+* The `submission`, `type` and `chain` inputs MUST be set as described in
+  {{submit-entry}}. The log MUST NOT accommodate misordered CA certificates or
+  use any other source of intermediate CA certificates to attempt certification
+  path construction.
+
+* Each of the zero or more intermediate CA certificates in the chain MUST have
+  one or both of the following features:
+  * The Basic Constraints extension with the cA boolean asserted.
+  * The Key Usage extension with the keyCertSign bit asserted.
+
+* Each certificate in the chain MUST fall within the limits imposed by the zero
+  or more Basic Constraints pathLenConstraint values found higher up the chain.
+
+* Precertificate submissions MUST conform to all of the requirements in
+  {{precertificates}}.
+
+### Discretionary Acceptance Criteria {#discretionary_criteria}
+
+If the minimum acceptance criteria are met but the submission is not fully
+valid according to [RFC5280] verification rules (e.g., the certificate or
+precertificate has expired, is not yet valid, has been revoked, exhibits ASN.1
+DER encoding errors but the log can still parse it, etc), then the acceptability
+of the submission is left to the log's discretion. It is useful for logs to
+accept such submissions in order to accommodate quirks of CA certificate-issuing
+software and to facilitate monitoring of CA compliance with applicable policies
+and technical standards. However, it is impractical for this document to
+enumerate, and for logs to consider, all of the ways that a submission might
+fail to comply with [RFC5280].
+
+Logs SHOULD limit the length of chain they will accept. The maximum chain length
+is one of the log's parameters (see {{log_parameters}}).
 
 ## Log Entries {#log_entries}
 
