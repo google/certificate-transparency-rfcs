@@ -767,12 +767,12 @@ If the acceptance criteria are met, the log SHOULD accept the submission. (A log
 may decide, for example, to temporarily reject acceptable submissions to protect
 itself against denial-of-service attacks).
 
-### Minimum Acceptance Criteria {#minimum_criteria}
-
 The log SHALL allow retrieval of its list of accepted trust anchors (see
 {{get-anchors}}), each of which is a root or intermediate CA certificate. This
 list might usefully be the union of root certificates trusted by major browser
 vendors.
+
+### Minimum Acceptance Criteria {#minimum_criteria}
 
 To ensure that logged certificates and precertificates are attributable to an
 accepted trust anchor, and to set clear expectations for what monitors would
