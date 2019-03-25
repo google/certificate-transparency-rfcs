@@ -297,11 +297,17 @@ The Merkle Tree Hash of an n-element list D\_n is then defined recursively as
 MTH(D_n) = HASH(0x01 || MTH(D[0:k]) || MTH(D[k:n])),
 ~~~~~~~~~~~
 
-Where || is concatenation and D\[k1:k2] = D'\_(k2-k1) denotes the list
-{d'\[0] = d\[k1], d'\[1] = d\[k1+1], ..., d'\[k2-k1-1] = d\[k2-1]} of
-length (k2 - k1). (Note that the hash calculations for leaves and
-nodes differ; this domain separation is required to give second preimage
-resistance).
+where:
+
+* \|\| denotes concatenation
+
+* : denotes concatenation of lists
+
+* D\[k1:k2] = D'\_(k2-k1) denotes the list {d'\[0] = d\[k1], d'\[1] = d\[k1+1],
+  ..., d'\[k2-k1-1] = d\[k2-1]} of length (k2 - k1).
+
+Note that the hash calculations for leaves and nodes differ; this domain
+separation is required to give second preimage resistance.
 
 Note that we do not require the length of the input list to be a power of two.
 The resulting Merkle Tree may thus not be balanced; however, its shape is
