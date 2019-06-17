@@ -2048,12 +2048,12 @@ arc that was selected due to its short encoding.
 IANA is asked to establish a registry of Log IDs, named "CT Log ID Registry",
 that initially consists of:
 
-|------------------------------+------------+-------------------------------------------------|
-| Value                        | Log        | Reference / Assignment Policy                   |
-|------------------------------+------------+-------------------------------------------------|
-| 1.3.101.8192 - 1.3.101.16383 | Unassigned | Parameters Required and First Come First Served |
-| 1.3.101.80.0 - 1.3.101.80.*  | Unassigned | Parameters Required and First Come First Served |
-|------------------------------+------------+-------------------------------------------------|
+|------------------------------+--------------+------------+------------+-------------------------------|
+| Value                        | Log Base URL | Contact    | Owner      | Reference / Assignment Policy |
+|------------------------------+--------------+------------+------------+-------------------------------|
+| 1.3.101.8192 - 1.3.101.16383 | Unassigned   | Unassigned | Unassigned | First Come First Served       |
+| 1.3.101.80.0 - 1.3.101.80.*  | Unassigned   | Unassigned | Unassigned | First Come First Served       |
+|------------------------------+--------------+------------+------------+-------------------------------|
 
 All OIDs in the range from 1.3.101.8192 to 1.3.101.16383 have been reserved.
 This is a limited resource of 8,192 OIDs, each of which has an encoded length of
@@ -2063,8 +2063,12 @@ The 1.3.101.80 arc has been delegated. This is an unlimited resource, but only
 the 128 OIDs from 1.3.101.80.0 to 1.3.101.80.127 have an encoded length of only
 4 octets.
 
-Each application for the allocation of a Log ID should be accompanied by all of
-the required parameters (except for the Log ID) listed in {{log_parameters}}.
+Each application for the allocation of a Log ID MUST be accompanied by:
+* the Log's Base URL (see {{log_parameters}}).
+* a Contact (including contact information), from whom further information can
+  be obtained.
+* an Owner (including contact information), who is authorized to change this Log
+  ID allocation.
 
 # Security Considerations
 
