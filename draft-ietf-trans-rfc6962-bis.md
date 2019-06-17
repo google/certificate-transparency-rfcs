@@ -50,6 +50,7 @@ normative:
   RFC7633:
   RFC7807:
   RFC8032:
+  RFC8174:
   RFC8259:
   RFC8446:
   HTML401:
@@ -195,8 +196,9 @@ such mechanisms are outside the scope of this document.
 ## Requirements Language
 
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
-"SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be
-interpreted as described in [RFC2119].
+"SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this
+document are to be interpreted as described in BCP 14 {{!RFC2119}} {{!RFC8174}}
+when, and only when, they appear in all capitals, as shown here.
 
 ## Data Structures {#data_structures}
 
