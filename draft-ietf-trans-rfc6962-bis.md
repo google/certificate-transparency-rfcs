@@ -270,7 +270,7 @@ major changes are:
 
 The log uses a binary Merkle Hash Tree for efficient auditing. The hash
 algorithm used is one of the log's parameters (see {{log_parameters}}).
-We have established a registry of acceptable hash algorithms (see
+This document establishes a registry of acceptable hash algorithms (see
 {{hash_algorithms}}). Throughout this document, the hash algorithm in use is
 referred to as HASH and the size of its output in bytes as HASH_SIZE. The input
 to the Merkle Tree Hash is a list of data entries; these entries will be
