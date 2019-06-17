@@ -205,9 +205,9 @@ in Section 3 of [RFC8446].
 
 ## Major Differences from CT 1.0
 
-This document revises and obsoletes the experimental CT 1.0 [RFC6962] protocol,
-drawing on insights gained from CT 1.0 deployments and on feedback from the
-community. The major changes are:
+This document revises and obsoletes the CT 1.0 [RFC6962] protocol, drawing on
+insights gained from CT 1.0 deployments and on feedback from the community. The
+major changes are:
 
 - Hash and signature algorithm agility: permitted algorithms are now specified
   in IANA registries.
