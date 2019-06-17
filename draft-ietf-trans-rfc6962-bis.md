@@ -1937,16 +1937,16 @@ document as the "Reference".
 IANA is asked to establish a registry of hash algorithm values, named
 "CT Hash Algorithms", that initially consists of:
 
-|-------------+----------------+------------------------+------------------------------------------|
-| Value       | Hash Algorithm | OID                    | Reference / Assignment Policy            |
-|-------------+----------------+------------------------|------------------------------------------|
-| 0x00        | SHA-256        | 2.16.840.1.101.3.4.2.1 | [RFC6234]                                |
-| 0x01 - 0xDF | Unassigned     |                        | Specification Required and Expert Review |
-| 0xE0 - 0xEF | Reserved       |                        | Experimental Use                         |
-| 0xF0 - 0xFF | Reserved       |                        | Private Use                              |
-|-------------+----------------+------------------------+------------------------------------------|
+|-------------+----------------+------------------------+-------------------------------|
+| Value       | Hash Algorithm | OID                    | Reference / Assignment Policy |
+|-------------+----------------+------------------------|-------------------------------|
+| 0x00        | SHA-256        | 2.16.840.1.101.3.4.2.1 | [RFC6234]                     |
+| 0x01 - 0xDF | Unassigned     |                        | Specification Required        |
+| 0xE0 - 0xEF | Reserved       |                        | Experimental Use              |
+| 0xF0 - 0xFF | Reserved       |                        | Private Use                   |
+|-------------+----------------+------------------------+-------------------------------|
 
-### Expert Review guidelines
+### Specification Required guidance
 
 The appointed Expert should ensure that the proposed algorithm has a public
 specification and is suitable for use as a cryptographic hash algorithm with no
@@ -1979,28 +1979,28 @@ cryptographic signature algorithm.
 IANA is asked to establish a registry of `VersionedTransType` values, named
 "CT VersionedTransTypes", that initially consists of:
 
-|-----------------+---------------------------+------------------------------------------|
-| Value           | Type and Version          | Reference / Assignment Policy            |
-|-----------------+---------------------------+------------------------------------------|
-| 0x0000          | Reserved                  | [RFC6962] (*)                            |
-| 0x0001          | x509_entry_v2             | RFCXXXX                                  |
-| 0x0002          | precert_entry_v2          | RFCXXXX                                  |
-| 0x0003          | x509_sct_v2               | RFCXXXX                                  |
-| 0x0004          | precert_sct_v2            | RFCXXXX                                  |
-| 0x0005          | signed_tree_head_v2       | RFCXXXX                                  |
-| 0x0006          | consistency_proof_v2      | RFCXXXX                                  |
-| 0x0007          | inclusion_proof_v2        | RFCXXXX                                  |
-| 0x0008 - 0xDFFF | Unassigned                | Specification Required and Expert Review |
-| 0xE000 - 0xEFFF | Reserved                  | Experimental Use                         |
-| 0xF000 - 0xFFFF | Reserved                  | Private Use                              |
-|-----------------+---------------------------+------------------------------------------|
+|-----------------+---------------------------+-------------------------------|
+| Value           | Type and Version          | Reference / Assignment Policy |
+|-----------------+---------------------------+-------------------------------|
+| 0x0000          | Reserved                  | [RFC6962] (*)                 |
+| 0x0001          | x509_entry_v2             | RFCXXXX                       |
+| 0x0002          | precert_entry_v2          | RFCXXXX                       |
+| 0x0003          | x509_sct_v2               | RFCXXXX                       |
+| 0x0004          | precert_sct_v2            | RFCXXXX                       |
+| 0x0005          | signed_tree_head_v2       | RFCXXXX                       |
+| 0x0006          | consistency_proof_v2      | RFCXXXX                       |
+| 0x0007          | inclusion_proof_v2        | RFCXXXX                       |
+| 0x0008 - 0xDFFF | Unassigned                | Specification Required        |
+| 0xE000 - 0xEFFF | Reserved                  | Experimental Use              |
+| 0xF000 - 0xFFFF | Reserved                  | Private Use                   |
+|-----------------+---------------------------+-------------------------------|
 
 (*) The 0x0000 value is reserved so that v1 SCTs are distinguishable from v2
 SCTs and other `TransItem` structures.
 
 \[RFC Editor: please update 'RFCXXXX' to refer to this document, once its RFC number is known.\]
 
-### Expert Review guidelines
+### Specification Required guidance
 
 The appointed Expert should review the public specification to ensure that it is
 detailed enough to ensure implementation interoperability.
@@ -2010,13 +2010,13 @@ detailed enough to ensure implementation interoperability.
 IANA is asked to establish a registry of `ExtensionType` values, named "CT Log
 Artifact Extensions", that initially consists of:
 
-|-----------------+------------+-----+------------------------------------------|
-| ExtensionType   | Status     | Use | Reference / Assignment Policy            |
-|-----------------+------------+-----+------------------------------------------|
-| 0x0000 - 0xDFFF | Unassigned | n/a | Specification Required and Expert Review |
-| 0xE000 - 0xEFFF | Reserved   | n/a | Experimental Use                         |
-| 0xF000 - 0xFFFF | Reserved   | n/a | Private Use                              |
-|-----------------+------------+-----+------------------------------------------|
+|-----------------+------------+-----+-------------------------------|
+| ExtensionType   | Status     | Use | Reference / Assignment Policy |
+|-----------------+------------+-----+-------------------------------|
+| 0x0000 - 0xDFFF | Unassigned | n/a | Specification Required        |
+| 0xE000 - 0xEFFF | Reserved   | n/a | Experimental Use              |
+| 0xF000 - 0xFFFF | Reserved   | n/a | Private Use                   |
+|-----------------+------------+-----+-------------------------------|
 
 The "Use" column should contain one or both of the following values:
 
@@ -2024,7 +2024,7 @@ The "Use" column should contain one or both of the following values:
 
 * "STH", for extensions specified for use in Signed Tree Heads.
 
-### Expert Review guidelines
+### Specification Required guidance
 
 The appointed Expert should review the public specification to ensure that it is
 detailed enough to ensure implementation interoperability. The Expert should
