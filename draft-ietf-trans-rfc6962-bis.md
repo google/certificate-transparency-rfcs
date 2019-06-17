@@ -45,6 +45,7 @@ normative:
   RFC5280:
   RFC5652:
   RFC6066:
+  RFC6570:
   RFC6960:
   RFC7231:
   RFC7633:
@@ -720,7 +721,11 @@ A log is defined by a collection of parameters, which are used by clients to
 communicate with the log and to verify log artifacts.
 
 Base URL:
-: The URL to substitute for \<log server> in {{client_messages}}.
+: The URL formed by populating the URL template [RFC6570]
+  "https://{host}/.well-known/ct/v2/{prefix}", where the `host` and `prefix`
+  fields are chosen by the log operator. The `host` field MUST consist of only
+  a domain name and optional port number, and each log's Base URL MUST NOT be
+  shared by any other log.
 
 Hash Algorithm:
 : The hash algorithm used for the Merkle Tree (see {{hash_algorithms}}).
@@ -1148,17 +1153,12 @@ using the "application/x-www-form-urlencoded" format described in the "HTML 4.01
 Specification" [HTML401]. Binary data is base64 encoded [RFC4648] as specified
 in the individual messages.
 
-Clients are configured with a base URL for a log and construct URLs for requests
-by appending suffixes to this base URL. This structure places some degree of
-restriction on how log operators can deploy these services, as noted in
-[RFC7320]. However, operational experience with version 1 of this protocol has
-not indicated that these restrictions are a problem in practice.
+Clients are configured with a log's Base URL (see {{log_parameters}}), and they
+construct URLs for requests by appending suffixes to this Base URL, as described
+in the subsections below.
 
 Note that JSON objects and URL parameters may contain fields not specified here.
 These extra fields SHOULD be ignored.
-
-The \<log server> prefix, which is one of the log's parameters, MAY include a
-path as well as a server name and a port.
 
 In practice, log servers may include multiple front-end machines. Since it is
 impractical to keep these machines in perfect sync, errors may occur that are
@@ -1192,7 +1192,7 @@ detail:
   processing the request, ideally with sufficient detail to enable the error to
   be rectified.
 
-e.g., In response to a request of `/ct/v2/get-entries?start=100&end=99`, the log
+e.g., In response to a request of `get-entries?start=100&end=99`, the log
 would return a `400 Bad Request` response code with a body similar to the
 following:
 
@@ -1222,7 +1222,7 @@ minimum time for the client to wait before retrying the request.
 
 ## Submit Entry to Log {#submit-entry}
 
-POST https://\<log server>/ct/v2/submit-entry
+POST https://{host}/.well-known/ct/v2/{prefix}/submit-entry
 
 Inputs:
 
@@ -1292,7 +1292,7 @@ embedded in the certificate).
 
 ## Retrieve Latest Signed Tree Head {#get-sth}
 
-GET https://\<log server>/ct/v2/get-sth
+GET https://{host}/.well-known/ct/v2/{prefix}/get-sth
 
 No inputs.
 
@@ -1304,7 +1304,7 @@ Outputs:
 
 ## Retrieve Merkle Consistency Proof between Two Signed Tree Heads {#get-sth-consistency}
 
-GET https://\<log server>/ct/v2/get-sth-consistency
+GET https://{host}/.well-known/ct/v2/{prefix}/get-sth-consistency
 
 Inputs:
 
@@ -1354,7 +1354,7 @@ output.
 
 ## Retrieve Merkle Inclusion Proof from Log by Leaf Hash {#get-proof-by-hash}
 
-GET https://\<log server>/ct/v2/get-proof-by-hash
+GET https://{host}/.well-known/ct/v2/{prefix}/get-proof-by-hash
 
 Inputs:
 
@@ -1397,7 +1397,7 @@ See {{verify_inclusion}} for an outline of how to use the `inclusion` output.
 
 ## Retrieve Merkle Inclusion Proof, Signed Tree Head and Consistency Proof by Leaf Hash {#get-all-by-hash}
 
-GET https://\<log server>/ct/v2/get-all-by-hash
+GET https://{host}/.well-known/ct/v2/{prefix}/get-all-by-hash
 
 Inputs:
 
@@ -1452,7 +1452,7 @@ output.
 
 ## Retrieve Entries and STH from Log {#get-entries}
 
-GET https://\<log server>/ct/v2/get-entries
+GET https://{host}/.well-known/ct/v2/{prefix}/get-entries
 
 Inputs:
 
@@ -1532,7 +1532,7 @@ Error codes:
 
 ## Retrieve Accepted Trust Anchors {#get-anchors}
 
-GET https://\<log server>/ct/v2/get-anchors
+GET https://{host}/.well-known/ct/v2/{prefix}/get-anchors
 
 No inputs.
 
