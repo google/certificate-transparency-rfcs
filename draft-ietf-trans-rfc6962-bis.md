@@ -106,12 +106,6 @@ informative:
     author:
       org: The Chromium Projects
     date: 2014
-  JSON.Metadata:
-    target: https://www.gstatic.com/ct/log_list/log_list_schema.json
-    title: Chromium Log Metadata JSON Schema
-    author:
-      org: The Chromium Projects
-    date: 2014
   Chromium.Log.Policy:
     target: http://www.chromium.org/Home/chromium-security/certificate-transparency/log-policy
     title: Chromium Certificate Transparency Log Policy
@@ -776,8 +770,8 @@ Final STH:
   The final STH should be provided in the form of a TransItem of type
   `signed_tree_head_v2`.
 
-[JSON.Metadata] is an example of a metadata format which includes the above
-elements.
+This document does not specify any particular method or format for distributing
+a log's parameters.
 
 ## Evaluating Submissions
 
