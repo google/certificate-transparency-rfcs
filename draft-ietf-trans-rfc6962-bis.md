@@ -2078,9 +2078,12 @@ the 128 OIDs from 1.3.101.80.0 to 1.3.101.80.127 have an encoded length of only
 4 octets.
 
 Each application for the allocation of a Log ID MUST be accompanied by:
+
 * the Log Name (see {{log_parameters}}).
+
 * a Contact (including contact information), from whom further information can
   be obtained.
+
 * an Owner (including contact information), who is authorized to change this Log
   ID allocation.
 
