@@ -85,6 +85,7 @@ informative:
   RFC6234:
   RFC6962:
   RFC6979:
+  RFC7320:
   RFC8126:
   I-D.ietf-trans-gossip:
   CrosbyWallach:
@@ -233,6 +234,9 @@ major changes are:
 
 - Log Artifact Extensions: these are now typed and managed by an IANA registry,
   and they can now appear not only in SCTs but also in STHs.
+
+- API URLs: these are now defined as log parameters rather than mandatory
+  suffixes of a base URL, to satisfy BCP 190 [RFC7320].
 
 - API outputs: complete `TransItem` structures are returned, rather than the
   constituent parts of each structure.
