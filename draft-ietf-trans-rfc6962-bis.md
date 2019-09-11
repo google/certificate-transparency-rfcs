@@ -85,6 +85,7 @@ informative:
   RFC6234:
   RFC6962:
   RFC6979:
+  RFC7320:
   RFC8126:
   I-D.ietf-trans-gossip:
   CrosbyWallach:
