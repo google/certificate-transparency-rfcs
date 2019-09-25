@@ -716,8 +716,10 @@ from the log.
 
 ## Log Parameters {#log_parameters}
 
-A log is defined by a collection of parameters, which are used by clients to
-communicate with the log and to verify log artifacts.
+A log is defined by a collection of immutable parameters, which are used by
+clients to communicate with the log and to verify log artifacts. Except for the
+Final STH, each of these parameters MUST be established before the log operator
+begins to operate the log.
 
 Base URL:
 : The prefix used to construct URLs for client messages (see
@@ -2052,12 +2054,12 @@ arc that was selected due to its short encoding.
 IANA is asked to establish a registry of Log IDs, named "CT Log ID Registry",
 that initially consists of:
 
-|------------------------------+--------------+------------+------------+-------------------------------|
-| Value                        | Log Base URL | Contact    | Owner      | Reference / Assignment Policy |
-|------------------------------+--------------+------------+------------+-------------------------------|
-| 1.3.101.8192 - 1.3.101.16383 | Unassigned   | Unassigned | Unassigned | First Come First Served       |
-| 1.3.101.80.0 - 1.3.101.80.*  | Unassigned   | Unassigned | Unassigned | First Come First Served       |
-|------------------------------+--------------+------------+------------+-------------------------------|
+|------------------------------+--------------+--------------+-------------------------------|
+| Log ID                       | Log Base URL | Log Operator | Reference / Assignment Policy |
+|------------------------------+--------------+--------------+-------------------------------|
+| 1.3.101.8192 - 1.3.101.16383 | Unassigned   | Unassigned   | First Come First Served       |
+| 1.3.101.80.0 - 1.3.101.80.*  | Unassigned   | Unassigned   | First Come First Served       |
+|------------------------------+--------------+--------------+-------------------------------|
 
 All OIDs in the range from 1.3.101.8192 to 1.3.101.16383 have been reserved.
 This is a limited resource of 8,192 OIDs, each of which has an encoded length of
@@ -2068,11 +2070,16 @@ the 128 OIDs from 1.3.101.80.0 to 1.3.101.80.127 have an encoded length of only
 4 octets.
 
 Each application for the allocation of a Log ID MUST be accompanied by:
+
 * the Log's Base URL (see {{log_parameters}}).
-* a Contact (including contact information), from whom further information can
-  be obtained.
-* an Owner (including contact information), who is authorized to change this Log
-  ID allocation.
+
+* the Log Operator's contact details.
+
+IANA is asked to reject any request to update a Log ID or Log Base URL in this
+registry, because these fields are immutable (see {{log_parameters}}).
+
+IANA is asked to accept requests from log operators to update their contact
+details in this registry.
 
 # Security Considerations
 
