@@ -680,12 +680,12 @@ construct a valid certificate.
 
 ### Binding Intent to Issue  {#binding_intent_to_issue}
 
-Under normal circumstances, there will be a short time period between
-precertificate submission and issuance of the corresponding certificate.
-Occasional delays are to be expected though (e.g., due to log server downtime),
-and in some cases the CA might not actually issue the corresponding certificate.
-Nevertheless, a precertificate's `signature` indicates the CA's binding intent
-to issue the corresponding certificate, which means that:
+Under normal circumstances, there will be a short delay between precertificate
+submission and issuance of the corresponding certificate. Longer delays are to
+be expected occasionally (e.g., due to log server downtime), and in some cases
+the CA might not actually issue the corresponding certificate. Nevertheless, a
+precertificate's `signature` indicates the CA's binding intent to issue the
+corresponding certificate, which means that:
 
 * Misissuance of a precertificate is considered equivalent to misissuance of
   the corresponding certificate. The CA should expect to be held to account,
