@@ -668,11 +668,8 @@ following profile:
     * A message-digest attribute whose value is the message digest of
       `SignedData.encapContentInfo.eContent`.
   * `signatureAlgorithm` MUST be the same OID as `TBSCertificate.signature`.
-  * `signature` MUST be from the same (root or intermediate) CA that will
-    ultimately issue the certificate. This signature indicates the CA's intent
-    to issue the certificate. This intent is considered binding (i.e.,
-    misissuance of the precertificate is considered equivalent to misissuance of
-    the corresponding certificate).
+  * `signature` MUST be from the same (root or intermediate) CA that intends to
+    issue the corresponding certificate (see {{binding_intent_to_issue}}).
   * `unsignedAttrs` MUST be omitted.
 
 `SignerInfo.signedAttrs` is included in the message digest calculation process
@@ -680,6 +677,30 @@ following profile:
 value will not be a valid X.509v3 signature that could be used in conjunction
 with the TBSCertificate (from `SignedData.encapContentInfo.eContent`) to
 construct a valid certificate.
+
+### Binding Intent to Issue  {#binding_intent_to_issue}
+
+Under normal circumstances, there will be a short time period between
+precertificate submission and issuance of the corresponding certificate.
+Occasional delays are to be expected though (e.g., due to log server downtime),
+and in some cases the CA might not actually issue the corresponding certificate.
+Nevertheless, a precertificate's `signature` indicates the CA's binding intent
+to issue the corresponding certificate, which means that:
+
+* Misissuance of a precertificate is considered equivalent to misissuance of
+  the corresponding certificate. The CA should expect to be held to account,
+  even if the corresponding certificate has not actually been issued.
+
+* Upon observing a precertificate, a client can reasonably presume that the
+  corresponding certificate has been issued. A client may wish to obtain status
+  information (e.g., by using the Online Certificate Status Protocol [RFC6960]
+  or by checking a Certificate Revocation List [RFC5280]) about a certificate
+  that is presumed to exist, especially if there is evidence or suspicion that
+  the corresponding precertificate was misissued.
+
+* TLS clients may have policies that require CAs to be able to revoke, and to
+  provide certificate status services for, each certificate that is presumed to
+  exist based on the existence of a corresponding precertificate.
 
 # Log Format and Operation
 
