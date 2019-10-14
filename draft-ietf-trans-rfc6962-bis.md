@@ -2181,6 +2181,13 @@ By requiring TLS servers to offer multiple SCTs, each from a different log, TLS
 clients reduce the effectiveness of an attack where a CA and a log collude
 (see {{multiple-scts}}).
 
+## Leakage of DNS Information
+
+Malicious monitors can use logs to learn about the existence of domain names
+that might not otherwise be easy to discover. Some subdomain labels may reveal
+information about the service and software for which the subdomain is used,
+which in turn might facilitate targeted attacks.
+
 # Acknowledgements
 
 The authors would like to thank Erwann Abelea, Robin Alden, Andrew Ayer, Richard
