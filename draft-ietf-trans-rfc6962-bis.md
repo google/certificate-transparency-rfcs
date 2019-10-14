@@ -739,8 +739,8 @@ from the log.
 
 A log is defined by a collection of immutable parameters, which are used by
 clients to communicate with the log and to verify log artifacts. Except for the
-Final STH, each of these parameters MUST be established before the log operator
-begins to operate the log.
+Final Signed Tree Head (STH), each of these parameters MUST be established
+before the log operator begins to operate the log.
 
 Base URL:
 : The prefix used to construct URLs for client messages (see
