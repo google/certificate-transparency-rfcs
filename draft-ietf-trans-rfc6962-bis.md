@@ -2102,6 +2102,9 @@ registry, because these fields are immutable (see {{log_parameters}}).
 IANA is asked to accept requests from log operators to update their contact
 details in this registry.
 
+Since log operators can choose to not use this registry (see {{log_id}}), it is
+not expected to be a global directory of all logs.
+
 # Security Considerations
 
 With CAs, logs, and servers performing the actions described here, TLS clients
