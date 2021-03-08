@@ -1594,8 +1594,8 @@ is encoded as an extension in the `CertificateStatus` message; see Section 8
 of [RFC6066]).  This mechanism also
 allows SCTs and inclusion proofs to be updated on the fly.
 
-For off-line use,
-an X509v3 certificate extension (see {{cert_transinfo_extension}}). This
+CT information can also be encoded as an extension in the X.509v3 certificate
+(see {{cert_transinfo_extension}}). This
 mechanism allows the use of unmodified TLS servers, but the SCTs and inclusion
 proofs cannot be updated on the fly. Since the logs from which the SCTs and
 inclusion proofs originated won't necessarily be accepted by TLS clients for
