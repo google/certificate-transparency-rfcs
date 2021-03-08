@@ -2122,7 +2122,7 @@ Index value: No transformation needed.
 ### TRANS Error Types
 
 IANA is requested to create a new registry for errors.
-Requirements for this registry are specification required.
+Requirements for this registry are Specification Required.
 
 This registry should have the following three fields:
 
@@ -2140,14 +2140,20 @@ The initial values are as follows, taken from the text above:
 | Identifier | Meaning                          | Reference |
 |------------+----------------------------------+-----------|
 | malformed  | The request could not be parsed. | RFCXXXX   |
-|------------+----------------------------------+-----------|
 | badSubmission | `submission` is neither a valid certificate nor a valid precertificate        | RFCXXXX |
 | badType       | `type` is neither 1 nor 2     | RFCXXXX |
 | badChain      | The first element of `chain` is not the certifier of the `submission`, or the second element does not certify the first, etc. | RFCXXXX |
 | badCertificate | One or more certificates in the `chain` are not valid (e.g., not properly encoded) | RFCXXXX |
 | unknownAnchor  | The last element of `chain` (or, if `chain` is an empty array, the `submission`) both is not, and is not certified by, an accepted trust anchor | RFCXXXX |
 | shutdown       | The log is no longer accepting submissions | RFCXXXX |
-|---------------+----------------------------------|
+| firstUnknown      | `first` is before the latest known STH but is not from an existing STH.  | RFCXXXX |
+| secondUnknown     | `second` is before the latest known STH but is not from an existing STH. | RFCXXXX |
+| secondBeforeFirst | `second` is smaller than `first`.                                        | RFCXXXX |
+| hashUnknown     | `hash` is not the hash of a known leaf (may be caused by skew or by a known certificate not yet merged). | RFCXXXX |
+| treeSizeUnknown | `hash` is before the latest known STH but is not from an existing STH.                                   | RFCXXXX |
+| startUnknown   | `start` is greater than the number of entries in the Merkle tree. | RFCXXXX |
+| endBeforeStart | `start` cannot be greater than `end`.                             | RFCXXXX |
+|------------+----------------------------------+-----------|
 
 # Security Considerations
 
