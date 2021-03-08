@@ -1827,6 +1827,14 @@ that are mandatory to implement for CT-using TLS clients (see
 if it did not include both the `transparency_info` and `status_request` TLS
 extensions in the ClientHello.
 
+## TLS Server {#no_tls_servers}
+
+This specification includes no description of what a TLS server should
+do if it wants to verify a received TLS client certificate.
+While this may be useful, it is not documented here because the greater
+security exposure is for clients to end up interacting with an illegitimate
+server. A future version could include such information.
+
 ## Monitor {#monitor}
 
 Monitors watch logs to check that they behave correctly, for certificates of
