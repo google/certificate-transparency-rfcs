@@ -1578,7 +1578,7 @@ to present one or more SCTs from one or more logs to each TLS client during full
 TLS handshakes, where each SCT corresponds to the server certificate. They
 SHOULD also present corresponding inclusion proofs and STHs.
 
-A server can provide SCT's using
+A server can provide SCTs using
 a TLS 1.3 extension (Section 4.2 of [RFC8446]) with type `transparency_info`
 (see {{tls_transinfo_extension}}). This mechanism allows TLS servers to
 participate in CT without the cooperation of CAs, unlike the other two
@@ -1589,9 +1589,9 @@ The server may also use an Online Certificate Status Protocol (OCSP)
 popularly known as "OCSP stapling."
 For TLS
 1.3, the information is encoded as an extension in the `status_request`
-extension data; see Section 4.4.2.1 of [RFC8446] For TLS 1.2, the information
+extension data; see Section 4.4.2.1 of [RFC8446]. For TLS 1.2, the information
 is encoded as an extension in the `CertificateStatus` message; see Section 8
-of [RFC6066]).  This mechanism also
+of [RFC6066].  This mechanism also
 allows SCTs and inclusion proofs to be updated on the fly.
 
 CT information can also be encoded as an extension in the X.509v3 certificate
