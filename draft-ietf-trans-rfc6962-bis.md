@@ -1586,7 +1586,8 @@ mechanisms. It also allows SCTs and inclusion proofs to be updated on the fly.
 
 The server may also use an Online Certificate Status Protocol (OCSP)
 [RFC6960] response extension (see {{ocsp_transinfo_extension}}),
-popularly known as "OCSP stapling."
+providing the OCSP response as part of the TLS handshake. Providing
+a response during a TLS handshake is popularly known as "OCSP stapling."
 For TLS
 1.3, the information is encoded as an extension in the `status_request`
 extension data; see Section 4.4.2.1 of [RFC8446]. For TLS 1.2, the information
