@@ -1600,9 +1600,10 @@ CT information can also be encoded as an extension in the X.509v3 certificate
 mechanism allows the use of unmodified TLS servers, but the SCTs and inclusion
 proofs cannot be updated on the fly. Since the logs from which the SCTs and
 inclusion proofs originated won't necessarily be accepted by TLS clients for
-the full lifetime of the certificate, there is a risk that TLS clients will
+the full lifetime of the certificate, there is a risk that TLS clients may
 subsequently consider the certificate to be non-compliant and in need of
-re-issuance.
+re-issuance or the use of one of the other two methods for delivering CT
+information.
 
 ## Multiple SCTs {#multiple-scts}
 
