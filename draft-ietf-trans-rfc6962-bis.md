@@ -1592,7 +1592,7 @@ For TLS
 1.3, the information is encoded as an extension in the `status_request`
 extension data; see Section 4.4.2.1 of [RFC8446]. For TLS 1.2, the information
 is encoded as an extension in the `CertificateStatus` message; see Section 8
-of [RFC6066].  This mechanism also
+of [RFC6066].  Using stapling also
 allows SCTs and inclusion proofs to be updated on the fly.
 
 CT information can also be encoded as an extension in the X.509v3 certificate
