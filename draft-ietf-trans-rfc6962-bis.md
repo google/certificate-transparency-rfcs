@@ -2265,9 +2265,9 @@ The authors would like to thank Erwann Abelea, Robin Alden, Andrew Ayer, Richard
 Barnes, Al Cutter, David Drysdale, Francis Dupont, Adam Eijdenberg, Stephen
 Farrell, Daniel Kahn Gillmor, Paul Hadfield, Brad Hill, Jeff Hodges, Paul
 Hoffman, Jeffrey Hutzelman, Kat Joyce, Stephen Kent, SM, Alexey Melnikov, Linus
-Nordberg, Chris Palmer, Trevor Perrin, Pierre Phaneuf, Eric Rescorla, Melinda
-Shore, Ryan Sleevi, Martin Smith, Carl Wallace and Paul Wouters for their
-valuable contributions.
+Nordberg, Chris Palmer, Trevor Perrin, Pierre Phaneuf, Eric Rescorla, Rich Salz,
+Melinda Shore, Ryan Sleevi, Martin Smith, Carl Wallace and Paul Wouters for
+their valuable contributions.
 
 A big thank you to Symantec for kindly donating the OIDs from the 1.3.101 arc
 that are used in this document.
