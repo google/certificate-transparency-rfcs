@@ -1601,6 +1601,20 @@ Three mechanisms are provided because they have different tradeoffs.
   subsequently consider the certificate to be non-compliant and in need of
   re-issuance.
 
+## TLS Client Authentication
+
+This specification includes no description of how a TLS server can
+use CT for TLS client certificates.
+While this may be useful, it is not documented here for the following
+reasons:
+
+* The greater security exposure is for clients to end up interacting with an
+  illegitimate server.
+* In general, TLS client certificates are not expected to be submitted to
+  CT logs, particularly those intended for general public use.
+
+A future version could include such information.
+
 ## Multiple SCTs {#multiple-scts}
 
 CT-using TLS servers SHOULD send SCTs from multiple logs, because:
