@@ -2013,7 +2013,7 @@ IANA is asked to establish a registry of `VersionedTransType` values, named
 |-----------------+---------------------------+-------------------------------|
 | Value           | Type and Version          | Reference / Assignment Policy |
 |-----------------+---------------------------+-------------------------------|
-| 0x0000          | Reserved                  | [RFC6962] (*)                 |
+| 0x0000          | Reserved                  | [RFC6962] \*                  |
 | 0x0001          | x509_entry_v2             | RFCXXXX                       |
 | 0x0002          | precert_entry_v2          | RFCXXXX                       |
 | 0x0003          | x509_sct_v2               | RFCXXXX                       |
@@ -2026,10 +2026,10 @@ IANA is asked to establish a registry of `VersionedTransType` values, named
 | 0xF000 - 0xFFFF | Reserved                  | Private Use                   |
 |-----------------+---------------------------+-------------------------------|
 
-(*) The 0x0000 value is reserved so that v1 SCTs are distinguishable from v2
+\* The 0x0000 value is reserved so that v1 SCTs are distinguishable from v2
 SCTs and other `TransItem` structures.
 
-\[RFC Editor: please update 'RFCXXXX' to refer to this document, once its RFC number is known.\]
+\[RFC Editor: please update 'RFCXXXX' to refer to this document, once its RFC number is known through the document.\]
 
 ### Specification Required guidance
 
@@ -2079,7 +2079,7 @@ that initially consists of:
 | Log ID                       | Log Base URL | Log Operator | Reference / Assignment Policy |
 |------------------------------+--------------+--------------+-------------------------------|
 | 1.3.101.8192 - 1.3.101.16383 | Unassigned   | Unassigned   | First Come First Served       |
-| 1.3.101.80.0 - 1.3.101.80.*  | Unassigned   | Unassigned   | First Come First Served       |
+| 1.3.101.80.0 - 1.3.101.80.\*  | Unassigned   | Unassigned   | First Come First Served       |
 |------------------------------+--------------+--------------+-------------------------------|
 
 All OIDs in the range from 1.3.101.8192 to 1.3.101.16383 have been reserved.
@@ -2104,6 +2104,56 @@ details in this registry.
 
 Since log operators can choose to not use this registry (see {{log_id}}), it is
 not expected to be a global directory of all logs.
+
+## URN Sub-namespace for TRANS errors (urn:ietf:params:trans:error)
+
+IANA is requested to add a new entry in the
+"IETF URN Sub-namespace for Registered Protocol Parameter Identifiers"
+registry, following the template in {{!RFC3553}}:
+
+Registry name: trans:error
+
+Specification: RFCXXXX
+
+Repository: https://www.iana.org/assignments/trans
+
+Index value: No transformation needed.
+
+### TRANS Error Types
+
+IANA is requested to create a new registry for errors.
+Requirements for this registry are Specification Required.
+
+This registry should have the following three fields:
+
+|------------+--------+-----------|
+| Field Name | Type   | Reference |
+|------------+--------+-----------|
+| identifier | string | RFCXXXX   |
+| meaning    | string | RFCXXXX   |
+| reference  | string | RFCXXXX   |
+|------------+--------+-----------|
+
+The initial values are as follows, taken from the text above:
+
+|------------+----------------------------------+-----------|
+| Identifier | Meaning                          | Reference |
+|------------+----------------------------------+-----------|
+| malformed  | The request could not be parsed. | RFCXXXX   |
+| badSubmission | `submission` is neither a valid certificate nor a valid precertificate        | RFCXXXX |
+| badType       | `type` is neither 1 nor 2     | RFCXXXX |
+| badChain      | The first element of `chain` is not the certifier of the `submission`, or the second element does not certify the first, etc. | RFCXXXX |
+| badCertificate | One or more certificates in the `chain` are not valid (e.g., not properly encoded) | RFCXXXX |
+| unknownAnchor  | The last element of `chain` (or, if `chain` is an empty array, the `submission`) both is not, and is not certified by, an accepted trust anchor | RFCXXXX |
+| shutdown       | The log is no longer accepting submissions | RFCXXXX |
+| firstUnknown      | `first` is before the latest known STH but is not from an existing STH.  | RFCXXXX |
+| secondUnknown     | `second` is before the latest known STH but is not from an existing STH. | RFCXXXX |
+| secondBeforeFirst | `second` is smaller than `first`.                                        | RFCXXXX |
+| hashUnknown     | `hash` is not the hash of a known leaf (may be caused by skew or by a known certificate not yet merged). | RFCXXXX |
+| treeSizeUnknown | `hash` is before the latest known STH but is not from an existing STH.                                   | RFCXXXX |
+| startUnknown   | `start` is greater than the number of entries in the Merkle tree. | RFCXXXX |
+| endBeforeStart | `start` cannot be greater than `end`.                             | RFCXXXX |
+|------------+----------------------------------+-----------|
 
 # Security Considerations
 
