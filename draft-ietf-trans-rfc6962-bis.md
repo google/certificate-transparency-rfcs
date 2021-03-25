@@ -1573,33 +1573,37 @@ Outputs:
 
 # TLS Servers {#tls_servers}
 
-CT-using TLS servers MUST use at least one of the three mechanisms listed below
+CT-using TLS servers MUST use at least one of the mechanisms described below
 to present one or more SCTs from one or more logs to each TLS client during full
 TLS handshakes, where each SCT corresponds to the server certificate. They
 SHOULD also present corresponding inclusion proofs and STHs.
 
-Three mechanisms are provided because they have different tradeoffs.
+A server can provide SCTs using
+a TLS 1.3 extension (Section 4.2 of [RFC8446]) with type `transparency_info`
+(see {{tls_transinfo_extension}}). This mechanism allows TLS servers to
+participate in CT without the cooperation of CAs, unlike the other two
+mechanisms. It also allows SCTs and inclusion proofs to be updated on the fly.
 
-* A TLS extension (Section 4.2 of [RFC8446]) with type `transparency_info`
-  (see {{tls_transinfo_extension}}). This mechanism allows TLS servers to
-  participate in CT without the cooperation of CAs, unlike the other two
-  mechanisms. It also allows SCTs and inclusion proofs to be updated on the fly.
+The server may also use an Online Certificate Status Protocol (OCSP)
+[RFC6960] response extension (see {{ocsp_transinfo_extension}}),
+providing the OCSP response as part of the TLS handshake. Providing
+a response during a TLS handshake is popularly known as "OCSP stapling."
+For TLS
+1.3, the information is encoded as an extension in the `status_request`
+extension data; see Section 4.4.2.1 of [RFC8446]. For TLS 1.2, the information
+is encoded as an extension in the `CertificateStatus` message; see Section 8
+of [RFC6066].  Using stapling also
+allows SCTs and inclusion proofs to be updated on the fly.
 
-* An Online Certificate Status Protocol (OCSP) [RFC6960] response extension (see
-  {{ocsp_transinfo_extension}}), where the OCSP response is provided in the
-  `CertificateStatus` message, provided that the TLS client included the
-  `status_request` extension in the (extended) `ClientHello` (Section 8 of
-  [RFC6066]). This mechanism, popularly known as OCSP stapling, is already
-  widely (but not universally) implemented. It also allows SCTs and inclusion
-  proofs to be updated on the fly.
-
-* An X509v3 certificate extension (see {{cert_transinfo_extension}}). This
-  mechanism allows the use of unmodified TLS servers, but the SCTs and inclusion
-  proofs cannot be updated on the fly. Since the logs from which the SCTs and
-  inclusion proofs originated won't necessarily be accepted by TLS clients for
-  the full lifetime of the certificate, there is a risk that TLS clients will
-  subsequently consider the certificate to be non-compliant and in need of
-  re-issuance.
+CT information can also be encoded as an extension in the X.509v3 certificate
+(see {{cert_transinfo_extension}}). This
+mechanism allows the use of unmodified TLS servers, but the SCTs and inclusion
+proofs cannot be updated on the fly. Since the logs from which the SCTs and
+inclusion proofs originated won't necessarily be accepted by TLS clients for
+the full lifetime of the certificate, there is a risk that TLS clients may
+subsequently consider the certificate to be non-compliant and in need of
+re-issuance or the use of one of the other two methods for delivering CT
+information.
 
 ## TLS Client Authentication
 
