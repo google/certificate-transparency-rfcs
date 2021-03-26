@@ -858,8 +858,8 @@ If a submission is accepted and an SCT issued, the accepting log MUST store the
 entire chain used for verification. This chain MUST include the certificate or
 precertificate itself, the zero or more intermediate CA certificates provided by
 the submitter, and the trust anchor used to verify the chain (even if it was
-omitted from the submission). The log MUST present this chain for auditing upon
-request (see {{get-entries}}). This prevents the CA from avoiding blame by
+omitted from the submission). The log MUST provide this chain for auditing upon
+request (see {{get-entries}}) so that the CA cannot avoid blame by
 logging a partial or empty chain.
 Each log entry is a `TransItem` structure of type `x509_entry_v2` or
 `precert_entry_v2`. However, a log may store its entries in any format. If a
