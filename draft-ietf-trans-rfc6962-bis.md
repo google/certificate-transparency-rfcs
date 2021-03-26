@@ -1068,9 +1068,8 @@ The log stores information about its Merkle Tree in a `TreeHeadDataV2`:
 
 The length of NodeHash MUST match HASH_SIZE of the log.
 
-`timestamp` is the current date and time, in the form of a 64-bit unsigned
-number of milliseconds elapsed since the Unix Epoch (1 January 1970
-00:00:00 UTC - see [UNIXTIME]), ignoring leap seconds, in network byte order.
+`timestamp` is the current date and time, using the format defined in
+{tree_leaves}.
 
 `tree_size` is the number of entries currently in the log's Merkle Tree.
 
