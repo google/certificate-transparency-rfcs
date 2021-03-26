@@ -331,7 +331,8 @@ used:
     1. Push `HASH(0x00 || entries[i])` to `stack`.
 
     2. Set `merge_count` to the lowest value (`0` included) such that `LSB(i >>
-       merge_count)` is not set. In other words, set `merge_count` to the number
+       merge_count)` is not set, where `LSB` means the least significant byte.
+       In other words, set `merge_count` to the number
        of consecutive `1`s found starting at the least significant bit of `i`.
 
     3. Repeat `merge_count` times:
