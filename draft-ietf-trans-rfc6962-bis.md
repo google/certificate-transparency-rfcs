@@ -1195,8 +1195,9 @@ can deploy these services, as noted in [RFC7320]. However, operational
 experience with version 1 of this protocol has not indicated that these
 restrictions are a problem in practice.
 
-Note that JSON objects and URL parameters may contain fields not specified here.
-These extra fields SHOULD be ignored.
+Note that JSON objects and URL parameters may contain fields not specified here,
+to allow for experimentation. Any fields that are not understood SHOULD
+be ignored.
 
 In practice, log servers may include multiple front-end machines. Since it is
 impractical to keep these machines in perfect sync, errors may occur that are
