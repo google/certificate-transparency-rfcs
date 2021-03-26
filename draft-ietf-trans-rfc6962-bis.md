@@ -1852,10 +1852,11 @@ It is up to a client's local policy to specify the quantity and form of
 evidence (SCTs, inclusion proofs or a combination) needed to achieve
 compliance and how to handle non-compliance.
 
-A TLS client can only evaluate compliance if it has given the TLS server the
+A TLS client can only determine compliance if it has given the TLS server the
 opportunity to send SCTs and inclusion proofs by any of the three mechanisms
 that are mandatory to implement for CT-using TLS clients (see
-{{receiving_transitems}}). Therefore, a TLS client MUST NOT evaluate compliance
+{{receiving_transitems}}). Therefore, a TLS client MUST NOT make such a
+compliance determination
 if it did not include both the `transparency_info` and `status_request` TLS
 extensions in the ClientHello.
 
