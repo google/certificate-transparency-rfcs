@@ -80,6 +80,13 @@ normative:
     title: The Open Group Base Specifications Issue 7 IEEE Std 1003.1-2008, 2016 Edition
     author:
       org: IEEE
+  X690:
+    title: "Information technology - ASN.1 encoding Rules: Specification of Basic Encoding Rules (BER), Canonical Encoding Rules (CER) and Distinguished Encoding Rules (DER)"
+    date: November 2015
+    author:
+      org: ITU-T
+    seriesinfo:
+      ISO/IEC: 8825-1:2002
 
 informative:
   RFC6234:
@@ -641,7 +648,7 @@ to multiple logs, but only incorporates the SCTs that are returned first.
 A precertificate is a CMS [RFC5652] `signed-data` object that conforms to the
 following profile:
 
-* It MUST be DER encoded.
+* It MUST be DER encoded as described in [X690].
 
 * `SignedData.version` MUST be v3(3).
 
