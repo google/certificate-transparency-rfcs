@@ -773,6 +773,8 @@ Log ID:
 
 Maximum Merge Delay:
 : The MMD the log has committed to.
+This document deliberately does not specify any limits on the value, to allow
+for experimentation.
 
 Version:
 : The version of the protocol supported by the log (currently 1 or 2).
