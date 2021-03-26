@@ -1888,6 +1888,8 @@ To inspect new entries, the monitor SHOULD follow these steps repeatedly for
 each log:
 
 1. Fetch the current STH ({{get-sth}}). Repeat until the STH changes.
+This document does not specify the polling frequency, to allow for
+experimentation.
 
 2. Verify the STH signature.
 
