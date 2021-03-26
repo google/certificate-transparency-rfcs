@@ -87,7 +87,6 @@ informative:
   RFC6979:
   RFC7320:
   RFC8126:
-  I-D.ietf-trans-gossip:
   CrosbyWallach:
     target: http://static.usenix.org/event/sec09/tech/full_papers/crosby.pdf
     title: Efficient Data Structures for Tamper-Evident Logging
@@ -712,8 +711,8 @@ precertificate entries.
 When it receives and accepts a valid submission, the log MUST return an SCT that
 corresponds to the submitted certificate or precertificate. If the log has
 previously seen this valid submission, it SHOULD return the same SCT as it
-returned before (to reduce the ability to track clients as described in
-{{prevent_tracking_clients}}). If different SCTs are produced for the same
+returned before, as discussed in {{misbehaving_logs}}.
+If different SCTs are produced for the same
 submission, multiple log entries will have to be created, one for each SCT (as
 the timestamp is a part of the leaf structure). Note that if a certificate was
 previously logged as a precertificate, then the precertificate's SCT of type
@@ -2235,18 +2234,15 @@ be asynchronous and need only be done once per certificate. However, note that
 there may be privacy concerns (see {{fetching_inclusion_proofs}}).
 
 Violation of the append-only property or the STH issuance rate limit can be
-detected by clients comparing their instances of the Signed Tree Heads. There
-are various ways this could be done, for example via gossip (see
-[I-D.ietf-trans-gossip]) or peer-to-peer communications or by sending STHs to
-monitors (who could then directly check against their own copy of the relevant
-log). Proof of misbehavior in such cases would be: a series of STHs that were
+detected by multiple clients comparing their instances of the Signed Tree Heads.
+This technique, known as "gossip," is an active area of research and not
+defined here.
+Proof of misbehavior in such cases would be: a series of STHs that were
 issued too closely together, proving violation of the STH issuance rate limit;
 or an STH with a root hash that does not match the one calculated from a copy of
 the log, proving violation of the append-only property.
 
-## Preventing Tracking Clients {#prevent_tracking_clients}
-
-Clients that gossip STHs or report back SCTs can be tracked or traced if a log
+Clients that report back SCTs can be tracked or traced if a log
 produces multiple STHs or SCTs with the same timestamp and data but different
 signatures. Logs SHOULD mitigate this risk by either:
 
