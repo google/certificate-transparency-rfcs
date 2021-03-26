@@ -369,7 +369,8 @@ used:
         3. Push `HASH(0x01 || left || right)` to `stack`.
 
 3. If there is more than one element in the `stack`, repeat the same merge
-   procedure (Step 2.3 above) until only a single element remains.
+   procedure (the sub-items of Step 2.3 above) until only a single element
+   remains.
 
 4. The remaining element in `stack` is the Merkle Tree hash for the given
    `tree_size` and should be compared by equality against the supplied
