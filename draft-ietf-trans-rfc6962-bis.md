@@ -1260,6 +1260,7 @@ responses as transient failures and MAY retry the same request without
 modification at a later date. Note that as per [RFC7231], in the case of a 503
 response the log MAY include a `Retry-After:` header in order to request a
 minimum time for the client to wait before retrying the request.
+In the absence of this header, this document does not specify a minimum.
 
 Clients SHOULD treat any 4xx error as a problem with the request and not
 attempt to resubmit without some modification to the request. The full
@@ -1560,6 +1561,9 @@ Logs MAY restrict the number of entries that can be retrieved per `get-entries`
 request. If a client requests more than the permitted number of entries, the log
 SHALL return the maximum number of entries permissible. These entries SHALL be
 sequential beginning with the entry specified by `start`.
+Note that limit on the number of entries is not immutable and therefore
+the restriction may be changed or lifted at any time and is not listed
+with the other Log Parameters in {{log_parameters}}.
 
 Because of skew, it is possible the log server will not have any entries between
 `start` and `end`. In this case it MUST return an empty `entries` array.
