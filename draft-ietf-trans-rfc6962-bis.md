@@ -602,7 +602,8 @@ consistent with hash2.
 ## Signatures {#signatures}
 
 Various data structures {{data_structures}} are signed. A log MUST use one of
-the signature algorithms defined in {{signature_algorithms}}.
+the signature algorithms from the IANA CT Signature Algorithms registry,
+described in {{signature_algorithms}}.
 
 # Submitters
 
@@ -661,6 +662,7 @@ following profile:
   * `version` MUST be v3(3).
   * `sid` MUST use the `subjectKeyIdentifier` option.
   * `digestAlgorithm` MUST be one of the hash algorithm OIDs listed in
+    the IANA CT Hash Algorithms Registry, described in
     {{hash_algorithms}}.
   * `signedAttrs` MUST be present and MUST contain two attributes:
     * A content-type attribute whose value is the same as
