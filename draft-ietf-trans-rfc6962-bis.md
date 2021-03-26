@@ -1025,8 +1025,10 @@ which encapsulates a `SignedCertificateTimestampDataV2` structure:
 `sct_extensions` is a vector of 0 or more SCT extensions. This vector MUST NOT
 include more than one extension with the same `extension_type`. The
 extensions in the vector MUST be ordered by the value of the
-`extension_type` field, smallest value first. If an implementation sees an
-extension that it does not understand, it SHOULD ignore that extension.
+`extension_type` field, smallest value first.
+All SCT extensions are similar to non-critical X.509v3 extensions (i.e.,
+the `mustUnderstand` field is not set), and a recipient SHOULD ignore any
+extension it does not understand.
 Furthermore, an implementation MAY choose to ignore any extension(s) that it
 does understand.
 
