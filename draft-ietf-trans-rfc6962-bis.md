@@ -208,8 +208,8 @@ is not subsequently logged).
 It is necessary to treat each log as a trusted third party, because the log
 auditing mechanisms described in this document can be circumvented by a
 misbehaving log that shows different, inconsistent views of itself to different
-clients. Whilst it is anticipated that additional mechanisms could be developed
-to address these shortcomings and thereby avoid the need to blindly trust logs,
+clients. While mechanisms are being developed to address these
+these shortcomings and thereby avoid the need to blindly trust logs,
 such mechanisms are outside the scope of this document.
 
 ## Requirements Language
