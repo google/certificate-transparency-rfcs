@@ -1183,7 +1183,8 @@ Messages are sent as HTTPS GET or POST requests. Parameters for POSTs and all
 responses are encoded as JavaScript Object Notation (JSON) objects [RFC8259].
 Parameters for GETs are encoded as order-independent key/value URL parameters,
 using the "application/x-www-form-urlencoded" format described in the "HTML 4.01
-Specification" [HTML401]. Binary data is base64 encoded [RFC4648] as specified
+Specification" [HTML401]. Binary data is base64 encoded according to
+section 4 of [RFC4648] as specified
 in the individual messages.
 
 Clients are configured with a log's base URL, which is one of the log's
