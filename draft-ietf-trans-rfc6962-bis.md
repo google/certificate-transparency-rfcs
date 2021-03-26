@@ -1149,9 +1149,11 @@ Log operators may decide to shut down a log for various reasons, such as
 deprecation of the signature algorithm. If there are entries in the log for
 certificates that have not yet expired, simply making TLS clients stop
 recognizing that log will have the effect of invalidating SCTs from that log.
-To avoid that, the following actions are suggested:
+In order to avoid that, the following actions SHOULD be taken:
 
 * Make it known to clients and monitors that the log will be frozen.
+  This is not part of the API, so it will have to be done via a relevant
+  out-of-band mechanism.
 
 * Stop accepting new submissions (the error code "shutdown" should be returned
   for such requests).
