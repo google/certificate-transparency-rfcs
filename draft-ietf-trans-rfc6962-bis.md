@@ -1249,6 +1249,13 @@ modification at a later date. Note that as per [RFC7231], in the case of a 503
 response the log MAY include a `Retry-After:` header in order to request a
 minimum time for the client to wait before retrying the request.
 
+Clients SHOULD treat any 4xx error as a problem with the request and not
+attempt to resubmit without some modification to the request. The full
+status code MAY provide additional details.
+
+This document deliberately does not provide more specific guidance
+on the use of HTTP status codes.
+
 ## Submit Entry to Log {#submit-entry}
 
 POST \<Base URL>/ct/v2/submit-entry
