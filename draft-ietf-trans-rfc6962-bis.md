@@ -600,7 +600,7 @@ consistent with hash2.
 
 ## Signatures {#signatures}
 
-Various data structures {{data_structures}} are signed. A log MUST use one of
+When signing data structures, a log MUST use one of
 the signature algorithms from the IANA CT Signature Algorithms registry,
 described in {{signature_algorithms}}.
 
