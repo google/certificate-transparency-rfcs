@@ -41,6 +41,7 @@ author:
 
 normative:
   RFC2119:
+  RFC3986:
   RFC4648:
   RFC5280:
   RFC5652:
@@ -752,7 +753,7 @@ Final Signed Tree Head (STH), each of these parameters MUST be established
 before the log operator begins to operate the log.
 
 Base URL:
-: The prefix used to construct URLs for client messages (see
+: The prefix used to construct URLs ([RFC3986]) for client messages (see
   {{client_messages}}). The base URL MUST be an "https" URL, MAY contain a port,
   MAY contain a path with any number of path segments, but MUST NOT contain a
   query string, fragment, or trailing "/".
