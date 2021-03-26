@@ -128,6 +128,16 @@ informative:
     author:
       org: The Chromium Projects
     date: 2014
+  CABBR:
+    target: https://cabforum.org/wp-content/uploads/CA-Browser-Forum-BR-1.7.3.pdf
+    title: >
+      Baseline Requirements for the Issuance and Management of
+      Publicly-Trusted Certificates
+    author:
+      org: CA/Browser Forum
+    date: 2020
+    format:
+      PDF: https://cabforum.org/wp-content/uploads/CA-Browser-Forum-BR-1.7.3.pdf
 
 --- abstract
 
@@ -158,6 +168,7 @@ mechanism that could be used for transparently logging any form of binary data,
 subject to some kind of inclusion criteria. In this document, we only describe
 its use for public TLS server certificates (i.e., where the inclusion criteria
 is a valid certificate issued by a public certification authority (CA)).
+A typical definition of "public" can be found in [CABBR].
 
 Each log contains certificate chains, which can be submitted by anyone. It is
 expected that public CAs will contribute all their newly issued certificates to
