@@ -52,6 +52,7 @@ normative:
   RFC8032:
   RFC8174:
   RFC8259:
+  RFC8391:
   RFC8446:
   HTML401:
     target: http://www.w3.org/TR/1999/REC-html401-19991224
@@ -264,6 +265,12 @@ major changes are:
 # Cryptographic Components
 
 ## Merkle Hash Trees {#mht}
+
+A full description of Merkle Hash Tree is beyond the scope of this
+document. Briefly, it is a binary tree where each non-leaf node is a
+hash of its children. For CT, the number of children is at most two.
+Additional information can be found in the Introduction and Reference
+section of {{!RFC8391}}.
 
 ### Definition of the Merkle Tree {#mht_definition}
 
