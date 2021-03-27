@@ -1029,7 +1029,7 @@ HASH_SIZE.
 that a precertificate's TBSCertificate can be reconstructed from the
 corresponding certificate as described in {{reconstructing_tbscertificate}}).
 
-`sct_extensions` matches the SCT extensions of the corresponding SCT.
+`sct_extensions` is the same as the SCT extensions of the corresponding SCT.
 
 The type of the `TransItem` corresponds to the value of the `type` parameter
 supplied in the {{submit-entry}} call.
