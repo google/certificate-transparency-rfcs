@@ -481,14 +481,14 @@ of the Merkle Tree created from the original D\_n for which PROOF was
 requested, and the subtree Merkle Tree Hash MTH(D\[0:m]) is known):
 
 ~~~~~~~~~~~
-SUBPROOF(m, D[m], true) = {}
+SUBPROOF(m, D_m, true) = {}
 ~~~~~~~~~~~
 
 Otherwise, the subproof for m = n is the Merkle Tree Hash committing inputs
 D\[0:m]:
 
 ~~~~~~~~~~~
-SUBPROOF(m, D[m], false) = {MTH(D[m])}
+SUBPROOF(m, D_m, false) = {MTH(D_m)}
 ~~~~~~~~~~~
 
 For m \< n, let k be the largest power of two smaller than n. The subproof is
