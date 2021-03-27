@@ -1044,7 +1044,7 @@ which encapsulates a `SignedCertificateTimestampDataV2` structure:
         LogID log_id;
         uint64 timestamp;
         Extension sct_extensions<0..2^16-1>;
-        opaque signature<0..2^16-1>;
+        opaque signature<1..2^16-1>;
     } SignedCertificateTimestampDataV2;
 ~~~~~~~~~~~
 
