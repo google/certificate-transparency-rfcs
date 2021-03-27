@@ -819,6 +819,7 @@ Final STH:
   valid STH in the log to ensure no new entries can be added without detection.
   This value MUST be provided in the form of a TransItem of type
   `signed_tree_head_v2`.
+  If a log is still accepting entries, this value should not be provided.
 
 [JSON.Metadata] is an example of a metadata format which includes the above
 elements.
@@ -912,7 +913,8 @@ opaque vector:
 ~~~~~~~~~~~
 
 Note that the ASN.1 length and the opaque vector length are identical in size (1
-byte) and value, so the DER encoding of the OID can be reproduced simply by
+byte) and value, so the full DER encoding (include the tag and length)
+of the OID can be reproduced simply by
 prepending an OBJECT IDENTIFIER tag (0x06) to the opaque vector length and
 contents.
 
