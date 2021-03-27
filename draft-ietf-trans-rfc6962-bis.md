@@ -176,6 +176,8 @@ one or more logs; however certificate holders can also contribute their own
 certificate chains, as can third parties. In order to avoid logs being rendered
 useless by the submission of large numbers of spurious certificates, it is
 required that each chain ends with a trust anchor that is accepted by the log.
+A log may also limit the length of the chain it is willing to accept;
+such chains must also end with an acceptable trust anchor.
 When a chain is accepted by a log, a signed timestamp is returned, which can
 later be used to provide evidence to TLS clients that the chain has been
 submitted. TLS clients can thus require that all certificates they accept as
@@ -804,7 +806,7 @@ Version:
 : The version of the protocol supported by the log (currently 1 or 2).
 
 Maximum Chain Length:
-: The longest chain submission the log is willing to accept, if the log imposes
+: The longest certificate chain submission the log is willing to accept, if the log imposes
   any limit.
 
 STH Frequency Count:
