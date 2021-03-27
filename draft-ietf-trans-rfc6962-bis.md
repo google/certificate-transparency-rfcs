@@ -419,7 +419,8 @@ When a client has received an inclusion proof (e.g., in a `TransItem` of type
 given `tree_size` and `root_hash`, the following algorithm may be used to prove
 the `hash` was included in the `root_hash`:
 
-1. Compare `leaf_index` against `tree_size`. If `leaf_index` is greater than or
+1. Compare `leaf_index` from the `inclusion_proof_v2` structure
+   against `tree_size`. If `leaf_index` is greater than or
    equal to `tree_size` then fail the proof verification.
 
 2. Set `fn` to `leaf_index` and `sn` to `tree_size - 1`.
