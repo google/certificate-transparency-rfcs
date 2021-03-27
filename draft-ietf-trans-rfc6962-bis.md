@@ -817,7 +817,7 @@ Final STH:
 : If a log has been closed down (i.e., no longer accepts new entries), existing
   entries may still be valid. In this case, the client should know the final
   valid STH in the log to ensure no new entries can be added without detection.
-  The final STH should be provided in the form of a TransItem of type
+  This value MUST be provided in the form of a TransItem of type
   `signed_tree_head_v2`.
 
 [JSON.Metadata] is an example of a metadata format which includes the above
