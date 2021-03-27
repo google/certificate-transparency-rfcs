@@ -676,7 +676,7 @@ following profile:
 
 * `SignedData.version` MUST be v3(3).
 
-* `SignedData.digestAlgorithms` MUST only include the
+* `SignedData.digestAlgorithms` MUST be the same as the
   `SignerInfo.digestAlgorithm` OID value (see below).
 
 * `SignedData.encapContentInfo`:
