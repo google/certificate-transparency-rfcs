@@ -1158,7 +1158,7 @@ encapsulates a `ConsistencyProofDataV2` structure:
 `tree_size_2` is the size of the newer tree.
 
 `consistency_path` is a vector of Merkle Tree nodes proving the consistency of
-two STHs.
+two STHs as described in {consistency}.
 
 ## Merkle Inclusion Proofs
 
@@ -1184,7 +1184,7 @@ encapsulates an `InclusionProofDataV2` structure:
 inclusion proof.
 
 `inclusion_path` is a vector of Merkle Tree nodes proving the inclusion of the
-chosen certificate or precertificate.
+chosen certificate or precertificate as describe in {merkle_inclusion_proof}.
 
 ## Shutting down a log   {#log_shutdown}
 
