@@ -918,8 +918,8 @@ of the OID can be reproduced simply by
 prepending an OBJECT IDENTIFIER tag (0x06) to the opaque vector length and
 contents.
 
-OIDs used to identify logs are limited such that the DER encoding of their value
-is less than or equal to 127 octets.
+The OID of a log MUST have a full DER encoding that is no more than 127
+octets.
 
 ## TransItem Structure
 
