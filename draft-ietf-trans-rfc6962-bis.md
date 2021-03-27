@@ -1369,7 +1369,7 @@ does not have access to the issuer's public key.
 
 If the returned `sct` is intended to be provided to TLS clients, then `sth` and
 `inclusion` (if returned) SHOULD also be provided to TLS clients (e.g., if
-`type` was 2 (for `precert_sct_v2`) then all three `TransItem`s could be
+`type` was 2 (for `precert_sct_v2`) so that all three `TransItem`s could be
 embedded in the certificate).
 
 ## Retrieve Latest Signed Tree Head {#get-sth}
