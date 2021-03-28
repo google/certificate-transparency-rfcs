@@ -20,6 +20,8 @@ Believed to be D_m; asked on the list (and one person already confirmed).
 >
 >This 'b' is always 'false', right?
 
+Asked on the list.
+
 >   If "submission" is an accepted trust anchor whose certifier is
 >   neither an accepted trust anchor nor the first element of "chain",
 >   then the log MUST return the "unknown anchor" error.  A log cannot
@@ -29,17 +31,6 @@ Believed to be D_m; asked on the list (and one person already confirmed).
 >Is this a descriptive "cannot" or a normative "MUST NOT"?
 
 It is descriptive.
-
->IMPORTANT: The input to get-proof-by-hash has a "tree_size" but the
->processing discussion refers to a single "requested STH".  It does not
->seem like the one uniquely determines the other, since there could be
->multiple valid STHs for a given tree size (e.g., if there are no
->submissions for more than the MMD).  Is the intent to supply an STH as
->input, or is there otherwise need for further clarity here?
-
->Section 5.5
->
->[similar note about tree_size/STH mapping]
 
 >Similarly, we talk about "index of requested hash", which is at least
 >unambiguous (IIUC), but we don't give a description of how the server
@@ -67,8 +58,7 @@ Client is not part of this document any more.
 >key off that value or otherwise use the value in a protocol data
 >structure?  (Why are there two entries for 0x0403?)
 
-The re-use of 0x0403 is a bug, asking on the list. I think the registry is
-just intended to be a compatible subset.
+Answered in the mirja-comments PR.
 
 >Section 11.1
 >
