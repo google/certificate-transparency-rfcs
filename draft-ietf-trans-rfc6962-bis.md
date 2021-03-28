@@ -1733,7 +1733,7 @@ skipping over new `TransItem` structures whose versions they don't understand).
 
 ## Presenting SCTs, inclusions proofs and STHs {#presenting_transitems}
 
-In each `TransItemList` that is sent to a client during a TLS handshake, the TLS
+In each `TransItemList` that is sent during a TLS handshake, the TLS
 server MUST include a `TransItem` structure of type `x509_sct_v2` or
 `precert_sct_v2`.
 

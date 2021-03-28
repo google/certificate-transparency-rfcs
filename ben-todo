@@ -47,13 +47,6 @@ It is descriptive.
 
 I think this is up to the implementation and should not be documented.
 
->Section 6.3
->
->   In each "TransItemList" that is sent to a client during a TLS
->
->nit: I don't know that "to a client" is needed; the server can just as
->well use CT for client certificates, right?
->
 >   o  The TLS server MUST construct a "TransItemList" of relevant
 >      "TransItem"s (see Section 6.3), which SHOULD omit any "TransItem"s
 >      that are already embedded in the server certificate or the stapled
