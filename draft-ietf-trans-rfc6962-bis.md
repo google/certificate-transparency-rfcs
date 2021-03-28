@@ -1639,7 +1639,10 @@ Outputs:
 
 CT-using TLS servers MUST use at least one of the mechanisms described below
 to present one or more SCTs from one or more logs to each TLS client during full
-TLS handshakes, where each SCT corresponds to the server certificate. They
+TLS handshakes, where each SCT corresponds to the server certificate.
+(Of course, a server can only send a TLS extension if the client has
+specified it first.)
+Servers
 SHOULD also present corresponding inclusion proofs and STHs.
 
 A server can provide SCTs using

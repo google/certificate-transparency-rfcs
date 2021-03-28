@@ -47,16 +47,6 @@ It is descriptive.
 
 I think this is up to the implementation.
 
->Section 6
->
->   CT-using TLS servers MUST use at least one of the three mechanisms
->   listed below to present one or more SCTs from one or more logs to
->   each TLS client during full TLS handshakes, where each SCT
->
->This MUST may need some caveats, given that the server can't use TLS
->extensions not offered first by the client.  So maybe it has to be
->"each CT-using TLS client".
->
 >Section 6.1
 >
 >   o  One or more logs may not have become acceptable to all CT-using
