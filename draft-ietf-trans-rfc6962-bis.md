@@ -1458,7 +1458,7 @@ Outputs:
 : inclusion:
   : A base64 encoded `TransItem` of type `inclusion_proof_v2` whose
     `inclusion_path` array of Merkle Tree nodes proves the inclusion of the
-    chosen certificate in the selected STH.
+    certificate (as specified by the `hash` parameter) in the selected STH.
 
   sth:
   : A base64 encoded `TransItem` of type `signed_tree_head_v2`, signed by this
@@ -1513,7 +1513,7 @@ Outputs:
 : inclusion:
   : A base64 encoded `TransItem` of type `inclusion_proof_v2` whose
     `inclusion_path` array of Merkle Tree nodes proves the inclusion of the
-    chosen certificate in the returned STH.
+    certificate (as specified by the `hash` parameter) in the selected STH.
 
   sth:
   : A base64 encoded `TransItem` of type `signed_tree_head_v2`, signed by this
