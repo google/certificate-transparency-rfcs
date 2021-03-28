@@ -1316,7 +1316,8 @@ Inputs:
     `submission`: 1 for `x509_entry_v2`, or 2 for `precert_entry_v2`.
 
   chain:
-  : An array of zero or more base64 encoded CA certificates. The first element
+  : An array of zero or more JSON strings,
+    each of which is a base64 encoded CA certificates. The first element
     is the certifier of the `submission`; the second certifies the first; etc.
     The last element of `chain` (or, if `chain` is an empty array, the
     `submission`) is certified by an accepted trust anchor.
