@@ -1,0 +1,136 @@
+THIS IS CUT/PASTE FROM
+    https://datatracker.ietf.org/doc/draft-ietf-trans-rfc6962-bis/ballot/
+
+I removed comments that have been addressed.
+
+>Section 2.1.4.1
+>
+>   SUBPROOF(m, D[m], true) = {}
+>
+>I don't remember seeing the "D[m]" notation defined; is this a typo for
+>something else?
+
+Believed to be D_m; asked on the list (and one person already confirmed).
+
+>   If m <= k, the right subtree entries D[k:n] only exist in the current
+>   tree.  We prove that the left subtree entries D[0:k] are consistent
+>   and add a commitment to D[k:n]:
+>
+>   SUBPROOF(m, D_n, b) = SUBPROOF(m, D[0:k], b) : MTH(D[k:n])
+>
+>This 'b' is always 'false', right?
+
+>   If "submission" is an accepted trust anchor whose certifier is
+>   neither an accepted trust anchor nor the first element of "chain",
+>   then the log MUST return the "unknown anchor" error.  A log cannot
+>   generate an SCT for a submission if it does not have access to the
+>   issuer's public key.
+>
+>Is this a descriptive "cannot" or a normative "MUST NOT"?
+
+It is descriptive.
+
+>IMPORTANT: The input to get-proof-by-hash has a "tree_size" but the
+>processing discussion refers to a single "requested STH".  It does not
+>seem like the one uniquely determines the other, since there could be
+>multiple valid STHs for a given tree size (e.g., if there are no
+>submissions for more than the MMD).  Is the intent to supply an STH as
+>input, or is there otherwise need for further clarity here?
+
+>Section 5.5
+>
+>[similar note about tree_size/STH mapping]
+
+>Similarly, we talk about "index of requested hash", which is at least
+>unambiguous (IIUC), but we don't give a description of how the server
+>could/should determine.
+
+I think this is up to the implementation.
+
+>Section 5.7
+>
+>There is not a note here about how no signature is required on the
+>results, and in fact this data does seem to only be authenticated by the
+>surrounding TLS connection.  Perhaps it's worth making a note of that.
+>
+>Section 6
+>
+>   CT-using TLS servers MUST use at least one of the three mechanisms
+>   listed below to present one or more SCTs from one or more logs to
+>   each TLS client during full TLS handshakes, where each SCT
+>
+>This MUST may need some caveats, given that the server can't use TLS
+>extensions not offered first by the client.  So maybe it has to be
+>"each CT-using TLS client".
+>
+>Section 6.1
+>
+>   o  One or more logs may not have become acceptable to all CT-using
+>      TLS clients.
+>
+>nit: are we concerned about (new?) logs potentially becoming acceptable
+>to clients, or logs acceptable to clients becoming no longer accepted
+>(or both)?
+>
+>Section 6.3
+>
+>   In each "TransItemList" that is sent to a client during a TLS
+>
+>nit: I don't know that "to a client" is needed; the server can just as
+>well use CT for client certificates, right?
+>
+>   o  The TLS server MUST construct a "TransItemList" of relevant
+>      "TransItem"s (see Section 6.3), which SHOULD omit any "TransItem"s
+>      that are already embedded in the server certificate or the stapled
+>      OCSP response (see Section 7.1).  If the constructed
+>      "TransItemList" is not empty, then the TLS server MUST include the
+>      "transparency_info" extension with the "extension_data" set to
+>      this "TransItemList".
+>
+>Am I allowed to send an empty "transparency_info" extension if the
+>TransItemList is empty?
+>
+>   TLS servers MUST only include this extension in the following
+>   messages:
+>
+>   o  the ServerHello message (for TLS 1.2 or earlier).
+>
+>   o  the Certificate or CertificateRequest message (for TLS 1.3).
+>
+>Servers sending it in CR implies that clients can send it in Certificate
+>(heh, the normal "CT" abbreviation is not really usable in this
+>context), but we don't explicitly say that.
+>
+>Section 10.3
+>
+>I'm confused by this registry.  Is the SignatureScheme value required to
+>come from/match the TLS SignatureScheme registry?  Is anything going to
+>key off that value or otherwise use the value in a protocol data
+>structure?  (Why are there two entries for 0x0403?)
+>
+>Section 10.5
+>
+>   All OIDs in the range from 1.3.101.8192 to 1.3.101.16383 have been
+>   reserved.  This is a limited resource of 8,192 OIDs, each of which
+>   has an encoded length of 4 octets.
+>
+>The table says "Unassigned"; which is it?
+>
+>Section 11.1
+>
+>This seems to be making some unstated assumptions, including perhaps
+>that someone has actually submitted the misissued certificate in
+>question to a log (in order to support the claim that the maximum time
+>it can be used without audit is twice the MMD).
+>
+>Section 11.3
+>
+>We may want to note the potential privacy concerns relating to gossip
+>and similar mechanisms, at least in passing.  I do see Section 11.4,
+>though there's not a terribly tight linkage in the text, and 11.4 may
+>not have comprehensive coverage of all privacy considerations.
+>
+>Section 13.2
+>
+>I think that RFCs 6234 and 6979 may need to be normative, since they're
+>needed for the signature/hash algorithms that are specified for use.
