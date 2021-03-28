@@ -88,8 +88,3 @@ In particular, I don't see the "perhaps someone submitted" assumption.
 >not have comprehensive coverage of all privacy considerations.
 
 Since gossip is gone, I think there's nothing to do here.
-
->Section 13.2
->
->I think that RFCs 6234 and 6979 may need to be normative, since they're
->needed for the signature/hash algorithms that are specified for use.

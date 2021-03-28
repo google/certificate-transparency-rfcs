@@ -47,7 +47,9 @@ normative:
   RFC5280:
   RFC5652:
   RFC6066:
+  RFC6234:
   RFC6960:
+  RFC6979:
   RFC7231:
   RFC7633:
   RFC7807:
@@ -92,9 +94,7 @@ normative:
       ISO/IEC: 8825-1:2002
 
 informative:
-  RFC6234:
   RFC6962:
-  RFC6979:
   RFC7320:
   RFC8126:
   CrosbyWallach:
