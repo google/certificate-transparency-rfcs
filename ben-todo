@@ -45,17 +45,8 @@ It is descriptive.
 >unambiguous (IIUC), but we don't give a description of how the server
 >could/should determine.
 
-I think this is up to the implementation.
+I think this is up to the implementation and should not be documented.
 
->Section 6.1
->
->   o  One or more logs may not have become acceptable to all CT-using
->      TLS clients.
->
->nit: are we concerned about (new?) logs potentially becoming acceptable
->to clients, or logs acceptable to clients becoming no longer accepted
->(or both)?
->
 >Section 6.3
 >
 >   In each "TransItemList" that is sent to a client during a TLS

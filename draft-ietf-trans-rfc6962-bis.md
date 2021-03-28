@@ -1691,6 +1691,8 @@ A future version could include such information.
 CT-using TLS servers SHOULD send SCTs from multiple logs, because:
 
 * One or more logs may not have become acceptable to all CT-using TLS clients.
+  Note that client discovery, trust, and distrust of logs is expected to
+  be handled out-of-band and is out of scope of this document.
 
 * If a CA and a log collude, it is possible to temporarily hide misissuance from
   clients. When a TLS client requires SCTs from multiple logs to be provided, it
