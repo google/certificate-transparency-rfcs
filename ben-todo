@@ -47,12 +47,6 @@ It is descriptive.
 
 I think this is up to the implementation.
 
->Section 5.7
->
->There is not a note here about how no signature is required on the
->results, and in fact this data does seem to only be authenticated by the
->surrounding TLS connection.  Perhaps it's worth making a note of that.
->
 >Section 6
 >
 >   CT-using TLS servers MUST use at least one of the three mechanisms

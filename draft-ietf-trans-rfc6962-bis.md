@@ -1317,7 +1317,7 @@ Inputs:
 
   chain:
   : An array of zero or more JSON strings,
-    each of which is a base64 encoded CA certificates. The first element
+    each of which is a base64 encoded CA certificate. The first element
     is the certifier of the `submission`; the second certifies the first; etc.
     The last element of `chain` (or, if `chain` is an empty array, the
     `submission`) is certified by an accepted trust anchor.
@@ -1625,12 +1625,15 @@ No inputs.
 Outputs:
 
 : certificates:
-  : An array of base64 encoded trust anchors that are acceptable to the log.
-
+  : An array of JSON strings, each of which
+    each of which is a base64 encoded CA certificate.
   max_chain_length:
   : If the server has chosen to limit the length of chains it accepts, this is
     the maximum number of certificates in the chain, in decimal. If there is no
     limit, this is omitted.
+
+> This data is not signed and the protocol depends on the security guarantees
+> of TLS to ensure correctness.
 
 # TLS Servers {#tls_servers}
 
