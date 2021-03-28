@@ -1389,10 +1389,10 @@ Inputs:
   tree_size:
   : The tree_size of the tree on which to base the proof, in decimal.
 
-> The `hash` must be calculated as defined in {{tree_leaves}}. The `tree_size`
-> must designate an existing v2 STH. Because of skew, the front-end may not know
-> the requested STH. In that case, it will return the latest STH it knows, along
-> with an inclusion proof to that STH. If the front-end knows the requested STH
+> The `hash` must be calculated as defined in {{tree_leaves}}. A v2 STH must
+> exist for the `tree_size`.  Because of skew, the front-end may not know
+> the requested tree head. In that case, it will return the latest STH it knows, along
+> with an inclusion proof to that STH. If the front-end knows the requested tree head
 > then only `inclusion` is returned.
 
 Outputs:
@@ -1432,17 +1432,17 @@ Inputs:
   tree_size:
   : The tree_size of the tree on which to base the proofs, in decimal.
 
-> The `hash` must be calculated as defined in {{tree_leaves}}. The `tree_size`
-> must designate an existing v2 STH.
+> The `hash` must be calculated as defined in {{tree_leaves}}. A v2 STH must
+> exist for the `tree_size`.
 
-Because of skew, the front-end may not know the requested STH or the requested
+Because of skew, the front-end may not know the requested tree head or the requested
 hash, which leads to a number of cases:
 
 |--------------------------------------+----------------------------------------------------------------------------------------------------------|
 | Case                                 | Response                                                                                                 |
 |--------------------------------------+----------------------------------------------------------------------------------------------------------|
-| latest STH < requested STH           | Return latest STH                                                                                        |
-| latest STH > requested STH           | Return latest STH and a consistency proof between it and the requested STH (see {{get-sth-consistency}}) |
+| latest STH < requested tree head     | Return latest STH                                                                                        |
+| latest STH > requested tree head     | Return latest STH and a consistency proof between it and the requested tree head (see {{get-sth-consistency}}) |
 | index of requested hash < latest STH | Return `inclusion`                                                                                       |
 |--------------------------------------+----------------------------------------------------------------------------------------------------------|
 
@@ -1463,7 +1463,7 @@ Outputs:
 
   consistency:
   : A base64 encoded `TransItem` of type `consistency_proof_v2` that proves the
-    consistency of the requested STH and the returned STH.
+    consistency of the requested tree head and the returned STH.
 
 > Note that no signature is required for the `inclusion` or `consistency`
 > outputs as they are used to verify inclusion in and consistency of STHs, which
