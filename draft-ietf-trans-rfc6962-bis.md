@@ -2187,11 +2187,13 @@ that initially consists of:
 | 1.3.101.80.0 - 1.3.101.80.\*  | Unassigned   | Unassigned   | First Come First Served       |
 |------------------------------+--------------+--------------+-------------------------------|
 
-All OIDs in the range from 1.3.101.8192 to 1.3.101.16383 have been reserved.
+All OIDs in the range from 1.3.101.8192 to 1.3.101.16383 have been set aside
+for Log IDs.
 This is a limited resource of 8,192 OIDs, each of which has an encoded length of
 4 octets.
 
-The 1.3.101.80 arc has been delegated. This is an unlimited resource, but only
+The 1.3.101.80 arc has also been set assigned for LogIDs.
+This is an unlimited resource, but only
 the 128 OIDs from 1.3.101.80.0 to 1.3.101.80.127 have an encoded length of only
 4 octets.
 

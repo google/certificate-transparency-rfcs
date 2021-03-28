@@ -57,36 +57,38 @@ I think this is up to the implementation and should not be documented.
 >Servers sending it in CR implies that clients can send it in Certificate
 >(heh, the normal "CT" abbreviation is not really usable in this
 >context), but we don't explicitly say that.
->
+
+Client is not part of this document any more.
+
 >Section 10.3
 >
 >I'm confused by this registry.  Is the SignatureScheme value required to
 >come from/match the TLS SignatureScheme registry?  Is anything going to
 >key off that value or otherwise use the value in a protocol data
 >structure?  (Why are there two entries for 0x0403?)
->
->Section 10.5
->
->   All OIDs in the range from 1.3.101.8192 to 1.3.101.16383 have been
->   reserved.  This is a limited resource of 8,192 OIDs, each of which
->   has an encoded length of 4 octets.
->
->The table says "Unassigned"; which is it?
->
+
+The re-use of 0x0403 is a bug, asking on the list. I think the registry is
+just intended to be a compatible subset.
+
 >Section 11.1
 >
 >This seems to be making some unstated assumptions, including perhaps
 >that someone has actually submitted the misissued certificate in
 >question to a log (in order to support the claim that the maximum time
 >it can be used without audit is twice the MMD).
->
+
+I don't see the assumptions, can you give more details?
+In particular, I don't see the "perhaps someone submitted" assumption.
+
 >Section 11.3
 >
 >We may want to note the potential privacy concerns relating to gossip
 >and similar mechanisms, at least in passing.  I do see Section 11.4,
 >though there's not a terribly tight linkage in the text, and 11.4 may
 >not have comprehensive coverage of all privacy considerations.
->
+
+Since gossip is gone, I think there's nothing to do here.
+
 >Section 13.2
 >
 >I think that RFCs 6234 and 6979 may need to be normative, since they're
