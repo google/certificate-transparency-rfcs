@@ -1555,7 +1555,7 @@ Outputs:
       `precert_entry_v2` (see {{log_entries}}).
 
     submitted_entry:
-    : JSON object representing the inputs that were submitted to
+    : JSON object equivalent to inputs that were submitted to
       `submit-entry`, with the addition of the trust anchor to the `chain`
       field if the submission did not include it.
 
