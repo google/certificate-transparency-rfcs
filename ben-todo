@@ -47,17 +47,6 @@ It is descriptive.
 
 I think this is up to the implementation and should not be documented.
 
->   o  The TLS server MUST construct a "TransItemList" of relevant
->      "TransItem"s (see Section 6.3), which SHOULD omit any "TransItem"s
->      that are already embedded in the server certificate or the stapled
->      OCSP response (see Section 7.1).  If the constructed
->      "TransItemList" is not empty, then the TLS server MUST include the
->      "transparency_info" extension with the "extension_data" set to
->      this "TransItemList".
->
->Am I allowed to send an empty "transparency_info" extension if the
->TransItemList is empty?
->
 >   TLS servers MUST only include this extension in the following
 >   messages:
 >
