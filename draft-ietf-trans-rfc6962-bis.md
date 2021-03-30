@@ -340,7 +340,7 @@ used:
     1. Push `HASH(0x00 || entries[i])` to `stack`.
 
     2. Set `merge_count` to the lowest value (`0` included) such that `LSB(i >>
-       merge_count)` is not set, where `LSB` means the least significant byte.
+       merge_count)` is not set, where `LSB` means the least significant bit.
        In other words, set `merge_count` to the number
        of consecutive `1`s found starting at the least significant bit of `i`.
 
@@ -1852,11 +1852,10 @@ It is up to a client's local policy to specify the quantity and form of
 evidence (SCTs, inclusion proofs or a combination) needed to achieve
 compliance and how to handle non-compliance.
 
-A TLS client can only determine compliance if it has given the TLS server the
+A TLS client can only evaluate compliance if it has given the TLS server the
 opportunity to send SCTs and inclusion proofs by any of the three mechanisms
 that are mandatory to implement for CT-using TLS clients (see
-{{receiving_transitems}}). Therefore, a TLS client MUST NOT make such a
-compliance determination
+{{receiving_transitems}}). Therefore, a TLS client MUST NOT evaluate compliance
 if it did not include both the `transparency_info` and `status_request` TLS
 extensions in the ClientHello.
 
