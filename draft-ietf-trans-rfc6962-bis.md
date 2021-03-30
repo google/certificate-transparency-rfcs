@@ -495,6 +495,9 @@ received a consistency proof between the two (e.g., in a `TransItem` of type
 `consistency_proof_v2`), the following algorithm may be used to verify the
 consistency proof:
 
+1. If `consistency_path` is an empty array, stop and fail the proof
+   verification.
+
 1. If `first` is an exact power of 2, then prepend `first_hash` to the
    `consistency_path` array.
 
@@ -1101,7 +1104,7 @@ encapsulates a `ConsistencyProofDataV2` structure:
         LogID log_id;
         uint64 tree_size_1;
         uint64 tree_size_2;
-        NodeHash consistency_path<1..2^16-1>;
+        NodeHash consistency_path<0..2^16-1>;
     } ConsistencyProofDataV2;
 ~~~~~~~~~~~
 
@@ -1126,7 +1129,7 @@ encapsulates an `InclusionProofDataV2` structure:
         LogID log_id;
         uint64 tree_size;
         uint64 leaf_index;
-        NodeHash inclusion_path<1..2^16-1>;
+        NodeHash inclusion_path<0..2^16-1>;
     } InclusionProofDataV2;
 ~~~~~~~~~~~
 
