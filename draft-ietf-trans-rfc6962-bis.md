@@ -869,7 +869,8 @@ Each log is identified by an OID, which is one of the log's parameters (see
 {{log_parameters}}) and which MUST NOT be used to identify any other log. A
 log's operator MUST either allocate the OID themselves or request an OID from
 the Log ID Registry (see {{log_id_registry}}).
-(Recall that OID's are do not require a central registration, although
+The only advantage of the registry is that the DER encoding can be small.
+(Recall that OID allocations do not require a central registration, although
 logs will most likely want to make themselves known to potential clients
 through out of band means.)
 Various data structures include
