@@ -2029,7 +2029,21 @@ the log.
 ## Signature Algorithms {#signature_algorithms}
 
 IANA is asked to establish a registry of signature algorithm values, named
-"CT Signature Algorithms", that initially consists of:
+"CT Signature Algorithms"
+
+The following notes should be added:
+
+- This is a subset of the TLS SignatureScheme Registry, limited to those
+algorithms that are appropriate for CT. A major advantage of this is
+leveraging the expertise of the TLS working group and its designated
+experts.
+
+- The value `0x0403` appears twice. While this may be confusing,
+it is okay because the verification
+process is the same for both algorithms, and the choice of which to use
+when generating a signature is purely internal to the log server.
+
+The registry should initially consist of:
 
 |--------------------------------+----------------------------------------------------+-------------------------------|
 | SignatureScheme Value          | Signature Algorithm                                | Reference / Assignment Policy |
