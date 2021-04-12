@@ -211,7 +211,7 @@ It is necessary to treat each log as a trusted third party, because the log
 auditing mechanisms described in this document can be circumvented by a
 misbehaving log that shows different, inconsistent views of itself to different
 clients. While mechanisms are being developed to address these
-these shortcomings and thereby avoid the need to blindly trust logs,
+shortcomings and thereby avoid the need to blindly trust logs,
 such mechanisms are outside the scope of this document.
 
 ## Requirements Language
@@ -913,13 +913,13 @@ opaque vector:
 ~~~~~~~~~~~
 
 Note that the ASN.1 length and the opaque vector length are identical in size (1
-byte) and value, so the full DER encoding (include the tag and length)
+byte) and value, so the full DER encoding (including the tag and length)
 of the OID can be reproduced simply by
 prepending an OBJECT IDENTIFIER tag (0x06) to the opaque vector length and
 contents.
 
-The OID of a log MUST have a full DER encoding that is no more than 127
-octets.
+The OID used to identify a log is limited such that the DER encoding of its
+value, excluding the tag and length, MUST be no longer than 127 octets.
 
 ## TransItem Structure
 
@@ -1029,7 +1029,8 @@ HASH_SIZE.
 that a precertificate's TBSCertificate can be reconstructed from the
 corresponding certificate as described in {{reconstructing_tbscertificate}}).
 
-`sct_extensions` is the same as the SCT extensions of the corresponding SCT.
+`sct_extensions` is byte-for-byte identical to the SCT extensions of the
+corresponding SCT.
 
 The type of the `TransItem` corresponds to the value of the `type` parameter
 supplied in the {{submit-entry}} call.
@@ -1184,7 +1185,7 @@ encapsulates an `InclusionProofDataV2` structure:
 inclusion proof.
 
 `inclusion_path` is a vector of Merkle Tree nodes proving the inclusion of the
-chosen certificate or precertificate as describe in {merkle_inclusion_proof}.
+chosen certificate or precertificate as described in {merkle_inclusion_proof}.
 
 ## Shutting down a log   {#log_shutdown}
 
@@ -1369,9 +1370,10 @@ the "unknown anchor" error. A log cannot generate an SCT for a submission if it
 does not have access to the issuer's public key.
 
 If the returned `sct` is intended to be provided to TLS clients, then `sth` and
-`inclusion` (if returned) SHOULD also be provided to TLS clients (e.g., if
-`type` was 2 (for `precert_sct_v2`) so that all three `TransItem`s could be
-embedded in the certificate).
+`inclusion` (if returned) SHOULD also be provided to TLS clients. For
+example, if
+`type` was 2 (indicating `precert_sct_v2`) then all three `TransItem`s could be
+embedded in the certificate.
 
 ## Retrieve Latest Signed Tree Head {#get-sth}
 
@@ -1626,7 +1628,7 @@ Outputs:
 
 : certificates:
   : An array of JSON strings, each of which
-    each of which is a base64 encoded CA certificate.
+    is a base64 encoded CA certificate that is acceptable to the log.
   max_chain_length:
   : If the server has chosen to limit the length of chains it accepts, this is
     the maximum number of certificates in the chain, in decimal. If there is no
