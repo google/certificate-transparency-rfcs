@@ -3,15 +3,6 @@ THIS IS CUT/PASTE FROM
 
 I removed comments that have been addressed.
 
->Section 2.1.4.1
->
->   SUBPROOF(m, D[m], true) = {}
->
->I don't remember seeing the "D[m]" notation defined; is this a typo for
->something else?
-
-Believed to be D_m; asked on the list (and one person already confirmed).
-
 >   If m <= k, the right subtree entries D[k:n] only exist in the current
 >   tree.  We prove that the left subtree entries D[0:k] are consistent
 >   and add a commitment to D[k:n]:
@@ -21,16 +12,6 @@ Believed to be D_m; asked on the list (and one person already confirmed).
 >This 'b' is always 'false', right?
 
 Asked on the list.
-
->   If "submission" is an accepted trust anchor whose certifier is
->   neither an accepted trust anchor nor the first element of "chain",
->   then the log MUST return the "unknown anchor" error.  A log cannot
->   generate an SCT for a submission if it does not have access to the
->   issuer's public key.
->
->Is this a descriptive "cannot" or a normative "MUST NOT"?
-
-It is descriptive.
 
 >Similarly, we talk about "index of requested hash", which is at least
 >unambiguous (IIUC), but we don't give a description of how the server

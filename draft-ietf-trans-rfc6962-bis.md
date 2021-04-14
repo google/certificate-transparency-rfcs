@@ -1366,7 +1366,8 @@ which may be accepted by some TLS clients.
 
 If `submission` is an accepted trust anchor whose certifier is neither an
 accepted trust anchor nor the first element of `chain`, then the log MUST return
-the "unknown anchor" error. A log cannot generate an SCT for a submission if it
+the "unknown anchor" error. A log is not able to generate an SCT for a
+submission if it
 does not have access to the issuer's public key.
 
 If the returned `sct` is intended to be provided to TLS clients, then `sth` and
