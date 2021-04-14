@@ -47,7 +47,9 @@ normative:
   RFC5280:
   RFC5652:
   RFC6066:
+  RFC6234:
   RFC6960:
+  RFC6979:
   RFC7231:
   RFC7633:
   RFC7807:
@@ -92,9 +94,7 @@ normative:
       ISO/IEC: 8825-1:2002
 
 informative:
-  RFC6234:
   RFC6962:
-  RFC6979:
   RFC7320:
   RFC8126:
   CrosbyWallach:
@@ -128,6 +128,16 @@ informative:
     author:
       org: The Chromium Projects
     date: 2014
+  CABBR:
+    target: https://cabforum.org/wp-content/uploads/CA-Browser-Forum-BR-1.7.3.pdf
+    title: >
+      Baseline Requirements for the Issuance and Management of
+      Publicly-Trusted Certificates
+    author:
+      org: CA/Browser Forum
+    date: 2020
+    format:
+      PDF: https://cabforum.org/wp-content/uploads/CA-Browser-Forum-BR-1.7.3.pdf
 
 --- abstract
 
@@ -158,6 +168,7 @@ mechanism that could be used for transparently logging any form of binary data,
 subject to some kind of inclusion criteria. In this document, we only describe
 its use for public TLS server certificates (i.e., where the inclusion criteria
 is a valid certificate issued by a public certification authority (CA)).
+A typical definition of "public" can be found in [CABBR].
 
 Each log contains certificate chains, which can be submitted by anyone. It is
 expected that public CAs will contribute all their newly issued certificates to
@@ -165,6 +176,8 @@ one or more logs; however certificate holders can also contribute their own
 certificate chains, as can third parties. In order to avoid logs being rendered
 useless by the submission of large numbers of spurious certificates, it is
 required that each chain ends with a trust anchor that is accepted by the log.
+A log may also limit the length of the chain it is willing to accept;
+such chains must also end with an acceptable trust anchor.
 When a chain is accepted by a log, a signed timestamp is returned, which can
 later be used to provide evidence to TLS clients that the chain has been
 submitted. TLS clients can thus require that all certificates they accept as
@@ -197,8 +210,8 @@ is not subsequently logged).
 It is necessary to treat each log as a trusted third party, because the log
 auditing mechanisms described in this document can be circumvented by a
 misbehaving log that shows different, inconsistent views of itself to different
-clients. Whilst it is anticipated that additional mechanisms could be developed
-to address these shortcomings and thereby avoid the need to blindly trust logs,
+clients. While mechanisms are being developed to address these
+shortcomings and thereby avoid the need to blindly trust logs,
 such mechanisms are outside the scope of this document.
 
 ## Requirements Language
@@ -333,7 +346,7 @@ definition handles non-full trees differently).
 
 ### Verifying a Tree Head Given Entries {#verify_hash}
 
-When a client has a complete list of n input `entries` from `0` up to
+When a client has a complete list of `entries` from `0` up to
 `tree_size - 1` and wishes to verify this list against a tree head `root_hash`
 returned by the log for the same `tree_size`, the following algorithm may be
 used:
@@ -358,7 +371,8 @@ used:
         3. Push `HASH(0x01 || left || right)` to `stack`.
 
 3. If there is more than one element in the `stack`, repeat the same merge
-   procedure (Step 2.3 above) until only a single element remains.
+   procedure (the sub-items of Step 2.3 above) until only a single element
+   remains.
 
 4. The remaining element in `stack` is the Merkle Tree hash for the given
    `tree_size` and should be compared by equality against the supplied
@@ -407,7 +421,8 @@ When a client has received an inclusion proof (e.g., in a `TransItem` of type
 given `tree_size` and `root_hash`, the following algorithm may be used to prove
 the `hash` was included in the `root_hash`:
 
-1. Compare `leaf_index` against `tree_size`. If `leaf_index` is greater than or
+1. Compare `leaf_index` from the `inclusion_proof_v2` structure
+   against `tree_size`. If `leaf_index` is greater than or
    equal to `tree_size` then fail the proof verification.
 
 2. Set `fn` to `leaf_index` and `sn` to `tree_size - 1`.
@@ -468,14 +483,14 @@ of the Merkle Tree created from the original D\_n for which PROOF was
 requested, and the subtree Merkle Tree Hash MTH(D\[0:m]) is known):
 
 ~~~~~~~~~~~
-SUBPROOF(m, D[m], true) = {}
+SUBPROOF(m, D_m, true) = {}
 ~~~~~~~~~~~
 
 Otherwise, the subproof for m = n is the Merkle Tree Hash committing inputs
 D\[0:m]:
 
 ~~~~~~~~~~~
-SUBPROOF(m, D[m], false) = {MTH(D[m])}
+SUBPROOF(m, D_m, false) = {MTH(D_m)}
 ~~~~~~~~~~~
 
 For m \< n, let k be the largest power of two smaller than n. The subproof is
@@ -663,7 +678,7 @@ following profile:
 
 * `SignedData.version` MUST be v3(3).
 
-* `SignedData.digestAlgorithms` MUST only include the
+* `SignedData.digestAlgorithms` MUST be the same as the
   `SignerInfo.digestAlgorithm` OID value (see below).
 
 * `SignedData.encapContentInfo`:
@@ -791,7 +806,7 @@ Version:
 : The version of the protocol supported by the log (currently 1 or 2).
 
 Maximum Chain Length:
-: The longest chain submission the log is willing to accept, if the log imposes
+: The longest certificate chain submission the log is willing to accept, if the log imposes
   any limit.
 
 STH Frequency Count:
@@ -802,8 +817,9 @@ Final STH:
 : If a log has been closed down (i.e., no longer accepts new entries), existing
   entries may still be valid. In this case, the client should know the final
   valid STH in the log to ensure no new entries can be added without detection.
-  The final STH should be provided in the form of a TransItem of type
+  This value MUST be provided in the form of a TransItem of type
   `signed_tree_head_v2`.
+  If a log is still accepting entries, this value should not be provided.
 
 [JSON.Metadata] is an example of a metadata format which includes the above
 elements.
@@ -897,12 +913,13 @@ opaque vector:
 ~~~~~~~~~~~
 
 Note that the ASN.1 length and the opaque vector length are identical in size (1
-byte) and value, so the DER encoding of the OID can be reproduced simply by
+byte) and value, so the full DER encoding (including the tag and length)
+of the OID can be reproduced simply by
 prepending an OBJECT IDENTIFIER tag (0x06) to the opaque vector length and
 contents.
 
-OIDs used to identify logs are limited such that the DER encoding of their value
-is less than or equal to 127 octets.
+The OID used to identify a log is limited such that the DER encoding of its
+value, excluding the tag and length, MUST be no longer than 127 octets.
 
 ## TransItem Structure
 
@@ -1012,7 +1029,8 @@ HASH_SIZE.
 that a precertificate's TBSCertificate can be reconstructed from the
 corresponding certificate as described in {{reconstructing_tbscertificate}}).
 
-`sct_extensions` matches the SCT extensions of the corresponding SCT.
+`sct_extensions` is byte-for-byte identical to the SCT extensions of the
+corresponding SCT.
 
 The type of the `TransItem` corresponds to the value of the `type` parameter
 supplied in the {{submit-entry}} call.
@@ -1027,7 +1045,7 @@ which encapsulates a `SignedCertificateTimestampDataV2` structure:
         LogID log_id;
         uint64 timestamp;
         Extension sct_extensions<0..2^16-1>;
-        opaque signature<0..2^16-1>;
+        opaque signature<1..2^16-1>;
     } SignedCertificateTimestampDataV2;
 ~~~~~~~~~~~
 
@@ -1068,9 +1086,8 @@ The log stores information about its Merkle Tree in a `TreeHeadDataV2`:
 
 The length of NodeHash MUST match HASH_SIZE of the log.
 
-`timestamp` is the current date and time, in the form of a 64-bit unsigned
-number of milliseconds elapsed since the Unix Epoch (1 January 1970
-00:00:00 UTC - see [UNIXTIME]), ignoring leap seconds, in network byte order.
+`timestamp` is the current date and time, using the format defined in
+{tree_leaves}.
 
 `tree_size` is the number of entries currently in the log's Merkle Tree.
 
@@ -1142,7 +1159,7 @@ encapsulates a `ConsistencyProofDataV2` structure:
 `tree_size_2` is the size of the newer tree.
 
 `consistency_path` is a vector of Merkle Tree nodes proving the consistency of
-two STHs.
+two STHs as described in {consistency}.
 
 ## Merkle Inclusion Proofs
 
@@ -1168,7 +1185,7 @@ encapsulates an `InclusionProofDataV2` structure:
 inclusion proof.
 
 `inclusion_path` is a vector of Merkle Tree nodes proving the inclusion of the
-chosen certificate or precertificate.
+chosen certificate or precertificate as described in {merkle_inclusion_proof}.
 
 ## Shutting down a log   {#log_shutdown}
 
@@ -1300,7 +1317,8 @@ Inputs:
     `submission`: 1 for `x509_entry_v2`, or 2 for `precert_entry_v2`.
 
   chain:
-  : An array of zero or more base64 encoded CA certificates. The first element
+  : An array of zero or more JSON strings,
+    each of which is a base64 encoded CA certificate. The first element
     is the certifier of the `submission`; the second certifies the first; etc.
     The last element of `chain` (or, if `chain` is an empty array, the
     `submission`) is certified by an accepted trust anchor.
@@ -1348,13 +1366,15 @@ which may be accepted by some TLS clients.
 
 If `submission` is an accepted trust anchor whose certifier is neither an
 accepted trust anchor nor the first element of `chain`, then the log MUST return
-the "unknown anchor" error. A log cannot generate an SCT for a submission if it
+the "unknown anchor" error. A log is not able to generate an SCT for a
+submission if it
 does not have access to the issuer's public key.
 
 If the returned `sct` is intended to be provided to TLS clients, then `sth` and
-`inclusion` (if returned) SHOULD also be provided to TLS clients (e.g., if
-`type` was 2 (for `precert_sct_v2`) then all three `TransItem`s could be
-embedded in the certificate).
+`inclusion` (if returned) SHOULD also be provided to TLS clients. For
+example, if
+`type` was 2 (indicating `precert_sct_v2`) then all three `TransItem`s could be
+embedded in the certificate.
 
 ## Retrieve Latest Signed Tree Head {#get-sth}
 
@@ -1441,7 +1461,7 @@ Outputs:
 : inclusion:
   : A base64 encoded `TransItem` of type `inclusion_proof_v2` whose
     `inclusion_path` array of Merkle Tree nodes proves the inclusion of the
-    chosen certificate in the selected STH.
+    certificate (as specified by the `hash` parameter) in the selected STH.
 
   sth:
   : A base64 encoded `TransItem` of type `signed_tree_head_v2`, signed by this
@@ -1496,7 +1516,7 @@ Outputs:
 : inclusion:
   : A base64 encoded `TransItem` of type `inclusion_proof_v2` whose
     `inclusion_path` array of Merkle Tree nodes proves the inclusion of the
-    chosen certificate in the returned STH.
+    certificate (as specified by the `hash` parameter) in the selected STH.
 
   sth:
   : A base64 encoded `TransItem` of type `signed_tree_head_v2`, signed by this
@@ -1538,7 +1558,7 @@ Outputs:
       `precert_entry_v2` (see {{log_entries}}).
 
     submitted_entry:
-    : JSON object representing the inputs that were submitted to
+    : JSON object equivalent to inputs that were submitted to
       `submit-entry`, with the addition of the trust anchor to the `chain`
       field if the submission did not include it.
 
@@ -1608,18 +1628,24 @@ No inputs.
 Outputs:
 
 : certificates:
-  : An array of base64 encoded trust anchors that are acceptable to the log.
-
+  : An array of JSON strings, each of which
+    is a base64 encoded CA certificate that is acceptable to the log.
   max_chain_length:
   : If the server has chosen to limit the length of chains it accepts, this is
     the maximum number of certificates in the chain, in decimal. If there is no
     limit, this is omitted.
 
+> This data is not signed and the protocol depends on the security guarantees
+> of TLS to ensure correctness.
+
 # TLS Servers {#tls_servers}
 
 CT-using TLS servers MUST use at least one of the mechanisms described below
 to present one or more SCTs from one or more logs to each TLS client during full
-TLS handshakes, where each SCT corresponds to the server certificate. They
+TLS handshakes, where each SCT corresponds to the server certificate.
+(Of course, a server can only send a TLS extension if the client has
+specified it first.)
+Servers
 SHOULD also present corresponding inclusion proofs and STHs.
 
 A server can provide SCTs using
@@ -1668,6 +1694,8 @@ A future version could include such information.
 CT-using TLS servers SHOULD send SCTs from multiple logs, because:
 
 * One or more logs may not have become acceptable to all CT-using TLS clients.
+  Note that client discovery, trust, and distrust of logs is expected to
+  be handled out-of-band and is out of scope of this document.
 
 * If a CA and a log collude, it is possible to temporarily hide misissuance from
   clients. When a TLS client requires SCTs from multiple logs to be provided, it
@@ -1708,7 +1736,7 @@ skipping over new `TransItem` structures whose versions they don't understand).
 
 ## Presenting SCTs, inclusions proofs and STHs {#presenting_transitems}
 
-In each `TransItemList` that is sent to a client during a TLS handshake, the TLS
+In each `TransItemList` that is sent during a TLS handshake, the TLS
 server MUST include a `TransItem` structure of type `x509_sct_v2` or
 `precert_sct_v2`.
 
@@ -1730,7 +1758,9 @@ the ClientHello and the TLS server supports the `transparency_info` extension:
   already embedded in the server certificate or the stapled OCSP response (see
   {{x509v3_transinfo_extension}}). If the constructed `TransItemList` is not
   empty, then the TLS server MUST include the `transparency_info` extension with
-  the `extension_data` set to this `TransItemList`.
+  the `extension_data` set to this `TransItemList`. If the list is empty
+  then the server SHOULD omit the `extension_data` element, but MAY send
+  it with an empty array.
 
 TLS servers MUST only include this extension in the following messages:
 
@@ -2160,11 +2190,13 @@ that initially consists of:
 | 1.3.101.80.0 - 1.3.101.80.\*  | Unassigned   | Unassigned   | First Come First Served       |
 |------------------------------+--------------+--------------+-------------------------------|
 
-All OIDs in the range from 1.3.101.8192 to 1.3.101.16383 have been reserved.
+All OIDs in the range from 1.3.101.8192 to 1.3.101.16383 have been set aside
+for Log IDs.
 This is a limited resource of 8,192 OIDs, each of which has an encoded length of
 4 octets.
 
-The 1.3.101.80 arc has been delegated. This is an unlimited resource, but only
+The 1.3.101.80 arc has also been set assigned for LogIDs.
+This is an unlimited resource, but only
 the 128 OIDs from 1.3.101.80.0 to 1.3.101.80.127 have an encoded length of only
 4 octets.
 
