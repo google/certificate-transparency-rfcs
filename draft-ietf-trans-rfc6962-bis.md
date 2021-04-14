@@ -511,17 +511,20 @@ received a consistency proof between the two (e.g., in a `TransItem` of type
 `consistency_proof_v2`), the following algorithm may be used to verify the
 consistency proof:
 
-1. If `first` is an exact power of 2, then prepend `first_hash` to the
+1. If `consistency_path` is an empty array, stop and fail the proof
+   verification.
+
+2. If `first` is an exact power of 2, then prepend `first_hash` to the
    `consistency_path` array.
 
-2. Set `fn` to `first - 1` and `sn` to `second - 1`.
+3. Set `fn` to `first - 1` and `sn` to `second - 1`.
 
-3. If `LSB(fn)` is set, then right-shift both `fn` and `sn` equally until
+4. If `LSB(fn)` is set, then right-shift both `fn` and `sn` equally until
    `LSB(fn)` is not set.
 
-4. Set both `fr` and `sr` to the first value in the `consistency_path` array.
+5. Set both `fr` and `sr` to the first value in the `consistency_path` array.
 
-5. For each subsequent value `c` in the `consistency_path` array:
+6. For each subsequent value `c` in the `consistency_path` array:
 
     If `sn` is 0, stop the iteration and fail the proof verification.
 
@@ -539,7 +542,7 @@ consistency proof:
 
     Finally, right-shift both `fn` and `sn` one time.
 
-6. After completing iterating through the `consistency_path` array as described
+7. After completing iterating through the `consistency_path` array as described
    above, verify that the `fr` calculated is equal to the `first_hash` supplied,
    that the `sr` calculated is equal to the `second_hash` supplied and that `sn`
    is 0.
@@ -1128,7 +1131,7 @@ encapsulates a `ConsistencyProofDataV2` structure:
         LogID log_id;
         uint64 tree_size_1;
         uint64 tree_size_2;
-        NodeHash consistency_path<1..2^16-1>;
+        NodeHash consistency_path<0..2^16-1>;
     } ConsistencyProofDataV2;
 ~~~~~~~~~~~
 
@@ -1153,7 +1156,7 @@ encapsulates an `InclusionProofDataV2` structure:
         LogID log_id;
         uint64 tree_size;
         uint64 leaf_index;
-        NodeHash inclusion_path<1..2^16-1>;
+        NodeHash inclusion_path<0..2^16-1>;
     } InclusionProofDataV2;
 ~~~~~~~~~~~
 
