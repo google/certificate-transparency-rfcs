@@ -43,6 +43,7 @@ normative:
   RFC2119:
   RFC3986:
   RFC4648:
+  RFC5246:
   RFC5280:
   RFC5652:
   RFC6066:
@@ -53,7 +54,7 @@ normative:
   RFC8032:
   RFC8174:
   RFC8259:
-  RFC5246:
+  RFC8391:
   RFC8446:
   HTML401:
     target: http://www.w3.org/TR/1999/REC-html401-19991224
@@ -96,7 +97,6 @@ informative:
   RFC6979:
   RFC7320:
   RFC8126:
-  I-D.ietf-trans-gossip:
   CrosbyWallach:
     target: http://static.usenix.org/event/sec09/tech/full_papers/crosby.pdf
     title: Efficient Data Structures for Tamper-Evident Logging
@@ -274,6 +274,12 @@ major changes are:
 # Cryptographic Components
 
 ## Merkle Hash Trees {#mht}
+
+A full description of Merkle Hash Tree is beyond the scope of this
+document. Briefly, it is a binary tree where each non-leaf node is a
+hash of its children. For CT, the number of children is at most two.
+Additional information can be found in the Introduction and Reference
+section of {{!RFC8391}}.
 
 ### Definition of the Merkle Tree {#mht_definition}
 
@@ -611,8 +617,9 @@ consistent with hash2.
 
 ## Signatures {#signatures}
 
-Various data structures {{data_structures}} are signed. A log MUST use one of
-the signature algorithms defined in {{signature_algorithms}}.
+When signing data structures, a log MUST use one of
+the signature algorithms from the IANA CT Signature Algorithms registry,
+described in {{signature_algorithms}}.
 
 # Submitters
 
@@ -671,6 +678,7 @@ following profile:
   * `version` MUST be v3(3).
   * `sid` MUST use the `subjectKeyIdentifier` option.
   * `digestAlgorithm` MUST be one of the hash algorithm OIDs listed in
+    the IANA CT Hash Algorithms Registry, described in
     {{hash_algorithms}}.
   * `signedAttrs` MUST be present and MUST contain two attributes:
     * A content-type attribute whose value is the same as
@@ -720,8 +728,8 @@ precertificate entries.
 When it receives and accepts a valid submission, the log MUST return an SCT that
 corresponds to the submitted certificate or precertificate. If the log has
 previously seen this valid submission, it SHOULD return the same SCT as it
-returned before (to reduce the ability to track clients as described in
-{{prevent_tracking_clients}}). If different SCTs are produced for the same
+returned before, as discussed in {{misbehaving_logs}}.
+If different SCTs are produced for the same
 submission, multiple log entries will have to be created, one for each SCT (as
 the timestamp is a part of the leaf structure). Note that if a certificate was
 previously logged as a precertificate, then the precertificate's SCT of type
@@ -873,7 +881,12 @@ chain that the log used to verify the submission.
 Each log is identified by an OID, which is one of the log's parameters (see
 {{log_parameters}}) and which MUST NOT be used to identify any other log. A
 log's operator MUST either allocate the OID themselves or request an OID from
-the Log ID Registry (see {{log_id_registry}}). Various data structures include
+the Log ID Registry (see {{log_id_registry}}).
+The only advantage of the registry is that the DER encoding can be small.
+(Recall that OID allocations do not require a central registration, although
+logs will most likely want to make themselves known to potential clients
+through out of band means.)
+Various data structures include
 the DER encoding of this OID, excluding the ASN.1 tag and length bytes, in an
 opaque vector:
 
@@ -1025,8 +1038,10 @@ which encapsulates a `SignedCertificateTimestampDataV2` structure:
 `sct_extensions` is a vector of 0 or more SCT extensions. This vector MUST NOT
 include more than one extension with the same `extension_type`. The
 extensions in the vector MUST be ordered by the value of the
-`extension_type` field, smallest value first. If an implementation sees an
-extension that it does not understand, it SHOULD ignore that extension.
+`extension_type` field, smallest value first.
+All SCT extensions are similar to non-critical X.509v3 extensions (i.e.,
+the `mustUnderstand` field is not set), and a recipient SHOULD ignore any
+extension it does not understand.
 Furthermore, an implementation MAY choose to ignore any extension(s) that it
 does understand.
 
@@ -1159,9 +1174,11 @@ Log operators may decide to shut down a log for various reasons, such as
 deprecation of the signature algorithm. If there are entries in the log for
 certificates that have not yet expired, simply making TLS clients stop
 recognizing that log will have the effect of invalidating SCTs from that log.
-To avoid that, the following actions are suggested:
+In order to avoid that, the following actions SHOULD be taken:
 
 * Make it known to clients and monitors that the log will be frozen.
+  This is not part of the API, so it will have to be done via a relevant
+  out-of-band mechanism.
 
 * Stop accepting new submissions (the error code "shutdown" should be returned
   for such requests).
@@ -1258,6 +1275,14 @@ responses as transient failures and MAY retry the same request without
 modification at a later date. Note that as per [RFC7231], in the case of a 503
 response the log MAY include a `Retry-After:` header in order to request a
 minimum time for the client to wait before retrying the request.
+In the absence of this header, this document does not specify a minimum.
+
+Clients SHOULD treat any 4xx error as a problem with the request and not
+attempt to resubmit without some modification to the request. The full
+status code MAY provide additional details.
+
+This document deliberately does not provide more specific guidance
+on the use of HTTP status codes.
 
 ## Submit Entry to Log {#submit-entry}
 
@@ -1551,6 +1576,9 @@ Logs MAY restrict the number of entries that can be retrieved per `get-entries`
 request. If a client requests more than the permitted number of entries, the log
 SHALL return the maximum number of entries permissible. These entries SHALL be
 sequential beginning with the entry specified by `start`.
+Note that limit on the number of entries is not immutable and therefore
+the restriction may be changed or lifted at any time and is not listed
+with the other Log Parameters in {{log_parameters}}.
 
 Because of skew, it is possible the log server will not have any entries between
 `start` and `end`. In this case it MUST return an empty `entries` array.
@@ -2017,7 +2045,21 @@ the log.
 ## Signature Algorithms {#signature_algorithms}
 
 IANA is asked to establish a registry of signature algorithm values, named
-"CT Signature Algorithms", that initially consists of:
+"CT Signature Algorithms"
+
+The following notes should be added:
+
+- This is a subset of the TLS SignatureScheme Registry, limited to those
+algorithms that are appropriate for CT. A major advantage of this is
+leveraging the expertise of the TLS working group and its designated
+experts.
+
+- The value `0x0403` appears twice. While this may be confusing,
+it is okay because the verification
+process is the same for both algorithms, and the choice of which to use
+when generating a signature is purely internal to the log server.
+
+The registry should initially consist of:
 
 |--------------------------------+----------------------------------------------------+-------------------------------|
 | SignatureScheme Value          | Signature Algorithm                                | Reference / Assignment Policy |
@@ -2240,18 +2282,15 @@ be asynchronous and need only be done once per certificate. However, note that
 there may be privacy concerns (see {{fetching_inclusion_proofs}}).
 
 Violation of the append-only property or the STH issuance rate limit can be
-detected by clients comparing their instances of the Signed Tree Heads. There
-are various ways this could be done, for example via gossip (see
-[I-D.ietf-trans-gossip]) or peer-to-peer communications or by sending STHs to
-monitors (who could then directly check against their own copy of the relevant
-log). Proof of misbehavior in such cases would be: a series of STHs that were
+detected by multiple clients comparing their instances of the Signed Tree Heads.
+This technique, known as "gossip," is an active area of research and not
+defined here.
+Proof of misbehavior in such cases would be: a series of STHs that were
 issued too closely together, proving violation of the STH issuance rate limit;
 or an STH with a root hash that does not match the one calculated from a copy of
 the log, proving violation of the append-only property.
 
-## Preventing Tracking Clients {#prevent_tracking_clients}
-
-Clients that gossip STHs or report back SCTs can be tracked or traced if a log
+Clients that report back SCTs can be tracked or traced if a log
 produces multiple STHs or SCTs with the same timestamp and data but different
 signatures. Logs SHOULD mitigate this risk by either:
 
