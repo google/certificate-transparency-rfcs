@@ -41,7 +41,9 @@ author:
 
 normative:
   RFC2119:
+  RFC3986:
   RFC4648:
+  RFC5246:
   RFC5280:
   RFC5652:
   RFC6066:
@@ -81,6 +83,13 @@ normative:
     title: The Open Group Base Specifications Issue 7 IEEE Std 1003.1-2008, 2016 Edition
     author:
       org: IEEE
+  X690:
+    title: "Information technology - ASN.1 encoding Rules: Specification of Basic Encoding Rules (BER), Canonical Encoding Rules (CER) and Distinguished Encoding Rules (DER)"
+    date: November 2015
+    author:
+      org: ITU-T
+    seriesinfo:
+      ISO/IEC: 8825-1:2002
 
 informative:
   RFC6234:
@@ -337,7 +346,8 @@ used:
     1. Push `HASH(0x00 || entries[i])` to `stack`.
 
     2. Set `merge_count` to the lowest value (`0` included) such that `LSB(i >>
-       merge_count)` is not set. In other words, set `merge_count` to the number
+       merge_count)` is not set, where `LSB` means the least significant bit.
+       In other words, set `merge_count` to the number
        of consecutive `1`s found starting at the least significant bit of `i`.
 
     3. Repeat `merge_count` times:
@@ -647,7 +657,7 @@ to multiple logs, but only incorporates the SCTs that are returned first.
 A precertificate is a CMS [RFC5652] `signed-data` object that conforms to the
 following profile:
 
-* It MUST be DER encoded.
+* It MUST be DER encoded as described in [X690].
 
 * `SignedData.version` MUST be v3(3).
 
@@ -751,7 +761,7 @@ Final Signed Tree Head (STH), each of these parameters MUST be established
 before the log operator begins to operate the log.
 
 Base URL:
-: The prefix used to construct URLs for client messages (see
+: The prefix used to construct URLs ([RFC3986]) for client messages (see
   {{client_messages}}). The base URL MUST be an "https" URL, MAY contain a port,
   MAY contain a path with any number of path segments, but MUST NOT contain a
   query string, fragment, or trailing "/".
@@ -772,6 +782,8 @@ Log ID:
 
 Maximum Merge Delay:
 : The MMD the log has committed to.
+This document deliberately does not specify any limits on the value, to allow
+for experimentation.
 
 Version:
 : The version of the protocol supported by the log (currently 1 or 2).
@@ -854,8 +866,8 @@ If a submission is accepted and an SCT issued, the accepting log MUST store the
 entire chain used for verification. This chain MUST include the certificate or
 precertificate itself, the zero or more intermediate CA certificates provided by
 the submitter, and the trust anchor used to verify the chain (even if it was
-omitted from the submission). The log MUST present this chain for auditing upon
-request (see {{get-entries}}). This prevents the CA from avoiding blame by
+omitted from the submission). The log MUST provide this chain for auditing upon
+request (see {{get-entries}}) so that the CA cannot avoid blame by
 logging a partial or empty chain.
 Each log entry is a `TransItem` structure of type `x509_entry_v2` or
 `precert_entry_v2`. However, a log may store its entries in any format. If a
@@ -1189,7 +1201,8 @@ Messages are sent as HTTPS GET or POST requests. Parameters for POSTs and all
 responses are encoded as JavaScript Object Notation (JSON) objects [RFC8259].
 Parameters for GETs are encoded as order-independent key/value URL parameters,
 using the "application/x-www-form-urlencoded" format described in the "HTML 4.01
-Specification" [HTML401]. Binary data is base64 encoded [RFC4648] as specified
+Specification" [HTML401]. Binary data is base64 encoded according to
+section 4 of [RFC4648] as specified
 in the individual messages.
 
 Clients are configured with a log's base URL, which is one of the log's
@@ -1199,8 +1212,9 @@ can deploy these services, as noted in [RFC7320]. However, operational
 experience with version 1 of this protocol has not indicated that these
 restrictions are a problem in practice.
 
-Note that JSON objects and URL parameters may contain fields not specified here.
-These extra fields SHOULD be ignored.
+Note that JSON objects and URL parameters may contain fields not specified here,
+to allow for experimentation. Any fields that are not understood SHOULD
+be ignored.
 
 In practice, log servers may include multiple front-end machines. Since it is
 impractical to keep these machines in perfect sync, errors may occur that are
@@ -1618,7 +1632,7 @@ providing the OCSP response as part of the TLS handshake. Providing
 a response during a TLS handshake is popularly known as "OCSP stapling."
 For TLS
 1.3, the information is encoded as an extension in the `status_request`
-extension data; see Section 4.4.2.1 of [RFC8446]. For TLS 1.2, the information
+extension data; see Section 4.4.2.1 of [RFC8446]. For TLS 1.2 ([RFC5246]), the information
 is encoded as an extension in the `CertificateStatus` message; see Section 8
 of [RFC6066].  Using stapling also
 allows SCTs and inclusion proofs to be updated on the fly.
@@ -1901,6 +1915,8 @@ To inspect new entries, the monitor SHOULD follow these steps repeatedly for
 each log:
 
 1. Fetch the current STH ({{get-sth}}). Repeat until the STH changes.
+This document does not specify the polling frequency, to allow for
+experimentation.
 
 2. Verify the STH signature.
 
