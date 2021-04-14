@@ -128,7 +128,6 @@ informative:
     author:
       org: The Chromium Projects
     date: 2014
-  I-D.ietf-trans-threat-analysis:
 
 --- abstract
 
@@ -2251,9 +2250,6 @@ owners will have a greater incentive to submit certificates to logs, possibly
 with the assistance of their CA, increasing the overall transparency of the
 system.
 
-[I-D.ietf-trans-threat-analysis] provides a more detailed threat analysis of the
-Certificate Transparency architecture.
-
 ## Misissued Certificates
 
 Misissued certificates that have not been publicly logged, and thus do not have
@@ -2276,8 +2272,7 @@ certificate with an SCT in the Merkle Tree within the MMD; presenting different,
 conflicting views of the Merkle Tree at different times and/or to different
 parties; issuing STHs too frequently; mutating the signature of a logged
 certificate; and failing to present a chain containing the certifier of a logged
-certificate. Such misbehavior is detectable and [I-D.ietf-trans-threat-analysis]
-provides more details on how this can be done.
+certificate.
 
 Violation of the MMD contract is detected by log clients requesting a Merkle
 inclusion proof ({{get-proof-by-hash}}) for each observed SCT. These checks can
