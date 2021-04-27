@@ -156,6 +156,11 @@ used to send various CT log artifacts.
 Logs are network services that implement the protocol operations for submissions
 and queries that are defined in this document.
 
+\[RFC Editor: please update 'RFCXXXX' to refer to this document,
+once its RFC number is known, through the document. Note that the use
+in the ASN.1 Appendix "RFCRFCXXXX" is deliberate. \]
+
+
 --- middle
 
 # Introduction
@@ -2069,7 +2074,7 @@ IANA is asked to establish a registry of hash algorithm values, named
 
 ### Specification Required guidance
 
-The appointed Expert should ensure that the proposed algorithm has a public
+The appointed Expert(s) should ensure that the proposed algorithm has a public
 specification and is suitable for use as a cryptographic hash algorithm with no
 known preimage or collision attacks. These attacks can damage the integrity of
 the log.
@@ -2136,9 +2141,6 @@ IANA is asked to establish a registry of `VersionedTransType` values, named
 
 \* The 0x0000 value is reserved so that v1 SCTs are distinguishable from v2
 SCTs and other `TransItem` structures.
-
-\[RFC Editor: please update 'RFCXXXX' to refer to this document, once its RFC number is known through the document.\]
-
 ### Specification Required guidance
 
 The appointed Expert should review the public specification to ensure that it is
@@ -2359,7 +2361,7 @@ that are used in this document.
 
 --- back
 
-# Supporting v1 and v2 simultaneously {#v1_coexistence}
+# Supporting v1 and v2 simultaneously (Informative) {#v1_coexistence}
 
 Certificate Transparency logs have to be either v1 (conforming to [RFC6962]) or
 v2 (conforming to this document), as the data structures are incompatible and so
@@ -2391,3 +2393,48 @@ SCTs:
 
 * Sign that TBSCertificate (which now contains v1 and v2 SCTs) to issue the
   final X.509 certificate.
+
+# An ASN.1 Module (Informative)
+
+The following ASN.1 module may be useful to implementors.
+
+~~~~~~~~~~~
+
+RFCRFCXX6962XModule-2021
+DEFINITIONS IMPLICIT TAGS ::= BEGIN
+
+-- EXPORTS ALL --
+
+IMPORTS
+  EXTENSION
+  FROM PKIX-CommonTypes-2009
+    { iso(1) identified-organization(3) dod(6) internet(1)
+      security(5) mechanisms(5) pkix(7) id-mod(0)
+      id-mod-pkixCommon-02(57) }
+;
+
+SignedCertificateTimestampList ::= OCTET STRING
+
+id-ce-embeddedSCT OBJECT IDENTIFIER ::= { 1 3 6 1 4 1 11129 2 4 2 }
+
+id-ce-criticalPoison OBJECT IDENTIFIER ::= {
+   1 3 6 1 4 1 11129 2 4 3 }
+
+id-kp-precertificateSigning OBJECT IDENTIFIER ::= {
+   1 3 6 1 4 1 11129 2 4 4 }
+
+id-pkix-ocsp-SCT OBJECT IDENTIFIER ::= { 1 3 6 1 4 1 11129 2 4 5 }
+
+ext-embeddedSCT EXTENSION ::= {
+   SYNTAX SignedCertificateTimestampList
+   IDENTIFIED BY id-ce-embeddedSCT }
+
+ext-criticalPoison EXTENSION ::= { SYNTAX NULL
+   IDENTIFIED BY id-ce-criticalPoison }
+
+ext-ocsp-SCT EXTENSION ::= {
+   SYNTAX SignedCertificateTimestampList
+   IDENTIFIED BY id-pkix-ocsp-SCT }
+
+END
+~~~~~~~~~~~
