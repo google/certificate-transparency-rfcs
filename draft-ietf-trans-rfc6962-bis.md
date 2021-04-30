@@ -2401,7 +2401,7 @@ The following ASN.1 module may be useful to implementors.
 ~~~~~~~~~~~
 
 CertificateTransparencyV2Module-2021
--- { OID Needed, but no point in using a short one }
+ -- { OID Needed, but no point in using a short one }
 DEFINITIONS IMPLICIT TAGS ::= BEGIN
 
 -- EXPORTS ALL --
@@ -2436,8 +2436,7 @@ ct-tbsCertificate CONTENT-TYPE ::= {
 id-ct-tbsCertificate OBJECT IDENTIFIER ::= { 1 3 101 78 }
 
 --
--- Section 7.1.  Transparency Information;
--- X.509v3 Extension
+-- Section 7.1.  Transparency Information X.509v3 Extension
 --
 
 ext-transparencyInfo EXTENSION ::= {
@@ -2470,7 +2469,8 @@ ext-embeddedSCT EXTENSION ::= {
    IDENTIFIED BY id-ce-embeddedSCT
    CRITICALITY { FALSE } }
 
-id-ce-embeddedSCT OBJECT IDENTIFIER ::= { 1 3 6 1 4 1 11129 2 4 2 }
+id-ce-embeddedSCT OBJECT IDENTIFIER ::= {
+   1 3 6 1 4 1 11129 2 4 2 }
 
 SignedCertificateTimestampList ::= OCTET STRING
 
