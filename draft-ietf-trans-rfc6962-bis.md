@@ -2050,14 +2050,37 @@ instead.
 The assignment policy criteria mentioned in this section refer to the policies
 outlined in [RFC8126].
 
-## New Entry to the TLS ExtensionType Registry
+## Additions to existing registries
+
+This sub-section defines additions to existing registries.
+
+### New Entry to the TLS ExtensionType Registry
 
 IANA is asked to add an entry for `transparency_info(TBD)` to the "TLS
 ExtensionType Values" registry defined in [RFC8446], setting the "Recommended"
 value to "Y", setting the "TLS 1.3" value to "CH, CR, CT", and citing this
 document as the "Reference".
 
-## Hash Algorithms {#hash_algorithms}
+### URN Sub-namespace for TRANS errors (urn:ietf:params:trans:error)
+
+IANA is requested to add a new entry in the
+"IETF URN Sub-namespace for Registered Protocol Parameter Identifiers"
+registry, following the template in {{!RFC3553}}:
+
+Registry name: trans:error
+
+Specification: RFCXXXX
+
+Repository: https://www.iana.org/assignments/trans
+
+Index value: No transformation needed.
+
+## New CT-Related registries
+
+This sub-section defines new registries for CT.
+They should be made available at https://www.iana.org/assignments/
+
+### Hash Algorithms {#hash_algorithms}
 
 IANA is asked to establish a registry of hash algorithm values, named
 "CT Hash Algorithms", that initially consists of:
@@ -2071,24 +2094,22 @@ IANA is asked to establish a registry of hash algorithm values, named
 | 0xF0 - 0xFF | Reserved       |                        | Private Use                   |
 |-------------+----------------+------------------------+-------------------------------|
 
-### Specification Required guidance
-
-The appointed Expert(s) should ensure that the proposed algorithm has a public
+The Designated Expert(s) should ensure that the proposed algorithm has a public
 specification and is suitable for use as a cryptographic hash algorithm with no
 known preimage or collision attacks. These attacks can damage the integrity of
 the log.
 
-## Signature Algorithms {#signature_algorithms}
+### Signature Algorithms {#signature_algorithms}
 
 IANA is asked to establish a registry of signature algorithm values, named
-"CT Signature Algorithms"
+"CT Signature Algorithms".
 
 The following notes should be added:
 
 - This is a subset of the TLS SignatureScheme Registry, limited to those
 algorithms that are appropriate for CT. A major advantage of this is
-leveraging the expertise of the TLS working group and its designated
-experts.
+leveraging the expertise of the TLS working group and its Designated
+Expert(s).
 
 - The value `0x0403` appears twice. While this may be confusing,
 it is okay because the verification
@@ -2110,14 +2131,12 @@ The registry should initially consist of:
 | 0xFF00 - 0xFFFF                | Reserved                                           | Private Use                   |
 |--------------------------------+----------------------------------------------------+-------------------------------|
 
-### Expert Review guidelines
-
-The appointed Expert should ensure that the proposed algorithm has a public
+The Designated Expert(s) should ensure that the proposed algorithm has a public
 specification, has a value assigned to it in the TLS SignatureScheme Registry
 (that IANA is asked to establish in [RFC8446]) and is suitable for use as a
 cryptographic signature algorithm.
 
-## VersionedTransTypes {#versioned_trans_types}
+### VersionedTransTypes {#versioned_trans_types}
 
 IANA is asked to establish a registry of `VersionedTransType` values, named
 "CT VersionedTransTypes", that initially consists of:
@@ -2140,12 +2159,11 @@ IANA is asked to establish a registry of `VersionedTransType` values, named
 
 \* The 0x0000 value is reserved so that v1 SCTs are distinguishable from v2
 SCTs and other `TransItem` structures.
-### Specification Required guidance
 
-The appointed Expert should review the public specification to ensure that it is
+The Designated Expert(s) should review the public specification to ensure that it is
 detailed enough to ensure implementation interoperability.
 
-## Log Artifact Extension Registry {#log_artifact_extension_registry}
+### Log Artifact Extension Registry {#log_artifact_extension_registry}
 
 IANA is asked to establish a registry of `ExtensionType` values, named "CT Log
 Artifact Extensions", that initially consists of:
@@ -2164,14 +2182,12 @@ The "Use" column should contain one or both of the following values:
 
 * "STH", for extensions specified for use in Signed Tree Heads.
 
-### Specification Required guidance
-
-The appointed Expert should review the public specification to ensure that it is
-detailed enough to ensure implementation interoperability. The Expert should
+The Designated Expert(s) should review the public specification to ensure that it is
+detailed enough to ensure implementation interoperability. They should
 also verify that the extension is appropriate to the contexts in which it is
 specified to be used (SCT, STH, or both).
 
-## Object Identifiers
+### Object Identifiers
 
 This document uses object identifiers (OIDs) to identify Log IDs (see
 {{log_id}}), the precertificate CMS `eContentType` (see {{precertificates}}),
@@ -2179,7 +2195,7 @@ and X.509v3 extensions in certificates (see {{cert_transinfo_extension}}) and
 OCSP responses (see {{ocsp_transinfo_extension}}). The OIDs are defined in an
 arc that was selected due to its short encoding.
 
-### Log ID Registry {#log_id_registry}
+#### Log ID Registry {#log_id_registry}
 
 IANA is asked to establish a registry of Log IDs, named "CT Log ID Registry",
 that initially consists of:
@@ -2216,23 +2232,11 @@ details in this registry.
 Since log operators can choose to not use this registry (see {{log_id}}), it is
 not expected to be a global directory of all logs.
 
-## URN Sub-namespace for TRANS errors (urn:ietf:params:trans:error)
+### CT Error Types Registry
 
-IANA is requested to add a new entry in the
-"IETF URN Sub-namespace for Registered Protocol Parameter Identifiers"
-registry, following the template in {{!RFC3553}}:
+IANA is requested to create a new registry for errors,
+the "CT Error Types" registry.
 
-Registry name: trans:error
-
-Specification: RFCXXXX
-
-Repository: https://www.iana.org/assignments/trans
-
-Index value: No transformation needed.
-
-### TRANS Error Types
-
-IANA is requested to create a new registry for errors.
 Requirements for this registry are Specification Required.
 
 This registry should have the following three fields:
