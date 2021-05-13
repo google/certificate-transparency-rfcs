@@ -156,6 +156,10 @@ used to send various CT log artifacts.
 Logs are network services that implement the protocol operations for submissions
 and queries that are defined in this document.
 
+\[RFC Editor: please update 'RFCXXXX' to refer to this document,
+once its RFC number is known, through the document.\]
+
+
 --- middle
 
 # Introduction
@@ -2069,7 +2073,7 @@ IANA is asked to establish a registry of hash algorithm values, named
 
 ### Specification Required guidance
 
-The appointed Expert should ensure that the proposed algorithm has a public
+The appointed Expert(s) should ensure that the proposed algorithm has a public
 specification and is suitable for use as a cryptographic hash algorithm with no
 known preimage or collision attacks. These attacks can damage the integrity of
 the log.
@@ -2136,9 +2140,6 @@ IANA is asked to establish a registry of `VersionedTransType` values, named
 
 \* The 0x0000 value is reserved so that v1 SCTs are distinguishable from v2
 SCTs and other `TransItem` structures.
-
-\[RFC Editor: please update 'RFCXXXX' to refer to this document, once its RFC number is known through the document.\]
-
 ### Specification Required guidance
 
 The appointed Expert should review the public specification to ensure that it is
@@ -2359,7 +2360,7 @@ that are used in this document.
 
 --- back
 
-# Supporting v1 and v2 simultaneously {#v1_coexistence}
+# Supporting v1 and v2 simultaneously (Informative) {#v1_coexistence}
 
 Certificate Transparency logs have to be either v1 (conforming to [RFC6962]) or
 v2 (conforming to this document), as the data structures are incompatible and so
@@ -2391,3 +2392,87 @@ SCTs:
 
 * Sign that TBSCertificate (which now contains v1 and v2 SCTs) to issue the
   final X.509 certificate.
+
+# An ASN.1 Module (Informative)
+
+The following ASN.1 module may be useful to implementors.
+
+~~~~~~~~~~~
+
+CertificateTransparencyV2Module-2021
+ -- { OID Needed, but no point in using a short one }
+DEFINITIONS IMPLICIT TAGS ::= BEGIN
+
+-- EXPORTS ALL --
+
+IMPORTS
+  EXTENSION
+  FROM PKIX-CommonTypes-2009 -- RFC 5912
+    { iso(1) identified-organization(3) dod(6) internet(1)
+      security(5) mechanisms(5) pkix(7) id-mod(0)
+      id-mod-pkixCommon-02(57) }
+
+  CONTENT-TYPE
+  FROM CryptographicMessageSyntax-2010  -- RFC 6268
+    { iso(1) member-body(2) us(840) rsadsi(113549) pkcs(1)
+      pkcs-9(9) smime(16) modules(0) id-mod-cms-2009(58) }
+
+  TBSCertificate
+  FROM PKIX1Explicit-2009 -- RFC 5912
+    { iso(1) identified-organization(3) dod(6) internet(1)
+      security(5) mechanisms(5) pkix(7) id-mod(0)
+      id-mod-pkix1-explicit-02(51) }
+;
+
+--
+-- Section 3.2.  Precertificates
+--
+
+ct-tbsCertificate CONTENT-TYPE ::= {
+  TYPE TBSCertificate
+  IDENTIFIED BY id-ct-tbsCertificate }
+
+id-ct-tbsCertificate OBJECT IDENTIFIER ::= { 1 3 101 78 }
+
+--
+-- Section 7.1.  Transparency Information X.509v3 Extension
+--
+
+ext-transparencyInfo EXTENSION ::= {
+   SYNTAX TransparencyInformationSyntax
+   IDENTIFIED BY id-ce-transparencyInfo
+   CRITICALITY { FALSE } }
+
+id-ce-transparencyInfo OBJECT IDENTIFIER ::= { 1 3 101 75 }
+
+TransparencyInformationSyntax ::= OCTET STRING
+
+--
+-- Section 7.1.1.  OCSP Response Extension
+--
+
+ext-ocsp-transparencyInfo EXTENSION ::= {
+   SYNTAX TransparencyInformationSyntax
+   IDENTIFIED BY id-pkix-ocsp-transparencyInfo
+   CRITICALITY { FALSE } }
+
+id-pkix-ocsp-transparencyInfo OBJECT IDENTIFIER ::=
+   id-ce-transparencyInfo
+
+--
+-- Section 8.1.2.  Reconstructing the TBSCertificate
+--
+
+ext-embeddedSCT-CTv1 EXTENSION ::= {
+   SYNTAX SignedCertificateTimestampList
+   IDENTIFIED BY id-ce-embeddedSCT-CTv1
+   CRITICALITY { FALSE } }
+
+id-ce-embeddedSCT-CTv1 OBJECT IDENTIFIER ::= {
+   1 3 6 1 4 1 11129 2 4 2 }
+
+SignedCertificateTimestampList ::= OCTET STRING
+
+END
+
+~~~~~~~~~~~
