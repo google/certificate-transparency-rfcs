@@ -498,7 +498,7 @@ SUBPROOF(m, D_m, false) = {MTH(D_m)}
 ~~~~~~~~~~~
 
 For m \< n, let k be the largest power of two smaller than n. The subproof is
-then defined recursively.
+then defined recursively, using the appropriate step below:
 
 If m \<= k, the right subtree entries D\[k:n] only exist in the current tree.
 We prove that the left subtree entries D\[0:k] are consistent and add a
