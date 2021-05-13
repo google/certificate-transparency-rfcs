@@ -157,8 +157,7 @@ Logs are network services that implement the protocol operations for submissions
 and queries that are defined in this document.
 
 \[RFC Editor: please update 'RFCXXXX' to refer to this document,
-once its RFC number is known, through the document. Note that the use
-in the ASN.1 Appendix "RFCRFCXXXX" is deliberate. \]
+once its RFC number is known, through the document.\]
 
 
 --- middle
@@ -2464,12 +2463,12 @@ id-pkix-ocsp-transparencyInfo OBJECT IDENTIFIER ::=
 -- Section 8.1.2.  Reconstructing the TBSCertificate
 --
 
-ext-embeddedSCT EXTENSION ::= {
+ext-embeddedSCT-CTv1 EXTENSION ::= {
    SYNTAX SignedCertificateTimestampList
-   IDENTIFIED BY id-ce-embeddedSCT
+   IDENTIFIED BY id-ce-embeddedSCT-CTv1
    CRITICALITY { FALSE } }
 
-id-ce-embeddedSCT OBJECT IDENTIFIER ::= {
+id-ce-embeddedSCT-CTv1 OBJECT IDENTIFIER ::= {
    1 3 6 1 4 1 11129 2 4 2 }
 
 SignedCertificateTimestampList ::= OCTET STRING
