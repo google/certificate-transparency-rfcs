@@ -95,8 +95,8 @@ normative:
 
 informative:
   RFC6962:
-  RFC7320:
   RFC8126:
+  RFC8820:
   CrosbyWallach:
     target: http://static.usenix.org/event/sec09/tech/full_papers/crosby.pdf
     title: Efficient Data Structures for Tamper-Evident Logging
@@ -1231,7 +1231,7 @@ in the individual messages.
 Clients are configured with a log's base URL, which is one of the log's
 parameters. Clients construct URLs for requests by appending suffixes to this
 base URL. This structure places some degree of restriction on how log operators
-can deploy these services, as noted in [RFC7320]. However, operational
+can deploy these services, as noted in [RFC8820]. However, operational
 experience with version 1 of this protocol has not indicated that these
 restrictions are a problem in practice.
 
