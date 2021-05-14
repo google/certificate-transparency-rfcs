@@ -2083,17 +2083,17 @@ Index value: No transformation needed.
 
 ## New CT-Related registries
 
-IANA is requisted to add a new protocol registry, "Certificate
-Transparency (CT)", to the list that appears at
+IANA is requisted to add a new protocol registry, "Public Notary
+Transparency", to the list that appears at
 https://www.iana.org/assignments/
 
 The reset of this section defines registries, or sub-registries, to be
 created within the new Certificate Transparency registry.
 
-### CT Hash Algorithms {#hash_algorithms}
+### Hash Algorithms {#hash_algorithms}
 
 IANA is asked to establish a registry of hash algorithm values, named
-"CT Hash Algorithms", that initially consists of:
+"Hash Algorithms", that initially consists of:
 
 |-------------+----------------+------------------------+-------------------------------|
 | Value       | Hash Algorithm | OID                    | Reference / Assignment Policy |
@@ -2109,10 +2109,10 @@ specification and is suitable for use as a cryptographic hash algorithm with no
 known preimage or collision attacks. These attacks can damage the integrity of
 the log.
 
-### CT Signature Algorithms {#signature_algorithms}
+### Signature Algorithms {#signature_algorithms}
 
 IANA is asked to establish a registry of signature algorithm values, named
-"CT Signature Algorithms".
+"Signature Algorithms".
 
 The following notes should be added:
 
@@ -2143,13 +2143,13 @@ The registry should initially consist of:
 
 The Designated Expert(s) should ensure that the proposed algorithm has a public
 specification, has a value assigned to it in the TLS SignatureScheme Registry
-(that IANA is asked to establish in [RFC8446]) and is suitable for use as a
+(that IANA was asked to establish in [RFC8446]) and is suitable for use as a
 cryptographic signature algorithm.
 
-### CT VersionedTransTypes {#versioned_trans_types}
+### VersionedTransTypes {#versioned_trans_types}
 
 IANA is asked to establish a registry of `VersionedTransType` values, named
-"CT VersionedTransTypes".
+"VersionedTransTypes".
 
 The following note should be added:
 
@@ -2177,9 +2177,9 @@ The registry should initially consist of:
 The Designated Expert(s) should review the public specification to ensure that it is
 detailed enough to ensure implementation interoperability.
 
-### CT Log Artifact Extension Registry {#log_artifact_extension_registry}
+### Log Artifact Extension Registry {#log_artifact_extension_registry}
 
-IANA is asked to establish a registry of `ExtensionType` values, named "CT Log
+IANA is asked to establish a registry of `ExtensionType` values, named "Log
 Artifact Extensions", that initially consists of:
 
 |-----------------+------------+-----+-------------------------------|
@@ -2201,9 +2201,9 @@ detailed enough to ensure implementation interoperability. They should
 also verify that the extension is appropriate to the contexts in which it is
 specified to be used (SCT, STH, or both).
 
-### CT Log ID Registry {#log_id_registry}
+### Log ID Registry {#log_id_registry}
 
-IANA is asked to establish a registry of Log IDs, named "CT Log ID Registry",
+IANA is asked to establish a registry of Log IDs, named "Log ID Registry",
 that initially consists of:
 
 |------------------------------+--------------+--------------+-------------------------------|
@@ -2238,10 +2238,10 @@ details in this registry.
 Since log operators can choose to not use this registry (see {{log_id}}), it is
 not expected to be a global directory of all logs.
 
-### CT Error Types Registry
+### Error Types Registry
 
 IANA is requested to create a new registry for errors,
-the "CT Error Types" registry.
+the "Error Types" registry.
 
 Requirements for this registry are Specification Required.
 
