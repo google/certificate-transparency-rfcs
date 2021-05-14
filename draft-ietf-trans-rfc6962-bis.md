@@ -230,6 +230,12 @@ when, and only when, they appear in all capitals, as shown here.
 Data structures are defined and encoded according to the conventions laid out
 in Section 3 of [RFC8446].
 
+This document uses object identifiers (OIDs) to identify Log IDs (see
+{{log_id}}), the precertificate CMS `eContentType` (see {{precertificates}}),
+and X.509v3 extensions in certificates (see {{cert_transinfo_extension}}) and
+OCSP responses (see {{ocsp_transinfo_extension}}). The OIDs are defined in an
+arc that was selected due to its short encoding.
+
 ## Major Differences from CT 1.0
 
 This document revises and obsoletes the CT 1.0 [RFC6962] protocol, drawing on
@@ -2077,10 +2083,14 @@ Index value: No transformation needed.
 
 ## New CT-Related registries
 
-This sub-section defines new registries for CT.
-They should be made available at https://www.iana.org/assignments/
+IANA is requisted to add a new protocol registry, "Certificate
+Transparency (CT)", to the list that appears at
+https://www.iana.org/assignments/
 
-### Hash Algorithms {#hash_algorithms}
+The reset of this section defines registries, or sub-registries, to be
+created within the new Certificate Transparency registry.
+
+### CT Hash Algorithms {#hash_algorithms}
 
 IANA is asked to establish a registry of hash algorithm values, named
 "CT Hash Algorithms", that initially consists of:
@@ -2099,7 +2109,7 @@ specification and is suitable for use as a cryptographic hash algorithm with no
 known preimage or collision attacks. These attacks can damage the integrity of
 the log.
 
-### Signature Algorithms {#signature_algorithms}
+### CT Signature Algorithms {#signature_algorithms}
 
 IANA is asked to establish a registry of signature algorithm values, named
 "CT Signature Algorithms".
@@ -2136,15 +2146,22 @@ specification, has a value assigned to it in the TLS SignatureScheme Registry
 (that IANA is asked to establish in [RFC8446]) and is suitable for use as a
 cryptographic signature algorithm.
 
-### VersionedTransTypes {#versioned_trans_types}
+### CT VersionedTransTypes {#versioned_trans_types}
 
 IANA is asked to establish a registry of `VersionedTransType` values, named
-"CT VersionedTransTypes", that initially consists of:
+"CT VersionedTransTypes".
+
+The following note should be added:
+
+- The 0x0000 value is reserved so that v1 SCTs are distinguishable from v2
+SCTs and other `TransItem` structures.
+
+The registry should initially consist of:
 
 |-----------------+---------------------------+-------------------------------|
 | Value           | Type and Version          | Reference / Assignment Policy |
 |-----------------+---------------------------+-------------------------------|
-| 0x0000          | Reserved                  | [RFC6962] \*                  |
+| 0x0000          | Reserved                  | [RFC6962]                     |
 | 0x0001          | x509_entry_v2             | RFCXXXX                       |
 | 0x0002          | precert_entry_v2          | RFCXXXX                       |
 | 0x0003          | x509_sct_v2               | RFCXXXX                       |
@@ -2157,13 +2174,10 @@ IANA is asked to establish a registry of `VersionedTransType` values, named
 | 0xF000 - 0xFFFF | Reserved                  | Private Use                   |
 |-----------------+---------------------------+-------------------------------|
 
-\* The 0x0000 value is reserved so that v1 SCTs are distinguishable from v2
-SCTs and other `TransItem` structures.
-
 The Designated Expert(s) should review the public specification to ensure that it is
 detailed enough to ensure implementation interoperability.
 
-### Log Artifact Extension Registry {#log_artifact_extension_registry}
+### CT Log Artifact Extension Registry {#log_artifact_extension_registry}
 
 IANA is asked to establish a registry of `ExtensionType` values, named "CT Log
 Artifact Extensions", that initially consists of:
@@ -2187,15 +2201,7 @@ detailed enough to ensure implementation interoperability. They should
 also verify that the extension is appropriate to the contexts in which it is
 specified to be used (SCT, STH, or both).
 
-### Object Identifiers
-
-This document uses object identifiers (OIDs) to identify Log IDs (see
-{{log_id}}), the precertificate CMS `eContentType` (see {{precertificates}}),
-and X.509v3 extensions in certificates (see {{cert_transinfo_extension}}) and
-OCSP responses (see {{ocsp_transinfo_extension}}). The OIDs are defined in an
-arc that was selected due to its short encoding.
-
-#### Log ID Registry {#log_id_registry}
+### CT Log ID Registry {#log_id_registry}
 
 IANA is asked to establish a registry of Log IDs, named "CT Log ID Registry",
 that initially consists of:
