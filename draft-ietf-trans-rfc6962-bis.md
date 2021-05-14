@@ -2083,12 +2083,12 @@ Index value: No transformation needed.
 
 ## New CT-Related registries
 
-IANA is requisted to add a new protocol registry, "Public Notary
+IANA is requested to add a new protocol registry, "Public Notary
 Transparency", to the list that appears at
 https://www.iana.org/assignments/
 
-The reset of this section defines registries, or sub-registries, to be
-created within the new Certificate Transparency registry.
+The rest of this section defines sub-registries to be
+created within the new Public Notary Transparency registry.
 
 ### Hash Algorithms {#hash_algorithms}
 
