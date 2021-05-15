@@ -2062,10 +2062,15 @@ This sub-section defines additions to existing registries.
 
 ### New Entry to the TLS ExtensionType Registry
 
-IANA is asked to add an entry for `transparency_info(TBD)` to the "TLS
-ExtensionType Values" registry defined in [RFC8446], setting the "Recommended"
-value to "Y", setting the "TLS 1.3" value to "CH, CR, CT", and citing this
-document as the "Reference".
+IANA is asked to add the following entry 
+to the "TLS ExtensionType Values" registry defined in [RFC8446],
+with an assigned Value:
+
++-----|-------------------|------------|-------------|-----------+
+Value | Extension Name    | TLS 1.3    | Recommended | Reference |
++-----|-------------------|------------|-------------|-----------+
+TBD   | transparency_info | CH, CR, CT | Y           | RFCXXXX   |
++-----|-------------------|------------|-------------|-----------+
 
 ### URN Sub-namespace for TRANS errors (urn:ietf:params:trans:error)
 
@@ -2280,7 +2285,8 @@ The initial values are as follows, taken from the text above:
 
 IANA is asked to assign one object identifier from the "SMI
 Security for PKIX Module Identifier" registry to identify the
-ASN.1 module in {{asn1_module}} of this document.
+ASN.1 module in {{asn1_module}} of this document with an assigned
+Decimal value.
 
 |---------+-------------------------+------------+
 | Decimal | Description             | References |
