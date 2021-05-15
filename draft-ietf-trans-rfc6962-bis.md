@@ -2276,6 +2276,19 @@ The initial values are as follows, taken from the text above:
 | endBeforeStart | `start` cannot be greater than `end`.                             | RFCXXXX |
 |------------+----------------------------------+-----------|
 
+## OID Assignment
+
+IANA is asked to assign one object identifier from the "SMI
+Security for PKIX Module Identifier" registry to identify the
+ASN.1 module in {{asn1_module}} of this document.
+
+|---------+-------------------------+------------+
+| Decimal | Description             | References |
+|---------+-------------------------+------------+
+| TBD     | id-mod-public-notary-v2 | RFCXXXX    |
+|---------+-------------------------+------------+
+
+
 # Security Considerations
 
 With CAs, logs, and servers performing the actions described here, TLS clients
@@ -2403,7 +2416,7 @@ SCTs:
 * Sign that TBSCertificate (which now contains v1 and v2 SCTs) to issue the
   final X.509 certificate.
 
-# An ASN.1 Module (Informative)
+# An ASN.1 Module (Informative) {#asn1_module}
 
 The following ASN.1 module may be useful to implementors.
 
