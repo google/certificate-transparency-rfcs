@@ -909,7 +909,7 @@ chain that the log used to verify the submission.
 Each log is identified by an OID, which is one of the log's parameters (see
 {{log_parameters}}) and which MUST NOT be used to identify any other log. A
 log's operator MUST either allocate the OID themselves or request an OID from
-the Log ID Registry (see {{log_id_registry}}).
+the Log ID registry (see {{log_id_registry}}).
 The only advantage of the registry is that the DER encoding can be small.
 (Recall that OID allocations do not require a central registration, although
 logs will most likely want to make themselves known to potential clients
@@ -2206,9 +2206,9 @@ detailed enough to ensure implementation interoperability. They should
 also verify that the extension is appropriate to the contexts in which it is
 specified to be used (SCT, STH, or both).
 
-### Log ID Registry {#log_id_registry}
+### Log IDs Registry {#log_id_registry}
 
-IANA is asked to establish a registry of Log IDs, named "Log ID Registry",
+IANA is asked to establish a registry of Log IDs, named "Log IDs",
 that initially consists of:
 
 |------------------------------+--------------+--------------+-------------------------------|
