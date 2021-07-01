@@ -176,7 +176,7 @@ A typical definition of "public" can be found in [CABBR].
 
 Each log contains certificate chains, which can be submitted by anyone. It is
 expected that public CAs will contribute all their newly issued certificates to
-one or more logs; however certificate holders can also contribute their own
+one or more logs; however, certificate holders can also contribute their own
 certificate chains, as can third parties. In order to avoid logs being rendered
 useless by the submission of large numbers of spurious certificates, it is
 required that each chain ends with a trust anchor that is accepted by the log.
@@ -1097,7 +1097,7 @@ The log stores information about its Merkle Tree in a `TreeHeadDataV2`:
 The length of NodeHash MUST match HASH_SIZE of the log.
 
 `timestamp` is the current date and time, using the format defined in
-{tree_leaves}.
+{{tree_leaves}}.
 
 `tree_size` is the number of entries currently in the log's Merkle Tree.
 
@@ -1130,7 +1130,7 @@ encapsulates a `SignedTreeHeadDataV2` structure:
     struct {
         LogID log_id;
         TreeHeadDataV2 tree_head;
-        opaque signature<0..2^16-1>;
+        opaque signature<1..2^16-1>;
     } SignedTreeHeadDataV2;
 ~~~~~~~~~~~
 
@@ -1169,7 +1169,7 @@ encapsulates a `ConsistencyProofDataV2` structure:
 `tree_size_2` is the size of the newer tree.
 
 `consistency_path` is a vector of Merkle Tree nodes proving the consistency of
-two STHs as described in {consistency}.
+two STHs as described in {{consistency}}.
 
 ## Merkle Inclusion Proofs
 
@@ -1195,7 +1195,7 @@ encapsulates an `InclusionProofDataV2` structure:
 inclusion proof.
 
 `inclusion_path` is a vector of Merkle Tree nodes proving the inclusion of the
-chosen certificate or precertificate as described in {merkle_inclusion_proof}.
+chosen certificate or precertificate as described in {{merkle_inclusion_proof}}.
 
 ## Shutting down a log   {#log_shutdown}
 
@@ -1302,9 +1302,9 @@ it did not comply with this document:
 Clients SHOULD treat `500 Internal Server Error` and `503 Service Unavailable`
 responses as transient failures and MAY retry the same request without
 modification at a later date. Note that as per [RFC7231], in the case of a 503
-response the log MAY include a `Retry-After:` header in order to request a
+response the log MAY include a `Retry-After:` header field in order to request a
 minimum time for the client to wait before retrying the request.
-In the absence of this header, this document does not specify a minimum.
+In the absence of this header field, this document does not specify a minimum.
 
 Clients SHOULD treat any 4xx error as a problem with the request and not
 attempt to resubmit without some modification to the request. The full
@@ -1640,6 +1640,7 @@ Outputs:
 : certificates:
   : An array of JSON strings, each of which
     is a base64 encoded CA certificate that is acceptable to the log.
+
   max_chain_length:
   : If the server has chosen to limit the length of chains it accepts, this is
     the maximum number of certificates in the chain, in decimal. If there is no
@@ -1652,7 +1653,7 @@ Outputs:
 
 CT-using TLS servers MUST use at least one of the mechanisms described below
 to present one or more SCTs from one or more logs to each TLS client during full
-TLS handshakes, where each SCT corresponds to the server certificate.
+TLS handshakes, when requested by the client, where each SCT corresponds to the server certificate.
 (Of course, a server can only send a TLS extension if the client has
 specified it first.)
 Servers
@@ -1671,7 +1672,7 @@ a response during a TLS handshake is popularly known as "OCSP stapling."
 For TLS
 1.3, the information is encoded as an extension in the `status_request`
 extension data; see Section 4.4.2.1 of [RFC8446]. For TLS 1.2 ([RFC5246]), the information
-is encoded as an extension in the `CertificateStatus` message; see Section 8
+is encoded in the `CertificateStatus` message; see Section 8
 of [RFC6066].  Using stapling also
 allows SCTs and inclusion proofs to be updated on the fly.
 
