@@ -991,7 +991,7 @@ and may add new `VersionedTransType` values for new or modified data structures.
 ~~~~~~~~~~~
 
 The `Extension` structure provides a generic extensibility for log artifacts,
-including Signed Certificate Timestamps ({{sct}}) and Signed Tree Heads
+including SCTs ({{sct}}) and STHs
 ({{sth}}). The interpretation of the `extension_data` field is determined solely
 by the value of the `extension_type` field.
 
@@ -1386,7 +1386,7 @@ example, if
 `type` was 2 (indicating `precert_sct_v2`) then all three `TransItem`s could be
 embedded in the certificate.
 
-## Retrieve Latest Signed Tree Head {#get-sth}
+## Retrieve Latest STH {#get-sth}
 
 GET \<Base URL>/ct/v2/get-sth
 
@@ -1398,7 +1398,7 @@ Outputs:
   : A base64 encoded `TransItem` of type `signed_tree_head_v2`, signed by this
     log, that is no older than the log's MMD.
 
-## Retrieve Merkle Consistency Proof between Two Signed Tree Heads {#get-sth-consistency}
+## Retrieve Merkle Consistency Proof between Two STHs {#get-sth-consistency}
 
 GET \<Base URL>/ct/v2/get-sth-consistency
 
@@ -1491,7 +1491,7 @@ Error codes:
 
 See {{verify_inclusion}} for an outline of how to use the `inclusion` output.
 
-## Retrieve Merkle Inclusion Proof, Signed Tree Head and Consistency Proof by Leaf Hash {#get-all-by-hash}
+## Retrieve Merkle Inclusion Proof, STH and Consistency Proof by Leaf Hash {#get-all-by-hash}
 
 GET \<Base URL>/ct/v2/get-all-by-hash
 
@@ -2343,7 +2343,7 @@ be asynchronous and need only be done once per certificate. However, note that
 there may be privacy concerns (see {{fetching_inclusion_proofs}}).
 
 Violation of the append-only property or the STH issuance rate limit can be
-detected by multiple clients comparing their instances of the Signed Tree Heads.
+detected by multiple clients comparing their instances of the STHs.
 This technique, known as "gossip," is an active area of research and not
 defined here.
 Proof of misbehavior in such cases would be: a series of STHs that were
