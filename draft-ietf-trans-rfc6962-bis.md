@@ -911,6 +911,9 @@ Each log is identified by an OID, which is one of the log's parameters (see
 {{log_parameters}}) and which MUST NOT be used to identify any other log. A
 log's operator MUST either allocate the OID themselves or request an OID from
 the Log ID registry (see {{log_id_registry}}).
+One way to get an OID arc, from which OIDs can be allocated, is to request
+a Private Enterprise Number from IANA, by completing the
+[registration form](https://pen.iana.org/pen/PenApplication.page).
 The only advantage of the registry is that the DER encoding can be small.
 (Recall that OID allocations do not require a central registration, although
 logs will most likely want to make themselves known to potential clients
