@@ -157,7 +157,8 @@ Logs are network services that implement the protocol operations for submissions
 and queries that are defined in this document.
 
 \[RFC Editor: please update 'RFCXXXX' to refer to this document,
-once its RFC number is known, through the document.\]
+once its RFC number is known, through the document.  Also, the OID
+assigned below must also appear in the appendix as indicated. \]
 
 
 --- middle
@@ -2063,7 +2064,7 @@ This sub-section defines additions to existing registries.
 
 ### New Entry to the TLS ExtensionType Registry
 
-IANA is asked to add the following entry 
+IANA is asked to add the following entry
 to the "TLS ExtensionType Values" registry defined in [RFC8446],
 with an assigned Value:
 
@@ -2137,10 +2138,10 @@ The registry should initially consist of:
 |--------------------------------+----------------------------------------------------+-------------------------------|
 | SignatureScheme Value          | Signature Algorithm                                | Reference / Assignment Policy |
 |--------------------------------+----------------------------------------------------+-------------------------------|
-| 0x0000 - 0x0402                | Unassigned                                         | Expert Review                 |
+| 0x0000 - 0x0402                | Unassigned                                         | Speficiation Required         |
 | ecdsa_secp256r1_sha256(0x0403) | ECDSA (NIST P-256) with SHA-256                    | [FIPS186-4]                   |
 | ecdsa_secp256r1_sha256(0x0403) | Deterministic ECDSA (NIST P-256) with HMAC-SHA256  | [RFC6979]                     |
-| 0x0404 - 0x0806                | Unassigned                                         | Expert Review                 |
+| 0x0404 - 0x0806                | Unassigned                                         | Speficiation Required         |
 | ed25519(0x0807)                | Ed25519 (PureEdDSA with the edwards25519 curve)    | [RFC8032]                     |
 | 0x0808 - 0xFDFF                | Unassigned                                         | Expert Review                 |
 | 0xFE00 - 0xFEFF                | Reserved                                           | Experimental Use              |
@@ -2149,7 +2150,7 @@ The registry should initially consist of:
 
 The Designated Expert(s) should ensure that the proposed algorithm has a public
 specification, has a value assigned to it in the TLS SignatureScheme Registry
-(that IANA was asked to establish in [RFC8446]) and is suitable for use as a
+(that IANA was asked to establish in [RFC8446]), and is suitable for use as a
 cryptographic signature algorithm.
 
 ### VersionedTransTypes {#versioned_trans_types}
@@ -2430,7 +2431,9 @@ The following ASN.1 module may be useful to implementors.
 ~~~~~~~~~~~
 
 CertificateTransparencyV2Module-2021
- -- { OID Needed, but no point in using a short one }
+ -- { id-mod-public-notary-v2 from above, in
+        iso(1) identified-organization(3) ...
+    form }
 DEFINITIONS IMPLICIT TAGS ::= BEGIN
 
 -- EXPORTS ALL --
