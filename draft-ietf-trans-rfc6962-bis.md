@@ -852,7 +852,7 @@ vendors.
 ### Minimum Acceptance Criteria {#minimum_criteria}
 
 To ensure that logged certificates and precertificates are attributable to an
-accepted trust anchorand to set clear expectations for what monitors would
+accepted trust anchor, to set clear expectations for what monitors would
 find in the log, and to avoid being overloaded by invalid submissions, the log
 MUST reject a submission if any of the following conditions are not met:
 
