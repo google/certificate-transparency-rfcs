@@ -2225,7 +2225,7 @@ for Log IDs.
 This is a limited resource of 8,192 OIDs, each of which has an encoded length of
 4 octets.
 
-The 1.3.101.80 arc has also been set assigned for LogIDs.
+The 1.3.101.80 arc has also been set aside for Log IDs.
 This is an unlimited resource, but only
 the 128 OIDs from 1.3.101.80.0 to 1.3.101.80.127 have an encoded length of only
 4 octets.
