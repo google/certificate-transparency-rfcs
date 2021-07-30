@@ -2138,10 +2138,10 @@ The registry should initially consist of:
 |--------------------------------+----------------------------------------------------+-------------------------------|
 | SignatureScheme Value          | Signature Algorithm                                | Reference / Assignment Policy |
 |--------------------------------+----------------------------------------------------+-------------------------------|
-| 0x0000 - 0x0402                | Unassigned                                         | Speficiation Required         |
+| 0x0000 - 0x0402                | Unassigned                                         | Specification Required         |
 | ecdsa_secp256r1_sha256(0x0403) | ECDSA (NIST P-256) with SHA-256                    | [FIPS186-4]                   |
 | ecdsa_secp256r1_sha256(0x0403) | Deterministic ECDSA (NIST P-256) with HMAC-SHA256  | [RFC6979]                     |
-| 0x0404 - 0x0806                | Unassigned                                         | Speficiation Required         |
+| 0x0404 - 0x0806                | Unassigned                                         | Specification Required         |
 | ed25519(0x0807)                | Ed25519 (PureEdDSA with the edwards25519 curve)    | [RFC8032]                     |
 | 0x0808 - 0xFDFF                | Unassigned                                         | Expert Review                 |
 | 0xFE00 - 0xFEFF                | Reserved                                           | Experimental Use              |
