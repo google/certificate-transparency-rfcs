@@ -2077,13 +2077,13 @@ Value | Extension Name    | TLS 1.3    | Recommended | Reference |
 TBD   | transparency_info | CH, CR, CT | Y           | RFCXXXX   |
 +-----|-------------------|------------|-------------|-----------+
 
-### URN Sub-namespace for TRANS errors (urn:ietf:params:trans:error)
+### URN Sub-namespace for TRANS (urn:ietf:params:trans)
 
 IANA is requested to add a new entry in the
 "IETF URN Sub-namespace for Registered Protocol Parameter Identifiers"
 registry, following the template in {{!RFC3553}}:
 
-Registry name: trans:error
+Registry name: trans
 
 Specification: RFCXXXX
 
