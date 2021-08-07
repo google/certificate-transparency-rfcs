@@ -1,6 +1,6 @@
 ---
 title: "Certificate Transparency Version 2.0"
-docname: draft-ietf-trans-rfc6962-bis-41
+docname: draft-ietf-trans-rfc6962-bis-42
 obsoletes: 6962
 category: exp
 
