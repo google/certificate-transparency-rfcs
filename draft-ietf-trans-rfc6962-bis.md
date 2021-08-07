@@ -255,7 +255,7 @@ major changes are:
   needed.
 
 - Logs IDs: each log is now identified by an OID rather than by the hash of its
-  public key. OID allocations are managed by an IANA registry.
+  public key. OID allocations are available from an IANA registry.
 
 - `TransItem` structure: this new data structure is used to encapsulate most
   types of CT data. A `TransItemList`, consisting of one or more `TransItem`
