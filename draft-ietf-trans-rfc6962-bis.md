@@ -2074,7 +2074,7 @@ with an assigned Value:
 +-----|-------------------|------------|-------------|-----------+
 Value | Extension Name    | TLS 1.3    | Recommended | Reference |
 +-----|-------------------|------------|-------------|-----------+
-TBD   | transparency_info | CH, CR, CT | Y           | RFCXXXX   |
+52    | transparency_info | CH, CR, CT | Y           | RFCXXXX   |
 +-----|-------------------|------------|-------------|-----------+
 
 ### URN Sub-namespace for TRANS errors (urn:ietf:params:trans:error)
