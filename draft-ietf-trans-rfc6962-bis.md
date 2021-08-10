@@ -2296,7 +2296,7 @@ Decimal value.
 |---------+-------------------------+------------+
 | Decimal | Description             | References |
 |---------+-------------------------+------------+
-| TBD     | id-mod-public-notary-v2 | RFCXXXX    |
+| 102     | id-mod-public-notary-v2 | RFCXXXX    |
 |---------+-------------------------+------------+
 
 
