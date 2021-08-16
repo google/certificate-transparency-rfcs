@@ -942,12 +942,16 @@ that the type and version of each one is identified in a common fashion:
 
 ~~~~~~~~~~~
     enum {
-        reserved(0),
-        x509_entry_v2(1), precert_entry_v2(2),
-        x509_sct_v2(3), precert_sct_v2(4),
-        signed_tree_head_v2(5), consistency_proof_v2(6),
-        inclusion_proof_v2(7),
-        (65535)
+        x509_entry_v2(0x0100), precert_entry_v2(0x0101),
+        x509_sct_v2(0x0102), precert_sct_v2(0x0103),
+        signed_tree_head_v2(0x0104), consistency_proof_v2(0x0105),
+        inclusion_proof_v2(0x0106),
+
+        /* Reserved Code Points */
+        reserved_rfc6962(0x0000..0x00FF),
+        reserved_experimentaluse(0xE000..0xEFFF),
+        reserved_privateuse(0xF000..0xFFFF),
+        (0xFFFF)
     } VersionedTransType;
 
     struct {
@@ -2163,7 +2167,7 @@ IANA is asked to establish a registry of `VersionedTransType` values, named
 
 The following note should be added:
 
-- The 0x0000 value is reserved so that v1 SCTs are distinguishable from v2
+- The range 0x0000..0x00FF is reserved so that v1 SCTs are distinguishable from v2
 SCTs and other `TransItem` structures.
 
 The registry should initially consist of:
@@ -2171,15 +2175,15 @@ The registry should initially consist of:
 |-----------------+---------------------------+-------------------------------|
 | Value           | Type and Version          | Reference / Assignment Policy |
 |-----------------+---------------------------+-------------------------------|
-| 0x0000          | Reserved                  | [RFC6962]                     |
-| 0x0001          | x509_entry_v2             | RFCXXXX                       |
-| 0x0002          | precert_entry_v2          | RFCXXXX                       |
-| 0x0003          | x509_sct_v2               | RFCXXXX                       |
-| 0x0004          | precert_sct_v2            | RFCXXXX                       |
-| 0x0005          | signed_tree_head_v2       | RFCXXXX                       |
-| 0x0006          | consistency_proof_v2      | RFCXXXX                       |
-| 0x0007          | inclusion_proof_v2        | RFCXXXX                       |
-| 0x0008 - 0xDFFF | Unassigned                | Specification Required        |
+| 0x0000 - 0x00FF | Reserved                  | [RFC6962]                     |
+| 0x0100          | x509_entry_v2             | RFCXXXX                       |
+| 0x0101          | precert_entry_v2          | RFCXXXX                       |
+| 0x0102          | x509_sct_v2               | RFCXXXX                       |
+| 0x0103          | precert_sct_v2            | RFCXXXX                       |
+| 0x0104          | signed_tree_head_v2       | RFCXXXX                       |
+| 0x0105          | consistency_proof_v2      | RFCXXXX                       |
+| 0x0106          | inclusion_proof_v2        | RFCXXXX                       |
+| 0x0107 - 0xDFFF | Unassigned                | Specification Required        |
 | 0xE000 - 0xEFFF | Reserved                  | Experimental Use              |
 | 0xF000 - 0xFFFF | Reserved                  | Private Use                   |
 |-----------------+---------------------------+-------------------------------|
