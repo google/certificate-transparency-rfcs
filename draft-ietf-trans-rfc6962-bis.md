@@ -2078,7 +2078,7 @@ with an assigned Value:
 +-----|-------------------|------------|-------------|-----------+
 Value | Extension Name    | TLS 1.3    | Recommended | Reference |
 +-----|-------------------|------------|-------------|-----------+
-TBD   | transparency_info | CH, CR, CT | Y           | RFCXXXX   |
+52    | transparency_info | CH, CR, CT | Y           | RFCXXXX   |
 +-----|-------------------|------------|-------------|-----------+
 
 ### URN Sub-namespace for TRANS (urn:ietf:params:trans)
@@ -2300,7 +2300,7 @@ Decimal value.
 |---------+-------------------------+------------+
 | Decimal | Description             | References |
 |---------+-------------------------+------------+
-| TBD     | id-mod-public-notary-v2 | RFCXXXX    |
+| 102     | id-mod-public-notary-v2 | RFCXXXX    |
 |---------+-------------------------+------------+
 
 
